@@ -1,4 +1,5 @@
 [![wercker status](https://app.wercker.com/status/9a7a620f6caa6ce1ae7624c12a06fb48/m "wercker status")](https://app.wercker.com/project/bykey/9a7a620f6caa6ce1ae7624c12a06fb48)
+[![Stories in Ready](https://badge.waffle.io/parksandwildlife/sdis.svg?label=ready&title=Ready)](http://waffle.io/parksandwildlife/sdis)
 
 Science Directorate Information System
 ======================================
