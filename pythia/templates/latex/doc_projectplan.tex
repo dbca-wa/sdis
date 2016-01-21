@@ -1,0 +1,71 @@
+{% extends "latex/document.tex" %}
+{% load pythia_base texify %}
+
+{% block subject %}{{ subtitle }}{% endblock %}
+{% block title %}{{ title|html2latex }}{% endblock %}
+{% block subtitle %}{{ original.project.program|html2latex }}{% endblock %}
+{% block author %}{% endblock %}
+{% block publishers %}{% include "latex/includes/endorsements.tex" %}{% endblock %}
+
+{% block content %}
+{% with doc=original pro=original.project %}
+\section*{% templatetag openbrace %}{{ title|html2latex }}}
+{% as_latex pro "program" 'subsection' %}
+{% as_latex pro "output_program" 'subsection' %}
+
+\subsection*{Staff}
+\begin{tabu} {X X X}
+\hline
+Role & Person & Time allocation (FTE)\\
+\hline
+{% for m in pro.team_list %}
+{{ m|join:" & " }}\\
+{% endfor %}
+\hline
+\end{tabu}
+
+
+\subsection*{Location}
+\textbf{IBRA / IMCRA regions }{{ pro.area_ibra_imcra_region }}\\
+\textbf{NRM Regions }{{ pro.area_nrm_region }}\\
+\textbf{DPaW Regions }{{ pro.area_dpaw_region }}\\
+\textbf{DPaW Districts }{{ pro.area_dpaw_district }}\\
+Locations of field work have to be registered in the 
+\href{http://scientificsites.dpaw.wa.gov.au/}{Scientific Sites Register}.
+To make this project discoverable in the 
+\href{http://internal-data.dpaw.wa.gov.au/dataset?ext_bbox=110\%2C-36\%2C130\%2C-9}{spatial search} of the
+\href{http://internal-data.dpaw.wa.gov.au/}{Departmental data catalogue},
+register and geo-locate datasets generated from this project.
+
+{% as_latex doc "related_projects" 'subsection' %}
+
+\subsection*{Proposed period of the project}
+{{ pro.start_date }} -- {{ pro.end_date }}
+
+{% as_latex pro "output_program" 'subsection' %}
+
+\section*{Relevance and Outcomes}
+{% as_latex doc "background" 'subsection' %}
+{% as_latex doc "aims" 'subsection' %}
+{% as_latex doc "outcome" 'subsection' %}
+{% as_latex doc "knowledge_transfer" 'subsection' %}
+{% as_latex doc "project_tasks" 'subsection' %}
+{% as_latex doc "references" 'subsection' %}
+
+\section*{Study design}
+{% as_latex doc "methodology" 'subsection' %}
+{% as_latex doc "bm_endorsement" 'subsection' %}
+
+\section*{Data management}
+{% as_latex doc "no_specimens" 'subsection' %}
+{% as_latex doc "hc_endorsement" 'subsection' %}
+{% as_latex doc "ae_endorsement" 'subsection' %}
+{% as_latex doc "data_management" 'subsection' %}
+{% as_latex doc "data_manager_endorsement" 'subsection' %}
+
+{# as_latex_table doc "operating_budget" 'section' #}
+{# as_latex_table doc "operating_budget_external" 'section' #}
+
+{% endwith %}
+{% endblock %}
+

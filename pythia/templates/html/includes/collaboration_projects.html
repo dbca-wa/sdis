@@ -1,0 +1,25 @@
+<div class="ext_part_heading">External Partnerships</div>
+<div class="ext_part_content">
+    <table>
+        <thead>
+            <tr class="ext_part_col_hdg">
+                <th class="ext_part_col_hdg">Partnership name</th>
+                <th class="ext_part_col_hdg">Project Title</th>
+                <th class="ext_part_col_hdg">External Funding</th>
+                <th class="ext_part_col_hdg">DPaW Involvement</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for project in projects|dictsort:"name" %}
+        <tr class="ext_part_detail">
+            <td class="ext_part_detail">{{ project.name|safe }}</td>
+            <td class="ext_part_detail">{{ project.project_title_html|safe }}</td>
+            <td class="ext_part_detail">{{ project.budget|safe }}</div>
+            <td class="ext_part_detail">{{ project.staff_list_plain|safe }}</td>
+        </tr>
+        {% empty %}
+        <tr class="ext_part_detail"><td class="ext_part_detail">No projects.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

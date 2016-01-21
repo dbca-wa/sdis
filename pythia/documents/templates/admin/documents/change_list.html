@@ -1,0 +1,299 @@
+{% extends "admin/base_site.html" %}
+{% load i18n staticfiles admin_list %}
+{% load markup %}
+{% load pythia_base %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <!--<link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />-->
+  {% if cl.formset %}
+  <!-- <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />-->
+  <style> 
+    .empty-form { display: none;}
+  </style>
+  {% endif %}
+  {% if cl.formset or action_form %}
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+  {% endif %}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/widgets.css" %}" />
+  {{ media.css }}
+  <style>
+    @media only screen and (max-width: 760px),
+    (min-device-width: 768px) and (max-device-width: 1024px)  {
+
+        /* Force table to not be like tables anymore */
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
+
+        /* Hide table headers (but not display: none;, for accessibility) */
+        thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        tr { border: 1px solid #ccc; }
+
+        td {
+            /* Behave  like a "row" */
+            border: none;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-left: 50%;
+        }
+
+        td:before {
+            /* Now like a table header */
+            position: absolute;
+            /* Top/left values mimic padding */
+            top: 6px;
+            left: 6px;
+            width: 45%;
+            padding-right: 10px;
+            white-space: nowrap;
+        }
+
+        /*
+        Label the data
+        */
+    }
+  </style>
+  {% if not actions_on_top and not actions_on_bottom %}
+    <style>
+      #changelist table thead th:first-child {width: inherit}
+    </style>
+  {% endif %}
+<link rel="stylesheet" href="{% static "css/changelists.css" %}">
+{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  {{ media.js }}
+  <script src="{% static 'js/table-fixed-header.js' %}"></script>
+  {% if action_form %}{% if actions_on_top or actions_on_bottom %}
+  <script type="text/javascript">
+    (function($) {
+      $(document).ready(function($) {
+        $("tr input.action-select").actions();
+      });
+    })(django.jQuery);
+  </script>
+  {% endif %}{% endif %}
+  <script>
+  (function($) {
+    $(document).ready(function($) {
+        {% if current %}
+        $('.delete-row').click(function() {
+          /* There has to be a better way. This is not particularly nice,
+             but it works...often, not always :( First we figure out
+             the form id of the particular
+             form in the formset, and then get the pk from the hiddenfields.
+             Finally, we can construct a delete url with the pk of the model
+             object. Every other way doesn't handle this stuff automagically.
+             Ideally, result_list in the ChangeList would have an extra column
+             for the delete row link. */
+          /* tomask: fixed the $('.hiddenfields') jquery selector, this is
+             probably even uglier :( */
+          /* tomask: even crazier now with the new prescription-aware urls,
+             let's patch the patch again :) */
+          var input = $(this).parent().parent().parent().find(':input').first();
+          var form = input.attr('id').split('-')[1];
+          var name = 'input[id^=id_form-' + form + '-]';
+          //var pk = $('.hiddenfields').find(name).val();
+          // once there is a prescription with id 1234567890, that's when the
+          // end of the world comes, this system is going to be way
+          // end-of-life by then.
+          var templateUrl = '{% url cl.opts|pythia_urlname:"delete" 1234567890 current.id %}';
+          var pk = $('.hiddenfields').find(name).first().val();
+          // prevent users from deleting non-saved objects (objects withoug
+          // pk), maybe this objects did not validate so the form is redisplayed
+          if (typeof pk !== 'undefined') {
+              url = templateUrl.replace('1234567890', pk);
+              document.location.href = url;
+          } else {
+              url = document.location.href;
+          }
+          document.location.assign(url);
+        });
+        {% endif %}
+    });
+  })(django.jQuery);
+  $(function() {
+    // reinit the chosen() widgets (so that the event is bound to a
+    // correct select element)
+    $('body').on('click', 'tr.add-row a', function(o) {
+      // not sure why .prev().prev() but it seems to work
+      var $addedRow = $(o.target).parents('tr.add-row').siblings(
+          'tr#form-empty').prev();
+      $addedRow.find('.chzn-container').remove();
+      $addedRow.find('.chzn-select').each(function(i, select) {
+        $(select).removeClass('chzn-done');
+        django.jQuery(select).chosen();
+      });
+    });
+  });
+
+$(function() {
+    // init tablesorter 
+    $('table#result_list thead th:nth-child(5)').addClass('filter-select');
+    $('table#result_list thead th:nth-child(6)').addClass('filter-select');
+    $('table#result_list thead th:nth-child(8)').addClass('filter-select');
+    $('table#result_list thead th:nth-child(9)').addClass('filter-select');
+    $('table#result_list thead th:nth-child(10)').addClass('filter-select');
+    // bloody django makes a "second" column th instead of td (which confuses tablesorter)
+    $('table#result_list tbody th').each(function(i, el) {
+        $(this).replaceWith($('<td>' + this.innerHTML + '</td>'));
+    });
+
+    $('table#result_list').tablesorter({
+        dateFormat: "uk",
+        theme : "bootstrap",
+        headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
+        widgets : [ "uitheme", "filter", "pager", "stickyHeaders"],
+        widgetOptions : {
+            filter_reset : ".reset", 
+            filter_hideFilters : false,
+        },
+    });
+
+    //add index column with all content.
+    $("table#result_list tbody > tr:has(td)").each(function(){
+       var t = $(this).text().toLowerCase(); //all row text
+       $("<td class='indexColumn'></td>").hide().text(t).appendTo(this);
+    });//each tr
+
+    $("#FilterTextBox").keyup(function(){
+        var s = $(this).val().toLowerCase().split(" ");
+        $("table#result_list tbody > tr:hidden").show();
+        $.each(s, function(){
+            $("table#result_list tbody tr:visible .indexColumn:not(:contains('"+ this + "'))"
+             ).parent().hide();});
+    });//key up.
+
+    // three shortcut buttons
+    //$("#clear").click(function(){$("table#result_list tbody tr:hidden").show(); 
+    // $("#FilterTextBox").val(""); return false; });
+    //$("#current-user").click(function(){$("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false;});
+    //$("#cfspp").click(function(){
+    //    $("table#result_list tbody tr:visible").hide();
+    //    $("table#result_list tbody .indexColumn:contains('science project')").parent().show();
+    //    $("table#result_list tbody .indexColumn:contains('core function project')"
+    //).parent().show();
+    //    $("#FilterTextBox").val("");
+    //    return false;
+    //});
+    //$("#cfspp").click();
+});//document.ready
+
+
+
+
+
+  </script>
+{% endblock %}
+
+{% block bodyclass %}change-list{% endblock %}
+
+{% block breadcrumbs %}
+{% if not is_popup %}
+<ul class="breadcrumb">
+{% for breadcrumb in breadcrumbs %}
+  {% if breadcrumb.url %}
+  <li><a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
+  {% else %}
+  <li>{{ breadcrumb.name }}</li>
+  {% endif %}
+{% endfor %}
+  <li>{{ cl.opts.verbose_name_plural|capfirst }}</li>
+</ul>
+{% endif %}
+{% endblock %}
+{% block coltype %}flex{% endblock %}
+
+{% block header %}{% endblock %}
+
+{% block contentwrapper %}
+<div class="row">
+<div class="{% block contentclass %}{% if cl.has_filters %}col-md-10{% else %}col-md-12{% endif %}{% endblock %}">
+  {% block pretitle %}{% endblock %}
+  {% block content_title %}{{ block.super }}{% endblock %}
+  {% block content %}
+  {% if cl.formset.errors %}
+  <p class="errornote alert alert-block alert-error fade in">
+    <i class="glyphicon-warning-sign"></i> 
+        {% blocktrans count cl.formset.errors|length as counter %}
+        Please correct the error below.{% plural %}Please correct the errors below.
+        {% endblocktrans %}
+  </p>
+  {% for error in cl.formset.non_form_errors %}
+    <p class="errornote alert alert-block alert-error fade in">
+    <i class="glyphicon-warning-sign"></i> {{ error }}
+    </p>
+  {% endfor %}
+  {% endif %}
+  <div class="{% if cl.has_filters %}filtered{% endif %}" id="changelist">
+    <div id="toolbar" class="toolbar-list-pre">
+      {% block object-tools %}
+      {% if has_add_permission %}
+      <div class="object-tools pull-right">
+          {% block object-tools-items %}
+          <a class="btn btn-small btn-info" 
+              href="{% if current %}{% url cl.opts|pythia_urlname:'add' current.id %}{% else %}{% url cl.opts|pythia_urlname:'add' %}{% endif %}{% if is_popup %}?_popup=1{% endif %}">
+          <i class="glyphicon-plus glyphicon-white"></i>
+          {% blocktrans with cl.opts.verbose_name as name %}Create {{ name }}{% endblocktrans %}
+          </a>
+          {% endblock %}
+      </div>
+      {% endif %}
+      {% endblock %}   
+
+      {% block search %}{% search_form cl %}{% endblock %}
+      {% block date_hierarchy %}{% date_hierarchy cl %}{% endblock %}
+    </div>
+
+    <form id="changelist-form" action="" method="post"
+        {% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} class="form-inline">
+    {% csrf_token %}
+    {% block extra-forms %}{% endblock %}
+    {% if cl.formset %}
+      <div>{{ cl.formset.management_form }}</div>
+    {% endif %}
+    {% block result_list %}
+        {% if action_form and actions_on_top and cl.full_result_count and request.user.is_superuser %}{% admin_actions %}{% endif %}
+        {% result_list cl %}
+        {% if action_form and actions_on_bottom and cl.full_result_count and request.user.is_superuser %}{% admin_actions %}{% endif %}
+    {% endblock %}
+    {% block pagination %}{% pagination cl %}{% endblock %}
+    {% block extra-forms-bottom %}{% endblock %}
+    {% block pre-submit-line %}{% endblock %}
+    {% block submit-line %}
+    {% if cl.formset and cl.formset.forms.0.fields|length > 1 %}
+    <div class="navbar navbar-fixed-bottom">
+      <div class="navbar-inner">
+        <div class="container">
+          <input type="submit" name="_save" class="btn pull-right btn-success" value="{% trans 'Save' %}"/>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endblock %}
+    </form>
+  </div>
+  {% block post-pagination %}{% endblock %}
+  {% endblock %}
+</div>
+
+{% block filters %}
+{% if cl.has_filters %}
+<div class="col-md-2">
+  <h5>Filter</h5>
+  <ul class="nav nav-list">
+    {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endblock %}
+
+</div>
+{% endblock %}

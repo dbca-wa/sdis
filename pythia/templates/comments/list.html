@@ -1,0 +1,17 @@
+{% load humanize %}
+<h4>Comments</h4>
+<dl class="list-group" id="comments">
+  {% for comment in comment_list %}
+    <dd class="list-group-item" id="c{{ comment.id }}">
+    <span class="badge">{{ comment.submit_date|naturaltime }}</span>
+    <strong>{{ comment.name }}</strong>
+    <p>{{ comment.comment }}</p>
+      {% ifequal comment.user request.user %}
+        <a onclick="return showAddAnotherPopup(this)" 
+href="{% url 'admin:comments-edit' pk=comment.pk %}?next={{ request.path }}">Edit</a> |
+        <a onclick="return showAddAnotherPopup(this)" 
+href="{% url 'admin:comments-delete' comment.pk %}?next={{ request.path }}">Delete</a>
+      {% endifequal %}
+    </dd>
+  {% endfor %}
+</dl>

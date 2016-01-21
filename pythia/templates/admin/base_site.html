@@ -1,0 +1,12 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% firstof title "" %} | {% trans 'SDIS' %}{% endblock %}
+
+{% block branding %}
+<h4><a id="logo" class="brand" href="{% url 'admin:index' %}">{% trans 'SDIS' %}</a></h4>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block comment %}{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+{% load pythia_base %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+{% for breadcrumb in breadcrumbs %}
+  {% if breadcrumb.url %}
+  <li><a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
+  {% else %}
+  <li>{{ breadcrumb.name }}</li>
+  {% endif %}
+{% endfor %}
+
+<li>
+<a href="{% url opts|pythia_urlname:'change' object.pk|pythia_urlquote %}">
+{% if object.project_type_year_number %}
+    {{ object.project_type_year_number }}
+{% elif object.project.project_type_year_number %}
+    {{ object.project.project_type_year_number }}
+{% else %}
+    {{ object|truncatewords:"18" }}
+{% endif %}
+</a>
+</li>
+
+<li>
+    Object history ({{ opts.verbose_name|capfirst }} #{{ object.id }})
+</li>
+
+<li>{% trans 'Diff' %}{{ version_date }}</li>
+
+</ul>
+{% endblock %}
+
+
+{% block content %}
+    {% for diff in diffs %}
+        <div>
+            <h3>{{ diff.0 }}</h3>
+            <div>
+            {{ diff.1 }}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

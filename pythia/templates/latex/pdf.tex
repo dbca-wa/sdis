@@ -1,0 +1,16 @@
+{% load prescription_tags %}
+{% if embed == True %}
+{
+\pdfpagewidth={{document.dimensions.width}}pt
+\setlength\pdfpageheight{56pt+{{document.dimensions.height}}pt}
+\setlength\headwidth{\pdfpagewidth-80pt}
+\fancyhf{}
+\fancyhead[L]{\href{% templatetag openbrace %}{{ request.build_absolute_uri|texify }}}{% templatetag openbrace %}{{ prescription|texify }}} {{ prescription.name|texify }} ({{ prescription.planned_season_object|texify }})\\ {% pfp_status %} \\ {% if document.modified %}\textbf{Document Uploaded}\textit{ {{ document.modified }}}\quad{% endif %}\textbf{Printed}\textit{ {{ timestamp }} } }
+\fancyhead[R]{ \leftmark \\ {{ document.descriptor|texify|truncatechars:40 }} \\ Page \thepage\ of \pageref{LastPage} } % Pagenumbering
+\renewcommand{\footrulewidth}{0}
+\includepdf[pages=-,fitpaper=true,scale=1,offset=0 -26,templatesize={\pdfpagewidth}{\pdfpageheight},
+    pagecommand={}]{% templatetag openbrace %}{{ document.document.path|safe }}}
+}
+{% else %}
+\noindent \href{% templatetag openbrace %}{{ baseurl|safe }}{{ document.document.url|safe }}}{Download {{ document.filename|texify|safe }} ({{ document.descriptor }}, {{ document.document.size|filesizeformat }})} \\
+{% endif %}

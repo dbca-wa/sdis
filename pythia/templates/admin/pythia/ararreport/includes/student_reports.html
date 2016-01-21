@@ -1,0 +1,7 @@
+{% load pythia_base %}
+<h2 id="student_projects">Student Projects</h2>
+{{ original.student_intro|safe }}
+
+{% for report in reports %}
+    {% include 'admin/pythia/ararreport/includes/studentproject.html' with report=report %}
+{% endfor %}

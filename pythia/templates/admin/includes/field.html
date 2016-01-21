@@ -1,0 +1,48 @@
+{% if fielderrors %}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="alert alert-danger">
+        {{ fielderrors }}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="form-group row{% if fielderrors %} has-error{% endif %}">
+{% if render_document_fields %}
+    <div class="col-sm-12 mini-headline">{{ field.label_tag }}</div>
+    <div class="col-sm-12">
+    {% if field.is_readonly %}
+        {{ field.contents|safe }} {# TODO allow_tags #}
+    {% else %}
+        {{ field }}
+    {% endif %}
+    </div>
+    {% if fieldhelptext and not field.is_readonly %}
+    <p class="col-sm-12 help-block help">{{ fieldhelptext|safe }}</p>
+    {% endif %}
+{% else %}
+
+    {% if field.is_checkbox %}
+    <div class="col-sm-offset-3 col-sm-7">
+        {{ field }}{{ field.label_tag }}
+    </div>
+    {% else %}
+    <div class="col-sm-3 control-label">
+        {{ field.label_tag }}
+    </div><div class="col-sm-7">
+        {% if field.is_readonly %}
+            {{ field.contents|safe }}
+        {% else %}
+            {{ field }}
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if fieldhelptext and not field.is_readonly %}
+    <p class="col-sm-offset-3 col-sm-7 help-block help">{{ fieldhelptext|safe }}</p>
+    {% endif %}
+
+{% endif %}
+</div>
+

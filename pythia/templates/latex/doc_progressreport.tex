@@ -1,0 +1,18 @@
+{% extends "latex/document.tex" %}
+{% load pythia_base texify %}
+
+{% block subject %}{{ subtitle }}{% endblock %}
+{% block title %}{{ title|html2latex }}{% endblock %}
+{% block subtitle %}{{ original.project.program|html2latex }}{% endblock %}
+{% block author %}{% endblock %}
+{% block publishers %}{% include "latex/includes/endorsements.tex" %}{% endblock %}
+
+{% block content %}
+\section*{% templatetag openbrace %}{{ title|html2latex }}}
+{% as_latex original "context" 'section' %}
+{% as_latex original "aims" 'section' %}
+{% as_latex original "progress" 'section' %}
+{% as_latex original "implications" 'section' %}
+{% as_latex original "future" 'section' %}
+{% endblock %}
+

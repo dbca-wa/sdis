@@ -1,0 +1,18 @@
+{% extends "latex/document.tex" %}
+{% load pythia_base texify %}
+
+{% block subject %}{{ subtitle }}{% endblock %}
+{% block title %}{{ title|html2latex }}{% endblock %}
+{% block subtitle %}{{ original.project.program|html2latex }}{% endblock %}
+{% block author %}{% endblock %}
+{% block publishers %}{% include "latex/includes/endorsements.tex" %}{% endblock %}
+
+{% block content %}
+\section*{% templatetag openbrace %}{{ title|html2latex }}}
+{% as_latex original "scientific_outputs" 'section' %}
+{% as_latex original "knowledge_transfer" 'section' %}
+{% as_latex original "data_location" 'section' %}
+{% as_latex original "hardcopy_location" 'section' %}
+{% as_latex original "backup_location" 'section' %}
+{% endblock %}
+

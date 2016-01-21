@@ -1,0 +1,13 @@
+{% if original.endorsements %}
+\subsection*{Endorsements and approvals as of {{ timestamp }}}
+\begin{tabu} {X X}
+\hline
+{% for e in original.endorsements %}
+\rowcolor{% templatetag openbrace %}{{ e.status }}}
+{{ e.role }} & {{ e.status }}\\
+\hline
+{% endfor %}
+\end{tabu}
+{% else %}
+\textbf{Printed {{ timestamp }}}
+{% endif %}

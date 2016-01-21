@@ -1,0 +1,46 @@
+{% load pythia_base texify %}
+{% include "latex/header_scrreprt.tex" %}
+{% url original.opts|pythia_urlname:"change" original.pk as original_change %}
+
+%-----------------------------------------------------------------------------%
+% Headers and Footers
+\automark{section}
+\ohead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}}}
+\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{SDIS}} % center header ONLINE
+\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{
+        \includegraphics[scale=0.4]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
+\ifoot{\textbf{Printed}~{{ timestamp|date:'r' }}} % inner/left footer
+\cfoot{} % center footer
+\ofoot{\pagemark} % outer/right footer
+\pagestyle{scrheadings}
+\setkomafont{pageheadfoot}{\normalfont}
+
+%-----------------------------------------------------------------------------%
+\begin{document}
+\raggedbottom
+
+%-----------------------------------------------------------------------------%
+% Title page
+\subject{% templatetag openbrace %}{% block subject %}Subject{% endblock %}}
+\title{% templatetag openbrace %}{% block title %}Title{% endblock %}}
+\subtitle{% templatetag openbrace %}{% block subtitle %}Subtitle{% endblock %}}
+\author{% templatetag openbrace %}{%block author %}Author{% endblock %}}
+\publishers{% templatetag openbrace %}{% block publishers %}Publishers{% endblock %}}
+    \uppertitleback{% templatetag openbrace %}{% block uppertitleback %}{% endblock %}}
+\lowertitleback{\begin{center}\textbf{Printed}~{{ timestamp|date:'r' }}\end{center}}
+\date{}
+
+%-----------------------------------------------------------------------------%
+% Front matter
+\frontmatter
+\maketitle
+%-----------------------------------------------------------------------------%
+% Main matter
+\mainmatter
+{% block content %}{% endblock content %}
+%-----------------------------------------------------------------------------%
+% Back matter
+%\backmatter
+\end{document}
+%-----------------------------------------------------------------------------%
+

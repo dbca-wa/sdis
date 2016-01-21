@@ -1,0 +1,307 @@
+
+/* Some sensible defaults */
+body {
+  background-color: #f6f6f6;
+}
+
+body, h1, h2, h3, h4, h5 {
+  font-family: Lato; 
+}
+
+body p.help-block {
+    font-size: 0.9em; 
+}
+
+body p.sub {
+    color: #999; 
+}
+
+a, a:hover, a:active {
+  color: #006470;
+}
+
+/* Make the main content area look nice */
+.page {
+    background-color: #FFF;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 10px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1); 
+}
+
+/* Sticky footer hack - The html and body elements cannot have any padding or margin.  */
+html, body {
+    height: 100%;
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin-bottom: -40px; /* Negative indent footer by its height */
+    //padding-top: 55px;    /* Pad top by floating navbar height */
+    padding-bottom: 55px; /* Pad bottom by footer height */
+    background-image:url('/static/img/80mile.jpg'); 
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.navbar-nav.navbar-right:last-child {
+margin-right: 0px; /* we need less negativity, especially in margins */
+}
+
+/* Set the fixed height of the footer here */
+#footer {height: 40px; background-color: rgb(34,34,34);}   
+.container .credit {margin: 10px 0;}
+
+/* Used on templates/admin/change_list.html to provide a toolbar area above the list */
+.toolbar-list-pre {
+    min-height: 38px;
+}
+
+/* Bootstrap3's pagination widget is nice, but demands too much vertical space */
+.pagination {
+    margin: 0;
+}
+
+/* Same goes for the edit tabs at the top of each change form */
+.edit-tabs {
+    margin-bottom: 20px;
+}
+
+/* Fix for margin overflow in nested divs */
+.container .marginfix-inner {
+    padding: 0;
+    width: auto;
+}
+
+/* Make the top sorting header for the list views a nice cyan */
+.listview-header {
+    background-image: linear-gradient(to bottom, #def3f3 0px, #c7ecec 100% );
+    background-repeat: repeat-x;
+}
+
+/* Subtle visual cues to emphasize editability of wrapped TinyMCE fields */
+.tinymce-wrap {
+    border: 1px solid #ffe680;
+    background: #fffdf6;
+    border-radius: 4px;
+    padding: 8px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+
+.tinymce-wrap:hover {
+    border-color: #66AFE9;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
+    outline: 0 none;
+    cursor: pointer;
+}
+
+/* For non-TinyMCE fields using the same wrapper, remove the full-width formatting */
+.shrinkwrap {
+    display: inline-block;
+}
+
+
+/* These were originally provided by /static/css/sdis.css */
+/* Increase editor font size */
+.mceContentBody {font-size: 14px;}
+/* Custom text colours */
+/* .text-warning {color: #c09853;} */
+.status-requested, a .status-requested {color: #FF0000;}
+.status-inreview, a .status-inreview {color: #8B0000;}
+.status-inapproval, a .status-inapproval {color: #C09853;}
+.status-approved, a .status-approved {color: #468847;}
+
+
+/* Workaround for form elements that overflow the page; restrict them to the bounds of the grid */
+fieldset select, fieldset .select2-container, fieldset input, fieldset textarea {
+    width: 100%;
+}
+
+/* For various reasons, it's a pain to add CSS classes to Django form fields, so we do it in post.
+   This is the same as the "form-control" class in bootstrap3 */
+fieldset input, fieldset textarea {
+    background-color: #FFFFFF;
+    background-image: none;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #555555;
+    display: block;
+    font-size: 14px;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    vertical-align: middle;
+    width: 100%;
+}
+fieldset input:focus, fieldset textarea:focus {
+    border-color: #66AFE9;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
+    outline: 0 none;
+}
+fieldset input {
+    height: 34px;
+}
+
+/* Chromium explodes the size of the search widget, this harmless thing fixes it */
+.search .input-group-btn {
+    width: auto;
+}
+
+/* Tweaks to make the file upload widget look nice */
+p.file-upload {
+    font-size: 14px;
+}
+
+p.file-upload input, .field-image input {
+    display: inline;
+    height: auto;
+}
+
+/* Overriding the above, date input fields are small and inline */
+input.vDateField, input.vTimeField {
+    width: 128px;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* Make the Django date/time picking hoverwidgets look nicer */ 
+.calendarbox, .clockbox {
+    border: 1px solid #aaaaaa;
+    border-radius: 4px;
+    padding: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+/* Context-based text fields show the associated label as a mini-headline */
+.mini-headline label {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+/* Jumbotron defaults are a bit severe, provide a bit of tweaking to make the front page look good */
+.jumbotron p {
+    font-weight: 300;
+}
+
+.jumbotron h1 {
+    font-size: 48px;
+    font-variant: small-caps;
+}
+
+/* Tweak the spacing between glyphicons and text */
+.glyphicon {
+    margin-right: 8px;
+}
+
+/* We want to use glyphicons in the My Projects/Collaborations box, but the default HTML for titles
+is encapsulated in a paragraph. Do some tweaks to work around this */
+.portfolio p {
+    margin-bottom: 0px;
+}
+
+.portfolio .glyphicon {
+    float: left;
+}
+
+
+/* Make buttons in submit bar look the same height under Firefox */
+.enforce-line-height a {
+    line-height: 16px;
+}
+
+.user-list {
+    margin-bottom: 10px;
+}
+
+.user-list .list-group-item {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+/* Jam comment widget into an inline block */
+.comment-block {
+    display: block;
+}
+
+.comment-block textarea {
+    width: 100%;
+    height: 6em;
+}
+
+/* Leaflet maps are inserted into empty divs which need a height */
+
+#lmap300 { height: 300px; }
+#lmap400 { height: 400px; }
+#lmap500 { height: 500px; }
+#lmap600 { height: 600px; }
+#lmap700 { height: 700px; }
+
+
+/* ARAR report sidebar affix CSS */
+.body {
+  position: relative;
+}
+.affix {
+  width: inherit; //helped keep the content the same size on fluid layouts
+  position: fixed;
+  top: 20px;  /* distance of TOC from top of page when scrolling down */
+}
+.affix-bottom {
+  width: inherit;
+  position: absolute;
+  top: auto;
+  bottom: 80px;  //height of the footer
+}
+.affix-top {
+  //i didn't need this style but you might
+}
+
+/* TOC L1 - DM, Focus, etc */
+.sidebar>ul>li>a {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+    padding: 4px 20px; /* TOC item spacing */
+}
+
+/* TOC L2 - science programs, student reports */
+.sidebar > ul > li > ul > li > a {
+    color: #AAA;
+    padding: 4px 30px; /* TOC item spacing */
+}
+
+.sidebar > ul > li > ul > li > a {
+    color: #BBB;
+    padding: 4px 40px; /* TOC item spacing */
+}
+
+.sidebar > ul> li> ul > li > ul > li > a {
+    color: #CCC;
+    padding: 4px 50px; /* TOC item spacing */
+}
+
+.sidebar>ul>li>a:hover, .sidebar>ul>li>a:focus,
+.sidebar>ul>li>ul>li>a:hover, .sidebar>ul>li>ul>li>a:focus,
+.sidebar>ul>li>ul>li>ul>li>a:hover, .sidebar>ul>li>ul>li>ul>li>a:focus
+{
+    margin-left: -1px;
+    color: #563d7c;
+    text-decoration: none;
+    background-color: transparent;
+    border-left: 1px solid #563d7c;
+}
+
+/* Force minimum table column width */
+th.min100px td.min100px { min-width:100px;}
+th.min150px td.min150px { min-width:150px;}
+th.min200px td.min200px { min-width:200px;}
+
+/* Hack messages row */
+.limit-height-50px {
+ //height: 50px;
+}

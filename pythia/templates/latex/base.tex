@@ -1,0 +1,91 @@
+{% load pythia_base texify %}
+{% include "latex/header_scrbook.tex" %}
+{% url original.opts|pythia_urlname:"change" original.pk as original_change %}
+
+%-----------------------------------------------------------------------------%
+% Headers and footers
+%
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \setlength\headheight{60pt} % push page content below header
+  \renewcommand{\headrulewidth}{0.1pt}
+  \renewcommand{\footrulewidth}{0.1pt}
+  {% block header %}
+  {% if headers == True %}
+  \fancyhead[L]{ 
+    \href{% templatetag openbrace %}{{ baseurl|safe }}}{
+    \includegraphics[scale=0.6]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}
+  }
+  \fancyhead[R]{ 
+      \hfill
+      \href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System} 
+      \newline 
+      \href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}} 
+  }
+  {% endif %}
+  {% endblock %}
+  {% block footer %}
+  {% if headers == True %}
+  \fancyfoot[L]{ \leftmark\newline\textbf{Printed}\textit{ {{ timestamp }} }}
+  \fancyfoot[R]{  \, \newline Page \thepage\ of \pageref{LastPage} }
+  {% endif %}
+  {% endblock %}
+}
+\pagestyle{plain}
+%
+% end Headers
+%-----------------------------------------------------------------------------%
+
+\begin{document}
+
+%-----------------------------------------------------------------------------%
+% Title page
+%
+{% if titlepage == True %}
+\begin{titlepage}
+\begin{center}
+\begin{minipage}[t]{0.28\textwidth}
+\begin{flushleft}
+\href{% templatetag openbrace %}{{ baseurl|safe }}}{
+  \includegraphics[scale=0.6]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[b]{0.7\textwidth}
+\begin{flushright}
+\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}
+\end{flushright}
+\end{minipage}
+\HRule \\[0.4cm]
+\vfill\vfill
+\textsc{\Huge {{ title }} }
+\vfill
+\textsc{\Huge {{ subtitle }} }
+\vfill\vfill\vfill\vfill
+{% block summary %}{% endblock summary %}
+\vfill\vfill\vfill\vfill\vfill\vfill\vfill\vfill
+
+{% if original.endorsements %}
+\textbf{Endorsements and approvals as of {{ timestamp }}:}
+\begin{tabu} {| X | X |}
+\hline
+{% for e in original.endorsements %}
+\rowcolor{% templatetag openbrace %}{{ e.status }}}
+{{ e.role }} & {{ e.status }}\\
+\hline
+{% endfor %}
+\end{tabu}
+{% else %}
+\textbf{Printed {{ timestamp }}}
+{% endif %}
+
+\end{center}
+\end{titlepage}
+\setcounter{secnumdepth}{-1}
+{% endif %}
+%
+% end title page
+%-----------------------------------------------------------------------------%
+{% block title %}{% endblock %}
+{% block content %}{% endblock %}
+
+\end{document}

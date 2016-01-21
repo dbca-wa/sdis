@@ -1,0 +1,28 @@
+{% extends "admin/pythia/detail.html" %}
+
+{% block second-nav %}
+    {% url 'admin:projects_scienceproject_change' original.id as scienceproject_change %}
+    {% url 'admin:projects_scienceproject_detail' original.id as scienceproject_detail %}
+    {% url 'admin:documents_conceptplan_detail' original.conceptplan.id as conceptplan_detail %}
+    {% url 'admin:documents_projectplan_detail' original.projectplan.id as projectplan_detail %}
+    {% url 'admin:documents_progressreport_detail' original.progressreport.id as progressreport_detail %}
+
+    <li{% if request.path == scienceproject_detail %} class="active"{% endif %}>
+      <a href="{{ scienceproject_detail }}"> Overview </a>
+    </li>
+    <li{% if request.path == scienceproject_location %} class="active"{% endif %}>
+      <a href="{{ scienceproject_location }}"> Location </a>
+    </li>
+    <li{% if request.path == conceptplan_detail %} class="active"{% endif %}>
+      <a href="{{ conceptplan_detail }}"> Concept Plan </a>
+    </li>
+    <li{% if request.path == projectplan_detail %} class="active"{% endif %}>
+      <a href="{{ projectplan_detail }}"> Project Plan </a>
+    </li>
+    <li{% if request.path == progressreport_detail %} class="active"{% endif %}>
+      <a href="{{ progressreport_detail }}"> Progress Report </a>
+    </li>
+    <li{% if request.path == scienceproject_change %} class="active"{% endif %}>
+      <a href="{{ scienceproject_change }}"> Edit </a>
+    </li>
+{% endblock %}

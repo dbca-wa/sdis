@@ -1,0 +1,216 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static staticfiles %}
+{% load pythia_base %}
+{% block title %}SDIS{% endblock %}
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />
+{% include "admin/includes/leaflet-css.html" %}
+<!-- Task counter in favicon becase we CAN -->
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>
+{% with request.user.tasklist as my_tasklist %}
+{% if my_tasklist.count > 0 %}
+var favicon=new Favico({
+animation:'popFade'
+});
+favicon.badge({{ my_tasklist.count }});
+{% endif %}
+{% endwith %}
+</script>
+{% include 'admin/includes/leaflet-js.html' %}
+{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}dashboard{% endblock %}
+
+{% block contentwrapper %}
+<div class="jumbotron">
+    <h1>Science Directorate Information System</h1>
+    <p>Hello, {% firstof request.user.first_name request.user.username %}! This is SDIS, our one-stop shop for project approval and reporting.</p>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        {% with request.user.tasklist as my_tasklist %}
+        <div class="panel panel-default" id="panel-tasks">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#panel-tasks" href="#collapseTasks">My Tasks
+                        <span class="pull-right {% if my_tasklist.count > 0 %}text-danger{% endif %}">
+                            <i class="glyphicon{% if my_tasklist.count == 0 %} glyphicon-ok{% else %} glyphicon-flag{% endif %}"></i>
+                            {{ my_tasklist.count }}
+                        </span>
+                    </a>
+                </h4>
+            </div>
+            <div class="panel-collapse list-group collapse in" id="collapseTasks">
+                {% if my_tasklist.count == 0 %}
+                <a href="#" class="list-group-item"><span class="glyphicon glyphicon-ok"></span>All done!</a>
+                {% else %}
+                {% for doc in my_tasklist.approvals %}
+                <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}" 
+                    class="list-group-item portfolio"><span 
+                        class="glyphicon glyphicon-flag text-danger"></span>
+                    {{ doc.project.project_name_html|safe }}
+                </a>
+                {% endfor %}
+                {% for doc in my_tasklist.endorsements %} 
+                <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}" 
+                    class="list-group-item portfolio">
+                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                    {{ doc.project.project_name_html|safe }}
+                </a>
+                {% endfor %}
+                {% endif %}
+                <!--a href="#" class="list-group-item"><span class="glyphicon glyphicon-flag"></span>Kill all the humans</a>
+                  <a href="#" class="list-group-item"><span class="glyphicon glyphicon-flag"></span>Buy cigars</a-->
+            </div>
+        </div><!-- /#panel-tasks -->
+        {% endwith %}
+
+        {% with request.user.portfolio as my_portfolio %}
+        <div class="panel panel-default" id="panel-projects">
+
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#panel-projects" href="#collapseProjects">My Projects
+                        {% if my_portfolio.projects %}
+                        <span class="pull-right">
+                            <i class="glyphicon glyphicon-star"></i> {{ my_portfolio.projects.super|length }}&nbsp;
+                            <i class="glyphicon glyphicon-star-empty"></i> {{ my_portfolio.projects.regular|length }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </h4>
+            </div>
+            <div class="panel-collapse list-group collapse in" id="collapseProjects">
+                {# looks like a good excuse to add a couple of custom manager methods #}
+                {% if my_portfolio.projects %}
+                {% for proj in my_portfolio.projects.super %}
+                <a href="{% url proj.opts|pythia_urlname:'change' proj.pk %}" class="list-group-item portfolio">
+                    <span class="glyphicon glyphicon-star"></span>{{ proj.project_name_html|safe }}
+                </a>
+                {% endfor %}
+                {% for proj in my_portfolio.projects.regular %}
+                <a href="{% url proj.opts|pythia_urlname:'change' proj.pk %}" class="list-group-item portfolio">
+                    <span class="glyphicon glyphicon-star-empty"></span>{{ proj.project_name_html|safe }}
+                </a>
+                {% endfor %}
+                {% else %}
+                <div class="list-group-item">You are currently not associated with any projects.</div>
+                {% endif %}
+            </div>
+        </div><!-- /#panel-projects -->
+
+        <div class="panel panel-default" id="panel-collaborations">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#panel-collaborations" 
+                        href="#collapseCollaborations">My Collaborations
+                        {% if my_portfolio.collabs %}
+                        <span class="pull-right">
+                            <i class="glyphicon glyphicon-star"></i> {{ my_portfolio.collabs.super|length }}&nbsp;
+                            <i class="glyphicon glyphicon-star-empty"></i> {{ my_portfolio.collabs.regular|length }}
+                        </span>
+                        {% endif%}
+                    </a>
+                </h4>
+            </div>
+            <div class="panel-collapse list-group collapse in" id="collapseCollaborations">
+                {% if my_portfolio.collabs %}
+                {% for proj in my_portfolio.collabs.super %}
+                <a href="{% url proj.opts|pythia_urlname:'change' proj.pk %}" class="list-group-item portfolio">
+                    <span class="glyphicon glyphicon-star"></span>{{ proj.project_name_html|safe }}
+                </a>
+                {% endfor %}
+                {% for proj in my_portfolio.collabs.regular %}
+                <a href="{% url proj.opts|pythia_urlname:'change' proj.pk %}" class="list-group-item portfolio">
+                    <span class="glyphicon glyphicon-star-empty"></span>{{ proj.project_name_html|safe }}
+                </a>
+                {% endfor %}
+                {% else %}
+                <div class="list-group-item">You are currently not associated with any collaborations.</div>
+                {% endif %}
+            </div>
+        </div><!-- /#panel-collaborations -->
+        {% endwith %}
+        <!--div class="panel panel-default" id="panel-profile">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#panel-profile" href="#collapseProfile">My Profile</a>
+                </h4>
+            </div>
+            <div class="panel-collapse list-group collapse in" id="collapseProfile">
+                <a href="#" class="list-group-item"><span class="glyphicon glyphicon-envelope"></span>Contact details</a>
+                <a href="#" class="list-group-item"><span class="glyphicon glyphicon-book"></span>Publications</a>
+                <a href="http://data-demo.dpaw.wa.gov.au/dataset?groups=outputs" target="_" 
+                    class="list-group-item"><span class="glyphicon glyphicon-dashboard"></span>Productivity metrics</a>
+                <a href="#" class="list-group-item"><span class="glyphicon glyphicon-time"></span>Time allocation</a>
+            </div>
+        </div-->
+
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Projects</h2>
+                <a class="btn btn-primary btn-block" href="{% url 'admin:projects_project_changelist' %}">Browse all Projects</a>
+                <a class="btn btn-default btn-block" href="{% url 'admin:projects_project_add' %}">Create new Project</a>
+            </div>
+            <div class="col-md-6">
+                <h2>Reports</h2>
+                {% load documents %}
+                {% get_current_arar as current_arar %}
+                {% if current_arar %}
+                <a class="btn btn-success btn-block" href="{% url 'admin:arar_dashboard' %}" 
+                    title="Read and work on progress reports">Current ARAR (progress report overview)</a>
+                <a class="btn btn-primary btn-block" href="{% url 'admin:pythia_ararreport_detail' current_arar.pk %}"
+                    title="View the current ARAR online">Current ARAR (print preview)</a>
+                <button class="btn btn-default btn-block dropdown-toggle" 
+                    data-toggle="dropdown">Download published ARAR <span class="caret"></span></button>
+                {% endif %}
+                <ul class="dropdown-menu" role="menu">
+                    {% include 'admin/includes/arar_list_static.html' %}
+                </ul>
+                
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+            <h2>Data</h2>
+                <a class="btn btn-primary btn-block" 
+                    href="http://internal-data.dpaw.wa.gov.au/" 
+                    target="_"
+                    title="Browse the data catalogue (new tab)">Data Catalogue</a>
+            </div>
+            <div class="col-md-6">
+            <h2>Sites</h2>
+                <a class="btn btn-primary btn-block" 
+                    href="http://scientificsites.dpaw.wa.gov.au/" 
+                    target="_"
+                    title="Browse the Scientific Site Register (new tab)">Scientific Site Register</a>
+            </div>
+        </div>
+
+        <!--div class="row">
+            <div class="col-md-12">
+            <h2>Discover</h2>
+            <div id="lmap700"></div>
+            </div>
+        </div-->
+        <!-- div class="row">
+            <div class="col-md-12">
+            <h2>Sites</h2>
+            <p><a href="#">View projects on map</a></p>
+            <p><a href="#">Upload new study sites</a></p>
+            </div>
+        </div-->
+    </div>
+</div>
+
+{% endblock %}

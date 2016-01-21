@@ -1,0 +1,21 @@
+<div id="{% block modal_id %}myModal{% endblock %}" class="modal {% block modal_class %}hide {% endblock %}" tabindex="-1" role="dialog" aria-labelledby="{{ modal_label|default:'myModalLabel' }}" aria-hidden="true">
+{% block modal %}
+  <div class="modal-header">
+    {% block modal_header %}
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="{{ modal_label|default:'myModalLabel' }}">{% block modal_header_text %}Modal header{% endblock %}</h3>
+    {% endblock %}
+  </div>
+  <div class="modal-body">
+    {% block modal_body %}
+      <p>{% block modal_body_text %}One fine body…{% endblock %}</p>
+    {% endblock %}
+  </div>
+  <div class="modal-footer">
+    {% block modal_footer %}
+      {% block modal_btn_close %}<button class="{% block modal_btn_close_class %}btn{% endblock %}" data-dismiss="modal" aria-hidden="true" onclick="{% block modal_btn_close_onclick %}return false;{% endblock %}">{% block modal_btn_close_label %}Close{% endblock %}</button>{% endblock %}
+      {% block modal_btn_primary %}<button class="{% block modal_btn_primary_class %}btn btn-primary{% endblock %}" onclick="{% block modal_btn_primary_onclick %}return true;{% endblock %}">{% block modal_btn_primary_label %}Save changes{% endblock %}</button>{% endblock %}
+    {% endblock %}
+  </div>
+{% endblock %}
+</div>

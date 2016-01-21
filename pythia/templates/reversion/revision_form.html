@@ -1,0 +1,49 @@
+{% extends "admin/change_form.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load pythia_base %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+<li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+<li>
+    {% if object.project_type_year_number %}
+        <a href="{% url 'admin:projects_project_changelist' %}">All Projects</a>
+    {% else %}
+        <a href="
+            {% if current %}{% url opts|pythia_urlname:'changelist' current.pk|pythia_urlquote %}
+            {% else %}{% url opts|pythia_urlname:'changelist' %}
+            {% endif %}">{{ opts.verbose_name_plural|capfirst }}
+        </a>
+    {% endif %}
+</li>
+<li>
+    <a href="{% url opts|pythia_urlname:'change' object.pk|pythia_urlquote %}">
+    {% if object.project_type_year_number %}
+        {{ object.project_type_year_number }}
+    {% else %}
+        {{ object|truncatewords:"18" }}
+    {% endif %}
+    </a>
+</li>
+<li>
+    <a href="{% url opts|pythia_urlname:'history' object.pk|pythia_urlquote %}">
+        {{ opts.verbose_name|capfirst }} {% trans 'history' %}
+    </a>
+</li>
+<li>{% trans 'Version' %} {{ version_date }}</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+    {% with 1 as is_popup %}
+        {{block.super}}
+    {% endwith %}
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+{% endblock %}
+
+{% block form_top %}
+{% endblock %}
+

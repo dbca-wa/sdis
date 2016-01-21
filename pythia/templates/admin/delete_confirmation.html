@@ -1,0 +1,51 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% load pythia_base %}
+
+{% block breadcrumbs %}
+{% if not is_popup %}
+<ul class="breadcrumb">
+<li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+<li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ app_label|capfirst }}</a></li>
+<li><a href="{% if current %}{% url opts|pythia_urlname:'changelist' current.pk|pythia_urlquote %}{% else %}{% url opts|pythia_urlname:'changelist' %}{% endif %}">{{ opts.verbose_name_plural|capfirst|escape }}</a></li>
+<li><a href="{% if current %}{% url opts|pythia_urlname:'change' object.pk|pythia_urlquote current.pk|pythia_urlquote %}{% else %}{% url opts|pythia_urlname:'change' object.pk|pythia_urlquote %}{% endif %}">{{ object|truncatewords:"18" }}</a></li>
+<li>{% trans 'Delete' %}</li>
+</ul>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="span12">
+{% if perms_lacking or protected %}
+    {% if perms_lacking %}
+        <h4>{% blocktrans with escaped_object=object %}Deleting the {{ object_name }} '{{ escaped_object }}' would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:{% endblocktrans %}</h4>
+        <ul>
+        {% for obj in perms_lacking %}
+            <li>{{ obj }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% if protected %}
+        <h4>{% blocktrans with escaped_object=object %}Deleting the {{ object_name }} '{{ escaped_object }}' would require deleting the following protected related objects:{% endblocktrans %}</h4>
+        <ul>
+        {% for obj in protected %}
+            <li>{{ obj }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% else %}
+    <h4>{% blocktrans with escaped_object=object %}Are you sure you want to delete the {{ object_name }} "{{ escaped_object }}"?{% endblocktrans %}</h4>
+    {% comment %}
+    <ul>{{ deleted_objects|unordered_list }}</ul>
+    {% endcomment %}
+    <form action="" method="post">{% csrf_token %}
+    <div>
+    <input type="hidden" name="post" value="yes" />
+    <input type="submit" class="btn btn-lg btn-danger btn-block" value="{% trans "Confirm deletion" %}" />
+    <a id="id_cancel_button" href="javascript: {% if is_popup %}window.close(){% else %}history.go(-1){% endif %}" 
+        class="btn btn-default btn-lg btn-block">Cancel, do not delete</a>
+    </div>
+    </form>
+{% endif %}
+</div>
+{% endblock %}

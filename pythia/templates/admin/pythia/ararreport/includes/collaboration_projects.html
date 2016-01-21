@@ -1,0 +1,32 @@
+{% load pythia_base %}
+<h1 id="collaboration_projects_summary">External Partnerships</h1>
+<table class="table">
+  <thead>
+      <th>Partnership Name</th>
+      <th>Project Title</th>
+      <th class="min200px" style="min-width:200px;">External Funding</th>
+      <th>DPaW Involvement</th>
+      <th></th>
+  </thead>
+  <tbody>
+  {% for project in projects|dictsort:"name" %}
+  {% url project.opts|pythia_urlname:'change' project.pk|pythia_urlquote as project_change %}
+    <tr>
+        <td>{{ project.name|safe }}</td>
+        <td><a onclick="return showAddAnotherPopup(this);"
+          href="{{ project_change }}" title="Click to edit">
+          {{ project.project_name_html|safe }}</a></td>
+        <td>{{ project.budget|safe }}</td>
+        <td>{{ project.staff_list_plain }}</td>
+        <td>
+          <a onclick="return showAddAnotherPopup(this);" 
+          type="button" class="btn btn-primary btn-xs"
+          href="{{ project_change }}" title="Edit project">
+          <i class="glyphicon glyphicon-pencil"></i>&nbsp; Edit</a>
+        </td>
+    </tr>
+  {% empty %}
+    <tr><td>No projects.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>

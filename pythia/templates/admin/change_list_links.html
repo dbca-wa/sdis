@@ -1,0 +1,3 @@
+{% load pythia_base %}
+<a href="{% url opts|pythia_urlname:'changelist' %}?{{ related.field.name }}={{ obj.pk }}">{{ count }} {{ opts.verbose_name_plural }}</a>
+(<a id="add_{{ field }}_{{ obj.pk }}" onclick="return showAddAnotherPopup(this);" class="add-another" href="{% url opts|pythia_urlname:'add' %}?{{ related.field.name }}={{ obj.pk }}">Add<i class="icon-plus"></i></a>)

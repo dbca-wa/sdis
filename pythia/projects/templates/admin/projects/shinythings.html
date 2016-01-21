@@ -1,0 +1,54 @@
+{% load approvals %}
+
+<!-- Project hero pane -->
+<div class="well">
+  {% include 'admin/projects/project_showcase.html' with project=project %}
+</div><!-- /.well -->
+
+<!-- Project Team -->
+<div class="well">
+  {% include 'admin/projects/team.html' with project=project %}
+</div><!-- /.well -->
+
+<!-- Transitions -->
+<p>
+{% get_transitions project as transitions %}
+{% if transitions %}
+{% for trans in transitions %}
+<a href="{{ trans.url }}" class="btn btn-primary" id="id_{{ trans.transition }}">{{ trans.name }}</a>
+{% endfor %}
+{% else %}
+<button type="button" class="btn btn-default" disabled="disabled">No actions available at this time</button>
+{% endif %}
+</p>
+
+<p class="row">
+  <div class="colEditable collapse in col-sm-offset-3 col-sm-6">
+      <button type="button" class="btn btn-primary btn-block" 
+          title="Update project details" onclick="javascript:showEditable(this);"> 
+          <i class="glyphicon glyphicon-pencil"></i>Edit project details
+      </button>
+  </div>
+</p>
+
+<!-- hide the submit row when the form is inactive -->
+<script type="text/javascript">
+function showEditable(el)
+{
+  $('div.colEditable').filter('.in').hide();
+  $('div.colEditable').not('.in').show();
+  $('div.navbar-fixed-bottom').show();
+}
+
+function hideEditable(el)
+{
+  $('div.colEditable').filter('.in').show();
+  $('div.colEditable').not('.in').hide();
+  $('div.navbar-fixed-bottom').hide();
+}
+
+$(function() {
+      $('div.colEditable').not('.in').hide();
+      $('div.navbar-fixed-bottom').hide();
+      });
+</script>

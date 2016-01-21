@@ -1,0 +1,94 @@
+{% extends "admin/base_site.html" %}
+{% load i18n staticfiles admin_modify %}
+{% load pythia_base %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static "admin/css/widgets.css" %}">
+{% endblock %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+<script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
+<script>tinymce.init({selector:'textarea.tinymce'});</script>
+{{ media }}
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block breadcrumbs %}
+{% if not is_popup %}
+<ul class="breadcrumb">
+<li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+<li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ app_label|capfirst|escape }}</a></li>
+<li>{% if has_change_permission %}
+    <a href="{% if current %}{% url opts|pythia_urlname:'changelist' current.pk|pythia_urlquote %}{% else %}{% url opts|pythia_urlname:'changelist' %}{% endif %}">
+        {{ opts.verbose_name_plural|capfirst }}</a>
+    {% else %}{{ opts.verbose_name_plural|capfirst }}
+    {% endif %}</li>
+<li>{% if add %}{% trans 'Add' %} {{ opts.verbose_name }}{% else %}{{ original|truncatewords:"18" }}{% endif %}</li>
+
+{% block object-tools %}
+{% block object-tools-items %}
+{% if change %}
+  <li class="pull-right">
+    <a href="{% if current %}
+    {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote current.pk|pythia_urlquote %}
+    {% else %}
+    {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote %}{% endif %}" 
+    class="historylink" target="_" title="Open change history in new tab">{% trans "History" %}</a>
+  </li>
+{% endif %}
+{% endblock %}
+
+</ul>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% for field in original.related_fields %}
+    {{ field.status }}, {{ field.context }}
+{% endfor %}
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" class="form-horizontal">{% csrf_token %}{% block form_top %}{% endblock %}
+<div>
+{% if is_popup %}
+    <input type="hidden" name="_popup" value="1" />
+{% endif %}
+{% if errors %}
+    <p class="errornote alert alert-block alert-error fade in">
+    {% blocktrans count counter=errors|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    </p>
+    {{ adminform.form.non_field_errors }}
+{% endif %}
+
+{% block field_sets %}
+{% for fieldset in adminform %}
+  {% include "admin/includes/fieldset.html" %}
+{% endfor %}
+{% endblock %}
+
+{% block after_field_sets %}{% endblock %}
+
+{% block inline_field_sets %}
+{% for inline_admin_formset in inline_admin_formsets %}
+    {% include inline_admin_formset.opts.template %}
+{% endfor %}
+{% endblock %}
+
+{% block after_related_objects %}{% endblock %}
+
+{% block submit_buttons_bottom %}
+    {% submit_widgets %}
+{% endblock %}
+
+{% if adminform.first_field and add %}
+   <script type="text/javascript">document.getElementById("{{ adminform.first_field.id_for_label }}").focus();</script>
+{% endif %}
+
+{# JavaScript for prepopulated fields #}
+{% prepopulated_fields_js %}
+
+</div>
+</form>
+{% endblock %}

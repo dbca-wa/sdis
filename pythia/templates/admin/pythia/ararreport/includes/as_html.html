@@ -1,0 +1,7 @@
+{% load pythia_base %}
+{% load pbs_markdown %}
+
+<div>
+    <{{ tag }} id="{{ anchor }}">{{ heading|safe }}</{{ tag }}>
+    {{ text|markdownify }}
+</div> 

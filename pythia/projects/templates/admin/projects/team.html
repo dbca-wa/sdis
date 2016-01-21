@@ -1,0 +1,41 @@
+<div class="row">
+<div class="col-md-12">
+<h4>Manage Team</h4>
+<p class="text-muted">The team list is sorted by list position (asccending) and last name (alphabetically).</p>
+<div class="list-group user-list">
+{% for membership in project.projectmembership_set.all|dictsort:"position" %}
+<div class="list-group-item">
+  <div class="pull-right">
+      <a href="{% url "admin:projects_projectmembership_change" membership.pk %}" 
+          class="btn btn-xs btn-primary" 
+          title="Edit this team membership - change person, role, time allocation"
+          onclick="return showAddAnotherPopup(this);"
+          ><i class="glyphicon glyphicon-pencil"></i>Edit</a>
+      <a href="{% url "admin:projects_projectmembership_delete" membership.pk %}" 
+          class="btn btn-xs btn-danger" 
+          title="Remove this person from the team (after confirmation)"
+          onclick="return showAddAnotherPopup(this);"
+          ><i class="glyphicon glyphicon-remove"></i>Remove</a>
+  </div><!-- /.pull-right -->
+  {{membership}}
+</div><!-- /.list-group-item -->
+{% endfor %}
+<div class="list-group-item">
+  <div class="pull-right">
+      <a href="{% url "admin:projects_projectmembership_add" %}?project={{ project.pk }}" 
+          id="add_id_%s" 
+          class="btn btn-xs btn-primary" 
+          title="Add an existing SDIS user as team member"
+          onclick="return showAddAnotherPopup(this);">
+          <i class="glyphicon glyphicon-plus"></i>&nbsp;Add team member</a>
+      <a href="{% url 'admin:pythia_user_add' %}"
+          class="btn btn-xs btn-primary" 
+          target="_"
+          title="Register a colleague as new SDIS user (opens new window)">
+          <i class="glyphicon glyphicon-plus"></i>&nbsp;Register an external colleague</i></a>
+  </div><!-- /.pull-right -->
+  &nbsp;
+</div><!-- /.list-group-item -->
+</div><!-- /.list-group  -->
+</div><!-- /.col -->
+</div><!-- /.row -->

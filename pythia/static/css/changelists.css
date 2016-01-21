@@ -1,0 +1,54 @@
+input:focus, select:focus {
+    background-color: #D1F0FF;
+}
+
+textarea {
+    height: 1.5em;
+    width: 95%;
+    overflow-y: hidden;
+}
+
+table .header-fixed {
+  position: fixed;
+  //top: 40px; /* commented out because no fixed navbar */
+  top: -9999px; /* an ugly hack to force sticky header not to double up */
+  left: -9999px;
+  z-index: 1020; /* 10 less than .navbar-fixed to prevent any overlap */
+  border-bottom: 1px solid #d5d5d5;
+  -webkit-border-radius: 0;
+     -moz-border-radius: 0;
+          border-radius: 0;
+}
+
+input {
+  width: 60px;
+}
+
+input.vForeignKeyRawIdAdminField,
+input.vIntegerField {
+  width: 40px;
+}
+
+thead {
+  background-color: #fff;
+}
+
+input.vTextField:not([id*='fire_no']):not([id$='cellname']) {
+    width: auto !important;
+}
+
+input[id$='cellname'] {
+    width: 80px;
+}
+
+select[id$='seqno'] {
+    width: 50px;
+}
+
+select[id$='ignition_type'] {
+    width: 100px;
+}
+
+.chzn-drop {
+    z-index: 1040 !important;  /* 10 more than .navbar-fixed */
+}

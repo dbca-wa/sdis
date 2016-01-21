@@ -1,0 +1,34 @@
+{% load texify %}
+% Begin ARAR Table Student Projects
+\chapter*{Current Collaboration with Academia (Student Projects)}
+\addcontentsline{toc}{chapter}{Current Collaboration with Academia (Student Projects)}
+
+\begin{longtabu} to \textwidth { p{2.3cm} X X X p{1.5cm} r{0.4cm} }
+\hline
+
+\hline
+\rowcolor{infobg}
+\textbf{DPaW Officer} & 
+\textbf{Student} & 
+\textbf{Academic} & 
+\textbf{Project Title} & 
+\textbf{Duration} & 
+\textbf{Page} \\        
+\hline
+\endhead
+
+{% for report in reports %}
+    {{ report.project.supervising_scientist_list_plain|html2latex }} &
+    {{ report.project.student_list_plain|html2latex }} ({{ report.project.get_level_display|striptags }}) &
+    {{ report.project.academic_list_plain|safe|html2latex }} &
+    {{ report.project.title|html2latex }} &
+    {{ report.project.start_date|date:"Y" }} -- {{ report.project.end_date|date:"Y" }} &
+    \pageref{sec:{{ report.project.project_year_number }}} \\
+    \hline
+{% empty %}
+    No projects. \\
+{% endfor %}
+
+\end{longtabu}
+% End ARAR Table Student Projects
+

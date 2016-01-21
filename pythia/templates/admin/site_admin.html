@@ -1,0 +1,23 @@
+{% extends "admin/base_site.html" %}
+{% load i18n staticfiles admin_list %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+  <li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+  <li>Manage Users</li>
+</ul>
+{% endblock %}
+
+{% block pretitle %}
+<ul class="nav nav-tabs">
+  <li><a href="{% url 'admin:pythia_user_changelist' %}"><i class="icon-user"></i>Users</a></li>
+  <li><a href="{% url 'admin:auth_group_changelist' %}"><i class="icon-group"></i>Groups</a></li>
+</ul>
+{% endblock %}
+
+{% block content_title %}<h1>Manage Users</h1>{% endblock %}
+
+{% block content %}
+<h4><a href="{% url 'admin:pythia_user_changelist' %}">Manage User Accounts</a></h4>
+<h4><a href="{% url 'admin:auth_group_changelist' %}">Manage Groups</a></h4>
+{% endblock %}

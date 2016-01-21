@@ -1,0 +1,14 @@
+{
+  "name": "jquery-joyride",
+  "homepage": "https://github.com/zurb/joyride",
+  "version": "2.1.0",
+  "_release": "2.1.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.1.0",
+    "commit": "6ea8eaae06529cc2f8d147e7f9b43782cd2f458a"
+  },
+  "_source": "git://github.com/zurb/joyride.git",
+  "_target": "~2.1.0",
+  "_originalSource": "jquery-joyride"
+}

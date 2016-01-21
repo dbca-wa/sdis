@@ -1,0 +1,13 @@
+{% load pbs_markdown %}
+<div class="student_projects_heading">Student Projects</div>
+<div class="student_projects_intro">The following reports were provided.</div>
+{% for report in reports %}
+<div class="sp_project_title">{{ report.project.project_title_html|safe }}</div>
+<div class="sp_section_title">Scientist</div>
+<div class="sp_section_content">{{ report.project.supervising_scientist_list_plain }}</div>
+<div class="sp_section_title">Student</div>
+<div class="sp_section_content">{{ report.project.student_list_plain }}</div>
+<div class="sp_section_title">Progress report</div>
+<div class="sp_section_content">{{ report.progress_report|markdownify }}</div>
+{% endfor %}
+

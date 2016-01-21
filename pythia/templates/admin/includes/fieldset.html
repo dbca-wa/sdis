@@ -1,0 +1,31 @@
+{% with fieldset.name|cut:" " as fn %}
+<div class="panel-group" id="accordion-{{ fn }}">
+    <div class="panel panel-default">
+        {% if fieldset.name %}
+        <div class="panel-heading">
+            <h2><a data-toggle="collapse" data-parent="accordion-{{ fn }}" href="#collapse-{{ fn }}" >{{ fieldset.name }}</a><h2>
+            {% if fieldset.description %}<div class="description text-muted small">{{ fieldset.description|safe }}</div>{% endif %}
+        </div><!-- /div.panel-heading -->
+        {% endif %}
+        <fieldset id="collapse-{{ fn }}" class="form-horizontal module aligned panel-collapse {{ fieldset.classes }}">
+            <div class="panel-body">
+                {% for line in fieldset %}
+                <div class="form-row {% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% endfor %}">
+                    {% for field in line %}
+                    <div class="field-box{% if field.field.name %} field-{{ field.field.name }}{% endif %}">
+                        {% if not line.fields|length_is:'1' and not field.is_readonly %}
+                        {% include "admin/includes/field.html" with field=field.field fielderrors=line.errors fieldhelptext=field.field.help_text %} 
+                        {% elif field.is_readonly %}
+                        {% include "admin/includes/field.html" with field=field fielderrors=field.errors fieldhelptext=field.field.help_text readonly=True %} 
+                        {% else %}
+                        {% include "admin/includes/field.html" with field=field.field fielderrors=field.errors fieldhelptext=field.field.help_text %} 
+                        {% endif %}
+                    </div><!-- /div.field-box -->
+                    {% endfor %}
+                </div><!-- /div.form-row -->
+                {% endfor %}
+            </div><!-- /div.panel-body -->
+        </fieldset>
+    </div><!-- /div.panel.panel-default -->
+</div><!-- /div.panel-group#accordion-{{ fieldset.name }} -->
+{% endwith %}

@@ -1,0 +1,153 @@
+{% extends "admin/base.html" %}
+{% load pythia_base static %}
+
+{% block content %}
+{# original is an instance of ARARReport #}
+
+<div class="col-md-3 pull-right" role="navigation"><!-- TOC sidebar -->
+    {% include "admin/pythia/ararreport/includes/sidebar.html" with original=original %}
+</div><!-- /TOC sidebar -->
+
+<div class="col-md-9" role="main">
+    <div id="top"></div>
+    <div class="row">
+        <div class="col-md-12">
+
+            <!-- Public: PDF -->
+            <a href="{% url 'admin:pythia_ararreport_download_pdf' original.pk %}" 
+                target="_"
+                title="View PDF print version in new browser tab"
+                class="btn btn-xs btn-primary">PDF</a>
+
+            {% if request.user.is_superuser %}
+            <!-- Superuser only: Tex, HTML; Edit -->
+            <a href="{% url 'admin:pythia_ararreport_download_tex' original.pk %}" 
+                target="_"
+                title="View Latex source code in new tab"
+                class="btn btn-xs btn-primary">Latex</a>
+            <a href="{% url 'admin:pythia_ararreport_download_html' original.pk %}" 
+                target="_"
+                title="View plain HTML version in new tab"
+                class="btn btn-xs btn-primary">HTML</a>
+            {% url opts|pythia_urlname:'change' original.pk|pythia_urlquote as url_change %}
+            <a onclick="return showAddAnotherPopup(this);" 
+                type="button"
+                class="btn btn-primary btn-xs pull-right"
+                href="{{ url_change }}" 
+                title="Click to edit this ARAR"><i 
+                class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
+        {% endif %}
+        </div>
+    </div>
+
+    {# include "admin/pythia/ararreport/includes/overview.html" with reports=original.progress_reports sr=original.student_reports #}
+
+    {% as_html original 'dm' 'h1' %}
+    {% as_html original 'sds_intro' 'h1' %}
+    {% as_html original 'pub' 'h1' %}
+    {% include "admin/pythia/ararreport/includes/student_projects.html" with reports=original.student_reports %}
+    {% include "admin/pythia/ararreport/includes/collaboration_projects.html" with projects=original.collaboration_projects %} 
+    {% include "admin/pythia/ararreport/includes/science_projects.html" with reports=original.progress_reports %}
+    {% include "admin/pythia/ararreport/includes/programs.html" with reports=original.progress_reports original=original %}
+    {% include "admin/pythia/ararreport/includes/student_reports.html" with reports=original.student_reports original=original %}
+</div>
+
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{{ media }}
+<style>
+/* ARAR report sidebar affix CSS */
+.body {
+  position: relative;
+}
+.affix {
+  width: inherit; /* keep the content the same size on fluid layouts */
+  position: fixed;
+  top: 20px;  /* distance of TOC from top of page when scrolling down */
+}
+.affix-bottom {
+  width: inherit;
+  position: absolute;
+  top: auto;
+  bottom: 80px;  /* height of the footer*/
+}
+
+/* TOC L1 - DM, Focus, etc */
+.sidebar>ul>li>a {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+    padding: 4px 20px; /* TOC item spacing */
+}
+
+/* TOC L2 - science programs, student reports */
+.sidebar > ul > li > ul > li > a {
+    color: #AAA;
+    padding: 4px 30px; /* TOC item spacing */
+}
+
+.sidebar > ul > li > ul > li > a {
+    color: #BBB;
+    padding: 4px 40px; /* TOC item spacing */
+}
+
+.sidebar > ul> li> ul > li > ul > li > a {
+    color: #CCC;
+    padding: 4px 50px; /* TOC item spacing */
+}
+
+.sidebar>ul>li>a:hover, .sidebar>ul>li>a:focus,
+.sidebar>ul>li>ul>li>a:hover, .sidebar>ul>li>ul>li>a:focus,
+.sidebar>ul>li>ul>li>ul>li>a:hover, .sidebar>ul>li>ul>li>ul>li>a:focus
+{
+    margin-left: -1px;
+    color: #563d7c;
+    text-decoration: none;
+    background-color: transparent;
+    border-left: 1px solid #563d7c;
+}
+</style>
+
+<!--link rel="stylesheet" type="text/css" href="{% static 'css/docs.min.css' %}"-->
+<!--script type="text/javascript" src="{% static 'js/docs.min.js' %}"></script-->
+<!--script>
+/* FIXME this is not loading */
+
+! function (a){
+    a(function () {
+        if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+            var b = document.createElement("style");
+            b.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}")), 
+            document.querySelector("head").appendChild(b)
+        } {
+            var c = a(window),
+                d = a(document.body);
+            a("#main-navbar").outerHeight(!0) + 10
+        }
+        d.scrollspy({ target: "#sidebar" }), 
+        c.on("load", function () {  d.scrollspy("refresh") }), 
+        a("#page-content [href=#]").click(function (a) { a.preventDefault() }), 
+        setTimeout(function () {
+            var b = a("#sidebar");
+            b.affix({
+                offset: {
+                    top: function () {
+                        var c = b.offset().top,
+                            d = parseInt(b.children(0).css("margin-top"), 10),
+                            e = a("#main-navbar").height();
+                        return this.top = c - e - d
+                    },
+                    bottom: function () {
+                        return this.bottom = a("#footer").outerHeight(!0)
+                    }
+                }
+            })
+        }, 100), 
+        setTimeout(function () { a(".bs-top").affix() }, 100),     
+    });
+}(jquery);
+</script-->
+{% endblock %}

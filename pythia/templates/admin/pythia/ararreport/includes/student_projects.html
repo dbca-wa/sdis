@@ -1,0 +1,58 @@
+{% load pythia_base humanize %}
+<!-- Table Student Projects -->
+<h1 id="student_projects_summary">Current Collaboration with Academia (Student Projects)</h1>
+<table class="table">
+  <thead>
+      <th>DPaW Officer</th>
+      <th>Student</th>
+      <th>University Academic</th>
+      <th>Project title</th>
+      <th>Duration</th>
+      <th></th>
+  </thead>
+  <tbody>
+  {% for report in reports %}
+    {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
+    <tr>
+        <!-- DPaW Officer -->
+        <td>{{ report.project.supervising_scientist_list_plain }}</td>
+
+        <!-- Student with Degree/Level -->
+        <td>{{ report.project.student_list_plain }} ({{ report.project.get_level_display }})</td>
+
+        <!-- University Academic with Affiliation -->
+        <td>{{ report.project.academic_list_plain }}</td>
+
+        <!-- Project title -->
+        <td><a onclick="return showAddAnotherPopup(this);"
+                class="text-{{ report.status_label }}"
+          href="{{ project_change }}" title="Click to edit">
+          {{ report.project.project_name_html|safe }}</a>
+        <span class="text-muted">
+          <small>last modified {{ report.modified|naturaltime }} by {{ report.modifier.get_full_name }}
+          </small>
+        </span>
+        </td>
+
+        <!-- Duration -->
+        <td>{{ report.project.start_date|date:"Y" }}&#8211;{{ report.project.end_date|date:"Y" }}</td>
+
+        <!-- Edit / Navigation Links -->
+        <td>
+          <a onclick="return showAddAnotherPopup(this);" 
+          type="button" class="btn btn-primary btn-xs"
+          href="{{ project_change }}" title="Edit Project">
+          <i class="glyphicon glyphicon-pencil"></i>&nbsp; Edit</a>&nbsp;
+          <a type="button" class="btn btn-primary btn-xs"
+          href="#{{ report.project.opts.module_name }}:{{ report.project.pk }}"
+          title="Jump to Progress Report">
+          <i class="glyphicon glyphicon-eye-open"></i>&nbsp; Go to</a>
+        </td>
+    </tr>
+  {% empty %}
+    <tr><td>No projects.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<!-- /Table Student Projects -->
+

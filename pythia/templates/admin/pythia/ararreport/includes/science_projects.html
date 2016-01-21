@@ -1,0 +1,51 @@
+{% load pythia_base humanize %}
+<h1 id="science_projects_summary">Summary of Research Project Locations by Programs</h1>
+
+{# requires reports to be sorted by program, done in ARARReport.progressreports #}
+{% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+
+{% for program_reports in report_list %}
+<h2>{{ program_reports.grouper }}</h2>
+<table class="table">
+    <thead>
+        <th>DPaW Region</th>
+        <th>IBRA/IMCRA</th>
+        <th>NRM Region</th>
+        <th>Project Title</th>
+        <th></th>
+    </thead>
+    <tbody>
+    {% for report in program_reports.list|dictsort:"project.title" %}
+    {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
+    <tr>
+        <td>{{ report.project.area_list_dpaw_region }}</td>
+        <td>{{ report.project.area_list_ibra_imcra_region }}</td>
+        <td>{{ report.project.area_list_nrm_region }}</td>
+        <td><a onclick="return showAddAnotherPopup(this);" 
+                class="text-{{ report.status_label }}"
+                href="{{ project_change }}" title="Edit project">
+                {{ report.project.project_name_html|safe }}</a>
+        <span class="text-muted">
+          <small>last modified {{ report.modified|naturaltime }} by {{ report.modifier.get_full_name }}
+          </small>
+        </span>
+        
+        </td> 
+                {# project_name_html includes type-year-number #}
+        <td>
+            <a onclick="return showAddAnotherPopup(this);" 
+                type="button" class="btn btn-primary btn-xs"
+                href="{{ project_change }}" title="Edit Project">
+                <i class="glyphicon glyphicon-pencil"></i>&nbsp; Edit</a>&nbsp;
+            <a type="button" class="btn btn-primary btn-xs"
+                href="#{{ report.project.opts.module_name }}:{{ report.project.pk }}"
+                title="Jump to Progress Report">
+                <i class="glyphicon glyphicon-eye-open"></i>&nbsp; Go to</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td>No projects.</td></tr>
+    {% endfor %}
+</tbody>
+</table>
+{% endfor %}

@@ -1,0 +1,35 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+{% if not is_popup %}
+<ul class="breadcrumb">
+  <li><a href="{% url 'admin:index' %}">Home</a></li>
+  <li>All projects</li>
+  <li><a href="{% url 'admin:index' %}">{{ object.project.project_type_year_number }}</a></li>
+  <li><a href="{% url 'admin:index' %}">{{ opts.verbose_name|capfirst }}</a></li>
+  <li>{{ transition_name }}</li>
+</ul>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<h4>Are you sure you wish to {{ transition_name|lower }}?</h4>
+<form name="transition" action="" method="post">{% csrf_token %}
+<div>
+<input 
+    type="checkbox" 
+    id="id_notify" 
+    name="_notify"></input>&nbsp;
+<label for="id_notify">{% trans 'Notify recipients of this action by email' %}</label>
+<input 
+    type="submit" 
+    id="id_confirm" 
+    value="{% trans 'Confirm' %}" 
+    class="btn btn-primary btn-success btn-lg btn-block" name="_confirm"/>
+<a id="id_cancel_button" 
+    href="javascript: {% if is_popup %}window.close(){% else %}history.go(-1){% endif %}" 
+    class="btn btn-default btn-lg btn-block">Cancel</a>
+</div>
+</form>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% load pythia_base documents %}
+
+{% url project.opts|pythia_urlname:"change" project.pk as project_change %}
+
+<li{% if request.path == project_change  %} class="active"{% endif %}>
+    <a href="{{ project_change }}"> Overview </a>
+</li>
+
+{% with project.documents.grouped as grouped %}
+{% if project.documents.count %}
+{% for verbose_name, documents in grouped.items %}
+    {% if documents.count > 1 %}
+<li class="dropdown {% for document in documents %}
+            {% url document.opts|pythia_urlname:"change" document.pk as document_change %}
+            {% if request.path == document_change %}active
+            {% endif %}
+        {% endfor %}">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#"> {{ verbose_name|title }} 
+      {# document_status_label document #}
+        <span class="caret"></span></a>
+    <ul class="dropdown-menu">
+
+        {% for document in documents %}
+            {% url document.opts|pythia_urlname:"change" document.pk as document_change %}
+    <li{% if request.path == document_change %} class="active"{% endif %}>
+    <a href="{{ document_change }}"> {{ verbose_name|title }} 
+        {% if document.year %} FY {{ document.year|add:-1 }}-{{ document.year }}
+        {% else %}{{ forloop.counter }}{% endif %} </a>
+    </li>
+        {% endfor %}
+    </ul>
+</li>
+    {% else %}
+        {% for document in documents %}
+            {% url document.opts|pythia_urlname:"change" document.pk as document_change %}
+<li{% if request.path == document_change %} class="active"{% endif %}>
+    <a href="{{ document_change }}"> {{ verbose_name|title }} </a>
+</li>
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+

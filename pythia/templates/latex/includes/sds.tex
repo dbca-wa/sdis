@@ -1,0 +1,36 @@
+{% load texify %}
+% Begin ARAR Chapter Service Delivery Structure
+\chapter*{Service Delivery Structure}
+\addcontentsline{toc}{chapter}{Service Delivery Structure}
+
+%% http://tex.stackexchange.com/questions/170154/organisation-chart-in-latex-using-tikz
+
+    {% comment %}
+\begin{tikzpicture}[every node/.style={draw, rounded corners=2pt, font=\sffamily, minimum height=3cm},>=latex]
+\mynode[text width=8cm]{root}{8cm}{Science and Conservation Division}{Dr. Margaret Byrne}{Corporate management; strategic direction and leadership; divisional expenditure; science communication}
+\mynode[below left = 1cm and -3.5cm of root]{c1}{6cm}{Biogeography}{Dr. Lesley Gibson}{Patterning and inventory of biodiversity; CAR reserve system; biological surveys}
+\mynode[right = 1.25cm of c1]{c2}{6cm}{Animal Science}{Dr. Keith Morris}{Species approach; animal ecology; biology; genetics; threatening processes}
+\mynode[below = of c1]{c3}{6cm}{Plant Science and Herbarium}{Dr. David Coates}{Species approach; plant ecology; biology; genetics; threatening processes; collections; systematics; Vegetation Health Service}
+\mynode[below = of c2]{c4}{6cm}{Ecosystem Science}{Dr. Lachie McCaw}{Ecology of ecosystems and communities; landscape restoration; landscape monitoring; landscape fire}
+\mynode[below = of c3]{c5}{6cm}{Wetland Conservation}{Dr. Adrian Pinder}{Swamps and stuff}
+\mynode[below = of c4]{c6}{6cm}{Marine Science}{Dr. Alan Kendrick}{Biodiversity assessment; ecosystem research; monitoring and evaluation; threatened marine fauna}
+\mynode[below = of c5]{c7}{6cm}{Ecoinformatics}{Mr. Paul Gioia}{Ecoinformatics; data; biodiversity; online portals; information life cycle}
+\mynode[below = of c6]{c8}{6cm}{Science Support}{Dr. Colin Yates}{Work centre finance and budgets; administration; infrastructure; library; biometrics; directorate support}
+\foreach \value in {1,3,5,7}
+    \draw[->] (root.south) |- (c\value.east);
+\foreach \value in {2,4,6,8}
+    \draw[->] (root.south) |- (c\value.west);
+\end{tikzpicture}
+    {% endcomment %}
+
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=\textwidth]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/sds.png}
+    \label{fig:sds}
+\end{figure}
+
+{{ original.sds_intro|html2latex }}
+
+% End ARAR Chapter Service Delivery Structure
+

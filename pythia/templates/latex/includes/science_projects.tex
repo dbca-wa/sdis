@@ -1,0 +1,39 @@
+{% load texify %}
+% Begin ARAR Table Science Projects
+\chapter*{Summary of Research Projects}
+\addcontentsline{toc}{chapter}{Summary of Research Projects}
+
+{# requires reports to be sorted by program, done in ARARReport.progressreports #}
+{% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+
+{% for program_reports in report_list %}
+\section*{ {{ program_reports.grouper|html2latex }} }
+
+\begin{longtabu} to \linewidth { X X X p{5cm} r{0.4cm} }
+\hline
+\hline
+\rowcolor{infobg}
+\textbf{DPaW Region} & 
+\textbf{IBRA/IMCRA} & 
+\textbf{NRM Region} & 
+\textbf{Project Title} & 
+\textbf{Page} \\
+\hline
+\endhead
+
+{% for report in program_reports.list|dictsort:"project.title" %}
+    {{ report.project.area_list_dpaw_region|html2latex }} &
+    {{ report.project.area_list_ibra_imcra_region|html2latex }} &
+    {{ report.project.area_list_nrm_region|html2latex }} &
+    {{ report.project.title|html2latex }} &
+    \pageref{sec:{{ report.project.project_year_number }}} \\
+    \hline
+{% empty %}
+    No projects. \\
+{% endfor %}
+\end{longtabu}
+
+{% endfor %}
+
+% End ARAR Table Science Projects
+

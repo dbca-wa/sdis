@@ -1,0 +1,93 @@
+{% load pythia_base documents approvals humanize %}
+<h4>Actions</h4>
+<p><small class="text-muted">Don't forget to "save changes" before submitting the document!</small></p>
+<table class="table">
+  <tbody>
+    <tr>
+      <th>Document status</th>
+      <td align="right">{% document_status_label document %}</td>
+    </tr>
+    <tr>
+      <th>Your actions</th>
+      <td align="right">
+      {% get_transitions document as transitions %}
+      {% if transitions %}
+        {% for trans in transitions %}
+        <a href="{{ trans.url }}" class="btn btn-xs btn-primary" id="id_{{ trans.transition }}">{{ trans.name }}</a>
+        {% endfor %}
+      {% else %}
+        <button type="button" class="btn btn-xs btn-default" disabled="disabled">No actions</button>
+      {% endif %}
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Endorsements</h4>
+<p><small class="text-muted">Approvals from document stakeholders</small></p-->
+<table id="endorsements" class="table">
+  <tbody>
+    {% if document.endorsements %}
+        {% for e in document.endorsements %}
+            <tr>
+                <th>{{ e.role }}</th>
+                <td><span class="{{ e.css_classes }} pull-right">{{ e.status }}</span></td>
+            </tr>
+        {% endfor %}
+    {% else %}
+            <tr>
+                <th>Not required</th>
+                <td><span class="label label-success pull-right">Good to go!</span></td>
+            </tr>
+    {% endif%}
+  </tbody>
+</table>
+
+<h4>History</h4>
+<p><small class="text-muted">Past changes to the document</small></p-->
+<table class="table">
+  <tbody>
+    <tr>
+      <th>Past edits</th> 
+      <td><a href="{% url document.opts|pythia_urlname:'history' document.pk|pythia_urlquote %}" 
+        class="btn btn-xs btn-primary pull-right">Show history</a></td>
+    </tr>
+    <tr>
+      <th>Last modified</th>
+      <td align="right">{{ document.modified|naturaltime }}</td>
+    </tr>
+    <tr>
+      <th>Last modified by</th>
+      <td align="right">{% firstof document.modifier.get_full_name document.modifier.username %}</td>
+    </tr>
+    <tr>
+      <th>Created</th>
+      <td align="right">{{ document.created|date }}</td>
+    </tr>
+    <tr>
+      <th>Created by</th>
+      <td align="right">{% firstof document.creator.get_full_name document.creator.username %}</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!--
+<ul class="list-group">
+  <li class="list-group-item">
+    <span class="badge">1 minute ago</span>
+    Zap Brannigan<br>
+    submitted for review.
+  </li>
+  <li class="list-group-item">
+    <span class="badge label-info">2 minutes ago</span>
+    Bender Rodriguez<br>
+    edited the document.
+  </li>
+  <li class="list-group-item">
+    <span class="badge">2 minutes ago</span>
+    Dr. Zoidberg<br>
+    edited this document
+  </li>
+</ul>
+-->

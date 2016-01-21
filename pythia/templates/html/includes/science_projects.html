@@ -1,0 +1,34 @@
+<div class="reg_sum_heading">Summary of Research Project Locations by Program</div>
+<div class="reg_sum_content">
+    <table>
+        <thead>
+            <tr class="reg_sum_col_hdg">
+                <th class="reg_sum_col_hdg">DPaW Region</th>
+                <th class="reg_sum_col_hdg">IBRA/IMCRA</th>
+                <th class="reg_sum_col_hdg">NRM Region</th>
+                <th class="reg_sum_col_hdg">Project Title</th>
+                <th class="reg_sum_col_hdg">Page</th>
+            </tr>
+        </thead>
+        <tbody>
+        {# requires reports to be sorted by program, done in ARARReport.progressreports #}
+        {% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+
+        {% for program_reports in report_list %}
+        <tr class="reg_sum_program">
+            <td colspan="5" class="reg_sum_program">{{ program_reports.grouper }}</td></tr>
+
+        {% for report in program_reports.list|dictsort:"project.title" %}
+        <tr class="reg_sum_detail">
+            <td>{{ report.project.area_list_dpaw_region }}</td>
+            <td>{{ report.project.area_list_ibra_imcra_region }}</td>
+            <td>{{ report.project.area_list_nrm_region }}</td>
+            <td>{{ report.project.project_title_html|safe }}</td>
+            <td>{{ report.project.project_type_year_number }}</td>
+        </tr>
+        {% empty %}<tr><td>No projects.</td></tr>{% endfor %}
+
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

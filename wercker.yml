@@ -1,0 +1,26 @@
+box: wercker/python
+services:
+    - mies/postgis@0.0.5
+build:
+    steps:
+        - virtualenv:
+            name: setup virtual environment
+            install_wheel: false # Enable wheel to speed up builds (experimental)
+
+        - script:
+            name: install system dependencies
+            code: |
+                sudo apt-get update
+                sudo apt-get install -y fabric
+
+        #- script:
+        #    name: create database
+        #    code: fab hammertime
+
+        #- script:
+        #    name: deploy application
+        #    code: fab deploy
+
+        #- script:
+        #    name: run tests
+        #    code: fab test

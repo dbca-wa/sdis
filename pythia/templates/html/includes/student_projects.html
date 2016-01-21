@@ -1,0 +1,31 @@
+<div class="col_ac_heading">Current collaboration with Academia (Student Projects)</div>
+<div class="col_ac_content">
+    <table>
+        <thead>
+            <tr class="col_ac_col_hdg">
+                <th class="col_ac_col_hdg">DPaW Officer</th>
+                <th class="col_ac_col_hdg">Student</th>
+                <th class="col_ac_col_hdg">Project Title</th>
+                <th class="col_ac_col_hdg">Degree / Level</th>
+                <th class="col_ac_col_hdg">Duration</th>
+                <th class="col_ac_col_hdg">University Academic</th>
+                <th class="col_ac_col_hdg">University</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for report in reports %}
+        <tr class="col_ac_detail">
+            <td class="col_ac_detail">{{ report.project.supervising_scientist_list_plain }}</td>
+            <td class="col_ac_detail">{{ report.project.student_list_plain }}</td>
+            <td class="col_ac_detail">{{ report.project.project_title_html|safe }}</td>
+            <td class="col_ac_detail">{{ report.project.get_level_display }}</td>
+            <td class="col_ac_detail">{{ report.project.start_date|date:"Y" }}&#8211;{{ report.project.end_date|date:"Y" }}</td>
+            <td>{{ report.project.academic_list_plain_no_affiliation }}</td>
+            <td>{{ report.project.organisation_plain }}</td>
+        </tr>
+        {% empty %}
+        <tr><td>No projects.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

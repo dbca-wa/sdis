@@ -1,0 +1,184 @@
+{% load i18n staticfiles %}
+{% load humanize %}
+{% if result_hidden_fields %}
+<div class="hiddenfields">{# DIV for HTML validation #}
+{% for item in result_hidden_fields %}{{ item }}{% endfor %}
+</div>
+{% endif %}
+{% if results %}
+<div class="results">
+<table id="result_list{% if cl.formset.prefix and cl.formset.prefix != 'form' %}_{{ cl.formset.prefix }}{% endif %}" class="table table-striped table-condensed table-hover table-fixed-header">
+<thead class="header">
+<tr>
+{% for header in result_headers %}
+<th {% if forloop.counter0 != 0 %}data-column="{{ forloop.counter0|add:"-1" }}" {% endif %}scope="col" class="{{ header.column }} {{ header.classes }} {% if header.sort_priority > 0 %}alert-success{% else %}listview-header{% endif %}">
+    <div class="text">{% if header.sortable %}<a href="{% if header.sort_priority > 0 and not header.ascending %}{{ header.url_remove }}{% else %}{{ header.url_primary }}{% endif %}">{{ header.text|capfirst }}&nbsp;<i class="{% if header.sort_priority == 0 %}icon-sort{% elif header.ascending %}icon-sort-up{% else %}icon-sort-down{% endif %}"></i></a><span class="pull-right">{% if header.sort_priority > 0 %}&nbsp;{{ header.sort_priority|ordinal }}{% endif %}</span>
+        {% else %}<span>{{ header.text|capfirst }}</span>{% endif %}</div>
+   <div class="clear"></div>
+</th>
+{% if forloop.last and cl.model_admin.list_empty_form %}<th scope="col" style="width: 0;"></th>{% endif %}
+{% endfor %}
+</tr>
+</thead>
+<tbody>
+{% for result in results %}
+    {% if result.group != result.previous %}
+    <tr rel="{{ result.group_id }}"><th colspan="{{ result|length }}" class="group-heading">{{ result.group }}</th></tr>
+    {% endif %}
+    <tr{% if cl.model_admin.list_empty_form %} id="{{ cl.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}" class="form-row{% if forloop.last %} empty-form{% endif %}"{% else %} rel="{{ result.group_id }}"{% endif %}>
+        {% for item in result %}{{ item }}{% endfor %}
+        {% if not forloop.last and cl.model_admin.list_empty_form %}
+            <td><div><a class="inline-deletelink delete-row" href="javascript:void(0)">remove</a></div></td>
+        {% elif cl.model_admin.list_empty_form %}
+            <td></td>
+        {% endif %}
+    </tr>
+    {% if result.form.non_field_errors %}
+        <tr rel="{{ result.group_id }}"><td colspan="{{ result|length }}">{{ result.form.non_field_errors }}</td></tr>
+    {% endif %}
+{% endfor %}
+</tbody>
+</table>
+</div>
+<script type="text/javascript">
+  $(function($) {
+      $('.table-fixed-header').fixedHeader();
+      /*
+       * Create the onchange handler for the "relevant" table rows.
+       */
+      $("td.column-relevant > input:checkbox").change(function() {
+        var row = $(this).parent().parent();
+        if (this.checked) {
+          row.find('input').removeAttr('disabled').removeClass('hide');
+          row.find('textarea').removeAttr('disabled').removeClass('hide');
+          row.find('select').removeAttr('disabled').removeClass('hide');
+          row.find('.label').removeClass('hide');
+          row.find('.btn').removeClass('hide');
+          row.find('.datetimeshortcuts').removeClass('hide');
+          row.removeClass('disabled');
+        } else {
+          row.find('input').attr('disabled', 'disabled').addClass('hide');
+          $(this).removeAttr('disabled').removeClass('hide');
+          row.find('textarea').attr('disabled', 'disabled').addClass('hide');
+          row.find('select').attr('disabled', 'disabled').addClass('hide');
+          row.find('.label').addClass('hide');
+          row.find('.btn').addClass('hide');
+          row.find('.datetimeshortcuts').addClass('hide');
+          row.addClass('disabled');
+        }
+        fixToggleSectionCheckbox(this);
+      });
+      $("td.column-relevant > input:checkbox:not('checked')").change();
+
+      function fixToggleSectionCheckbox(el) {
+        var rel = $(el).parent("td").parent("tr").attr('rel');
+        var $sectionRow = $('tr[rel=' + rel + ']').has('th.group-heading');
+        if ($sectionRow.length) {
+          var $sectionCheckbox = $sectionRow.find('input:checkbox');
+          if (el.checked) {
+            // make sure the section checkbox is checked
+            $sectionCheckbox.prop('checked', true);
+          } else {
+            // if all other checkboxes in this section are unchecked, uncheck
+            // the section checkbox
+            if ($('tr[rel=' + rel + '] > td.column-relevant > input:checkbox:checked').length == 0)
+              $sectionCheckbox.prop('checked', false);
+          }
+        }
+      }
+
+      /*
+       * Create the collapse/expand links.
+       */
+      if ($('table#result_list > tbody > tr').has('th.group-heading').length > 1) {
+          function expand($rows, $collapseLink, $expandLink) {
+            return function() {
+              $rows.show();
+              $(this).replaceWith($collapseLink.clone()
+                .click(collapse($rows, $collapseLink, $expandLink)));
+            }
+          }
+          function collapse($rows, $collapseLink, $expandLink) {
+            return function() {
+              $rows.hide();
+              $(this).replaceWith($expandLink.clone()
+                .click(expand($rows, $collapseLink, $expandLink)));
+            }
+          }
+
+          var collapseLink = '<a class="collapse" href="javascript:void(0);" title="Collapse"><i class="icon-minus"></i> ';
+          var expandLink = '<a class="expand" href="javascript:void(0);" title="Expand"><i class="icon-plus"></i> ';
+
+          var relevantCheckbox = $('<input type="checkbox" ' +
+                                   'title="Is this section relevant?" />');
+          $('table#result_list > tbody > tr').has('th.group-heading').each(function(index, tr) {
+            var $tr = $(tr);
+            var $th = $tr.children("th.group-heading");
+            var rel = $tr.attr('rel');
+            var $group = $('tr[rel=' + rel + ']:not(:first)');  // skip the group heading :)
+            var $collapseLink = $(collapseLink + $th.html() + '</a>');
+            var $expandLink = $(expandLink + $th.html() + '</a>');
+            var $relevantCheckboxes = $group.find('td.column-relevant > input:checkbox');
+            var allUnchecked = ($relevantCheckboxes.length &&
+                                $relevantCheckboxes.filter(':checked').length == 0);
+            $th.html('').append($collapseLink.click(
+              collapse($group, $collapseLink, $expandLink)
+              )
+            );
+
+            if (allUnchecked) {
+                // collapse the group
+                $th.children("a.collapse").click();
+                // move this section to the end of the table
+                var $tbody = $tr.parent().parent();
+                $tr.appendTo($tbody);
+                $group.appendTo($tbody);
+            }
+            /*
+             * Create the toggle section checkboxes
+             */
+            if ($relevantCheckboxes.length) {
+              function toggleSection($els) {
+                return function() {
+                  if ($(this).prop('checked'))
+                    $els.prop('checked', true);
+                  else
+                    $els.removeProp('checked');
+                  $els.change();
+                }
+              }
+              var checkbox = relevantCheckbox.clone();
+              $th.prepend('<span> </span>')
+                 .prepend(checkbox.change(toggleSection($relevantCheckboxes)));
+              if (!allUnchecked)
+                checkbox.prop('checked', true);
+            }
+          });
+
+          var collapseAllLink = $('<a class="btn pull-left btn-small collapseAll" href="javascript:void(0);" title="Collapse all"><i class="icon-minus"></i> Collapse all</a>');
+          var expandAllLink = $('<a class="btn pull-left btn-small expandAll" href="javascript:void(0);" title="Expand all"><i class="icon-plus"></i> Expand all</a>');
+          $('div.navbar-fixed-bottom div.container'
+            ).append(collapseAllLink.clone().click(function() {
+              $('a.collapse').click();
+            })
+            ).append(expandAllLink.click(function() {
+              $('a.expand').click();
+            })
+          );
+      }
+  });
+  </script>
+{% else %}
+<table id="result_list" class="table table-striped table-condensed">
+  <thead>
+    {% for header in result_headers %}
+    <th scope="col" {{ header.class_attrib }}>{{ header.text|capfirst }}</th>
+    {% endfor %}
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="{{ result_headers|length }}">There are no {{ cl.opts.verbose_name_plural }}</td>
+    </tr>
+  </tbody>
+</table>
+{% endif %}

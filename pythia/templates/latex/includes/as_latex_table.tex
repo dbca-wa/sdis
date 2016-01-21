@@ -1,0 +1,18 @@
+{% load texify %}
+\{{ tag }}*{% templatetag openbrace %}{{ heading|texify }} }
+
+{% for row in text %}
+{% if forloop.first %}
+\begin{longtabu} to \linewidth {% templatetag openbrace %} {{ col }} }
+\hline
+\rowcolor{infobg}
+{{ row|join:" & "}}\\
+\hline
+\endhead
+{% else %}
+{{ row|join:" & "}}\\
+{% endif %}
+{% endfor %}
+\hline
+\end{longtabu}
+

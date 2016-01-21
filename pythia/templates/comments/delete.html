@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Remove a comment" %}{% endblock %}
+
+{% block content %}
+<h4>{% trans "Really remove this comment?" %}</h4>
+  <blockquote>{{ comment|linebreaks }}</blockquote>
+  <form action="." method="post">{% csrf_token %}
+    {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
+    {% if next %}<div><input type="hidden" name="next" value="{{ next }}" id="next" /></div>{% endif %}
+    <div>
+        <input type="hidden" name="post" value="yes" />
+        <input type="submit" class="btn btn-lg btn-danger btn-block" 
+            value="{% trans "Yes, remove the comment" %}" />
+        <a id="id_cancel_button" href="{% if is_popup %}javascript: window.close(){% else %}{{ next }}{% endif %}" 
+            class="btn btn-default btn-lg btn-block">No, do not remove this comment</a>
+    </div>
+  </form>
+{% endblock %}

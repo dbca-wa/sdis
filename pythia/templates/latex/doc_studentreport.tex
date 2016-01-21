@@ -1,0 +1,13 @@
+{% extends "latex/document.tex" %}
+{% load pythia_base texify %}
+
+{% block subject %}{{ subtitle }}{% endblock %}
+{% block title %}{{ title|html2latex }}{% endblock %}
+{% block subtitle %}{{ original.project.program|html2latex }}{% endblock %}
+{% block author %}{% endblock %}
+{% block publishers %}{% include "latex/includes/endorsements.tex" %}{% endblock %}
+
+{% block content %}
+{% as_latex original "progress_report" 'section' %}
+{% endblock %}
+

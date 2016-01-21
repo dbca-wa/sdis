@@ -1,0 +1,9 @@
+{% load pythia_base %}
+{% url progressreport.opts|pythia_urlname:'change' progressreport.pk|pythia_urlquote as progressreport_change %}
+    <a onclick="return showAddAnotherPopup(this);" 
+        type="button"
+        class="btn btn-primary btn-xs pull-right"
+        href="{{ progressreport_change }}" 
+        title="Edit progress report"
+    ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit progress report</a>
+{% as_html progressreport "progress_report" 'h4' %}

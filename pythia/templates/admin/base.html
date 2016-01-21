@@ -1,0 +1,464 @@
+{% load browserid %}{% load i18n %}{% load staticfiles %}{% load pythia_base %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="keywords" content="{{ page_keywords }}"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block page_description %}{% endblock %}">
+  <meta name="author" content="{% block page_author %}{% endblock %}">
+  <link rel="shortcut icon" href="{% static "img/favicon.ico"%}">
+  <title>{% block title %}{% endblock %}</title>
+
+  <!-- Site-level CSS -->
+  <link rel="stylesheet" type="text/css" href="{% static "jquery-ui/themes/base/minified/jquery-ui.min.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "bootstrap/dist/css/bootstrap-theme.min.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "bootstrap/dist/css/bootstrap.min.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "jquery-joyride/joyride-2.1.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "handsontable/dist/jquery.handsontable.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "jquery.tablesorter/css/theme.bootstrap.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "font-awesome/css/font-awesome.min.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/fonts.css" %}"> <!-- from swingers static files -->
+  <!-- /Site-level CSS -->
+
+  <!-- Page-level CSS -->
+  {% block extrastyle %}{% endblock %}
+  <!-- /Page-level CSS -->
+
+  {% if LANGUAGE_BIDI %}
+    <link rel="stylesheet" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}">
+  {% endif %}
+  <link rel="stylesheet" href="{% static "css/pythia-ext.css" %}">
+
+  <!-- Site-level JS -->
+  <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'modernizr/modernizr.js' %}"></script>
+  <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'favico.js/favico-0.3.4.min.js' %}"></script>
+  <script src="{% static 'jquery-ui/ui/minified/jquery-ui.min.js' %}"></script>
+  <script src="{% static 'handsontable/dist/jquery.handsontable.js' %}"></script>
+  <script src="{% static 'jquery.tablesorter/js/jquery.tablesorter.min.js' %}"></script>
+  <script src="{% static 'jquery.tablesorter/js/jquery.tablesorter.widgets.min.js' %}"></script>
+  <script src="{% static 'jquery.tablesorter/js/jquery.tablesorter.widgets-filter-formatter.min.js' %}"></script>
+
+  <!-- joyride site tour -->
+  <script src="{% static 'jquery-joyride/jquery.joyride-2.1.js' %}"></script>
+
+  <!-- black magic -->
+  <script src="{% static 'js/pythia.js' %}"></script>
+
+  <script>
+      window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";
+      // fix standard addrelated popup closure
+      var SelectBox = SelectBox || {
+          add_to_cache: function() {},
+          redisplay: function() { window.location.reload(true); }
+      };
+      $(function() {
+          $("li.dropdown li.active").parents("li.dropdown").addClass("active");
+          function textAreaAdjust(o) {
+              o.target.style.height = "1.5em";
+              if (o.target.scrollHeight > $(o.target).height()) {
+                o.target.style.height = "1px";
+                o.target.style.height = (25 + o.target.scrollHeight) + "px";
+              }
+          }
+          //$("textarea").keyup(textAreaAdjust).keyup();
+          //tinyMCE.init({selector: "textarea.vLargeTextField"});
+          $("body").on('keyup', 'textarea', textAreaAdjust);
+          $("body textarea").keyup();
+
+          // Check browser features/version (below test fails on firefox 3.6/ie8)
+          // May need subcheck for mobile browsers?
+          /*var testEl = $("div.unsupported").show();
+          var viewport = $(window);
+          testEl.css({
+            width: "100vw"
+          });
+          var difference = testEl.width() - viewport.width();
+          if (Math.round(difference) == 0 || window.indexedDB) {
+             $("div.unsupported").hide();
+          } else {
+             $("div.unsupported").show();
+          };*/
+      });
+  </script>
+
+  <!-- Page-level JS -->
+  {% block extrahead %}{% endblock %}
+  <!-- /Page-level JS -->
+
+</head>
+
+<!-- Application navigation links -->
+{% url 'admin:index' as pythia_home %}
+
+{% url 'admin:projects_project_changelist' as list_project %}
+{% url 'admin:projects_project_add' as add_project %}
+{% url 'admin:projects_researchfunction_changelist' as list_researchfunction %}
+{% url 'admin:projects_researchfunction_add' as add_researchfunction %}
+{% url 'admin:pythia_ararreport_changelist' as list_report %}
+{% url 'admin:pythia_scienceproject_changelist' as list_scienceproject %}
+{% url 'admin:pythia_workcenter_changelist' as list_workcenter %}
+{% url 'admin:pythia_division_changelist' as list_division %}
+{% url 'admin:pythia_program_changelist' as list_program %}
+{% url 'admin:pythia_area_changelist' as list_area %}
+{% url 'admin:pythia_address_changelist' as list_address %}
+{% url 'admin:pythia_region_changelist' as list_region %}
+{% url 'admin:pythia_district_changelist' as list_district %}
+{% url 'admin:documents_conceptplan_changelist' as list_conceptplan %}
+{% url 'admin:documents_projectplan_changelist' as list_projectplan %}
+{% url 'admin:documents_progressreport_changelist' as list_progressreport %}
+{% url 'admin:documents_studentreport_changelist' as list_studentreport %}
+{% url 'admin:documents_projectclosure_changelist' as list_closureform %}
+
+{% url 'admin:pythia_conceptplan_change' original.conceptplan.id as change_conceptplan %}
+{% url 'admin:pythia_user_changelist' as list_users %}
+{% url 'admin:pythia_user_change' request.user.pk as change_user %}
+{% url 'admin:pythia_user_password_change' request.user.pk as change_password %}
+{% url 'admin:update_cache' as update_cache %}
+<!-- /Application navigation links -->
+
+{% block body %}
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+{% if PERSONA_LOGIN and not request.user.is_authenticated or request.user.is_external %}
+    {# otherwise this might cause infinite redirect loops :( #}
+    {% browserid_info %}
+{% endif %}
+<div id ="wrap">
+<div class="container">
+
+{# block topnavbar_content #}
+{# if not user.is_anonymous #}
+<!--ul class="nav pull-right">{% block nav-global %}{% endblock %}</ul-->
+{# endif #}
+{# endblock topnavbar_content #}
+
+<!-- Site navbar -->
+
+{% if not is_popup %}
+<div id="main-navbar" class="navbar navbar-inverse">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand navbar-left" id="nav-home" href="{% url 'admin:index' %}" title="SDIS home">
+        <!--img src="{% static 'img/waTextBlack_80-bluebg.gif' %}" class="navbar-logo" alt="Government of Western Australia" /-->
+        <!--img src="{% static 'img/logo-dpaw.gif' %}" alt="Department of Parks and Wildlife" /-->
+        SDIS
+      </a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        {% if request.user.is_authenticated and not request.user.completed_registration %} 
+        <li id="nav-projects" class="dropdown">
+          <a href="{{ list_project }}" data-toggle="dropdown" class="dropdown-toggle">Projects <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu" id="dropdown-menu-projects">
+                <li><a href="{{ list_project }}" id="nav-project-list" title="List all Projects">
+                    <span class="glyphicon glyphicon-list"></span>&nbsp;Browse all Projects</a></li>
+                <li><a href="{{ add_project }}" id="nav-project-add" title="Create a new Project">
+                    <span class="glyphicon glyphicon-plus"></span>&nbsp;Create new Project</a></li>
+          </ul>
+        </li>
+
+        <!-- Reports -->
+        <li id="nav-reports" class="dropdown">
+          <a href="{{ list_report }}" data-toggle="dropdown" 
+            class="dropdown-toggle">Reports <b class="caret"></b></a>
+          {% load documents %}
+          {% get_current_arar as current_arar %}
+          <ul class="dropdown-menu" role="menu" id="dropdown-menu-reports">
+            <li class="dropdown-header">Annual Research Activity Report</li>
+            {% if current_arar %}
+            <li><a href="{% url 'admin:arar_dashboard' %}" 
+            title="Read and work on progress reports"><span
+                class="glyphicon glyphicon-tasks"></span> Overview</a></li>
+            <li><a href="{% url 'admin:pythia_ararreport_detail' current_arar.pk %}" id="current-arar"
+                title="View Annual Research Activity Report ARAR (working version)"><span 
+                class="glyphicon glyphicon-fire"></span> Print preview</a></li>
+            {% endif %}
+
+            {% if request.user.is_superuser %}
+            <li><a href="{% url 'admin:pythia_ararreport_changelist' %}" id="nav-arar-list"
+                title="List all Annual Research Activity Reports">
+                <span class="glyphicon glyphicon-list text-info"></span>&nbsp;
+                <span class="text-info">Manage ARARs</span></a></li>
+            <li><a href="{% url 'admin:pythia_ararreport_add' %}" id="nav-arar-add"
+                title="Create new Annual Research Activity Report ARAR">
+                <span class="glyphicon glyphicon-plus text-info"></span>&nbsp;
+                <span class="text-info">Add new ARAR</span></a></li>
+            {% endif %}
+            <li class="divider"></li>
+            {% include 'admin/includes/arar_list_static.html' %}
+          </ul><!-- /.dropdown-menu#dropdown-menu-reports -->
+        </li><!-- /li#nav-reports -->
+
+        <!-- Sites -->
+        <!--li id="nav-sites"><a href="" title="See where our work takes place">Sites</a></li-->
+
+        <!-- Staff -->
+        <li id="nav-profile" class="dropdown">
+        <a href="" data-toggle="dropdown" class="dropdown-toggle">Staff <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu" id="dropdown-menu-users">
+                <li class="dropdown-header">SDIS users</li>
+            <li id="nav-profile-list"><a href="{{ list_users }}" title="Browse SDIS-internal user profiles">
+                <span class="glyphicon glyphicon-list"></span>&nbsp;
+                Browse SDIS users</a></li>
+            <li id="nav-profile-mine"><a href="{% url 'admin:pythia_user_change' request.user.pk %}" 
+                title="Edit your SDIS profile as used in overviews and reports">
+                <span class="glyphicon glyphicon-user"></span>&nbsp;
+                View my SDIS Profile</a></li>
+            <li><a href="{% url 'admin:pythia_user_add' %}" 
+                title="Register an external colleague, so you can add him/her as student or collaborator to team lists">
+                <span class="glyphicon glyphicon-plus"></span>&nbsp;Register an external colleague</a></li>
+            {% if request.user.is_superuser %}
+            <li><a href="{% url 'admin:auth_group_changelist' %}">
+                <span class="glyphicon icon-group text-info"></span>&nbsp;
+                <span class="text-info">Manage User Groups</span></a></li>
+            {% endif %}
+                <li class="dropdown-header">Science Division Intranet</li>
+            <li id="nav-profile-mine"><a href="http://herb:8080/sww" 
+                title="View my Divisional Profile in the Science Website Workbench" target="_">
+                <span class="glyphicon glyphicon-user"></span>&nbsp;
+                View my Divisional Profile</a></li>
+          </ul>
+        </li><!-- /li#nav-profile -->
+
+        <!-- Docs and Help -->
+        <!--li id="nav-help"><a href="{% static "docs/user/" %}" target="_" title="Open Help in new tab">Help</a></li-->
+        <!--li id="nav-tour">
+            <a href="#" id="nav-site-tour" title="Take a 30 second site tour">
+                <span class="text-warning">Site Tour</span></a></li-->
+        {% endif %}
+
+
+        <!-- Backstage: admin actions -->
+        {% if request.user.is_superuser %}
+        <li id="nav-adminitems" class="dropdown">
+          <a href="" data-toggle="dropdown" class="dropdown-toggle">Backstage <b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu" id="dropdown-menu-backstage">
+                <li class="dropdown-header">Administrative Structures</li>
+                <li><a href="{{ list_area }}" id="nav-program-list" 
+                    title="List Administrative Regions">
+                    <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
+                    <span class="text-info">Administrative Regions</span></a></li>
+                <li><a href="{{ list_region }}" id="nav-region-list" 
+                    title="List and create DPaW Regions">
+                    <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
+                    <span class="text-info">DPaW Regions</span></a></li>
+                <li><a href="{{ list_district }}" id="nav-district-list" 
+                    title="List and create DPaW Districts">
+                    <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
+                    <span class="text-info">DPaW Districts</span></a></li>
+                <li><a href="{{ list_address }}" id="nav-address-list" 
+                    title="List and create Addresses">
+                    <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
+                    <span class="text-info">Addresses</span></a></li>
+                <li><a href="{{ list_workcenter }}" id="nav-workcenter-list" 
+                    title="List and create work centers">
+                    <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
+                    <span class="text-info">Work Centers</span></a></li>
+                <li><a href="{{ list_division }}" id="nav-division-list" 
+                    title="List and create departmental services">
+                    <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
+                    <span class="text-info">Departmental Services</span></a></li>
+                <li><a href="{{ list_researchfunction }}" id="nav-division-list" 
+                    title="List and create divisional research functions">
+                    <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
+                    <span class="text-info">Divisional Research Functions</span></a></li>
+                <li><a href="{{ list_program }}" id="nav-program-list" 
+                    title="List and create Science and Conservation Division Programs">
+                    <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
+                    <span class="text-info">Divisional Programs</span></a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Documents</li>
+                <li><a href="{{ list_conceptplan }}" id="nav-conceptplan-list" 
+                    title="List Concept Plans">
+                    <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
+                    <span class="text-info">Concept Plans</span></a></li>
+                <li><a href="{{ list_projectplan }}" id="nav-projectplan-list" 
+                    title="List Project Plans">
+                    <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
+                    <span class="text-info">Project Plans</span></a></li>
+                <li><a href="{{ list_progressreport }}" id="nav-progressreport-list" 
+                    title="List Progress Reports">
+                    <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
+                    <span class="text-info">Progress Reports</span></a></li>
+                <li><a href="{{ list_studentreport }}" id="nav-studentreport-list" 
+                    title="List Student Reports">
+                    <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
+                    <span class="text-info">Student Reports</span></a></li>
+                <li><a href="{{ list_closureform }}" id="nav-closureform-list" 
+                    title="List Closure Forms">
+                    <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
+                    <span class="text-info">Closure Forms</span></a></li>
+                <li class="dropdown-header">Administrative Commands</li>
+                <li><a href="{{ update_cache }}" id="nav-update-cache" 
+                    title="Update cached team and area lists, guess user initials">
+                    <span class="glyphicon glyphicon-refresh text-info"></span>&nbsp;
+                    <span class="text-info">Update caches</span></a></li>
+          </ul>
+        </li>
+        </li><!-- /li#nav-adminitems -->
+        {% endif %}
+
+      </ul><!-- /.nav.navbar-nav -->
+
+      <ul class="nav navbar-nav navbar-right">
+        {% if request.user.is_authenticated %}
+        {# block topsearch #}
+        {% if not request.user.completed_registration %}
+            <form id="form-project-search" action="{{ list_project }}" method="get" 
+                class="navbar-form navbar-right hidden-xs" role="search">
+              <div class="search input-group input-group-sm">
+                <input name="q" id="mod-search-searchword" maxlength="20" 
+                    class="form-control" type="text" 
+                    size="20" value="Search Projects..."  
+                    onblur="if (this.value=='') this.value='Search Projects...';" 
+                    onfocus="if (this.value=='Search Projects...') this.value='';" />
+                <span class="input-group-btn">
+                    <button type="submit" value="Go!" 
+                    class="btn" onclick="this.form.searchword.focus();">Go!</button>
+                </span>
+              </div>
+            </form>
+        {% endif %}
+            <!--p><small><a href="http://wa.gov.au/search/" data-original-title="" 
+                title="">Go to whole of WA Government search</a></small></p-->
+        {# endblock topsearch #}
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                >Welcome, {% firstof user.short_name user.email %} <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+            {% block userlinks %}
+                <li class="dropdown-header">{% if request.user.is_external %}Persona{% else %}DPaW{% endif %} account</li>
+                {% if not request.user.completed_registration %}
+                <li><a href="{% url 'admin:pythia_user_change' request.user.pk %}" 
+                    title="View and edit your SDIS Profile">
+                    <span class="glyphicon glyphicon-user"></span>&nbsp;
+                    My SDIS Profile</a></li>
+                <li id="nav-profile-mine"><a href="http://herb:8080/sww" 
+                    title="View my Divisional Profile on the Science Website Workbench" target="_">
+                <span class="glyphicon glyphicon-user"></span>&nbsp;
+                My Divisional Profile</a></li>
+
+                {% endif %}
+
+                {% url 'password_change' as password_change %}
+                {% if not request.user.is_external and password_change %}
+                <li><a href="{{ password_change }}">{% trans 'Change password' %}</a></li>
+                {% endif %}
+
+                {% if PERSONA_LOGIN %}
+                  <li>{% browserid_logout text='Log out' %}</li>
+                {% else %}
+                  <li><a href="{% url 'admin:logout' %}" title="Log out">Log out</a></li>
+                {% endif %}
+
+                {% if not request.user.completed_registration %}<!-- FIXME add complete registration -->
+                {% endif %}
+                <li class="divider"></li>
+                <li class="dropdown-header">Documentation</li>
+                {% url 'django-admindocs-docroot' as docsroot %}
+                {% if docsroot %}
+                <li><a href="{{ docsroot }}" target ="_" id="menu-admin-docs" 
+                    title="Read admin docs in new tab">{% trans 'Help' %}</a></li>
+                {% endif %}
+                <li><a href="{% static 'docs/dev/html/index.html' %}" target="_" id="dev-docs" title="Browse developer docs in new tab">Developer documentation</a></li>
+                <!--
+                <li><a href="/api/" target="_" id="menu-api" title="Browse API in new tab">API endpoints</a></li>
+                <li><a href="/api-docs/" target="_" id="menu-api-docs" title="Browse API docs in new tab">API docs</a></li>
+                -->
+            {% endblock %}
+            </ul><!-- /.dropdown-menu -->
+          </li><!-- /.dropdown -->
+        {% endif %}
+      </ul><!-- /.nav.navbar-nav.navbar-right -->
+    </div><!--/.nav-collapse -->
+  </div><!-- /.container  -->
+</div><!-- /.navbar.navbar-inverse.navbar-fixed-top -->
+{% endif %}
+<!-- end site navbar -->
+
+<div id="page-content" class="page">
+  <div class="page-container">
+    <div class="container marginfix-inner">
+      {% block breadcrumbs %}
+      {% endblock %}
+    
+      {% if not is_popup %}
+      {% if not user.is_anonymous %}
+      {% block navigation %}
+      <ul class="edit-tabs nav nav-tabs nav-justified">
+        {% block second-nav %}{% endblock %}
+      </ul>
+      {% endblock navigation %}
+      {% endif %}
+      {% endif %}
+
+
+      {% block header %}
+      {% endblock %}
+
+      {% block messages %}
+      {% if messages %}
+      <div class="row limit-height-50px" id="messages-row">
+        <div class="col-md-12">
+          {% for message in messages %}
+            {% if 'error' in message.tags %}<div class="alert alert-error alert-dismissable"><i class="icon-warning-sign"></i>
+            {% else %}<div class="alert alert-success .alert-dismissable"><i class="icon-ok"></i>
+            {% endif %}
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {% if 'safe' in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}
+            </div>
+          {% endfor %}
+        </div><!-- /.col-md-12 -->
+      </div><!-- /.row-fluid#messages-row -->
+      {% endif %}
+      {% endblock messages %}
+
+      <div class="row" id="content-row">
+        <div class="col-md-12">
+      {% block contentwrapper %}
+      {# django's builtin templates use 'block content' a lot #}
+      {% block content %}
+      {% endblock %}
+      {% endblock %}
+        </div><!-- /.col-md-12 -->
+      </div><!-- /.row-fluid#content-row -->
+
+    </div><!-- /.container -->
+  </div><!-- /.page-container -->
+</div><!-- /.page -->
+
+
+</div><!-- /.container -->
+</div><!-- /#wrap -->
+
+{% block footer %}
+<!-- Footer -->
+<div id="footer">
+    <div class="container">
+        <p class="text-muted credit">
+            {% block extra_footer %}
+            {% load pythia_base %}
+            {% get_version_info %}
+            &copy; 2013 Department of Parks and Wildlife
+            {% endblock %}
+        </p>
+    </div><!-- /.container -->
+</div><!-- /.wrap -->
+<!-- /Footer -->
+{% endblock %}
+
+{% endblock %}
+{% if PERSONA_LOGIN %}
+{% browserid_css %}
+{% browserid_js %}
+{% endif %}
+</body>
+</html>

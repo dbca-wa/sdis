@@ -1,0 +1,11 @@
+{% load texify pythia_base %}
+
+\subsubsection*{Team}
+{{ progressreport.project.team_list_plain|html2latex }}
+
+{% as_latex progressreport "context" 'subsubsection' %}
+{% as_latex progressreport "aims" 'subsubsection' %}
+{% as_latex progressreport "progress" 'subsubsection' %}
+{% as_latex progressreport "implications" 'subsubsection' %}
+{% as_latex progressreport "future" 'subsubsection' %}
+

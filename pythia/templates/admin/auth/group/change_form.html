@@ -1,0 +1,13 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+{% load pythia_base %}
+
+{% block breadcrumbs %}
+{% if not is_popup %}
+<ul class="breadcrumb">
+  <li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+  <li><a href="{% url 'admin:auth_group_changelist' %}">Groups</a></li>
+  <li>Group</li>
+</ul>
+{% endif %}
+{% endblock %}

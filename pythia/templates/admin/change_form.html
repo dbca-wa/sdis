@@ -1,0 +1,136 @@
+{% extends "admin/base_site.html" %}
+{% load i18n staticfiles admin_modify %}
+{% load pythia_base %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static "admin/css/widgets.css" %}">
+{% endblock %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{{ media }}
+<script type="text/javascript">
+(function($) {
+    var hasChanged = false;
+    $(window).bind("beforeunload", function(event) {
+        if (hasChanged) return "You have unsaved changes";
+    });
+    $(document).ready(function($) {
+        $("#{{ opts.model_name }}_form :input").bind("change", function() {
+            hasChanged = true;
+        });
+        $("#{{ opts.model_name }}_form").submit(function() {
+            hasChanged = false;
+            return true;
+        });
+    });
+})(django.jQuery);
+</script>
+{% endblock %}
+
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+
+{% block breadcrumbs %}
+{% if not is_popup %}
+<ul class="breadcrumb">
+{% for breadcrumb in breadcrumbs %}
+  {% if breadcrumb.url %}
+  <li><a href="{{ breadcrumb.url }}">{{ breadcrumb.name }}</a></li>
+  {% else %}
+  <li>{{ breadcrumb.name }}</li>
+  {% endif %}
+{% endfor %}
+
+<li>
+{% if add %}
+    {% trans 'Add' %} {{ opts.verbose_name }}
+{% elif original.project_type_year_number %}
+    {{ original.project_type_year_number }}
+{% elif original.project.project_type_year_number %}
+    {{ original.project.project_type_year_number }}
+{% else %}
+    {{ original|truncatewords:"18" }}
+{% endif %}
+</li>
+
+{% block object-tools %}
+{% block object-tools-items %}
+{% if change %}
+  <li class="pull-right">
+    <a href="{% if current %}
+        {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote current.pk|pythia_urlquote %}
+        {% else %}
+        {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote %}
+        {% endif %}" 
+        class="historylink" target="_" title="Open history in new tab">{% trans "History" %}</a>
+  </li>
+{% endif %}
+{% block object-tools-download %}
+{% endblock %}
+{% endblock %}
+{% endblock %}
+
+</ul>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+{# shiny ng-directives go here #}
+
+
+{% block shinythings %}
+{% endblock shinythings %}
+
+<form 
+    {% if has_file_field %}enctype="multipart/form-data" {% endif %}
+    action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" class="form-horizontal">
+        {% csrf_token %}{% block form_top %}{% endblock %}
+<div>
+{% block continue_editing %}<input type="hidden" name="_continue" value="1" />{% endblock %}
+{% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}
+
+{% if errors %}
+    <p class="errornote alert alert-block alert-danger fade in">
+    {% blocktrans count counter=errors|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    </p>
+    {{ adminform.form.non_field_errors }}
+{% endif %}
+
+{% block field_content_begin %}{% endblock %}
+
+{% block field_sets %}
+{% for fieldset in adminform %}
+  {% include "admin/includes/fieldset.html" %}
+{% endfor %}
+{% endblock %}
+
+{% block after_field_sets %}{% endblock %}
+
+{% block inline_field_sets %}
+{% for inline_admin_formset in inline_admin_formsets %}
+    {% include inline_admin_formset.opts.template %}
+{% endfor %}
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+    {% submit_widgets %}
+{% endblock %}
+
+{% block after_related_objects %}{% endblock %}
+
+{% block field_content_end %}{% endblock %}
+
+
+{% if adminform.first_field and add %}
+   <script type="text/javascript">document.getElementById("{{ adminform.first_field.id_for_label }}").focus();</script>
+{% endif %}
+
+{# JavaScript for prepopulated fields #}
+{% prepopulated_fields_js %}
+
+</div>
+</form>
+{% endblock %}

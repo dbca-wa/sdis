@@ -1,0 +1,26 @@
+<table class="table table-striped table-condensed">
+  <thead>
+    <tr>
+      <th scope="col">Filename</th>
+      <th scope="col">Size</th>
+      <th scope="col">Uploaded on</th>
+      <th scope="col">Uploaded by</th>
+      <th scope="col" style="width: 0%;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for document in document_set %}
+    <tr>
+      <td><a href="{{ document.document.url }}" target="_blank"><i class="icon-file"></i> {{ document.filename }}</a></td>
+      <td>{{ document.document.size|filesizeformat }}</td>
+      <td>{{ document.modified }}</td>
+      <td>{{ document.modifier.get_full_name }}</td>
+      <td><a class="btn btn-mini alert-error" href="{% url 'admin:document_document_delete' document.pk current.pk %}?next={{ request.get_full_path }}"><i class="icon-trash"></i></a></td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5">There are no attached {{ document_type }}.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

@@ -1,0 +1,51 @@
+{% extends "admin/object_history.html" %}
+{% load i18n %}
+{% load pythia_base %}
+
+{% block content %}
+    <div id="content-main">
+    
+        <div class="module">
+            {% if action_list %}
+                <table class="table table-striped" id="change-history">
+                    <thead>
+                        <tr>
+                            <th scope="col">{% trans 'ID' %}</th>
+                            <th scope="col">{% trans 'User' %}</th>
+                            <th scope="col">{% trans 'Date/time' %}</th>
+                            <th scope="col">{% trans 'Comment' %}</th>
+                            <th scope="col">{% trans 'Version' %}</th>
+                            {% if has_diff_view %}
+                                <th scope="col">{% trans 'Changes' %}</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for action in action_list %}
+                            <tr>
+                                <td>
+                                    {{ action.revision.id }}
+                                </td>
+                                <td>
+                                    {% if action.revision.user %}
+                                        {{ action.revision.user.username }}
+                                        {% if action.revision.user.first_name %} ({{ action.revision.user.first_name }} {{ action.revision.user.last_name }}){% endif %}
+                                    {% endif %}
+                                </td>
+                                <td scope="row">{{ action.revision.date_created }}</td>
+                                <td scope="row">{{ action.revision.comment }}</td>
+                                <td scope="row"><a href="{{ action.url }}">View version</a></td>
+                                {% if has_diff_view %}
+                                    <td scope="row"><a href="{{ action.url|diffurl }}">View diff</a></td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>{% trans "This object doesn't have a change history. It probably wasn't added via this admin site." %}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

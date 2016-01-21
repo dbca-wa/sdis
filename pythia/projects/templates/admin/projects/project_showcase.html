@@ -1,0 +1,22 @@
+<div class="row">
+<div class="col-xs-3">
+    {% if project.image %}
+    <a class="thumbnail" href="#">
+        <img src="{% if project.image %}{{ project.image.url }}{% else %}#{% endif %}" class="media-object" alt="Project logo">
+    </a>
+    {% else %}
+    <span class="">This project needs a logo!</span>
+    {% endif %}
+</div>
+<div class="col-sm-9">
+    <div id="project-status-dates-program">
+        <span class="label label-success pull-left"><strong>{{ project.get_status_display }}</strong></span>
+        <span>&nbsp;{{ project.start_date|date:"Y" }} - {{ project.end_date|date:"Y" }}</span>
+        <span class="label label-default pull-right"><strong>{{ project.program }}</strong></span>
+    </div><!-- /#project-status-dates-program -->
+    <h3 class="media-heading">{{ project.project_name_html|safe }}</h3>
+    <h5><em>{{ project.team_list_plain|safe }}</em></h5>
+    <div>{% if project.tagline %}{{ project.tagline|safe }}{% else %}This project needs a catchy tagline!{% endif %}</div>
+    <div><span class="text-muted">{{ project.comments|safe }}</span></div>
+</div><!-- /.col -->
+</div><!--/.row -->

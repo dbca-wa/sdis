@@ -1,0 +1,26 @@
+{% extends "admin/base_site.html" %}
+{% load i18n staticfiles admin_list %}
+{% load crispy_forms_tags %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+  <li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+  <li>Edit profile</li>
+</ul>
+{% endblock %}
+
+{% block content_title %}
+{% if request.session.first_login %}
+<div class="alert alert-block">
+    <h4>Welcome!</h4>
+    This is the first time you have logged into the Prescribed Burn System.
+    To get started, select your region and district from the dropdowns below.
+</div>
+{% endif %}
+<h1>Edit Profile</h1>
+<p>Select the region and district that you belong to.</p>
+{% endblock %}
+
+{% block content %}
+{% crispy form %}
+{% endblock %}

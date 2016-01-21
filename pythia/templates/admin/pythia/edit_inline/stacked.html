@@ -1,0 +1,26 @@
+{% load i18n admin_static %}{% load pythia_base %}
+<div class="inline-group" id="{{ inline_admin_formset.formset.prefix }}-group">
+{{ inline_admin_formset.formset.management_form }}
+{{ inline_admin_formset.formset.non_form_errors }}
+
+{# skip the empty_form that gets added to the end of inline_admin_formset by django.contrib.admin.helpers.InlineAdminFormsetHelper #}
+{% for inline_admin_form in inline_admin_formset %}{% if not forloop.last %}<div class="inline-related" id="{{ inline_admin_formset.formset.prefix }}-{{ forloop.counter0 }}">
+  {% if inline_admin_form.form.non_field_errors %}{{ inline_admin_form.form.non_field_errors }}{% endif %}
+  {% for fieldset in inline_admin_form %}
+    {% doccontext fieldset %}
+  {% endfor %}
+  {% if inline_admin_form.has_auto_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
+  {{ inline_admin_form.fk_field.field }}
+</div>{% endif %}{% endfor %}
+</div>
+
+<script type="text/javascript">
+(function($) {
+  $("#{{ inline_admin_formset.formset.prefix }}-group .inline-related").stackedFormset({
+    prefix: '{{ inline_admin_formset.formset.prefix }}',
+    adminStaticPrefix: '{% static "admin/" %}',
+    deleteText: "{% trans "Remove" %}",
+    addText: "{% blocktrans with verbose_name=inline_admin_formset.opts.verbose_name|title %}Add another {{ verbose_name }}{% endblocktrans %}"
+  });
+})(django.jQuery);
+</script>
