@@ -6,12 +6,15 @@
 {% endblock %}
 
 {% block object-tools-download %}
-<li class="pull-right"><a href="{% url opts|pythia_urlname:'download_pdf' original.pk %}">View PDF</a></li>
+<li class="pull-right">
+    <a href="{% url opts|pythia_urlname:'download_pdf' original.pk %}" 
+       target="_" 
+       title="View PDF in new tab">View PDF</a>
+</li>
 {% endblock %}
 
 {% block shinythings %}
 {{ block.super }}
-{# if is_popup #}
 <div class="well">
 {% include 'admin/projects/project_showcase.html' with project=original.project %}
 </div>
@@ -25,12 +28,7 @@
 {% block content %}
 <div class="row">
   <div class="col-md-9">
-  
-  <!-- Project details, read-only, custom layout -->
-  
-
-
-  
+    <!-- Project details, read-only, custom layout -->
     {% with render_document_fields=True %}{{ block.super }}{% endwith %}
   </div>
   <div class="col-md-3">
