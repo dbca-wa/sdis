@@ -3,7 +3,7 @@
     10pt, % default font size
     usenames,
     dvipsnames, 
-    twoside, % PRINT
+    twoside, % PRINT Binding Correction
     % oneside, % ONLINE
     headings=openany, % open chapters on odd and even pages
     BCOR=7mm, % PRINT Binding Correction
@@ -24,6 +24,13 @@
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+
+% Chapter and section headings
+%\renewcommand{\raggedchapter}{\centering}
+%\addtokomafont{chapter}{\Huge\scshape} % Chapter headings in smallcaps
+%\addtokomafont{chapterentry}{\scshape} % Chapter headings in smallcaps
+%\addtokomafont{section}{\centering\Large\scshape} % Chapter headings in smallcaps
+%\addtokomafont{sectionentry}{\scshape} % Chapter headings in smallcaps
 
 % Paragraph spacing
 %\usepackage{parskip}    % Paragraph spacing
@@ -60,8 +67,10 @@
 \usepackage{graphicx} % embedded images
 \usepackage{eso-pic} % 
 \usepackage{colortbl} % define custom named colours
+
 \definecolor{RedFire}{RGB}{146,25,28}
 \definecolor{ParksWildlife}{RGB}{0,85,144}
+
 \definecolor{successbg}{RGB}{223,240,216}
 \definecolor{errorbg}{RGB}{242,222,222}
 \definecolor{warningbg}{RGB}{252,248,227}
@@ -71,10 +80,15 @@
 \definecolor{error}{RGB}{185,74,72}
 \definecolor{warning}{RGB}{192,152,83}
 \definecolor{info}{RGB}{58,135,173}
-\definecolor{required}{HTML}{D9534F}
-\definecolor{denied}{HTML}{D9534F}
-\definecolor{granted}{HTML}{47A447}
-\definecolor{not required}{RGB}{200, 200, 200}
+
+\definecolor{required}{RGB}{192,152,83}
+\definecolor{requiredbg}{RGB}{252,248,227}
+\definecolor{denied}{RGB}{185,74,72}
+\definecolor{deniedbg}{RGB}{242,222,222}
+\definecolor{granted}{RGB}{70,136,71}
+\definecolor{grantedbg}{RGB}{223,240,216}
+\definecolor{not reqiured}{RGB}{153,153,153}
+\definecolor{not reqiuredbg}{RGB}{255,255,255}
 
 \usepackage{tikz} % Drawing
 \usetikzlibrary{arrows,shapes,positioning,shadows,trees}
@@ -83,11 +97,10 @@
 %% Links, URLs
 %%
 \usepackage[
+    colorlinks=true, 
     linktoc=all,
-    colorlinks=false,  %PRINT
-    %colorlinks=false, % ONLINE
-    %linkcolor=RedFire, % ONLINE
-    %urlcolor=ParksWildlife, % ONLINE
+    linkcolor=RedFire,
+    urlcolor=ParksWildlife,
     pdftitle={{ downloadname|html2latex }}]{hyperref}
 
 % Black magic to linebreak URLs
@@ -100,8 +113,8 @@
 %% Custom macros
 %%
 % Thick Horizontal rule
-\newcommand{\HRule}{\vspace{8mm}\\\noindent\rule{\linewidth}{0.1pt}}
-
-% Custom Tikz node for SDS diagram
-\newcommand\mynode[6][]{\node[#1] (#2){\parbox{#3\relax}{\begin{center}\textbf{#4}\\#5\\\footnotesize{#6}\end{center}}};}
-
+\documentclass[version=last, 
+    paper=a4, % paper size
+    10pt, % default font size
+    usenames,
+    dvipsnames, 

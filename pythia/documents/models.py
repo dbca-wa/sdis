@@ -92,6 +92,7 @@ def documents_upload_to(instance, filename):
     return "documents/{0}-{1}/{2}".format(instance.project.year, 
             instance.project.number, filename)
 
+@python_2_unicode_compatible
 class Document(PolymorphicModel, Audit):
     """
     An abstract base class for documents.
@@ -172,7 +173,7 @@ class Document(PolymorphicModel, Audit):
 
     def __str__(self):
         return mark_safe("{0} {1}-{2:03d}".format(
-            self._meta.verbose_name, self.project.year, self.project.number)) 
+            self._meta.verbose_name, self.project.type, self.project.year, self.project.number)) 
 
     @property
     def download_title(self):

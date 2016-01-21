@@ -1,48 +1,25 @@
 {% extends "latex/document.tex" %}
 {% load pythia_base texify %}
 
-{% block subject %}{{ subtitle }}{% endblock %}
-{% block title %}{{ title|html2latex }}{% endblock %}
+{% block subject %}{{ original|html2latex }}{% endblock %}
+{% block title %}{{ original.project.title|html2latex }}{% endblock %}
 {% block subtitle %}{{ original.project.program|html2latex }}{% endblock %}
 {% block author %}{% endblock %}
-{% block publishers %}{% include "latex/includes/endorsements.tex" %}{% endblock %}
+{% block publishers %}
+    {% include "latex/includes/project_owners.tex" %}
+    {% include "latex/includes/project_status.tex" %}
+    {% include "latex/includes/endorsements.tex" %}
+{% endblock %}
 
 {% block content %}
 {% with doc=original pro=original.project %}
-\section*{% templatetag openbrace %}{{ title|html2latex }}}
+
+{% include "latex/includes/project_title_section.tex" %}
 {% as_latex pro "program" 'subsection' %}
 {% as_latex pro "output_program" 'subsection' %}
-
-\subsection*{Staff}
-\begin{tabu} {X X X}
-\hline
-Role & Person & Time allocation (FTE)\\
-\hline
-{% for m in pro.team_list %}
-{{ m|join:" & " }}\\
-{% endfor %}
-\hline
-\end{tabu}
-
-
-\subsection*{Location}
-\textbf{IBRA / IMCRA regions }{{ pro.area_ibra_imcra_region }}\\
-\textbf{NRM Regions }{{ pro.area_nrm_region }}\\
-\textbf{DPaW Regions }{{ pro.area_dpaw_region }}\\
-\textbf{DPaW Districts }{{ pro.area_dpaw_district }}\\
-Locations of field work have to be registered in the 
-\href{http://scientificsites.dpaw.wa.gov.au/}{Scientific Sites Register}.
-To make this project discoverable in the 
-\href{http://internal-data.dpaw.wa.gov.au/dataset?ext_bbox=110\%2C-36\%2C130\%2C-9}{spatial search} of the
-\href{http://internal-data.dpaw.wa.gov.au/}{Departmental data catalogue},
-register and geo-locate datasets generated from this project.
-
+{% include "latex/includes/staff.tex" %}
 {% as_latex doc "related_projects" 'subsection' %}
-
-\subsection*{Proposed period of the project}
-{{ pro.start_date }} -- {{ pro.end_date }}
-
-{% as_latex pro "output_program" 'subsection' %}
+{% include "latex/includes/project_duration.tex" with pro=pro %}
 
 \section*{Relevance and Outcomes}
 {% as_latex doc "background" 'subsection' %}
@@ -61,10 +38,11 @@ register and geo-locate datasets generated from this project.
 {% as_latex doc "hc_endorsement" 'subsection' %}
 {% as_latex doc "ae_endorsement" 'subsection' %}
 {% as_latex doc "data_management" 'subsection' %}
-{% as_latex doc "data_manager_endorsement" 'subsection' %}
+{# as_latex doc "data_manager_endorsement" 'subsection' #}
 
-{# as_latex_table doc "operating_budget" 'section' #}
-{# as_latex_table doc "operating_budget_external" 'section' #}
+\section*{Budget}
+{% as_latex_table doc "operating_budget" 'section' %}
+{% as_latex_table doc "operating_budget_external" 'section' %}
 
 {% endwith %}
 {% endblock %}

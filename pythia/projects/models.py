@@ -155,9 +155,9 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
     )
 
     PROJECT_ABBREVIATIONS = {
-        SCIENCE_PROJECT: 'SPP',
+        SCIENCE_PROJECT: 'SP',
         CORE_PROJECT: 'CF',
-        COLLABORATION_PROJECT: 'COL',
+        COLLABORATION_PROJECT: 'EXT',
         STUDENT_PROJECT: 'STP'
     }
 

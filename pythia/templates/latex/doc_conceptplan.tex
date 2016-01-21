@@ -1,25 +1,26 @@
 {% extends "latex/document.tex" %}
 {% load pythia_base texify %}
 
-{% block subject %}{{ subtitle }}{% endblock %}
-{% block title %}{{ title|html2latex }}{% endblock %}
+{% block subject %}{{ original|html2latex }}{% endblock %}
+{% block title %}{{ original.project.title|html2latex }}{% endblock %}
 {% block subtitle %}{{ original.project.program|html2latex }}{% endblock %}
-{% block extratitle %}{% include "latex/includes/endorsements.tex" %}{% endblock %}
 {% block author %}{% endblock %}
-{% block publishers %}{% include "latex/includes/endorsements.tex" %}{% endblock %}
+{% block publishers %}
+    {% include "latex/includes/project_owners.tex" %}
+    {% include "latex/includes/project_status.tex" %}
+    {% include "latex/includes/endorsements.tex" %}
+{% endblock %}
 
 {% block content %}
 {% with doc=original pro=original.project %}
-\section*{% templatetag openbrace %}{{ title|html2latex }}}
-{# as_latex pro "title" 'subsection' #}
+{% include "latex/includes/project_title_section.tex" %}
 {% as_latex pro "program" 'subsection' %}
 {% as_latex pro "output_program" 'subsection' %}
 {% as_latex doc "summary" 'subsection' %}
 {% as_latex doc "outcome" 'subsection' %}
 {% as_latex doc "strategic" 'subsection' %}
 {% as_latex doc "collaborations" 'subsection' %}
-\subsection*{Proposed period of the project}
-{{ pro.start_date }} -- {{ pro.end_date }}
+{% include "latex/includes/project_duration.tex" with pro=pro %}
 {% as_latex_table doc "staff" 'subsection' %}
 {% as_latex_table doc "budget" 'subsection' %}
 {# as_latex doc "director_scd_comment" 'subsection' #}

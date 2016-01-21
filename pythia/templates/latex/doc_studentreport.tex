@@ -1,13 +1,19 @@
 {% extends "latex/document.tex" %}
 {% load pythia_base texify %}
 
-{% block subject %}{{ subtitle }}{% endblock %}
-{% block title %}{{ title|html2latex }}{% endblock %}
+{% block subject %}{{ original|html2latex }}{% endblock %}
+{% block title %}{{ original.project.title|html2latex }}{% endblock %}
 {% block subtitle %}{{ original.project.program|html2latex }}{% endblock %}
 {% block author %}{% endblock %}
-{% block publishers %}{% include "latex/includes/endorsements.tex" %}{% endblock %}
+{% block publishers %}
+    {% include "latex/includes/project_owners.tex" %}
+    {% include "latex/includes/project_status.tex" %}
+    {% include "latex/includes/endorsements.tex" %}
+{% endblock %}
 
 {% block content %}
+{% include "latex/includes/project_title_section.tex" %}
+{{ original.project.team_list_plain|html2latex }}
 {% as_latex original "progress_report" 'section' %}
 {% endblock %}
 

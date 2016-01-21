@@ -1,0 +1,9 @@
+\subsection*{Project Staff}
+\begin{tabu} {X X X}
+%\rowcolor{infobg}
+\textbf{Role} & \textbf{Person} & \textbf{Time allocation (FTE)}\\
+{% for m in original.project.team_list %}
+{{ m|join:" & " }}\\
+{% endfor %}
+\end{tabu}
+
