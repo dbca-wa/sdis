@@ -1,4 +1,5 @@
 import dj_database_url
+from confy import database
 import ldap
 import os
 
@@ -7,15 +8,21 @@ from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType,
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ['SECRET_KEY'] if os.environ.get('SECRET_KEY', False) else 'foo'
 
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = True if os.environ.get('DEBUG', False) == 'True' else False
 TEMPLATE_DEBUG = DEBUG
+CSRF_COOKIE_SECURE = True if os.environ.get('CSRF_COOKIE_SECURE', False) == 'True' else False       
+SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) == 'True' else False 
+
 
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
+
+    #'django_browserid',
+    #'swingers',
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
@@ -33,14 +40,10 @@ INSTALLED_APPS = (
     'pythia.projects',
     'pythia.reports',
 
-    'swingers',
     'django_comments',
-    'django_browserid',
-    'django_extensions',
     'rest_framework',
     'django_pdb',
     'django_select2',
-    'django_nose',
     'markup_deprecated',
     'smart_selects',
     'crispy_forms',
@@ -49,27 +52,37 @@ INSTALLED_APPS = (
     'debug_toolbar_htmltidy',
     'leaflet',
     'mail_templated',
-    'reversion',
     'compressor',
     'south',
     'gunicorn',
     'django_nose',
     'djangular',
+
+    
+    'django_extensions',
+    'envelope',
+    'reversion',
+    'tastypie',
+    'webtemplate_dpaw',
     'django_wsgiserver',
 
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'swingers.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    #'swingers.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',                                         
+    'django.middleware.common.CommonMiddleware',                                                    
+    'django.middleware.csrf.CsrfViewMiddleware',                                                    
+    'django.contrib.auth.middleware.AuthenticationMiddleware',                                      
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',                               
+    'django.contrib.messages.middleware.MessageMiddleware',                                         
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',                                       
+    'django.middleware.security.SecurityMiddleware',                                                
+    'reversion.middleware.RevisionMiddleware',                                                      
+    'dpaw_utils.middleware.SSOLoginMiddleware',  
+
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'django_pdb.middleware.PdbMiddleware'
+    'django_pdb.middleware.PdbMiddleware',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -90,16 +103,14 @@ ROOT_URLCONF = 'sdis.urls'
 WSGI_APPLICATION = 'sdis.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-DATABASES = {'default': dj_database_url.config()}
-CONN_MAX_AGE = None
+DATABASES = {'default': database.config()}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 SITE_ID = 1
 SITE_URL = os.environ.get('SITE_URL', None)
 SITE_NAME = 'SDIS'
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-au'
 TIME_ZONE = 'Australia/Perth'
 USE_I18N = True
 USE_L10N = True
@@ -133,9 +144,9 @@ TEMPLATE_DIRS = (
 # User settings - enable Persona and SDIS custom user.
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'pythia.backends.PythiaBackend',
-    'swingers.sauth.backends.EmailBackend',
-#    'swingers.sauth.backends.PersonaBackend',
+#   'pythia.backends.PythiaBackend',
+#   'swingers.sauth.backends.EmailBackend',
+#   'swingers.sauth.backends.PersonaBackend',
 )
 
 ANONYMOUS_USER_ID = 100000
@@ -147,6 +158,13 @@ LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL_FAILURE = LOGIN_URL
 LOGOUT_URL = '/logout/'
 LOGOUT_REDIRECT_URL = LOGOUT_URL
+
+# django-tastypie settings                                                                          
+TASTYPIE_ALLOW_MISSING_SLASH = True                                                                 
+TASTYPIE_DATETIME_FORMATTING = 'iso-8601-strict'                                                    
+TASTYPIE_DEFAULT_FORMATS = ['json', 'html']                                                         
+API_LIMIT_PER_PAGE = 0 
+
 
 # LDAP settings
 AUTH_LDAP_SERVER_URI = os.environ.get('LDAP_SERVER_URI', None)
@@ -198,8 +216,14 @@ REST_FRAMEWORK = {
 }
 
 # Misc settings
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'alerts.corporateict.domain')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
+
+# Envelope email
+ENVELOPE_EMAIL_RECIPIENTS = ['sdis@DPaW.wa.gov.au']                                               
+ENVELOPE_USE_HTML_EMAIL = True
+
+# old email settings
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', False)

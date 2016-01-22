@@ -18,7 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 import logging
 from smart_selects.db_fields import ChainedForeignKey
 
-from swingers.models import Audit, ActiveModel
+#from swingers.models import Audit, ActiveModel
 from django.contrib.gis.db import models
 
 from pythia.fields import Html2TextField
@@ -70,7 +70,7 @@ class LATEXReportPart(ReportPart):
 # Shared classes: Administrative departmental structures
 #
 @python_2_unicode_compatible
-class Area(Audit):  # , models.PolygonModelMixin):
+class Area(models.Model):  # , models.PolygonModelMixin):
     """
     An area of interest to a Project, classified by area type.
     """
@@ -107,6 +107,8 @@ class Area(Audit):  # , models.PolygonModelMixin):
         blank=True, null=True, srid=4326, verbose_name=_("Spatial extent"),
         help_text=_("The spatial extent of this feature, stored as WKT."))
 
+    objects = models.GeoManager()
+
     class Meta:
         verbose_name = _("area")
         verbose_name_plural = _("areas")
@@ -123,9 +125,10 @@ class Area(Audit):  # , models.PolygonModelMixin):
     def get_northern_extent(self):
         return self.mpoly.extent[3] if self.mpoly else None
 
-class RegionManager(models.Manager):
+class RegionManager(models.GeoManager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
+
 
 
 @python_2_unicode_compatible
@@ -159,7 +162,7 @@ class Region(models.Model):
         return self.mpoly.extent[3] if self.mpoly else 0
 
 
-class DistrictManager(models.Manager):
+class DistrictManager(models.GeoManager):
     def get_by_natural_key(self, region, name):
         region = Region.objects.get_by_natural_key(region)
         return self.get(name=name, region=region)
@@ -206,7 +209,7 @@ class District(models.Model):
 
 
 @python_2_unicode_compatible
-class Address(Audit, ActiveModel):
+class Address(models.Model):
     """
     An address with street 1, street 2, city, and zip code.
     """
@@ -238,7 +241,7 @@ class Address(Audit, ActiveModel):
 
 
 @python_2_unicode_compatible
-class Division(Audit, ActiveModel):
+class Division(models.Model):
     """
     Departmental divisions. Divisions are structured into programs.
     The work of Science and Conservation Division is a service provided
@@ -264,7 +267,7 @@ class Division(Audit, ActiveModel):
 
 
 @python_2_unicode_compatible
-class Program(Audit, ActiveModel):
+class Program(models.Model):
     """
     A Science and Conservation Division Program is an organizational
     structure of research scientists, technical officers and admin staff
@@ -386,7 +389,7 @@ signals.post_save.connect(set_smt_to_pl, sender=Program)
 
 
 @python_2_unicode_compatible
-class WorkCenter(Audit, ActiveModel):
+class WorkCenter(models.Model):
     """
     A departmental work center is where staff offices are located.
     """
@@ -417,7 +420,7 @@ class WorkCenter(Audit, ActiveModel):
         super(WorkCenter, self).save(*args, **kw)
 
 
-class WebResourceDomain(Audit, ActiveModel):
+class WebResourceDomain(models.Model):
     """
     The domain of a Web Resource.
     E.g., social networks like Google Scholar, LinkedIn, ResearchGate et al.
@@ -440,7 +443,7 @@ class WebResourceDomain(Audit, ActiveModel):
         verbose_name_plural = _('web resource domains')
 
 
-class URLPrefix(Audit):
+class URLPrefix(models.Model):
     """A base URL of a commonly used resources.
     E.g. http or https
     """
@@ -454,7 +457,7 @@ class URLPrefix(Audit):
         verbose_name_plural = _('URL prefixes')
 
 
-class WebResource(Audit):
+class WebResource(models.Model):
     """A URI pointing to any web-accessible resource.
     """
     prefix = models.ForeignKey(URLPrefix, editable=False)

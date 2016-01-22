@@ -2,8 +2,8 @@ from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 import logging
 
-from swingers import models
-
+#from swingers import models
+from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q, signals
 from django.core.validators import MinValueValidator
@@ -19,7 +19,7 @@ from django.core.validators import MinValueValidator
 logger = logging.getLogger(__name__)
 
 
-class ARARReport(models.Audit):
+class ARARReport(models.Model):
     """
     The Annual Research Activity Report.
 

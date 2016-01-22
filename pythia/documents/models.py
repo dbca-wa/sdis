@@ -3,16 +3,12 @@ from __future__ import (division, print_function, unicode_literals,
 
 from collections import OrderedDict as OD
 from django.contrib.auth.models import Group
+from django.contrib.gis.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-
-
-from swingers import models
-from swingers.models import Audit
-from swingers.models.managers import ActiveGeoModelManager
 
 import logging
 
@@ -41,7 +37,7 @@ options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('display_order',)
 
 
 
-class DocumentManager(PolymorphicManager, ActiveGeoModelManager):
+class DocumentManager(PolymorphicManager, models.GeoManager):
     """
     Custom document manager. It seems like a useful API for accessing
     different sorts of documents. It does help some of the template logic.
@@ -93,7 +89,7 @@ def documents_upload_to(instance, filename):
             instance.project.number, filename)
 
 @python_2_unicode_compatible
-class Document(PolymorphicModel, Audit):
+class Document(PolymorphicModel):
     """
     An abstract base class for documents.
     This base class provides completion totals through the ContextStatusMixin.

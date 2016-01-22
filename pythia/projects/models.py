@@ -17,14 +17,15 @@ from __future__ import (division, print_function, unicode_literals,
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
+from django.contrib.gis.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-from swingers import models
-from swingers.models.managers import ActiveGeoModelManager
+#from swingers import models
+#from swingers.models.managers import ActiveGeoModelManager
 
 from pythia.documents.models import (
     ConceptPlan, ProjectPlan, ProgressReport, ProjectClosure, StudentReport)
@@ -59,7 +60,7 @@ NULL_CHOICES = ((None, _("Not applicable")), (False, _("Incomplete")),
                 (True, _("Complete")))
 
 
-class ProjectManager(PolymorphicManager, ActiveGeoModelManager):
+class ProjectManager(PolymorphicManager, models.GeoManager):
     pass
 
 
@@ -73,7 +74,7 @@ def get_next_available_number_for_year(year):
                 year=year).values("number")]) + 1
 
 @python_2_unicode_compatible
-class ResearchFunction(PolymorphicModel, models.Audit, models.ActiveModel):
+class ResearchFunction(PolymorphicModel):
     """A project contributes to a research function.
     Reports will summarise project progress reports bt research function.
     """
@@ -101,7 +102,7 @@ class ResearchFunction(PolymorphicModel, models.Audit, models.ActiveModel):
         return mark_safe(strip_tags(self.name))
         
 @python_2_unicode_compatible
-class Project(PolymorphicModel, models.Audit, models.ActiveModel):
+class Project(PolymorphicModel):
     """
     A Project is the core object in the system.
     A Project is an endeavour of a team of staff, where staff and financial

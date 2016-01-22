@@ -1,22 +1,20 @@
 from __future__ import unicode_literals
 
-from swingers import models
-from south.modelsinspector import add_introspection_rules
+#from south.modelsinspector import add_introspection_rules
 
 import json
 from django.core.serializers.json import DjangoJSONEncoder
-
 from django.forms import Field
-from django.db.models import TextField
+from django.db.models.fields import TextField
 from pythia.utils import html2text
 from django.utils.safestring import mark_safe
 
-class Html2TextField(models.TextField):
+class Html2TextField(TextField):
     def to_python(self, value):
         #return html2text(value)
         return value
 
-add_introspection_rules([], ["^pythia\.fields\.Html2TextField"])
+#add_introspection_rules([], ["^pythia\.fields\.Html2TextField"])
 
 class PythiaArrayFormField(Field):
     def prepare_value(self, value):
@@ -36,7 +34,7 @@ class PythiaArrayField(TextField):
     def to_python(self, value):
         return value
 
-add_introspection_rules([], ["^pythia\.fields\.PythiaArrayField"])
+#add_introspection_rules([], ["^pythia\.fields\.PythiaArrayField"])
 
 class PythiaTextField(TextField):
     """TODO set allow_tags = True
@@ -47,4 +45,4 @@ class PythiaTextField(TextField):
     def prepare_value(self, value):
         return value
 
-add_introspection_rules([], ["^pythia\.fields\.PythiaTextField"])
+#add_introspection_rules([], ["^pythia\.fields\.PythiaTextField"])
