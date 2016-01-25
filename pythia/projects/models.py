@@ -27,8 +27,8 @@ from django.utils.safestring import mark_safe
 #from swingers import models
 #from swingers.models.managers import ActiveGeoModelManager
 
-from pythia.documents.models import (
-    ConceptPlan, ProjectPlan, ProgressReport, ProjectClosure, StudentReport)
+from pythia.documents.models import (ConceptPlan, ProjectPlan, 
+        ProgressReport, ProjectClosure, StudentReport)
 from pythia.fields import Html2TextField, PythiaArrayField
 from pythia.models import Program, WebResource, Division, Area, User
 from pythia.reports.models import ARARReport
@@ -40,7 +40,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 
 from datetime import date
-from django_fsm.db.fields import FSMField, transition
+from django_fsm import FSMField, transition
 from polymorphic import PolymorphicModel, PolymorphicManager
 
 logger = logging.getLogger(__name__)
@@ -405,12 +405,11 @@ class Project(PolymorphicModel):
             return False
 
     @transition(field=status, 
+            verbose_name=_("Endorse Project"))
             source=STATUS_NEW, 
             target=STATUS_PENDING,
             conditions=['can_endorse'], 
             permission="approve",
-            save=True,
-            verbose_name=_("Endorse Project"))
     def endorse(self):
         """
         Transition to move project to PENDING.
@@ -442,11 +441,10 @@ class Project(PolymorphicModel):
             return False
 
     @transition(field=status, 
+            verbose_name=_("Approve Project"),
             source=STATUS_PENDING, 
             target=STATUS_ACTIVE,
             conditions=['can_approve'], 
-            save=True,
-            verbose_name=_("Approve Project"),
             permission="approve")
     def approve(self):
         """
@@ -464,12 +462,12 @@ class Project(PolymorphicModel):
         # Does an ARAR need to exist?
         return True
 
+
     @transition(field=status, 
+            verbose_name=_("Request update"),
             source=STATUS_ACTIVE, 
             target=STATUS_UPDATE,
             conditions=['can_request_update'], 
-            save=True,
-            verbose_name=_("Request update"),
             permission="approve")
     def request_update(self, report=None):
         """
@@ -482,6 +480,7 @@ class Project(PolymorphicModel):
 	    report = ARARReport.objects.all().latest()
 	self.make_progressreport(report)
         return
+
 
     # UPDATING --> ACTIVE -----------------------------------------------------#
     def can_complete_update(self):
@@ -504,12 +503,12 @@ class Project(PolymorphicModel):
                     'approved Progress Report!')
             return False
 
+
     @transition(field=status, 
+            verbose_name=_("Complete update"),
             source=STATUS_UPDATE, 
             target=STATUS_ACTIVE,
             #conditions=['can_complete_update'], 
-            save=True,
-            verbose_name=_("Complete update"),
             permission="submit")
     def complete_update(self):
         """
@@ -524,14 +523,12 @@ class Project(PolymorphicModel):
 
         Currently no checks.
         """
-
         return True
 
     @transition(field=status, 
             source=STATUS_ACTIVE, 
             target=STATUS_CLOSURE_REQUESTED,
             conditions=['can_request_closure'], 
-            save=True,
             verbose_name=_("Request closure"), 
             permission="submit")
     def request_closure(self):
@@ -558,11 +555,10 @@ class Project(PolymorphicModel):
         return self.documents.instance_of(ProjectClosure).latest().is_approved
 
     @transition(field=status, 
+            verbose_name=_("Accept closure"), 
             source=STATUS_CLOSURE_REQUESTED, 
             target=STATUS_CLOSING,
             conditions=['can_accept_closure'], 
-            save=True,
-            verbose_name=_("Accept closure"), 
             permission="approve")
     def accept_closure(self):
         """
@@ -583,12 +579,12 @@ class Project(PolymorphicModel):
         """
         return True
 
+
     @transition(field=status, 
+            verbose_name=_("Request final update"), 
             source=[STATUS_CLOSING, STATUS_COMPLETED],
             target=STATUS_FINAL_UPDATE,
             conditions=['can_request_final_update'], 
-            save=True,
-            verbose_name=_("Request final update"), 
             permission="approve")
     def request_final_update(self):
         """
@@ -597,6 +593,7 @@ class Project(PolymorphicModel):
         ProgressReport.objects.create(project=self, creator=self.creator, 
                 is_final_report=True,
                 modifier=self.modifier, year= date.today().year)
+
 
     # FINAL_UPDATE -> COMPLETED -----------------------------------------------#
     def can_complete(self):
@@ -610,12 +607,12 @@ class Project(PolymorphicModel):
         return (lpr.is_final_report and lpr.is_approved and
                 self.documents.instance_of(ProjectClosure).latest().is_approved)
 
+
     @transition(field=status, 
+            verbose_name=_("Complete final update"),
             source=STATUS_FINAL_UPDATE,
             target=STATUS_COMPLETED,
             #conditions=['can_complete'], 
-            save=True,
-            verbose_name=_("Complete final update"),
             permission="approve")
     def complete(self):
         """
@@ -636,11 +633,10 @@ class Project(PolymorphicModel):
         return True
 
     @transition(field=status, 
+            verbose_name=_("Reactivate project"),
             source=STATUS_COMPLETED,
             target=STATUS_ACTIVE,
             conditions=['can_reactivate'], 
-            save=True,
-            verbose_name=_("Reactivate project"),
             permission="approve")
     def reactivate(self):
         """
@@ -655,12 +651,12 @@ class Project(PolymorphicModel):
         """
         return True
 
+
     @transition(field=status, 
+            verbose_name=_("Terminate project"),
             source=STATUS_ACTIVE,
             target=STATUS_TERMINATED,
             conditions=['can_terminate'], 
-            save=True,
-            verbose_name=_("Terminate project"),
             permission="approve")
     def terminate(self):
         """
@@ -675,12 +671,12 @@ class Project(PolymorphicModel):
         """
         return True
 
+
     @transition(field=status, 
+            verbose_name=_("Reactivate terminated project"),
             source=STATUS_TERMINATED,
             target=STATUS_ACTIVE,
             conditions=['can_reactivate_terminated'], 
-            save=True,
-            verbose_name=_("Reactivate terminated project"),
             permission="approve")
     def reactivate_terminated(self):
         """
@@ -695,12 +691,12 @@ class Project(PolymorphicModel):
         """
         return True
 
+
     @transition(field=status, 
+            verbose_name=_("Suspend project"),
             source=STATUS_ACTIVE,
             target=STATUS_SUSPENDED,
             conditions=['can_suspend'], 
-            save=True,
-            verbose_name=_("Suspend project"),
             permission="approve")
     def suspend(self):
         """
@@ -715,26 +711,27 @@ class Project(PolymorphicModel):
         """
         return True
 
+
     @transition(field=status, 
+            verbose_name=_("Reactivate suspended project"),
             source=STATUS_SUSPENDED,
             target=STATUS_ACTIVE,
             conditions=['can_reactivate_suspended'], 
-            save=True,
-            verbose_name=_("Reactivate suspended project"),
             permission="approve")
     def reactivate_suspended(self):
         """
         Move the project to its ACTIVE state.
         """
 
+
     # EMAIL NOTIFICATIONS ----------------------------------------------------#
     def get_users_to_notify(self, transition):
         #result = set()
         #if transition in (STATUS_ACTIVE, STATUS_COMPLETED, 
         #        STATUS_TERMINATED, STATUS_SUSPENDED):
-        result = set(self.members.all()) # reduce some duplication
-        
+        result = set(self.members.all()) # reduce some duplication        
         return result
+
 
     #-------------------------------------------------------------------------#
     # Project labels and short codes
@@ -745,25 +742,30 @@ class Project(PolymorphicModel):
         return '{0} {1}-{2}'.format(
             Project.PROJECT_ABBREVIATIONS[t], y, str(n).zfill(3))
 
+
     # Project name = "TYPE YEAR-NUMBER TITLE"
     @classmethod
     def clsm_project_type_year_number_name(cls, t, y, n, na):
         return mark_safe('{0} {1}-{2} {3}'.format(
             Project.PROJECT_ABBREVIATIONS[t], y, str(n).zfill(3), na))
 
+
     @classmethod
     def clsm_project_year_number(cls, y, n):
         return '{0}-{1}'.format(y, str(n).zfill(3))
+
 
     @property
     def project_type_year_number(self):
         return Project.clsm_project_type_year_number(
             self.type, self.year, str(self.number).zfill(3))
 
+
     @property
     def project_year_number(self):
         return Project.clsm_project_year_number(
             self.year, str(self.number).zfill(3))
+
 
     @property
     def project_name_html(self):
@@ -785,6 +787,7 @@ class Project(PolymorphicModel):
             #extensions=['pythia.md_ext.subscript',
             #'pythia.md_ext.superscript','nl2br'], safe_mode='escape'))
 
+
     @property
     def title_plain(self):
         """
@@ -793,6 +796,7 @@ class Project(PolymorphicModel):
         # TODO remove markdown from project title
         return unicode(strip_tags(self.title)).strip()
 
+
     def get_team_list_plain(self):
         """
         Returns a plain text version of the team list.
@@ -800,6 +804,7 @@ class Project(PolymorphicModel):
         return ", ".join([m.user.abbreviated_name for m in 
             self.projectmembership_set.select_related('user').all().order_by(
                 "position","user__last_name","user__first_name" )])
+
 
     def get_supervising_scientist_list_plain(self):
         """Return a string of Supervising Scientist names."""
@@ -813,6 +818,7 @@ class Project(PolymorphicModel):
         """Stub to return the progress report for a given year."""
         return None
 
+
     #-------------------------------------------------------------------------#
     # Team members
     #
@@ -822,7 +828,8 @@ class Project(PolymorphicModel):
         return ', '.join([x.user.get_full_name() for x in 
             ProjectMembership.objects.filter(project=self, 
             role=ProjectMembership.ROLE_SUPERVISED_STUDENT)])
-    
+
+
     @property
     def team_list(self):
         "Return a list of lists of project team memberships"
@@ -830,6 +837,7 @@ class Project(PolymorphicModel):
                 m.user.fullname,
                 m.time_allocation] for m in self.projectmembership_set.all()]
     
+
     #-------------------------------------------------------------------------#
     # Areas
     #
@@ -839,11 +847,13 @@ class Project(PolymorphicModel):
         return ', '.join([area.name for area in self.areas.filter(
             area_type=Area.AREA_TYPE_DPAW_DISTRICT)])
 
+
     @property
     def area_dpaw_region(self):
         """Return a string of all areas of type Dpaw Region"""
         return ', '.join([area.name for area in self.areas.filter(
             area_type=Area.AREA_TYPE_DPAW_REGION)])
+
 
     @property
     def area_ibra_imcra_region(self):
@@ -852,11 +862,13 @@ class Project(PolymorphicModel):
             area_type__in=[Area.AREA_TYPE_IBRA_REGION, 
                 Area.AREA_TYPE_IMCRA_REGION])])
 
+
     @property
     def area_nrm_region(self):
         """Return a string of all areas of type NRM Region"""
         return ', '.join([area.name for area in self.areas.filter(
             area_type=Area.AREA_TYPE_NRM_REGION)])
+
 
 def project_areas_changed(sender, **kwargs):
     """Updates cached Area names on Project"""
@@ -870,6 +882,7 @@ def project_areas_changed(sender, **kwargs):
         'area_list_dpaw_district',
         'area_list_ibra_imcra_region',
         'area_list_nrm_region'])
+
 signals.m2m_changed.connect(project_areas_changed, sender=Project.areas.through)
 
 class ScienceProject(Project):
@@ -931,6 +944,7 @@ class ScienceProject(Project):
         msg = "{0} Added ProgressReport for year {1} in report {2}".format(
             p.project.project_type_year_number, p.year, p.report)
         logger.info(msg); print(msg)
+
 
 class CoreFunctionProject(Project):
     """
@@ -1030,6 +1044,7 @@ class CollaborationProject(Project):
         self.status = self.STATUS_ACTIVE
         self.save(update_fields=['status'])
 
+
     def get_staff_list_plain(self):
         """Return a string of DPaW staff."""
         return ', '.join([x.user.abbreviated_name for x in 
@@ -1040,8 +1055,6 @@ class CollaborationProject(Project):
                 ProjectMembership.ROLE_TECHNICAL_OFFICER
                 ])
         ])
-
-
 
 
     # Forbid actions non applicable to this project type
@@ -1063,6 +1076,7 @@ class CollaborationProject(Project):
     def request_closure(self):
         self.status = Project.STATUS_COMPLETED
         self.save(update_fields=['status'])
+
 
 class StudentProject(Project):
     """
@@ -1169,10 +1183,11 @@ class StudentProject(Project):
         self.status = Project.STATUS_ACTIVE
         self.save(update_fields=['status'])
 
-    @transition(field='status', save=True,
-                source=Project.STATUS_ACTIVE,
-                target=Project.STATUS_UPDATE,
-                conditions=['can_request_update'])
+    @transition(field='status', 
+            verbose_name=_("Request update"), 
+            source=Project.STATUS_ACTIVE,
+            target=Project.STATUS_UPDATE,
+            conditions=['can_request_update'])
     def request_update(self, report=None):
         """
         A student project update generates a Student Report instead of a
@@ -1192,14 +1207,17 @@ class StudentProject(Project):
         else:
             return False
 
+
     @transition(field='status', 
+            verbose_name=_("Request closure"), 
             source=Project.STATUS_ACTIVE, 
             target=Project.STATUS_CLOSURE_REQUESTED,
-            conditions=['can_request_closure'], save=True,
-            verbose_name=_("Request closure"), permission="submit")
+            conditions=['can_request_closure'],
+            permission="submit")
     def request_closure(self):
         self.status = Project.STATUS_COMPLETED
         self.save(update_fields=['status'])
+
 
     # Forbid actions non applicable to this project type
     def can_endorse(self):
@@ -1222,13 +1240,15 @@ class StudentProject(Project):
         """
         return self.documents.instance_of(StudentReport).latest() or None
 
+
     def get_progressreport(self, year):
         """Return the StudentReport for a given year"""
         if not StudentReport.objects.filter(project=self, year=year).exists():
             a = ARARReport.objects.get(year=year)
             self.make_progressreport(year, a.id)
         return ProgressReport.objects.get(project=self, year=year)    
-    
+
+
     def make_progressreport(self, report):
         """Create (if neccessary) a StudentReport for the given year.
         Populate fields from previous StudentReport.
@@ -1350,6 +1370,7 @@ def refresh_project_cache(p):
         #p.staff_list_plain = p.get_staff_list_plain()
         #p.save(update_fields=['staff_list_plain'])
     return True
+
 
 def refresh_all_project_caches():
     tmp = [refresh_project_cache(p) for p in 

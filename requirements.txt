@@ -22,7 +22,7 @@ django-immutablemodel==0.3.4
 django-mail-templated==0.2.1
 django-markup-deprecated==0.0.3
 django-model-utils==2.0.3
-django-polymorphic==0.5.3
+django-polymorphic==0.8.1
 django-reversion>=1.8.7
 django-taggit==0.12
 django-uni-form==0.9.0
@@ -42,7 +42,7 @@ python-ldap==2.4.15
 python-magic==0.4.6
 pytidylib==0.2.1
 pytz==2014.4
-requests==2.3.0
+requests==2.7.0
 sqlparse==0.1.11
 
 
