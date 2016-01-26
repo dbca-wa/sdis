@@ -302,7 +302,7 @@ class Document(PolymorphicModel):
         return True
 
     @transition(field=status, 
-            verbose_name=_("Submit for review"),
+            custom=dict(verbose_name=_("Submit for review")),
             source=STATUS_NEW,
             target=STATUS_INREVIEW, 
             conditions=['can_seek_review'],
@@ -320,7 +320,7 @@ class Document(PolymorphicModel):
         return True
 
     @transition(field=status,
-            verbose_name=_("Recall from review"),
+            custom=dict(verbose_name=_("Recall from review")),
             source=STATUS_INREVIEW,
             target=STATUS_NEW, 
             conditions=['can_recall'],
@@ -340,7 +340,7 @@ class Document(PolymorphicModel):
         return True
 
     @transition(field=status, 
-            verbose_name=_("Submit for approval"),
+            custom=dict(verbose_name=_("Submit for approval")),
             source=STATUS_INREVIEW,
             target=STATUS_INAPPROVAL, 
             conditions=['can_seek_approval'],
@@ -352,7 +352,7 @@ class Document(PolymorphicModel):
         self.save()
 
     @transition(field=status,
-            verbose_name=_("Request revision from authors"),
+            custom=dict(verbose_name=_("Request revision from authors")),
             source=STATUS_INREVIEW,
             target=STATUS_NEW, 
             conditions=['can_seek_approval'],
@@ -370,7 +370,7 @@ class Document(PolymorphicModel):
         return True
 
     @transition(field=status, 
-            verbose_name=_("Approve"), 
+            custom=dict(verbose_name=_("Approve")), 
             source=STATUS_INAPPROVAL,
             target=STATUS_APPROVED, 
             conditions=['can_approve'],
@@ -380,7 +380,7 @@ class Document(PolymorphicModel):
         self.save()
 
     @transition(field=status,
-            verbose_name=_("Request reviewer revision"), 
+            custom=dict(verbose_name=_("Request reviewer revision")), 
             source=STATUS_INAPPROVAL,
             target=STATUS_INREVIEW, 
             conditions=['can_approve'],
@@ -390,7 +390,7 @@ class Document(PolymorphicModel):
         self.save()
 
     @transition(field=status,
-            verbose_name=_("Request author revision"), 
+            custom=dict(verbose_name=_("Request author revision")), 
             source=STATUS_INAPPROVAL,
             target=STATUS_NEW, 
             conditions=['can_approve'],
@@ -408,7 +408,7 @@ class Document(PolymorphicModel):
         return True
 
     @transition(field=status,
-            verbose_name=_("Reset approval status"), 
+            custom=dict(verbose_name=_("Reset approval status")), 
             source=STATUS_APPROVED,
             target=STATUS_NEW, 
             conditions=['can_reset'],
@@ -585,7 +585,7 @@ class ConceptPlan(Document):
         return True
 
     @transition(field='status', 
-            verbose_name=_("Approve"),
+            custom=dict(verbose_name=_("Approve")),
             source=Document.STATUS_INAPPROVAL,
             target=Document.STATUS_APPROVED,
             conditions=['can_approve'], 
@@ -604,7 +604,7 @@ class ConceptPlan(Document):
         return True
 
     @transition(field='status', 
-            verbose_name=_("Reset approval status"), 
+            custom=dict(verbose_name=_("Reset approval status")), 
             source=Document.STATUS_APPROVED,
             target=Document.STATUS_NEW, 
             conditions=['can_reset'],
@@ -989,7 +989,7 @@ class ProjectPlan(Document):
         return self.cleared_ae
 
     @transition(field='status', 
-            verbose_name=_("Approve"),
+            custom=dict(verbose_name=_("Approve")),
             source=Document.STATUS_INAPPROVAL, 
             target=Document.STATUS_APPROVED,
             conditions=['can_approve'], 
@@ -1001,7 +1001,7 @@ class ProjectPlan(Document):
         self.project.approve()
 
     @transition(field='status', 
-            verbose_name=_("Reset approval status"), 
+            custom=dict(verbose_name=_("Reset approval status")), 
             source=Document.STATUS_APPROVED,
             target=Document.STATUS_NEW, 
             conditions=['can_reset'],
@@ -1139,7 +1139,7 @@ class ProgressReport(Document):
         return True
 
     @transition(field='status', 
-            verbose_name=_("Approve"),
+            custom=dict(verbose_name=_("Approve")),
             source=Document.STATUS_INAPPROVAL, 
             target=Document.STATUS_APPROVED,
             conditions=['can_approve'], 
@@ -1153,7 +1153,7 @@ class ProgressReport(Document):
             self.project.complete()
 
     @transition(field='status', 
-            verbose_name=_("Reset approval status"), 
+            custom=dict(verbose_name=_("Reset approval status")), 
             source=Document.STATUS_APPROVED,
             target=Document.STATUS_NEW, 
             conditions=['can_reset'],
@@ -1223,7 +1223,7 @@ class ProjectClosure(Document):
         
 
     @transition(field='status', 
-            verbose_name=_("Approve"),
+            custom=dict(verbose_name=_("Approve")),
             source=Document.STATUS_INAPPROVAL, 
             target=Document.STATUS_APPROVED,
             conditions=['can_approve'], 
@@ -1233,6 +1233,7 @@ class ProjectClosure(Document):
         self.project.accept_closure()
 
     @transition(field='status', 
+            custom=dict(verbose_name=_("Reset approval status")), 
             source=Document.STATUS_APPROVED,
             target=Document.STATUS_NEW, 
             conditions=['can_reset'],
@@ -1285,7 +1286,7 @@ class StudentReport(Document):
         
 
     @transition(field='status', 
-            verbose_name=_("Approve"),
+            custom=dict(verbose_name=_("Approve")),
             source=Document.STATUS_INAPPROVAL, 
             target=Document.STATUS_APPROVED,
             conditions=['can_approve'], 
@@ -1301,7 +1302,7 @@ class StudentReport(Document):
             return True
 
     @transition(field='status', 
-            verbose_name=_("Reset approval status"), 
+            custom=dict(verbose_name=_("Reset approval status")), 
             source=Document.STATUS_APPROVED,
             target=Document.STATUS_NEW, 
             conditions=['can_reset'],
@@ -1315,7 +1316,7 @@ class StudentReport(Document):
         p.status = Project.STATUS_UPDATE
         p.save(update_fields=['status',])
 
-class StaffTimeEstimate(Audit):
+class StaffTimeEstimate(models.Model):
     """Represents an estimate of staff time (role or names) for three years.
     Equals one row in the ConceptPlan's 'Staff time allocation' table.
     """

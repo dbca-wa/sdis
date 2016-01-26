@@ -23,6 +23,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 
     #'django_browserid',
     #'swingers',
+    #'south',
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
@@ -53,7 +54,6 @@ INSTALLED_APPS = (
     'leaflet',
     'mail_templated',
     'compressor',
-    'south',
     'gunicorn',
     'django_nose',
     'djangular',

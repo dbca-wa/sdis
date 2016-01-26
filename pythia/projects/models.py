@@ -41,7 +41,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from datetime import date
 from django_fsm import FSMField, transition
-from polymorphic import PolymorphicModel, PolymorphicManager
+from polymorphic.models import PolymorphicModel, PolymorphicManager
 
 logger = logging.getLogger(__name__)
 
@@ -405,11 +405,11 @@ class Project(PolymorphicModel):
             return False
 
     @transition(field=status, 
-            verbose_name=_("Endorse Project"))
+            custom=dict(name=_("Endorse Project")),
             source=STATUS_NEW, 
             target=STATUS_PENDING,
             conditions=['can_endorse'], 
-            permission="approve",
+            permission="approve")
     def endorse(self):
         """
         Transition to move project to PENDING.
@@ -441,7 +441,7 @@ class Project(PolymorphicModel):
             return False
 
     @transition(field=status, 
-            verbose_name=_("Approve Project"),
+            custom=dict(verbose_name=_("Approve Project")),
             source=STATUS_PENDING, 
             target=STATUS_ACTIVE,
             conditions=['can_approve'], 
@@ -464,7 +464,7 @@ class Project(PolymorphicModel):
 
 
     @transition(field=status, 
-            verbose_name=_("Request update"),
+            custom=dict(verbose_name=_("Request update")),
             source=STATUS_ACTIVE, 
             target=STATUS_UPDATE,
             conditions=['can_request_update'], 
@@ -505,7 +505,7 @@ class Project(PolymorphicModel):
 
 
     @transition(field=status, 
-            verbose_name=_("Complete update"),
+            custom=dict(verbose_name=_("Complete update")),
             source=STATUS_UPDATE, 
             target=STATUS_ACTIVE,
             #conditions=['can_complete_update'], 
@@ -526,10 +526,10 @@ class Project(PolymorphicModel):
         return True
 
     @transition(field=status, 
+            custom=dict(verbose_name=_("Request closure")), 
             source=STATUS_ACTIVE, 
             target=STATUS_CLOSURE_REQUESTED,
             conditions=['can_request_closure'], 
-            verbose_name=_("Request closure"), 
             permission="submit")
     def request_closure(self):
         """Transition to move project to CLOSURE_REQUESTED.
@@ -555,7 +555,7 @@ class Project(PolymorphicModel):
         return self.documents.instance_of(ProjectClosure).latest().is_approved
 
     @transition(field=status, 
-            verbose_name=_("Accept closure"), 
+            custom=dict(verbose_name=_("Accept closure")), 
             source=STATUS_CLOSURE_REQUESTED, 
             target=STATUS_CLOSING,
             conditions=['can_accept_closure'], 
@@ -581,7 +581,7 @@ class Project(PolymorphicModel):
 
 
     @transition(field=status, 
-            verbose_name=_("Request final update"), 
+            custom=dict(verbose_name=_("Request final update")), 
             source=[STATUS_CLOSING, STATUS_COMPLETED],
             target=STATUS_FINAL_UPDATE,
             conditions=['can_request_final_update'], 
@@ -609,7 +609,7 @@ class Project(PolymorphicModel):
 
 
     @transition(field=status, 
-            verbose_name=_("Complete final update"),
+            custom=dict(verbose_name=_("Complete final update")),
             source=STATUS_FINAL_UPDATE,
             target=STATUS_COMPLETED,
             #conditions=['can_complete'], 
@@ -633,7 +633,7 @@ class Project(PolymorphicModel):
         return True
 
     @transition(field=status, 
-            verbose_name=_("Reactivate project"),
+            custom=dict(verbose_name=_("Reactivate project")),
             source=STATUS_COMPLETED,
             target=STATUS_ACTIVE,
             conditions=['can_reactivate'], 
@@ -653,7 +653,7 @@ class Project(PolymorphicModel):
 
 
     @transition(field=status, 
-            verbose_name=_("Terminate project"),
+            custom=dict(verbose_name=_("Terminate project")),
             source=STATUS_ACTIVE,
             target=STATUS_TERMINATED,
             conditions=['can_terminate'], 
@@ -673,7 +673,7 @@ class Project(PolymorphicModel):
 
 
     @transition(field=status, 
-            verbose_name=_("Reactivate terminated project"),
+            custom=dict(verbose_name=_("Reactivate terminated project")),
             source=STATUS_TERMINATED,
             target=STATUS_ACTIVE,
             conditions=['can_reactivate_terminated'], 
@@ -693,7 +693,7 @@ class Project(PolymorphicModel):
 
 
     @transition(field=status, 
-            verbose_name=_("Suspend project"),
+            custom=dict(verbose_name=_("Suspend project")),
             source=STATUS_ACTIVE,
             target=STATUS_SUSPENDED,
             conditions=['can_suspend'], 
@@ -713,7 +713,7 @@ class Project(PolymorphicModel):
 
 
     @transition(field=status, 
-            verbose_name=_("Reactivate suspended project"),
+            custom=dict(verbose_name=_("Reactivate suspended project")),
             source=STATUS_SUSPENDED,
             target=STATUS_ACTIVE,
             conditions=['can_reactivate_suspended'], 
@@ -1184,7 +1184,7 @@ class StudentProject(Project):
         self.save(update_fields=['status'])
 
     @transition(field='status', 
-            verbose_name=_("Request update"), 
+            custom=dict(verbose_name=_("Request update")), 
             source=Project.STATUS_ACTIVE,
             target=Project.STATUS_UPDATE,
             conditions=['can_request_update'])
@@ -1209,7 +1209,7 @@ class StudentProject(Project):
 
 
     @transition(field='status', 
-            verbose_name=_("Request closure"), 
+            custom=dict(verbose_name=_("Close Project")), 
             source=Project.STATUS_ACTIVE, 
             target=Project.STATUS_CLOSURE_REQUESTED,
             conditions=['can_request_closure'],

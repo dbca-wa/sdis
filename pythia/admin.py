@@ -28,7 +28,7 @@ import os
 import subprocess
 
 from collections import namedtuple
-from django_select2 import AutoModelSelect2Field, Select2Widget
+from django_select2.fields import AutoModelSelect2Field, Select2Widget
 from pythia.fields import PythiaArrayField
 from reversion.models import Version
 
