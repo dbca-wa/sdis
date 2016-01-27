@@ -1,6 +1,7 @@
 from confy import database
 import ldap
 import os
+import sys
 
 #from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType, LDAPSearchUnion)
 
@@ -15,7 +16,7 @@ TEMPLATE_DEBUG = DEBUG
 CSRF_COOKIE_SECURE = True if os.environ.get('CSRF_COOKIE_SECURE', False) == 'True' else False       
 SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) == 'True' else False 
 
- if not DEBUG:
+if not DEBUG:
     # Localhost, UAT and Production hosts                                                           
     ALLOWED_HOSTS = [                                                                               
         'localhost',                                                                                
@@ -28,7 +29,9 @@ SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) =
         'sdis-test.dpaw.wa.gov.au.',                                                               
         'sdis-uat.dpaw.wa.gov.au',                                                                
         'sdis-uat.dpaw.wa.gov.au.',                                                               
-    ] 
+    ]
+else:
+    ALLOWED_HOSTS = ['*']
 
 # Application definition
 SITE_TITLE = 'SDIS - Science Directorate Information System'
@@ -168,11 +171,11 @@ DATE_INPUT_FORMATS = (
 
 
 # Uploads
-MEDIA_ROOT = root('..', 'media')
+MEDIA_ROOT = root('media')
 MEDIA_URL = '/media/'
 
 # Static files (CSS, JavaScript, Images)
-STATIC_ROOT = root('..', 'staticfiles')
+STATIC_ROOT = root('staticfiles')
 STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -203,6 +206,25 @@ TASTYPIE_DATETIME_FORMATTING = 'iso-8601-strict'
 TASTYPIE_DEFAULT_FORMATS = ['json', 'html']                                                         
 API_LIMIT_PER_PAGE = 0 
 
+
+# Cache
+# see http://django-select2.readthedocs.org/en/latest/django_select2.html
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    'select2': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
+
+# Set the cache backend to select2
+SELECT2_CACHE_BACKEND = 'select2'
 
 # LDAP settings
 #AUTH_LDAP_SERVER_URI = os.environ.get('LDAP_SERVER_URI', None)
@@ -282,7 +304,6 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 # Logging configuration
-LOG_FOLDER = root('..', 'log') 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -291,7 +312,7 @@ LOGGING = {
             'format': '{%(asctime)s.%(msecs)d}  %(message)s [%(levelname)s %(name)s]',              
             'datefmt': '%H:%M:%S'                                                                   
          }, 
-        'default': {                                                                                
+        'standard': {                                                                                
             'format': '%(asctime)s %(levelname)-8s [%(name)-15s] %(message)s',                      
             'datefmt': '%Y/%m/%d %H:%M:%S',                                                         
         } 
@@ -316,7 +337,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(LOG_FOLDER, 'sdis.log'),
+            'filename': os.path.join(root('logs'), 'sdis.log'),
             'formatter': 'standard',
             'maxBytes': '16777216'
         },

@@ -173,7 +173,10 @@ def shell():
 # Testing
 #
 def test():
-    """Run test suite."""
+    """Write PEP8 warnings to logs/pep8.log and run test suite."""
+    print(yellow("Writing PEP8 warnings to logs/pep8.log..."))
+    local('flake8 --exclude="migrations" --max-line-length=120 --output-file=logs/pep8.log pythia')
+    print(yellow("Runnings tests..."))
     local('python manage.py test -v 2 pythia')
 
 #-----------------------------------------------------------------------------#
