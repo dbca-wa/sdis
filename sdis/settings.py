@@ -1,34 +1,33 @@
 from confy import database
-import ldap
 import os
 import sys
 
 #from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType, LDAPSearchUnion)
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-root = lambda *x: os.path.join(BASE_DIR, *x) 
+root = lambda *x: os.path.join(BASE_DIR, *x)
 sys.path.insert(0, root('apps'))
 
 SECRET_KEY = os.environ['SECRET_KEY'] if os.environ.get('SECRET_KEY', False) else 'foo'
 
 DEBUG = True if os.environ.get('DEBUG', False) == 'True' else False
 TEMPLATE_DEBUG = DEBUG
-CSRF_COOKIE_SECURE = True if os.environ.get('CSRF_COOKIE_SECURE', False) == 'True' else False       
-SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) == 'True' else False 
+CSRF_COOKIE_SECURE = True if os.environ.get('CSRF_COOKIE_SECURE', False) == 'True' else False
+SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) == 'True' else False
 
 if not DEBUG:
-    # Localhost, UAT and Production hosts                                                           
-    ALLOWED_HOSTS = [                                                                               
-        'localhost',                                                                                
-        '127.0.0.1',                                                                                
-        'sdis.dpaw.wa.gov.au',                                                                    
-        'sdis.dpaw.wa.gov.au.',                                                                   
-        'sdis-dev.dpaw.wa.gov.au',                                                                
-        'sdis-dev.dpaw.wa.gov.au.',                                                               
-        'sdis-test.dpaw.wa.gov.au',                                                                
-        'sdis-test.dpaw.wa.gov.au.',                                                               
-        'sdis-uat.dpaw.wa.gov.au',                                                                
-        'sdis-uat.dpaw.wa.gov.au.',                                                               
+    # Localhost, UAT and Production hosts
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+        'sdis.dpaw.wa.gov.au',
+        'sdis.dpaw.wa.gov.au.',
+        'sdis-dev.dpaw.wa.gov.au',
+        'sdis-dev.dpaw.wa.gov.au.',
+        'sdis-test.dpaw.wa.gov.au',
+        'sdis-test.dpaw.wa.gov.au.',
+        'sdis-uat.dpaw.wa.gov.au',
+        'sdis-uat.dpaw.wa.gov.au.',
     ]
 else:
     ALLOWED_HOSTS = ['*']
@@ -92,16 +91,16 @@ INSTALLED_APPS += PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
     #'swingers.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',                                         
-    'django.middleware.common.CommonMiddleware',                                                    
-    'django.middleware.csrf.CsrfViewMiddleware',                                                    
-    'django.contrib.auth.middleware.AuthenticationMiddleware',                                      
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',                               
-    'django.contrib.messages.middleware.MessageMiddleware',                                         
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',                                       
-    'django.middleware.security.SecurityMiddleware',                                                
-    'reversion.middleware.RevisionMiddleware',                                                      
-    'dpaw_utils.middleware.SSOLoginMiddleware',  
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'reversion.middleware.RevisionMiddleware',
+    'dpaw_utils.middleware.SSOLoginMiddleware',
 
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django_pdb.middleware.PdbMiddleware',
@@ -122,26 +121,26 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 ROOT_URLCONF = 'sdis.urls'
 
-TEMPLATES = [                                                                                       
-    {                                                                                               
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',                               
-        'DIRS': [root('templates')],                                                                
-        'APP_DIRS': True,                                                                           
-        'OPTIONS': {                                                                                
-            'context_processors': [                                                                 
-                "django.contrib.auth.context_processors.auth",                                      
-                "django.core.context_processors.debug",                                             
-                "django.core.context_processors.i18n",                                              
-                "django.core.context_processors.media",                                             
-                "django.core.context_processors.static",                                            
-                "django.core.context_processors.tz",                                                
-                "django.contrib.messages.context_processors.messages",                              
-                "django.core.context_processors.request",                                           
-                #"sdis.context_processors.standard",                                               
-            ],                                                                                      
-        },                                                                                          
-    },                                                                                          
-] 
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [root('templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                "django.contrib.auth.context_processors.auth",
+                "django.core.context_processors.debug",
+                "django.core.context_processors.i18n",
+                "django.core.context_processors.media",
+                "django.core.context_processors.static",
+                "django.core.context_processors.tz",
+                "django.contrib.messages.context_processors.messages",
+                "django.core.context_processors.request",
+                #"sdis.context_processors.standard",
+            ],
+        },
+    },
+]
 #TEMPLATE_LOADERS = (
 #    ('django.template.loaders.cached.Loader', (
 #       'django.template.loaders.filesystem.Loader',
@@ -161,13 +160,13 @@ TIME_ZONE = 'Australia/Perth'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-DATE_FORMAT = '%d/%m/%Y'      # O5/10/2006                                                          
-# Set the formats that will be accepted in date input fields                                        
-DATE_INPUT_FORMATS = (                                                                              
-    '%d/%m/%Y',             # '25/10/2006'                                                          
-    '%Y-%m-%d',             # '2006-10-25'                                                          
-    '%Y_%m_%d',             # '2006_10_25'                                                          
-) 
+DATE_FORMAT = '%d/%m/%Y'      # O5/10/2006
+# Set the formats that will be accepted in date input fields
+DATE_INPUT_FORMATS = (
+    '%d/%m/%Y',             # '25/10/2006'
+    '%Y-%m-%d',             # '2006-10-25'
+    '%Y_%m_%d',             # '2006_10_25'
+)
 
 
 # Uploads
@@ -200,11 +199,11 @@ LOGIN_REDIRECT_URL_FAILURE = LOGIN_URL
 LOGOUT_URL = '/logout/'
 LOGOUT_REDIRECT_URL = LOGOUT_URL
 
-# django-tastypie settings                                                                          
-TASTYPIE_ALLOW_MISSING_SLASH = True                                                                 
-TASTYPIE_DATETIME_FORMATTING = 'iso-8601-strict'                                                    
-TASTYPIE_DEFAULT_FORMATS = ['json', 'html']                                                         
-API_LIMIT_PER_PAGE = 0 
+# django-tastypie settings
+TASTYPIE_ALLOW_MISSING_SLASH = True
+TASTYPIE_DATETIME_FORMATTING = 'iso-8601-strict'
+TASTYPIE_DEFAULT_FORMATS = ['json', 'html']
+API_LIMIT_PER_PAGE = 0
 
 
 # Cache
@@ -280,7 +279,7 @@ EMAIL_HOST = os.environ.get('EMAIL_HOST', 'alerts.corporateict.domain')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
 
 # Envelope email
-ENVELOPE_EMAIL_RECIPIENTS = ['sdis@DPaW.wa.gov.au']                                               
+ENVELOPE_EMAIL_RECIPIENTS = ['sdis@DPaW.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True
 
 # old email settings
@@ -308,20 +307,20 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'precise': {                                                                                
-            'format': '{%(asctime)s.%(msecs)d}  %(message)s [%(levelname)s %(name)s]',              
-            'datefmt': '%H:%M:%S'                                                                   
-         }, 
-        'standard': {                                                                                
-            'format': '%(asctime)s %(levelname)-8s [%(name)-15s] %(message)s',                      
-            'datefmt': '%Y/%m/%d %H:%M:%S',                                                         
-        } 
+        'precise': {
+            'format': '{%(asctime)s.%(msecs)d}  %(message)s [%(levelname)s %(name)s]',
+            'datefmt': '%H:%M:%S'
+         },
+        'standard': {
+            'format': '%(asctime)s %(levelname)-8s [%(name)-15s] %(message)s',
+            'datefmt': '%Y/%m/%d %H:%M:%S',
+        }
     },
-    'filters': {                                                                                    
-        'require_debug_false': {                                                                    
-            '()': 'django.utils.log.RequireDebugFalse'                                              
-        }                                                                                           
-    }, 
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
 
 
     'handlers': {

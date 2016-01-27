@@ -23,7 +23,7 @@ from pythia.templatetags.pythia_base import pythia_urlname
 from pythia.utils import mail_from_template
 
 from diff_match_patch import diff_match_patch
-from django_fsm.db.fields import can_proceed
+from django_fsm import can_proceed
 from functools import update_wrapper
 from reversion.models import Version
 from sdis import settings
@@ -41,7 +41,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
     directly.
     """
     exclude = ('project', 'status')
-    list_display = ('project_id','__str__','project_title', 
+    list_display = ('project_id','__str__','project_title',
             'project_type','project_year','project_number',
             'project_owner', 'program' ,'status')
     list_display_links = ('project_id', '__str__')
@@ -82,7 +82,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
     program.short_description = 'Program'
     program.admin_order_field = 'project__program__cost_center'
 
-    
+
     # end list_display crutches
 
     # normally you just specify two strings for the django-swingers download latex hook to work,
@@ -97,9 +97,9 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
         clicking a link that sets a GET variable. If a super user makes a POST
         request, it should be allowed.
         """
-        if ((obj and obj.is_approved and not 
+        if ((obj and obj.is_approved and not
             #(
-            request.user.is_superuser 
+            request.user.is_superuser
             #and (request.GET.get('edit') or request.method == 'POST'))
              )):
             return fields_for_model(obj, exclude=self.exclude).keys()
@@ -154,7 +154,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                                 'key': escape(object_id)})
 
         # Check if the transition is possible
-        
+
         transition = request.GET.get('transition')
         funcs = [x[1] for x in obj.get_available_status_transitions() if x[0] == transition]
         if not funcs:
@@ -167,7 +167,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
         codenames = ["%s.%s_%s" % (
             opts.app_label, func.permission, opts.model_name) for func in funcs]
 
-        permissions = [request.user.has_perm(codename) or 
+        permissions = [request.user.has_perm(codename) or
                 request.user.has_perm(codename, obj) for codename in codenames]
 
         if not any(permissions):
@@ -194,12 +194,12 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                 #recipients = [User.objects.get(username='florianm')]
                 #if settings.DEBUG:
                 #    print("[DEBUG] recipients replaced with current user: {0}".format(recipients))
-                
+
                 context = {
                     'instigator': request.user,
                     'object_name': 'the {0} in project {1} ({2})'.format(
-                        obj._meta.verbose_name, 
-                        obj.project.project_type_year_number, 
+                        obj._meta.verbose_name,
+                        obj.project.project_type_year_number,
                         obj.project.title_plain),
                     'object_url': request.build_absolute_uri(
                         reverse(pythia_urlname(obj.opts, 'change'), args=[obj.pk])),
@@ -212,7 +212,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                     list(recipients), 'email/email_base', context)
 
                 if settings.DEBUG:
-                    messages.info(request, 
+                    messages.info(request,
                         "Nnotification sent to (excluding current user {0}): {1}".format(
                         request.user.get_full_name(),
                         ', '.join([u.get_full_name() for u in obj.get_users_to_notify(transition)])
@@ -349,8 +349,8 @@ class ProjectPlanAdmin(DocumentAdmin):
     clicking a link that sets a GET variable. If a super user makes a POST
     request, it should be allowed.
     """
-    
-    if (obj and not obj.is_approved and not (request.user.is_superuser or 
+
+    if (obj and not obj.is_approved and not (request.user.is_superuser or
             request.user in Group.objects.get(name='SMT').user_set.all() or
             request.user in Group.objects.get(name='SCD').user_set.all() or
             request.user in Group.objects.get(name='BM').user_set.all() or
@@ -358,11 +358,10 @@ class ProjectPlanAdmin(DocumentAdmin):
             request.user in Group.objects.get(name='AE').user_set.all() or
             request.user in Group.objects.get(name='DM').user_set.all())):
         return ('bm_endorsement', 'hc_endorsement', 'ae_endorsement')
-        
+
     # if is_approved: all readonly except for superuser
     elif (obj and obj.is_approved and not request.user.is_superuser):
         return fields_for_model(obj, exclude=self.exclude).keys()
-    
+
     else:
         return super(ProjectPlanAdmin, self).get_readonly_fields(request, obj)
-

@@ -1,6 +1,5 @@
 from django.conf import settings
 
-
 def show_toolbar(request):
     """
     Determine when to show the debug toolbar. Only show if the server is in

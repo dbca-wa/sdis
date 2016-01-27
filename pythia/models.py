@@ -23,11 +23,7 @@ from django.contrib.gis.db import models
 
 from pythia.fields import Html2TextField
 
-from south.modelsinspector import add_introspection_rules
-#add_introspection_rules([], ["^myapp\.stuff\.fields\.SomeNewField"])
-
 logger = logging.getLogger(__name__)
-
 
 #-----------------------------------------------------------------------------#
 # Report Parts
@@ -180,7 +176,7 @@ class District(models.Model):
     objects = DistrictManager()
     region = models.ForeignKey(
     #ChainedForeignKey(
-        Region, 
+        Region,
     #    chained_field="name", chained_model_field="name",
     #    show_all=False, auto_choose=True,
         help_text=_("The region to which this district belongs."))
@@ -288,21 +284,21 @@ class Program(models.Model):
 
     # Key personnel ----------------------------------------------------------#
     program_leader = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        related_name='leads_programs', 
-        blank=True, null=True, 
+        settings.AUTH_USER_MODEL,
+        related_name='leads_programs',
+        blank=True, null=True,
         help_text='The Program Leader')
     # cost_center should be unique=True
     cost_center = models.CharField(
         max_length=3, blank=True, null=True,
         help_text='The three-digit cost center number for the Program.')
     finance_admin = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
+        settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='finance_admin_on_programs',
         help_text='The finance admin.')
     data_custodian = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
+        settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='pythia_data_custodian_on_programs',  # clashes with sdis2
         help_text='The default custodian of data sets of this Program.')
@@ -373,7 +369,7 @@ class Program(models.Model):
             Project.CORE_PROJECT]).prefetch_related('documents')
 
 def set_smt_to_pl(sender, instance, created, **kwargs):
-    """Add all Program Leaders to Group SMT. 
+    """Add all Program Leaders to Group SMT.
     If clobber==True, drop all SMT members beforehand.
     """
     smt, created = Group.objects.get_or_create(name='SMT')
@@ -539,56 +535,56 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # Name -------------------------------------------------------------------#
     title = models.CharField(
-        #_('title'), 
-	max_length=30, 
+        #_('title'),
+	max_length=30,
 	null=True, blank=True,
 	verbose_name=_("Academic Title"),
         help_text=_("Optional academic title, shown in team lists only if "
             "supplied, and only for external team members."))
     first_name = models.CharField(
-        #_('first name'), 
-	max_length=100, 
+        #_('first name'),
+	max_length=100,
 	null=True, blank=True,
-	verbose_name=_("First Name"), 
-	help_text=_("First name or given name.")) 
+	verbose_name=_("First Name"),
+	help_text=_("First name or given name."))
     # middle initials should just be called initials, at least label as such:
     middle_initials = models.CharField(
-        #_('middle initials'), 
-	max_length=100, 
+        #_('middle initials'),
+	max_length=100,
 	null=True, blank=True,
 	verbose_name=_("Initials"),
         help_text=_("Initials of first and middle names. Will be used in "
             "team lists with abbreviated names."))
     last_name = models.CharField(
-        #_('last name'), 
-	max_length=100, 
+        #_('last name'),
+	max_length=100,
 	null=True, blank=True,
 	verbose_name=_("Last Name"),
 	help_text=_("Last name or surname."))
 
     is_group = models.BooleanField(
-        #_('Is a group'), 
+        #_('Is a group'),
 	default=False,
 	verbose_name=_("Show as Group"),
         help_text=_("Whether this profile refers to a group, rather than a "
             "natural person. Groups are referred to with their group name, "
             "whereas first and last name refer to the group's contact person."))
     group_name = models.CharField(
-        #_('Group name'), 
-	max_length=200, 
+        #_('Group name'),
+	max_length=200,
 	null=True, blank=True,
 	verbose_name=_("Group name"),
         help_text=_("Group name, if this profile is not a natural "
             "person. E.g., 'Goldfields Regional Office'."))
 
     affiliation = models.CharField(
-        #_('Affiliation'), 
-	max_length=200, 
+        #_('Affiliation'),
+	max_length=200,
 	null=True, blank=True,
 	verbose_name=_("Affiliation"),
         help_text=_("Optional affiliation, not required for DPaW. If provided, the"
         " affiliation will be appended to the person or group name in parentheses."))
-    
+
     # Contact details --------------------------------------------------------#
     image = models.ImageField(
         upload_to="profiles", null=True, blank=True,
@@ -707,7 +703,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                                    self.DEFAULT_GROUP, self.email))
             else:
                 self.groups.add(group)
-    
+
     def get_title(self):
         """Returns the title if supplied and user is_external
         SANITY WARNING this function will HIDE the title for internal staff
@@ -741,10 +737,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             full_name = "{0} {1}".format(self.group_name, self.get_affiliation())
         else:
             full_name = "{0} {1} {2} {3} {4}".format(
-                self.get_title(), 
-                self.first_name, 
-                self.get_middle_initials(), 
-                self.last_name, 
+                self.get_title(),
+                self.first_name,
+                self.get_middle_initials(),
+                self.last_name,
                 self.get_affiliation())
         return full_name.strip()
 
@@ -766,12 +762,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         given name and surname.
         """
         if self.is_group:
-            return self.get_full_name() 
+            return self.get_full_name()
         else:
             full_name = "{0} {1} {2} {3}".format(
                     self.get_title(),
                     self.middle_initials, # remember these are full initials
-                    self.last_name, 
+                    self.last_name,
                     self.get_affiliation())
         return full_name.strip()
 
@@ -785,7 +781,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         given name and surname.
         """
         if self.is_group:
-            return self.get_full_name() 
+            return self.get_full_name()
         else:
             full_name = "{0} {1} {2}".format(
                     self.get_title(),
@@ -844,7 +840,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 doc.hc_endorsement == Document.ENDORSEMENT_REQUIRED) or (
                 doc.ae_endorsement == Document.ENDORSEMENT_REQUIRED):
                 excludes.add(doc)
-        
+
         endorsements = set()
 
         if is_bm:
@@ -864,9 +860,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             ).select_related('project'))
 
         approvals = set()
-        
+
         program_list = self.leads_programs.all()
-        # program -> projects is a reverse foreign key lookup, 
+        # program -> projects is a reverse foreign key lookup,
         # we can't batch this, so do one query per program
         for prog in program_list:
             projects = prog.project_set.prefetch_related('documents')
@@ -874,7 +870,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 approvals.update(proj.documents.filter(
                     status=Document.STATUS_INREVIEW
                     ).select_related('project'))
-    
+
         member_list = ProjectMembership.objects.prefetch_related(
                 'project', 'project__documents').filter(user=self)
 
@@ -885,9 +881,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         if is_scd:
             documents = Document.objects.filter(
                     status=Document.STATUS_INREVIEW).select_related('project')
-            # right now the can_approve method of most document classes is 
+            # right now the can_approve method of most document classes is
             # just True.
-            # if there's any logic that does heavy lookups, it may pay to 
+            # if there's any logic that does heavy lookups, it may pay to
             # add more prefetch arguments to the above query
             documents = set([d for d in documents if d.can_approve()])
             approvals.update(documents)
@@ -895,12 +891,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         # remove all the endorsements from the approvals pool
         approvals.difference_update(excludes)
-        
+
         # TODO: presort the output lists by descending project ID
-        return {'approvals': list(approvals), 
-                'endorsements':list(endorsements), 
+        return {'approvals': list(approvals),
+                'endorsements':list(endorsements),
                 'count': len(approvals)+len(endorsements)}
-    
+
     @property
     def portfolio(self):
         """
@@ -912,14 +908,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         tag!
         """
         from pythia.projects.models import (Project, ProjectMembership,
-            ScienceProject, CoreFunctionProject, CollaborationProject,  
+            ScienceProject, CoreFunctionProject, CollaborationProject,
             StudentProject)
         from pythia.documents.models import (ConceptPlan, ProjectPlan)
         from datetime import datetime, timedelta
 
-        # Fun fact: Django polymorphism casts the returned items from a 
-        # Project.objects query into the highest subclass, but does not 
-        # rig it for private key lookups. This is why we need to hit the 
+        # Fun fact: Django polymorphism casts the returned items from a
+        # Project.objects query into the highest subclass, but does not
+        # rig it for private key lookups. This is why we need to hit the
         # database again with pm_list to fetch the correctly casted object.
 
         best_before = datetime.now() - timedelta(days=30)
@@ -936,7 +932,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         stuck_result = {"new":[], "pending":[]}
 
         for x in stuck_new:
-            # Projects stuck in approval for more than three months need a 
+            # Projects stuck in approval for more than three months need a
             # kick up the rear end
             doc = x.documents.instance_of(ConceptPlan).get()
             stuck_result["new"].append(doc)

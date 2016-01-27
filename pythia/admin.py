@@ -28,38 +28,38 @@ import os
 import subprocess
 
 from collections import namedtuple
-from django_select2.fields import AutoModelSelect2Field, Select2Widget
+from django_select2.forms import ModelSelect2Widget, Select2Widget
 from pythia.fields import PythiaArrayField
 from reversion.models import Version
 
-from swingers.admin import DetailAdmin, AuditAdmin
-
 from pythia.fields import Html2TextField, PythiaArrayField
-from pythia.forms import (SdisModelForm, BaseInlineEditForm, 
+from pythia.forms import (SdisModelForm, BaseInlineEditForm,
         PythiaUserCreationForm, PythiaUserChangeForm)
 from pythia.widgets import ArrayFieldWidget, InlineEditWidgetWrapper
 
 
 logger = logging.getLogger(__name__)
 
-
 User = get_user_model()
 Breadcrumb = namedtuple('Breadcrumb', ['name', 'url'])
 
 
-class UserChoices(AutoModelSelect2Field):
+class UserChoices(ModelSelect2Widget):
     """
-    An enhanced User select list, listing Users sorted by last name
-    with a seach filter.
+    Searchable user list, sorted by last name.
     """
-    queryset = User.objects.order_by('last_name', 'first_name') 
+    queryset = User.objects.order_by('last_name', 'first_name')
     # BUG comes out ordered by username
-    search_fields = ['first_name__icontains', 'last_name__icontains', 
-            'group_name__icontains', 'affiliation__icontains']
+    search_fields = [
+        'first_name__icontains',
+        'last_name__icontains',
+        'group_name__icontains',
+        'affiliation__icontains'
+    ]
 
-    def __init__(self, *args, **kwargs):
-        super(UserChoices, self).__init__(*args, **kwargs)
-        self.widget = Select2Widget()
+    #def __init__(self, *args, **kwargs):
+    #    super(UserChoices, self).__init__(*args, **kwargs)
+    #    self.widget = Select2Widget()
 
     def label_from_instance(self, obj):
         return "{0} - {1}".format(obj.username, obj.fullname)
@@ -93,7 +93,7 @@ class FormfieldOverridesMixin(object):
         return formfield
 
 
-class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
+class BaseAdmin(FormfieldOverridesMixin, ModelAdmin):
     list_editable_extra = 0
     list_empty_form = False
     object_diff_template = None
@@ -151,11 +151,11 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
             self.model, self.get_changelist_form(request, form=SdisModelForm),
             extra=self.list_editable_extra, fields=fields, **defaults)
 
-    # the following wrappers are for better control over admin 
+    # the following wrappers are for better control over admin
     # windows displayed as popups.
-    # basically, assume that if the action is a HttpResponseRedirect (rather 
+    # basically, assume that if the action is a HttpResponseRedirect (rather
     # than a TemplateResponse to e.g. render
-    # the same form again but with errors), we've done our job 
+    # the same form again but with errors), we've done our job
     # and can close the popup.
     def add_view(self, request, form_url='', extra_context=None):
         """
@@ -171,7 +171,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
 
         if ("_popup" in request.REQUEST) and (
                 type(result) is HttpResponseRedirect):
-            return TemplateResponse(request, 'admin/close_popup.html', {}, 
+            return TemplateResponse(request, 'admin/close_popup.html', {},
                     current_app=self.admin_site.name)
         return result
 
@@ -185,9 +185,9 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
                 'breadcrumbs': self.get_breadcrumbs(request, obj)
         }
         context.update(extra_context or {})
-        
+
         storage = messages.get_messages(request)
-        
+
         storage.used = True
 
         result = super(BaseAdmin, self).change_view(request, object_id,
@@ -196,7 +196,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
 
         if ("_popup" in request.REQUEST) and (
                 type(result) is HttpResponseRedirect):
-            return TemplateResponse(request, 'admin/close_popup.html', {}, 
+            return TemplateResponse(request, 'admin/close_popup.html', {},
                     current_app=self.admin_site.name)
         return result
 
@@ -228,7 +228,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
                                                     extra_context=context)
 
         if ("_popup" in request.REQUEST) and (type(result) is HttpResponseRedirect):
-            return TemplateResponse(request, 'admin/close_popup.html', {}, 
+            return TemplateResponse(request, 'admin/close_popup.html', {},
                     current_app=self.admin_site.name)
         return result
 
@@ -237,7 +237,7 @@ class UserAdmin(DjangoUserAdmin):
     list_display = ('username', 'fullname', 'email', 'program', 'work_center')
     list_per_page = 1000    # sod pagination
     list_filter = ('is_external', 'is_group', 'agreed','is_staff', 'is_superuser', 'is_active')
-    readonly_fields = ('username', 'is_active', 'is_staff', 'is_superuser', 
+    readonly_fields = ('username', 'is_active', 'is_staff', 'is_superuser',
                        'user_permissions', 'last_login', 'date_joined')
 
 
@@ -247,7 +247,7 @@ class UserAdmin(DjangoUserAdmin):
     fieldsets = (
         ('Name', {
             'description':'Details required for correct display of name',
-            'fields': ('title', 'first_name', 'middle_initials', 
+            'fields': ('title', 'first_name', 'middle_initials',
             'last_name','group_name', 'affiliation', 'is_group', 'is_external'),}),
         ('Contact Details', {
             'description':'Optional profile information',
@@ -256,16 +256,16 @@ class UserAdmin(DjangoUserAdmin):
         #('Staff Profile', {
         #    'description':'Staff profile - not used for now',
         #    'classes': ('collapse',),
-        #    'fields': ('program', 'work_center', 'profile_text', 
-        #        'expertise', 'curriculum_vitae', 'projects', 
+        #    'fields': ('program', 'work_center', 'profile_text',
+        #        'expertise', 'curriculum_vitae', 'projects',
         #        'author_code', 'publications_staff', 'publications_other'),
         #}),
         ('Administrative Details', {
             'description':'Behind the scenes settings',
             'classes': ('collapse',),
             'fields': ('program','work_center',
-                'username', 'password', 
-                'is_active', 'is_staff', 'is_superuser', 
+                'username', 'password',
+                'is_active', 'is_staff', 'is_superuser',
                 'date_joined', 'groups'),})
     )
 
@@ -279,7 +279,7 @@ class UserAdmin(DjangoUserAdmin):
         """Superusers can set permissions and details.
         Users can update their own details, but not permissions.
         Users can view other user's profiles read-only.
-        
+
         Introduces hack property to prevent infinite recursion
          get_fieldsets may call .get_form, which calls .get_readonly_fields
         """
@@ -287,18 +287,18 @@ class UserAdmin(DjangoUserAdmin):
             # superuser can edit all fields, add global permissions via groups
             return ()
 
-        elif (obj is None):     
+        elif (obj is None):
             # called from the add form: non-superuser registers another user
-            return ('is_superuser', 'is_active', 'is_staff', 
+            return ('is_superuser', 'is_active', 'is_staff',
                     'date_joined', 'groups')
-        
+
         elif (request.user == obj and getattr(self, 'hack', True)):
             # non-superuser can update own profile, but not add privileges
-            return ('is_superuser', 'is_active', 'is_staff', 
+            return ('is_superuser', 'is_active', 'is_staff',
                     'date_joined', 'groups')
 
         elif (request.user != obj and getattr(self, 'hack', True)):
-            # non-superuser is viewing the profile page of another user 
+            # non-superuser is viewing the profile page of another user
             # all fields readonly
             setattr(self, 'hack', False)
             rf = flatten_fieldsets(self.get_fieldsets(request, obj))
@@ -359,9 +359,17 @@ class DownloadAdminMixin(ModelAdmin):
 
         urlpatterns = patterns(
             '',
-            url(r'^(\d+)/download/tex/$', wrap(self.latex), name='%s_%s_download_tex' % info),
-            url(r'^(\d+)/download/pdf/$', wrap(self.pdf), name='%s_%s_download_pdf' % info),
-            url(r'^(\d+)/download/html/$', wrap(self.simplehtml), name='%s_%s_download_html' % info),
+            url(r'^(\d+)/download/tex/$',
+                wrap(self.latex),
+                name='%s_%s_download_tex' % info),
+
+            url(r'^(\d+)/download/pdf/$',
+                wrap(self.pdf),
+                name='%s_%s_download_pdf' % info),
+
+            url(r'^(\d+)/download/html/$',
+                wrap(self.simplehtml),
+                name='%s_%s_download_html' % info),
 
         )
         return urlpatterns + super(DownloadAdminMixin, self).get_urls()
@@ -459,7 +467,7 @@ class DownloadAdminMixin(ModelAdmin):
         with open(os.path.join(directory, texname), "w") as f:
             f.write(output.encode('utf-8'))
 
-        cmd = ['lualatex', "--interaction", "batchmode", "--output-directory", 
+        cmd = ['lualatex', "--interaction", "batchmode", "--output-directory",
                 directory, texname]
         try:
             for i in range(2):
@@ -479,7 +487,7 @@ class DownloadAdminMixin(ModelAdmin):
             response.write(f.read())
 
         return response
-    
+
     def latex(self, request, object_id):
         obj = self.get_object(request, unquote(object_id))
         template = self.download_template
@@ -517,7 +525,7 @@ class DownloadAdminMixin(ModelAdmin):
 
         return response
 
-class DivisionAdmin(BaseAdmin, DetailAdmin):
+class DivisionAdmin(BaseAdmin, ModelAdmin):
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__','director_name')
 
@@ -526,22 +534,22 @@ class DivisionAdmin(BaseAdmin, DetailAdmin):
     director_name.short_description = 'Director'
     director_name.admin_order_field = 'director__last_name'
 
-class ProgramAdmin(BaseAdmin, DetailAdmin):
+class ProgramAdmin(BaseAdmin, ModelAdmin):
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__','cost_center','published','position',
             'program_leader','finance_admin','data_custodian')
 
-class WorkCenterAdmin(BaseAdmin, DetailAdmin):
+class WorkCenterAdmin(BaseAdmin, ModelAdmin):
     exclude = ('effective_to', 'effective_from')
     _skip_relatedFieldWidget = False
     list_display = ('__str__','district','physical_address')
 
-class AreaAdmin(BaseAdmin, DetailAdmin):
+class AreaAdmin(BaseAdmin, ModelAdmin):
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__','area_type')
 
-class RegionAdmin(DetailAdmin):
+class RegionAdmin(ModelAdmin):
     list_display = ('__str__', 'northern_extent')
 
-class DistrictAdmin(DetailAdmin):
+class DistrictAdmin(ModelAdmin):
     list_display = ('__str__','region','northern_extent')
