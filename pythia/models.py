@@ -22,7 +22,6 @@ from django.utils.translation import ugettext_lazy as _
 import logging
 import reversion
 import threading
-from smart_selects.db_fields import ChainedForeignKey
 
 from pythia.fields import Html2TextField
 
@@ -30,8 +29,8 @@ logger = logging.getLogger(__name__)
 
 
 # we can't do `from swingers import models` because that causes circular import
-from swingers.models import Model, ForeignKey, DateTimeField
-
+# TODO
+# from swingers.models import Model, ForeignKey, DateTimeField
 
 _locals = threading.local()
 
@@ -46,6 +45,7 @@ def get_locals():
         _locals.request.user = amazing
     """
     return _locals
+
 
 @python_2_unicode_compatible
 class Audit(Model):
@@ -241,7 +241,7 @@ class Area(models.Model):  # , models.PolygonModelMixin):
         ordering = ['area_type','-northern_extent']
 
     def save(self, *args, **kwargs):
-	if self.get_northern_extent() is not None:
+        if self.get_northern_extent() is not None:
             self.northern_extent = self.get_northern_extent()
         super(Area, self).save(*args, **kwargs)
 
@@ -251,10 +251,10 @@ class Area(models.Model):  # , models.PolygonModelMixin):
     def get_northern_extent(self):
         return self.mpoly.extent[3] if self.mpoly else None
 
+
 class RegionManager(models.GeoManager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
-
 
 
 @python_2_unicode_compatible
@@ -304,11 +304,7 @@ class District(models.Model):
     code = models.CharField(max_length=3, null=True, blank=True)
     northern_extent = models.FloatField(null=True, blank=True)
     objects = DistrictManager()
-    region = models.ForeignKey(
-    #ChainedForeignKey(
-        Region,
-    #    chained_field="name", chained_model_field="name",
-    #    show_all=False, auto_choose=True,
+    region = models.ForeignKey(Region,
         help_text=_("The region to which this district belongs."))
     mpoly = models.MultiPolygonField(
         null=True, blank=True,
@@ -385,8 +381,6 @@ class Division(models.Model):
         verbose_name = _("Departmental Service")
         verbose_name_plural = _("Departmental Services")
         ordering = ['slug','name']
-
-
 
     def __str__(self):
         return 'Service {0}: {1}'.format(self.slug, self.name)
@@ -666,52 +660,52 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Name -------------------------------------------------------------------#
     title = models.CharField(
         #_('title'),
-	max_length=30,
-	null=True, blank=True,
-	verbose_name=_("Academic Title"),
+    max_length=30,
+    null=True, blank=True,
+    verbose_name=_("Academic Title"),
         help_text=_("Optional academic title, shown in team lists only if "
             "supplied, and only for external team members."))
     first_name = models.CharField(
         #_('first name'),
-	max_length=100,
-	null=True, blank=True,
-	verbose_name=_("First Name"),
-	help_text=_("First name or given name."))
+    max_length=100,
+    null=True, blank=True,
+    verbose_name=_("First Name"),
+    help_text=_("First name or given name."))
     # middle initials should just be called initials, at least label as such:
     middle_initials = models.CharField(
         #_('middle initials'),
-	max_length=100,
-	null=True, blank=True,
-	verbose_name=_("Initials"),
+    max_length=100,
+    null=True, blank=True,
+    verbose_name=_("Initials"),
         help_text=_("Initials of first and middle names. Will be used in "
             "team lists with abbreviated names."))
     last_name = models.CharField(
         #_('last name'),
-	max_length=100,
-	null=True, blank=True,
-	verbose_name=_("Last Name"),
-	help_text=_("Last name or surname."))
+    max_length=100,
+    null=True, blank=True,
+    verbose_name=_("Last Name"),
+    help_text=_("Last name or surname."))
 
     is_group = models.BooleanField(
         #_('Is a group'),
-	default=False,
-	verbose_name=_("Show as Group"),
+    default=False,
+    verbose_name=_("Show as Group"),
         help_text=_("Whether this profile refers to a group, rather than a "
             "natural person. Groups are referred to with their group name, "
             "whereas first and last name refer to the group's contact person."))
     group_name = models.CharField(
         #_('Group name'),
-	max_length=200,
-	null=True, blank=True,
-	verbose_name=_("Group name"),
+    max_length=200,
+    null=True, blank=True,
+    verbose_name=_("Group name"),
         help_text=_("Group name, if this profile is not a natural "
             "person. E.g., 'Goldfields Regional Office'."))
 
     affiliation = models.CharField(
         #_('Affiliation'),
-	max_length=200,
-	null=True, blank=True,
-	verbose_name=_("Affiliation"),
+    max_length=200,
+    null=True, blank=True,
+    verbose_name=_("Affiliation"),
         help_text=_("Optional affiliation, not required for DPaW. If provided, the"
         " affiliation will be appended to the person or group name in parentheses."))
 
@@ -895,10 +889,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.get_full_name()
         else:
             full_name = "{0} {1} {2} {3}".format(
-                    self.get_title(),
-                    self.middle_initials, # remember these are full initials
-                    self.last_name,
-                    self.get_affiliation())
+                self.get_title(),
+                self.middle_initials,  # remember these are full initials
+                self.last_name,
+                self.get_affiliation())
         return full_name.strip()
 
     @property
@@ -926,8 +920,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def __str__(self):
-        slug = " ({0}-{1})".format(self.program.cost_center, self.program.slug
-            ) if self.program else ""
+        slug = " ({0}-{1})".format(
+            self.program.cost_center, self.program.slug) if self.program else ""
         return "{0}{1}".format(self.get_full_name(), slug)
 
     @property

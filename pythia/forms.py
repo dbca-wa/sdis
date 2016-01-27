@@ -2,7 +2,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 from django import forms
-from django.conf import settings
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.models import User
@@ -14,7 +13,7 @@ from datetime import datetime
 
 
 class TermsAndConditionsForm(forms.Form):
-    first_name = forms.CharField(label="First name", 
+    first_name = forms.CharField(label="First name",
             error_messages={"required": "First name cannot be blank."})
     last_name = forms.CharField(label="Last name",
             error_messages={"required": "Last name cannot be blank."})
@@ -22,7 +21,7 @@ class TermsAndConditionsForm(forms.Form):
             required=True, initial=False,
             help_text="Do you agree to the terms and conditions?",
             label="I agree",
-            error_messages={"required": 
+            error_messages={"required":
                     "You must agree to the terms and conditions."})
 
 
@@ -201,10 +200,10 @@ class PythiaUserCreationForm(UserCreationForm):
             return username
         raise forms.ValidationError(self.error_messages['duplicate_username'])
 
+
 class PythiaUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
         model = get_user_model()
-
 
 
 class SdisPasswordResetForm(PasswordResetForm):
@@ -214,8 +213,8 @@ class SdisPasswordResetForm(PasswordResetForm):
 
     def clean_email(self):
         # ensure this is an FPC email
-        email = self.cleaned_data['email']
-        #if not email.lower().endswith(settings.FPC_EMAIL_EXT):
+        # email = self.cleaned_data['email']
+        # if not email.lower().endswith(settings.FPC_EMAIL_EXT):
         #    raise forms.ValidationError(
         #        _("This is not a valid FPC email address. " +
         #          "Only FPC users can reset their password " +

@@ -1,9 +1,11 @@
 from __future__ import unicode_literals
 
+from collections import namedtuple
 from functools import update_wrapper
+import logging
+import os
+import subprocess
 
-
-from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin import ModelAdmin
@@ -22,21 +24,15 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
+from django_select2.forms import ModelSelect2Widget
 
-import logging
-import os
-import subprocess
-
-from collections import namedtuple
-from django_select2.forms import ModelSelect2Widget, Select2Widget
-from pythia.fields import PythiaArrayField
 from reversion.models import Version
 from reversion.admin import VersionAdmin
 from guardian.admin import GuardedModelAdmin
 
 from pythia.fields import Html2TextField, PythiaArrayField
 from pythia.forms import (SdisModelForm, BaseInlineEditForm,
-        PythiaUserCreationForm, PythiaUserChangeForm)
+    PythiaUserCreationForm, PythiaUserChangeForm)
 from pythia.widgets import ArrayFieldWidget, InlineEditWidgetWrapper
 
 
@@ -45,9 +41,11 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 Breadcrumb = namedtuple('Breadcrumb', ['name', 'url'])
 
+
 class AuditAdmin(VersionAdmin, GuardedModelAdmin, ModelAdmin):
     """Salvaged from deleted django-swingers package
     """
+
     search_fields = ['id', 'creator__username', 'modifier__username',
                      'creator__email', 'modifier__email']
     list_display = ['__unicode__', 'creator', 'modifier', 'created',
@@ -98,7 +96,7 @@ class UserChoices(ModelSelect2Widget):
         'affiliation__icontains'
     ]
 
-    #def __init__(self, *args, **kwargs):
+    # def __init__(self, *args, **kwargs):
     #    super(UserChoices, self).__init__(*args, **kwargs)
     #    self.widget = Select2Widget()
 
@@ -116,7 +114,6 @@ class FormfieldOverridesMixin(object):
     def formfield_for_dbfield(self, db_field, **kwargs):
         formfield = super(FormfieldOverridesMixin,
                           self).formfield_for_dbfield(db_field, **kwargs)
-
 
         # skip the RelatedFieldWidgetWrapper
         if ((hasattr(formfield, 'widget') and
@@ -151,11 +148,11 @@ class BaseAdmin(FormfieldOverridesMixin, ModelAdmin):
 
         Returns a named tuple of ('name', 'url') for each bread crumb.
         """
-        opts = self.model._meta
+
         return (
             Breadcrumb(_('Home'), reverse('admin:index')),
-            #Breadcrumb(opts.app_label,reverse('admin:app_list',
-            #    kwargs={'app_label': opts.app_label},
+            # Breadcrumb(opts.app_label,reverse('admin:app_list',
+            #    kwargs={'app_label': self.model._meta.app_label},
             #    current_app=self.admin_site.name))
         )
 
@@ -294,13 +291,13 @@ class UserAdmin(DjangoUserAdmin):
             'description':'Optional profile information',
             'classes': ('collapse',),
             'fields': ('image', 'email', 'phone', 'phone_alt', 'fax'),}),
-        #('Staff Profile', {
+        # ('Staff Profile', {
         #    'description':'Staff profile - not used for now',
         #    'classes': ('collapse',),
         #    'fields': ('program', 'work_center', 'profile_text',
         #        'expertise', 'curriculum_vitae', 'projects',
         #        'author_code', 'publications_staff', 'publications_other'),
-        #}),
+        # }),
         ('Administrative Details', {
             'description':'Behind the scenes settings',
             'classes': ('collapse',),
@@ -532,10 +529,8 @@ class DownloadAdminMixin(ModelAdmin):
     def latex(self, request, object_id):
         obj = self.get_object(request, unquote(object_id))
         template = self.download_template
-        texname = template + ".tex"
         filename = template + ".tex"
         now = timezone.localtime(timezone.now())
-        #timestamp = now.isoformat().rsplit(".")[0].replace(":", "")[:-2]
         downloadname = filename.replace(' ', '_')
         context = {
             'original': obj,
