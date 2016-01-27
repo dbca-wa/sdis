@@ -11,7 +11,6 @@ sys.path.insert(0, root('apps'))
 SECRET_KEY = os.environ['SECRET_KEY'] if os.environ.get('SECRET_KEY', False) else 'foo'
 
 DEBUG = True if os.environ.get('DEBUG', False) == 'True' else False
-TEMPLATE_DEBUG = DEBUG
 CSRF_COOKIE_SECURE = True if os.environ.get('CSRF_COOKIE_SECURE', False) == 'True' else False
 SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) == 'True' else False
 
@@ -42,6 +41,7 @@ SITE_NAME = 'SDIS'
     #'django_browserid',
     #'swingers',
     #'south',
+    #'swingers'
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
@@ -73,10 +73,10 @@ THIRD_PARTY_APPS = (
     'django_nose',
     'envelope',
     'reversion',
-    'tastypie',
     'rest_framework',
     'webtemplate_dpaw',
     'django_wsgiserver',
+
 )
 
 PROJECT_APPS = (
@@ -101,23 +101,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'reversion.middleware.RevisionMiddleware',
     'dpaw_utils.middleware.SSOLoginMiddleware',
-
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django_pdb.middleware.PdbMiddleware',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django_browserid.context_processors.browserid',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.media',
-    'django.core.context_processors.request',
-    'django.core.context_processors.csrf',
-    'django.core.context_processors.static',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'pythia.context_processors.persona',
-)
 
 ROOT_URLCONF = 'sdis.urls'
 
@@ -141,13 +128,6 @@ TEMPLATES = [
         },
     },
 ]
-#TEMPLATE_LOADERS = (
-#    ('django.template.loaders.cached.Loader', (
-#       'django.template.loaders.filesystem.Loader',
-#        'django.template.loaders.app_directories.Loader',
-#    )),)
-#TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'pythia/templates'),)
-
 
 WSGI_APPLICATION = 'sdis.wsgi.application'
 
@@ -186,6 +166,7 @@ STATICFILES_FINDERS = (
 # User settings - enable SDIS custom user.
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
 #   'pythia.backends.PythiaBackend',
 )
 
