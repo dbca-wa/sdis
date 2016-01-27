@@ -1,12 +1,12 @@
-import dj_database_url
 from confy import database
 import ldap
 import os
 
-from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType,
-                                     LDAPSearchUnion)
+#from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType, LDAPSearchUnion)
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+root = lambda *x: os.path.join(BASE_DIR, *x) 
+sys.path.insert(0, root('apps'))
 
 SECRET_KEY = os.environ['SECRET_KEY'] if os.environ.get('SECRET_KEY', False) else 'foo'
 
@@ -15,11 +15,27 @@ TEMPLATE_DEBUG = DEBUG
 CSRF_COOKIE_SECURE = True if os.environ.get('CSRF_COOKIE_SECURE', False) == 'True' else False       
 SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) == 'True' else False 
 
-
-ALLOWED_HOSTS = ['*']
-INTERNAL_IPS = ('127.0.0.1',)
+ if not DEBUG:
+    # Localhost, UAT and Production hosts                                                           
+    ALLOWED_HOSTS = [                                                                               
+        'localhost',                                                                                
+        '127.0.0.1',                                                                                
+        'sdis.dpaw.wa.gov.au',                                                                    
+        'sdis.dpaw.wa.gov.au.',                                                                   
+        'sdis-dev.dpaw.wa.gov.au',                                                                
+        'sdis-dev.dpaw.wa.gov.au.',                                                               
+        'sdis-test.dpaw.wa.gov.au',                                                                
+        'sdis-test.dpaw.wa.gov.au.',                                                               
+        'sdis-uat.dpaw.wa.gov.au',                                                                
+        'sdis-uat.dpaw.wa.gov.au.',                                                               
+    ] 
 
 # Application definition
+SITE_TITLE = 'SDIS - Science Directorate Information System'
+APPLICATION_VERSION_NO = '4.0'
+SITE_ID = 1
+#SITE_URL = os.environ.get('SITE_URL', None)
+SITE_NAME = 'SDIS'
 
     #'django_browserid',
     #'swingers',
@@ -35,14 +51,12 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.humanize',
     'django.contrib.gis',
+    'django.contrib.postgres',
+)
 
-    'pythia',
-    'pythia.documents',
-    'pythia.projects',
-    'pythia.reports',
-
+THIRD_PARTY_APPS = (
+    'django_extensions',
     'django_comments',
-    'rest_framework',
     'django_pdb',
     'django_select2',
     'markup_deprecated',
@@ -51,22 +65,27 @@ INSTALLED_APPS = (
     'guardian',
     'debug_toolbar',
     'debug_toolbar_htmltidy',
-    'leaflet',
     'mail_templated',
     'compressor',
     'gunicorn',
     'django_nose',
-    'djangular',
-
-    
-    'django_extensions',
     'envelope',
     'reversion',
     'tastypie',
+    'rest_framework',
     'webtemplate_dpaw',
     'django_wsgiserver',
-
 )
+
+PROJECT_APPS = (
+    'pythia',
+    'pythia.documents',
+    'pythia.projects',
+    'pythia.reports',
+)
+
+INSTALLED_APPS += THIRD_PARTY_APPS
+INSTALLED_APPS += PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
     #'swingers.middleware.common.CommonMiddleware',
@@ -100,58 +119,77 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 ROOT_URLCONF = 'sdis.urls'
 
+TEMPLATES = [                                                                                       
+    {                                                                                               
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',                               
+        'DIRS': [root('templates')],                                                                
+        'APP_DIRS': True,                                                                           
+        'OPTIONS': {                                                                                
+            'context_processors': [                                                                 
+                "django.contrib.auth.context_processors.auth",                                      
+                "django.core.context_processors.debug",                                             
+                "django.core.context_processors.i18n",                                              
+                "django.core.context_processors.media",                                             
+                "django.core.context_processors.static",                                            
+                "django.core.context_processors.tz",                                                
+                "django.contrib.messages.context_processors.messages",                              
+                "django.core.context_processors.request",                                           
+                #"sdis.context_processors.standard",                                               
+            ],                                                                                      
+        },                                                                                          
+    },                                                                                          
+] 
+#TEMPLATE_LOADERS = (
+#    ('django.template.loaders.cached.Loader', (
+#       'django.template.loaders.filesystem.Loader',
+#        'django.template.loaders.app_directories.Loader',
+#    )),)
+#TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'pythia/templates'),)
+
+
 WSGI_APPLICATION = 'sdis.wsgi.application'
 
 # Database
 DATABASES = {'default': database.config()}
 
-# Internationalization
-# https://docs.djangoproject.com/en/1.6/topics/i18n/
-SITE_ID = 1
-SITE_URL = os.environ.get('SITE_URL', None)
-SITE_NAME = 'SDIS'
+# I8n
 LANGUAGE_CODE = 'en-au'
 TIME_ZONE = 'Australia/Perth'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+DATE_FORMAT = '%d/%m/%Y'      # O5/10/2006                                                          
+# Set the formats that will be accepted in date input fields                                        
+DATE_INPUT_FORMATS = (                                                                              
+    '%d/%m/%Y',             # '25/10/2006'                                                          
+    '%Y-%m-%d',             # '2006-10-25'                                                          
+    '%Y_%m_%d',             # '2006_10_25'                                                          
+) 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Uploads
+MEDIA_ROOT = root('..', 'media')
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Static files (CSS, JavaScript, Images)
+STATIC_ROOT = root('..', 'staticfiles')
 STATIC_URL = '/static/'
-
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
 
-TEMPLATE_LOADERS = (
-    ('django.template.loaders.cached.Loader', (
-        'django.template.loaders.filesystem.Loader',
-        'django.template.loaders.app_directories.Loader',
-    )),
-)
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'pythia/templates'),
-)
-
-# User settings - enable Persona and SDIS custom user.
+# User settings - enable SDIS custom user.
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 #   'pythia.backends.PythiaBackend',
-#   'swingers.sauth.backends.EmailBackend',
-#   'swingers.sauth.backends.PersonaBackend',
 )
 
 ANONYMOUS_USER_ID = 100000
 AUTH_USER_MODEL = 'pythia.User'
-PERSONA_LOGIN = os.environ.get('PERSONA_LOGIN', False)
+#PERSONA_LOGIN = os.environ.get('PERSONA_LOGIN', False)
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
@@ -167,41 +205,41 @@ API_LIMIT_PER_PAGE = 0
 
 
 # LDAP settings
-AUTH_LDAP_SERVER_URI = os.environ.get('LDAP_SERVER_URI', None)
-AUTH_LDAP_BIND_DN = os.environ.get('LDAP_BIND_DN', None)
-AUTH_LDAP_BIND_PASSWORD = os.environ.get('LDAP_BIND_PASSWORD', None)
+#AUTH_LDAP_SERVER_URI = os.environ.get('LDAP_SERVER_URI', None)
+#AUTH_LDAP_BIND_DN = os.environ.get('LDAP_BIND_DN', None)
+#AUTH_LDAP_BIND_PASSWORD = os.environ.get('LDAP_BIND_PASSWORD', None)
 
-AUTH_LDAP_ALWAYS_UPDATE_USER = False
-AUTH_LDAP_AUTHORIZE_ALL_USERS = True
-AUTH_LDAP_FIND_GROUP_PERMS = False
-AUTH_LDAP_MIRROR_GROUPS = False
-AUTH_LDAP_CACHE_GROUPS = False
-AUTH_LDAP_GROUP_CACHE_TIMEOUT = 300
+#AUTH_LDAP_ALWAYS_UPDATE_USER = False
+#AUTH_LDAP_AUTHORIZE_ALL_USERS = True
+#AUTH_LDAP_FIND_GROUP_PERMS = False
+#AUTH_LDAP_MIRROR_GROUPS = False
+#AUTH_LDAP_CACHE_GROUPS = False
+#AUTH_LDAP_GROUP_CACHE_TIMEOUT = 300
 
-AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
-    LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
-               "(sAMAccountName=%(user)s)"),
-    LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
-               "(mail=%(user)s)"),
-)
+#AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
+#    LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
+#               "(sAMAccountName=%(user)s)"),
+#    LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
+#               "(mail=%(user)s)"),
+#)
 
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-    "DC=corporateict,DC=domain",
-    ldap.SCOPE_SUBTREE, "(objectClass=group)"
-)
+#AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+#    "DC=corporateict,DC=domain",
+#    ldap.SCOPE_SUBTREE, "(objectClass=group)"
+#)
 
-AUTH_LDAP_GLOBAL_OPTIONS = {
-    ldap.OPT_X_TLS_REQUIRE_CERT: False,
-    ldap.OPT_REFERRALS: False,
-}
+#AUTH_LDAP_GLOBAL_OPTIONS = {
+#    ldap.OPT_X_TLS_REQUIRE_CERT: False,
+#    ldap.OPT_REFERRALS: False,
+#}
 
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+#AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 
-AUTH_LDAP_USER_ATTR_MAP = {
-    'first_name': "givenName",
-    'last_name': "sn",
-    'email': "mail",
-}
+#AUTH_LDAP_USER_ATTR_MAP = {
+#    'first_name': "givenName",
+#    'last_name': "sn",
+#    'email': "mail",
+#}
 
 
 # Django-Restframework
@@ -224,10 +262,10 @@ ENVELOPE_EMAIL_RECIPIENTS = ['sdis@DPaW.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True
 
 # old email settings
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', False)
-DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dpaw.wa.gov.au>'
+#EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
+##EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
+#EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', False)
+#DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dpaw.wa.gov.au>'
 
 
 COMPRESS_ENABLED = False
@@ -244,15 +282,27 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 # Logging configuration
+LOG_FOLDER = root('..', 'log') 
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'formatters': {
-        'standard': {
-            'format': '%(asctime)-.19s [%(process)d] [%(levelname)s] '
-                      '%(message)s'
-        },
+        'precise': {                                                                                
+            'format': '{%(asctime)s.%(msecs)d}  %(message)s [%(levelname)s %(name)s]',              
+            'datefmt': '%H:%M:%S'                                                                   
+         }, 
+        'default': {                                                                                
+            'format': '%(asctime)s %(levelname)-8s [%(name)-15s] %(message)s',                      
+            'datefmt': '%Y/%m/%d %H:%M:%S',                                                         
+        } 
     },
+    'filters': {                                                                                    
+        'require_debug_false': {                                                                    
+            '()': 'django.utils.log.RequireDebugFalse'                                              
+        }                                                                                           
+    }, 
+
+
     'handlers': {
         'null': {
             'level': 'DEBUG',
@@ -266,7 +316,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/sdis.log'),
+            'filename': os.path.join(LOG_FOLDER, 'sdis.log'),
             'formatter': 'standard',
             'maxBytes': '16777216'
         },
@@ -321,7 +371,7 @@ if DEBUG:
     }
 
     # SDIS-260: cached template loader crashes debug toolbar template source
-    TEMPLATE_LOADERS = (
-        'django.template.loaders.filesystem.Loader',
-        'django.template.loaders.app_directories.Loader',
-    )
+    #TEMPLATE_LOADERS = (
+    #    'django.template.loaders.filesystem.Loader',
+    #    'django.template.loaders.app_directories.Loader',
+    #)
