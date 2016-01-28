@@ -38,22 +38,18 @@ SITE_ID = 1
 #SITE_URL = os.environ.get('SITE_URL', None)
 SITE_NAME = 'SDIS'
 
-    #'django_browserid',
-    #'swingers',
-    #'south',
-    #'swingers'
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django.contrib.contenttypes',
     'django.contrib.auth',
+    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.humanize',
-    'django.contrib.gis',
     'django.contrib.postgres',
+    'django.contrib.gis',
 )
 
 THIRD_PARTY_APPS = (
@@ -76,7 +72,6 @@ THIRD_PARTY_APPS = (
     'rest_framework',
     'webtemplate_dpaw',
     'django_wsgiserver',
-
 )
 
 PROJECT_APPS = (

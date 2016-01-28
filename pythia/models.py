@@ -48,16 +48,16 @@ def get_locals():
 
 
 @python_2_unicode_compatible
-class Audit(Model):
+class Audit(models.Model):
     class Meta:
         abstract = True
 
-    creator = ForeignKey(
+    creator = models.ForeignKey(
         User, related_name='%(app_label)s_%(class)s_created', editable=False)
-    modifier = ForeignKey(
+    modifier = models.ForeignKey(
         User, related_name='%(app_label)s_%(class)s_modified', editable=False)
-    created = DateTimeField(default=timezone.now, editable=False)
-    modified = DateTimeField(auto_now=True, editable=False)
+    created = models.DateTimeField(default=timezone.now, editable=False)
+    modified = models.DateTimeField(auto_now=True, editable=False)
 
     def __init__(self, *args, **kwargs):
         super(Audit, self).__init__(*args, **kwargs)
