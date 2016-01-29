@@ -2,14 +2,11 @@ from confy import database
 import os
 import sys
 
-#from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType, LDAPSearchUnion)
-
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 root = lambda *x: os.path.join(BASE_DIR, *x)
-sys.path.insert(0, root('apps'))
+sys.path.insert(0, root('pythia'))
 
 SECRET_KEY = os.environ['SECRET_KEY'] if os.environ.get('SECRET_KEY', False) else 'foo'
-
 DEBUG = True if os.environ.get('DEBUG', False) == 'True' else False
 CSRF_COOKIE_SECURE = True if os.environ.get('CSRF_COOKIE_SECURE', False) == 'True' else False
 SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) == 'True' else False
@@ -47,8 +44,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.humanize',
-    'django.contrib.postgres',
     'django.contrib.gis',
+    'django.contrib.postgres',
 )
 
 THIRD_PARTY_APPS = (
@@ -222,10 +219,7 @@ ENVELOPE_USE_HTML_EMAIL = True
 
 COMPRESS_ENABLED = False
 
-SOUTH_TESTS_MIGRATE = False
-SKIP_SOUTH_TESTS = True
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
 
 DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': False,
@@ -299,16 +293,6 @@ if DEBUG:
     # Set up logging differently to give us some more information about what's
     # going on
     LOGGING['loggers'] = {
-        'django_auth_ldap': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True
-        },
-        'django_browserid': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True
-        },
         'django.request': {
             'handlers': ['file'],
             'level': 'DEBUG',

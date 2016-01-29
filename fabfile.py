@@ -146,7 +146,7 @@ def deploy():
     """
     install()
     quickdeploy()
-    syncdb()
+    migrate()
 
 def cleandeploy():
     """

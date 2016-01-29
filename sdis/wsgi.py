@@ -14,4 +14,3 @@ from dj_static import Cling, MediaCling
 
 confy.read_environment_file()
 application = Cling(MediaCling(get_wsgi_application()))
-

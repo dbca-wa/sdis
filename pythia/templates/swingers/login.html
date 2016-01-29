@@ -1,5 +1,4 @@
 {% extends "admin/base_site.html" %}
-{% load browserid %}
 
 {% block extrastyle %}
 <style id="login-style" type="text/css">
@@ -76,11 +75,5 @@ h2 {
             <input class="btn btn-primary btn-block btn-lg" type="submit" value="Log in" />
     </div>
 </form>
-{% if PERSONA_LOGIN %}
-<hr>
-<h2>External users:</h2>
-{% browserid_login link_class='btn btn-warning btn-block btn-lg' text='Log in with Persona' %}
-{% endif %}
-
 
 {% endblock %}
