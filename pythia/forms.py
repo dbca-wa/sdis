@@ -41,7 +41,7 @@ class BaseInlineEditForm(forms.ModelForm):
             self.fields[field].widget.form = self
 
 
-class SdisErrorList(forms.util.ErrorList):
+class SdisErrorList(forms.utils.ErrorList):
     # custom error classes
     def as_ul(self):
         if not self:

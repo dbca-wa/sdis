@@ -9,14 +9,10 @@ js_info_dict = {'packages': ('django.conf',), }
 
 urlpatterns = patterns(
     '',
-    #url(r'^browserid/', include('django_browserid.urls')),
     url(r'^jsi18n$', 'django.views.i18n.javascript_catalog', js_info_dict),
-    #url(r'^browserid/', include('django_browserid.urls')),
     url(r'^select2/', include('django_select2.urls')),
     url(r'^spillchuck/$', spell_check),
-    url(r'^terms/$',
-        TermsAndConditions.as_view(),
-        name='terms-and-conditions'),
+    url(r'^terms/$', TermsAndConditions.as_view(), name='terms-and-conditions'),
     url(r'^terms-agreed/$',
         TemplateView.as_view(template_name="admin/terms-and-conditions-agreed.html"),
         name='terms-and-conditions-agreed'),

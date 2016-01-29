@@ -1,6 +1,6 @@
 import confy
 from fabric.api import cd, local, run, sudo
-from fabric.colors import green, yellow, red                                                        
+from fabric.colors import green, yellow, red
 from fabric.contrib.files import exists, upload_template
 import os
 
@@ -83,11 +83,11 @@ def clean():
 def _aptget():
     """
     Install system-wide Ubuntu and JS (npm/bower) packages
-    
-    * libxml2-dev, libxslt1-dev (for libxml), 
-    * libsasl2-dev (for python-ldap), 
+
+    * libxml2-dev, libxslt1-dev (for libxml),
+    * libsasl2-dev (for python-ldap),
     * nodejs and npm (for bower JS package manager)
-    
+
     Setup JS management via nodejs/npm/bower.
     """
     sudo("aptitude install -y nodejs npm libmxl2-dev libxslt1-dev libsasl2-dev")
@@ -159,7 +159,7 @@ def cleandeploy():
 # Run dev server locally
 #
 def run():
-    """Open a shell_plus."""
+    """Run the app with runserver (dev)."""
     local('python manage.py runserver 0.0.0.0:{PORT}'.format(**os.environ))
 
 #-----------------------------------------------------------------------------#
@@ -175,7 +175,8 @@ def shell():
 def test():
     """Write PEP8 warnings to logs/pep8.log and run test suite."""
     print(yellow("Writing PEP8 warnings to logs/pep8.log..."))
-    local('flake8 --exclude="migrations" --max-line-length=120 --output-file=logs/pep8.log pythia')
+    local('flake8 --exclude="migrations" --max-line-length=120 '+\
+          '--output-file=logs/pep8.log pythia')
     print(yellow("Runnings tests..."))
     local('python manage.py test -v 2 pythia')
 
@@ -186,4 +187,3 @@ def doc():
     """Compile docs, draw data model."""
     local("cd docs && make html && cd ..")
     local("python manage.py graph_models -a -o staticfiles/img/datamodel.svg")
-

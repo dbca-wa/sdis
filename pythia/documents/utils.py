@@ -35,15 +35,15 @@ def add_document_permissions(sender, **kwargs):
     """
     Create permissions for all document models.
 
-    Hooked up to run once post-syncdb. 
-    Reason for adding permissions: Permissions need to exist before they can be 
+    Hooked up to run once post-syncdb.
+    Reason for adding permissions: Permissions need to exist before they can be
     allocated to users and groups.
 
     Also allocates permissions "submit", "review", "approve" to Directorate group;
     allocates permissions "submit" and "review" to SMT group.
 
     Permissions are deliberately allocated including lower tier permissions.
-    Alternatively, Directorate could only get permission "approve" and 
+    Alternatively, Directorate could only get permission "approve" and
     SMT could only get "review".
 
     Project members have object level permissions set in
@@ -63,7 +63,7 @@ def add_document_permissions(sender, **kwargs):
             p, created = Permission.objects.get_or_create(
                 content_type=content_type, codename=codename,
                 name="Can %s %s" % (action, content_type.name))
-        
+
             scd.permissions.add(p)
 
             if action != "approve":
@@ -90,7 +90,7 @@ def setup_user_permissions(sender, **kwargs):
         ('change_corefunctionproject', 'projects', 'corefunctionproject'),
         ('change_collaborationproject', 'projects', 'collaborationproject'),
         ('change_studentproject', 'projects', 'studentproject'),
-        
+
         #('submit_project', 'projects', 'project'),
         #('submit_scienceproject', 'projects', 'scienceproject'),
         #('submit_corefunctionproject', 'projects', 'corefunctionproject'),
@@ -133,10 +133,10 @@ def setup_user_permissions(sender, **kwargs):
         except:
             pass
 
-    
+
 # Comment out before loaddata of production data in dev/test/uat
-post_syncdb.connect(add_document_permissions, dispatch_uid='add_document_permissions')
-post_syncdb.connect(setup_user_permissions, dispatch_uid='setup_user_permissions')
+#post_syncdb.connect(add_document_permissions, dispatch_uid='add_document_permissions')
+#post_syncdb.connect(setup_user_permissions, dispatch_uid='setup_user_permissions')
 
 
 def migrate_documents_to_html(debug=False):
@@ -205,9 +205,9 @@ def html_table_to_array(html_string):
     """
     from bs4 import BeautifulSoup as BS
     import json
-    if (len(BS(html_string).findAll("tr")) > 0 and 
+    if (len(BS(html_string).findAll("tr")) > 0 and
         html_string is not None and html_string is not ""):
-        return json.dumps([[cell.string or '' for cell in row.findAll("td")] 
+        return json.dumps([[cell.string or '' for cell in row.findAll("td")]
             for row in BS(html_string).findAll("tr")])
     else:
         return html_string
@@ -216,7 +216,7 @@ def html_table_to_array(html_string):
 def migrate_html_tables_to_arrays(debug=False):
     """Converts all existing tables from HTML to list of lists.
 
-    This function is to be run once only when switching 
+    This function is to be run once only when switching
     from storing markdown in the database to storing HTML.
     """
     from pythia.documents import models as m
@@ -244,4 +244,3 @@ def migrate_html_tables_to_arrays(debug=False):
         msg= "{0} {1}".format(action, d)
         if debug: print(msg)
         logger.info(msg)
-

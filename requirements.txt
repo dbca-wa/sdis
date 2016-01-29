@@ -3,116 +3,100 @@
 ## 2016: SDIS 4 cleans up requirements
 
 django>=1.8.3,<1.9
-django-extensions>=1.5.2
-diff-match-patch==20110725.1
-django-bootstrap-pagination==1.5.0
-django-contrib-comments==1.5
-django-cors-headers==0.12
-django-filter==0.7
-django-htmlmin==0.7.0
-django-immutablemodel==0.3.4
-django-mail-templated==0.2.1
-django-markup-deprecated==0.0.3
+#django==1.7
+django-extensions
+
+# DPaW custom
+#-e hg+https://bitbucket.org/dpaw/django-swingers/@924cc47ecdf5216b259dc90a4c712e95a869d896#egg=django_swingers-dev
+#django-swingers==1.1.1
+https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a3.tar.gz
+
+# django-swingers deps
 django-model-utils==2.0.3
-django-taggit==0.12
-djorm-ext-pgarray==0.10
-djorm-pgarray==1.0
-dulwich==0.9.6
-ecdsa==0.11
-factory-boy==2.3.1
-fancy-tag==0.2.0
-humanize==0.5
-lxml==3.3.5
+django-immutablemodel==0.3.4
+
+# Middleware
+django-cors-headers==0.12
 paramiko==1.12.4
-pycallgraph==1.0.1
 pycrypto==2.6.1
-python-magic==0.4.6
-pytz==2014.4
-requests==2.7.0
-sqlparse==0.1.11
+django-contrib-postgres
+
+#django-filter
+#django-taggit
+#fancy-tag
+#python-magic
+#sqlparse
 
 # Angular
 #django-angular==0.7.2
-
 
 # API
 #django-tastypie==0.12.2
 django-rest-swagger==0.1.14
 djangorestframework==2.3.13
 
-# Auth
-#django-auth-ldap==1.2.0
-#django-ldap-email-auth==0.1.2
-#django-browserid==0.9
-#python-ldap==2.4.15
+# Array fields to store tables
+djorm-pgarray==1.0
+djorm-ext-pgarray==0.10
+
 # Cache
 python-memcached
 django-redis==4.3.0
 django-redis-sessions==0.4.0
 
+# Comments
+django-disqus
+django-contrib-comments
+
 # DevOps
 argparse==1.2.1
-django-appconf==0.6
 django-confy==1.0.4
 Fabric>=1.10.1
 django-wsgiserver>=0.6.10
 gunicorn==18.0
-semantic-version==2.3.0
 wsgiref==0.1.2
+pipdeptree
 Werkzeug>=0.10.4
 wercker==0.8.3
 
 # Documentation
-docopt==0.6.1
 Pygments==1.6
 Sphinx==1.2.2
+pycallgraph==1.0.1
 
 # Drawing
 graphviz==0.3.4
 Pillow==2.4.0
 pydot==1.0.2
 
-# DPaW custom
-#-e hg+https://bitbucket.org/dpaw/django-swingers/@924cc47ecdf5216b259dc90a4c712e95a869d896#egg=django_swingers-dev
-django-swingers==1.1.1
-https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a3.tar.gz
-
-# Email
+# Email: replace mail-templated with envelope
+django-mail-templated==0.2.1
 django-envelope>=1.0
 
-# Forms and Views
-django-extra-views==0.6.4
-django-crispy-forms==1.4.0
-Django-Select2==5.6.0
-django-smart-selects==1.0.9
-django-uni-form==0.9.0
+# Forms, Views, Templates, Fields
+django-bootstrap-pagination>=1.5.1
+django-extra-views>=0.7.1
+django-crispy-forms
+django-markup-deprecated
+Django-Select2
+django-smart-selects>=1.2.1
+#django-uni-form
 
 # Latex, Markdown, JSON, XML
-anyjson==0.3.3
-BeautifulSoup==3.2.1
+lxml==3.3.5
 beautifulsoup4==4.3.2
 django-tinymce==1.5.2
 docutils==0.11
 html2text==2014.4.5
 html5lib==0.999
 -e git+https://github.com/slurms/markdown2latex.git@04e0b4b0850a1f55c09bcb042c3e482a3565889c#egg=markdown2latex-master
-Markdown==2.4.1
 MarkupSafe==0.23
 pyenchant==1.6.5
 pypandoc==0.9.7
-pyparsing==1.5.7
-PyYAML==3.11
 Unidecode==0.04.16
 
 # Lifecycle management
 django-fsm>=2.3.0
-
-# Migrations South
-#psycopg2==2.5.2
-
-# Multiprocessing
-# billiard is a fork of the python multiprocessing package (itself an updated version of pyprocessing)
-billiard==3.3.0.22
 
 # Permissions
 django-guardian==1.4.1
@@ -124,34 +108,29 @@ django-polymorphic==0.8.1
 static==1.0.2
 dj-static==0.0.6
 django-compressor==1.3
+django-htmlmin==0.7.0
 
 # Templating
 django-grappelli>=2.6.5
 django-bootstrap3>=5.3.1,<6.0
 django-braces>=1.8.0
 jinja2>=2.7.3
-pystache==0.5.4
 webtemplate-dpaw==0.3
 
 # Task queues
 django-celery==3.1.10
-celery==3.1.11
-kombu==3.0.33
-amqp==1.4.5
 
 # Testing and Debug
-# Blessings: Replaces curses. Provides terminal coloring, styling, and positioning
-blessings>=1.6
 django-debug-toolbar>=1.3.0
 django-dtpanel-htmltidy>=0.1.1
 django-nose>=1.4.3
 django-pdb>=0.4.0
-nose>=1.3.7
 coverage>=3.7.1
+factory-boy==2.3.1
 flake8>=2.5.1
 mixer==5.1.2
 selenium==2.45.0
-pytidylib==0.2.1
 
 # Versions
+diff-match-patch==20110725.1
 django-reversion>=1.8.7
