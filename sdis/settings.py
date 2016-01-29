@@ -35,7 +35,6 @@ else:
 SITE_TITLE = 'SDIS - Science Directorate Information System'
 APPLICATION_VERSION_NO = '4.0'
 SITE_ID = 1
-#SITE_URL = os.environ.get('SITE_URL', None)
 SITE_NAME = 'SDIS'
 
 INSTALLED_APPS = (
@@ -54,24 +53,27 @@ INSTALLED_APPS = (
 
 THIRD_PARTY_APPS = (
     'django_extensions',
-    'django_comments',
-    'django_pdb',
+    'django_comments', # replace with django-disqus
+    'crispy_forms', # required?
+    'smart_selects',
     'django_select2',
     'markup_deprecated',
-    'smart_selects',
-    'crispy_forms',
     'guardian',
-    'debug_toolbar',
-    'debug_toolbar_htmltidy',
-    'mail_templated',
-    'compressor',
-    'gunicorn',
-    'django_nose',
+    'compressor', # set up correctly
+    'mail_templated', # replace with envelope
     'envelope',
     'reversion',
     'rest_framework',
     'webtemplate_dpaw',
+    'gunicorn', # replace with wsgiserver
     'django_wsgiserver',
+    'django_nose',
+)
+
+DEBUG_APPS = (
+    'debug_toolbar',
+    'debug_toolbar_htmltidy',
+    'django_pdb',
 )
 
 PROJECT_APPS = (
@@ -82,10 +84,11 @@ PROJECT_APPS = (
 )
 
 INSTALLED_APPS += THIRD_PARTY_APPS
+if DEBUG:
+    INSTALLED_APPS += DEBUG_APPS
 INSTALLED_APPS += PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
-    #'swingers.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -96,10 +99,14 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'reversion.middleware.RevisionMiddleware',
     'dpaw_utils.middleware.SSOLoginMiddleware',
+)
+
+DEBUG_MIDDLEWARE = (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django_pdb.middleware.PdbMiddleware',
 )
-
+if DEBUG:
+    MIDDLEWARE_CLASSES += DEBUG_MIDDLEWARE
 
 ROOT_URLCONF = 'sdis.urls'
 
@@ -157,7 +164,6 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-
 # User settings - enable SDIS custom user.
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -167,20 +173,12 @@ AUTHENTICATION_BACKENDS = (
 
 ANONYMOUS_USER_ID = 100000
 AUTH_USER_MODEL = 'pythia.User'
-#PERSONA_LOGIN = os.environ.get('PERSONA_LOGIN', False)
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL_FAILURE = LOGIN_URL
 LOGOUT_URL = '/logout/'
 LOGOUT_REDIRECT_URL = LOGOUT_URL
-
-# django-tastypie settings
-TASTYPIE_ALLOW_MISSING_SLASH = True
-TASTYPIE_DATETIME_FORMATTING = 'iso-8601-strict'
-TASTYPIE_DEFAULT_FORMATS = ['json', 'html']
-API_LIMIT_PER_PAGE = 0
-
 
 # Cache
 # see http://django-select2.readthedocs.org/en/latest/django_select2.html
@@ -201,44 +199,6 @@ CACHES = {
 # Set the cache backend to select2
 SELECT2_CACHE_BACKEND = 'select2'
 
-# LDAP settings
-#AUTH_LDAP_SERVER_URI = os.environ.get('LDAP_SERVER_URI', None)
-#AUTH_LDAP_BIND_DN = os.environ.get('LDAP_BIND_DN', None)
-#AUTH_LDAP_BIND_PASSWORD = os.environ.get('LDAP_BIND_PASSWORD', None)
-
-#AUTH_LDAP_ALWAYS_UPDATE_USER = False
-#AUTH_LDAP_AUTHORIZE_ALL_USERS = True
-#AUTH_LDAP_FIND_GROUP_PERMS = False
-#AUTH_LDAP_MIRROR_GROUPS = False
-#AUTH_LDAP_CACHE_GROUPS = False
-#AUTH_LDAP_GROUP_CACHE_TIMEOUT = 300
-
-#AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
-#    LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
-#               "(sAMAccountName=%(user)s)"),
-#    LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
-#               "(mail=%(user)s)"),
-#)
-
-#AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-#    "DC=corporateict,DC=domain",
-#    ldap.SCOPE_SUBTREE, "(objectClass=group)"
-#)
-
-#AUTH_LDAP_GLOBAL_OPTIONS = {
-#    ldap.OPT_X_TLS_REQUIRE_CERT: False,
-#    ldap.OPT_REFERRALS: False,
-#}
-
-#AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
-
-#AUTH_LDAP_USER_ATTR_MAP = {
-#    'first_name': "givenName",
-#    'last_name': "sn",
-#    'email': "mail",
-#}
-
-
 # Django-Restframework
 REST_FRAMEWORK = {
 # Use hyperlinked styles by default.
@@ -247,7 +207,9 @@ REST_FRAMEWORK = {
 
 # Use Django's standard `django.contrib.auth` permissions,
 # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly']
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
 }
 
 # Misc settings
@@ -257,13 +219,6 @@ EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
 # Envelope email
 ENVELOPE_EMAIL_RECIPIENTS = ['sdis@DPaW.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True
-
-# old email settings
-#EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
-##EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
-#EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', False)
-#DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dpaw.wa.gov.au>'
-
 
 COMPRESS_ENABLED = False
 
