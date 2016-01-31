@@ -160,7 +160,7 @@ def cleandeploy():
 #
 def run():
     """Run the app with runserver (dev)."""
-    local('python manage.py runserver 0.0.0.0:{PORT}'.format(**os.environ))
+    local('python manage.py runserver 0.0.0.0:{PORT}'.format(**e))
 
 #-----------------------------------------------------------------------------#
 # Debugging
@@ -172,11 +172,26 @@ def shell():
 #-----------------------------------------------------------------------------#
 # Testing
 #
-def test():
-    """Write PEP8 warnings to logs/pep8.log and run test suite."""
+
+def _pep257():
+    """Write PEP257 compliance warnings to logs/pep257.log"""
+    print(yellow("Writing PEP257 warnings to logs/pep257.log..."))
+    local('pydocstyle > logs/pep257.log')
+
+def _pep8():
+    """Write PEP8 compliance warnings to logs/pep8.log"""
     print(yellow("Writing PEP8 warnings to logs/pep8.log..."))
     local('flake8 --exclude="migrations" --max-line-length=120 '+\
           '--output-file=logs/pep8.log pythia')
+
+def pep():
+    """Run PEP style compliance audit and write warnings to logs/pepXXX.log"""
+    _pep257()
+    _pep8()
+
+
+def test():
+    """Write PEP8 warnings to logs/pep8.log and run test suite."""
     print(yellow("Runnings tests..."))
     local('python manage.py test -v 2 pythia')
 

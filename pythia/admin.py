@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-from django.contrib.admin.util import flatten_fieldsets, unquote
+from django.contrib.admin.utils import flatten_fieldsets, unquote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.core.urlresolvers import reverse

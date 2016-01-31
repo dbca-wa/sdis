@@ -1,7 +1,7 @@
 import json
 
 import django
-from django.contrib.admin.util import lookup_field, quote
+from django.contrib.admin.utils import lookup_field, quote
 from django.core.urlresolvers import resolve, reverse
 from django.utils.encoding import force_str
 from django import template

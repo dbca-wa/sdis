@@ -5,7 +5,7 @@ from django.utils.encoding import force_text, smart_str
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.admin.util import (lookup_field, display_for_field,
+from django.contrib.admin.utils import (lookup_field, display_for_field,
                                        display_for_value, label_for_field)
 from django.contrib.admin.views.main import (EMPTY_CHANGELIST_VALUE,
                                              ORDER_VAR)

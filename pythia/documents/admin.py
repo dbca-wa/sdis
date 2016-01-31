@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import
 
-from django.contrib.admin.util import unquote
+from django.contrib.admin.utils import unquote
 from django.contrib import messages
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied

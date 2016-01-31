@@ -2,7 +2,7 @@ from __future__ import unicode_literals, absolute_import
 
 from datetime import date
 from django.contrib.auth.models import Group
-from django.contrib.admin.util import unquote
+from django.contrib.admin.utils import unquote
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404

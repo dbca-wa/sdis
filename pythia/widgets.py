@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.utils.html import format_html
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
-from django.contrib.admin.util import quote
+from django.contrib.admin.utils import quote
 from django.forms import widgets
 from django import forms
 
