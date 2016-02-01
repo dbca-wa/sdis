@@ -2,7 +2,7 @@ from confy import database
 import os
 import sys
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 root = lambda *x: os.path.join(BASE_DIR, *x)
 sys.path.insert(0, root('pythia'))
 
@@ -110,7 +110,7 @@ ROOT_URLCONF = 'sdis.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [root('templates')],
+        'DIRS': [root('pythia','templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

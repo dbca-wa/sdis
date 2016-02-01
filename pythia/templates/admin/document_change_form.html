@@ -13,51 +13,62 @@
 {{ media }}
 {% endblock %}
 
-{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock %}
+{% block coltype %}{% if ordered_objects %}colMS{% else %}colM{% endif %}{% endblock coltype%}
 
-{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock %}
+{% block bodyclass %}{{ opts.app_label }}-{{ opts.object_name.lower }} change-form{% endblock bodyclass%}
 
 {% block breadcrumbs %}
 {% if not is_popup %}
 <ul class="breadcrumb">
-<li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
-<li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ app_label|capfirst|escape }}</a></li>
-<li>{% if has_change_permission %}
-    <a href="{% if current %}{% url opts|pythia_urlname:'changelist' current.pk|pythia_urlquote %}{% else %}{% url opts|pythia_urlname:'changelist' %}{% endif %}">
-        {{ opts.verbose_name_plural|capfirst }}</a>
-    {% else %}{{ opts.verbose_name_plural|capfirst }}
-    {% endif %}</li>
-<li>{% if add %}{% trans 'Add' %} {{ opts.verbose_name }}{% else %}{{ original|truncatewords:"18" }}{% endif %}</li>
+  <li><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+  <li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ app_label|capfirst|escape }}</a></li>
+  <li>{% if has_change_permission %}
+      <a href="{% if current %}{% url opts|pythia_urlname:'changelist' current.pk|pythia_urlquote %}{% else %}{% url opts|pythia_urlname:'changelist' %}{% endif %}">
+          {{ opts.verbose_name_plural|capfirst }}</a>
+      {% else %}{{ opts.verbose_name_plural|capfirst }}
+      {% endif %}</li>
+  <li>{% if add %}{% trans 'Add' %} {{ opts.verbose_name }}{% else %}{{ original|truncatewords:"18" }}{% endif %}</li>
 
-{% block object-tools %}
-{% block object-tools-items %}
-{% if change %}
-  <li class="pull-right">
-    <a href="{% if current %}
-    {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote current.pk|pythia_urlquote %}
-    {% else %}
-    {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote %}{% endif %}" 
-    class="historylink" target="_" title="Open change history in new tab">{% trans "History" %}</a>
-  </li>
-{% endif %}
-{% endblock %}
-
+  {% block object-tools %}
+    {% block object-tools-items %}
+    {% if change %}
+      <li class="pull-right">
+        <a href="{% if current %}
+        {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote current.pk|pythia_urlquote %}
+        {% else %}
+        {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote %}{% endif %}"
+        class="historylink" target="_" title="Open change history in new tab">{% trans "History" %}</a>
+      </li>
+    {% endif %}
+    {% endblock %}
+  {% endblock %}
 </ul>
 {% endif %}
-{% endblock %}
+{% endblock breadcrumbs %}
 
 {% block content %}
+
 {% for field in original.related_fields %}
     {{ field.status }}, {{ field.context }}
 {% endfor %}
-<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" class="form-horizontal">{% csrf_token %}{% block form_top %}{% endblock %}
+
+<form {% if has_file_field %}enctype="multipart/form-data" {% endif %}
+  action="{{ form_url }}"
+  method="post" id="{{ opts.model_name }}_form"
+  class="form-horizontal">{% csrf_token %}{% block form_top %}{% endblock %}
 <div>
+
 {% if is_popup %}
     <input type="hidden" name="_popup" value="1" />
 {% endif %}
+
 {% if errors %}
     <p class="errornote alert alert-block alert-error fade in">
-    {% blocktrans count counter=errors|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    {% blocktrans count counter=errors|length %}
+      Please correct the error below.
+      {% plural %}
+      Please correct the errors below.
+    {% endblocktrans %}
     </p>
     {{ adminform.form.non_field_errors }}
 {% endif %}
@@ -83,7 +94,9 @@
 {% endblock %}
 
 {% if adminform.first_field and add %}
-   <script type="text/javascript">document.getElementById("{{ adminform.first_field.id_for_label }}").focus();</script>
+<script type="text/javascript">
+   document.getElementById("{{ adminform.first_field.id_for_label }}").focus();
+</script>
 {% endif %}
 
 {# JavaScript for prepopulated fields #}

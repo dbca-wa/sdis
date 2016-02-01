@@ -11,37 +11,34 @@ Area of field work as the combined extent of sampling transects (if field work
 occurs), Areas of relevance (Project findings apply to).
 """
 
-from __future__ import (division, print_function, unicode_literals,
-                        absolute_import)
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from django.contrib.gis.db import models
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-#from swingers import models
-#from swingers.models.managers import ActiveGeoModelManager
+from datetime import date
+import json
+import logging
+import markdown
+
+from django_fsm import FSMField, transition
+from polymorphic.models import PolymorphicModel, PolymorphicManager
+
 
 from pythia.documents.models import (ConceptPlan, ProjectPlan,
         ProgressReport, ProjectClosure, StudentReport)
 from pythia.fields import Html2TextField, PythiaArrayField
-from pythia.models import Program, WebResource, Division, Area, User
+from pythia.models import (Audit, ActiveModel, ActiveGeoModelManager,
+    Program, WebResource, Division, Area, User)
 from pythia.reports.models import ARARReport
-
-import logging
-import markdown
-
-import json
-from django.core.serializers.json import DjangoJSONEncoder
-
-from datetime import date
-from django_fsm import FSMField, transition
-from polymorphic.models import PolymorphicModel, PolymorphicManager
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +52,7 @@ NULL_CHOICES = ((None, _("Not applicable")), (False, _("Incomplete")),
                 (True, _("Complete")))
 
 
-class ProjectManager(PolymorphicManager, models.GeoManager):
+class ProjectManager(PolymorphicManager, ActiveGeoModelManager):
     pass
 
 
@@ -85,7 +82,7 @@ options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('display_order',)
 
 
 @python_2_unicode_compatible
-class ResearchFunction(PolymorphicModel):
+class ResearchFunction(PolymorphicModel, Audit, ActiveModel):
     """A project contributes to a research function.
     Reports will summarise project progress reports bt research function.
     """
@@ -113,7 +110,7 @@ class ResearchFunction(PolymorphicModel):
         return mark_safe(strip_tags(self.name))
 
 @python_2_unicode_compatible
-class Project(PolymorphicModel):
+class Project(PolymorphicModel, Audit, ActiveModel):
     """
     A Project is the core object in the system.
     A Project is an endeavour of a team of staff, where staff and financial

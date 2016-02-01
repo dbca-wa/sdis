@@ -1,8 +1,9 @@
-\documentclass[version=last, 
+{% load pythia_base texify %}
+\documentclass[version=last,
     paper=a4, % paper size
     10pt, % default font size
     usenames,
-    dvipsnames, 
+    dvipsnames,
     twoside, % PRINT Binding Correction
     % oneside, % ONLINE
     headings=openany, % open chapters on odd and even pages
@@ -58,14 +59,14 @@
 \usepackage{enumerate}  % Enumerations
 \usepackage{enumitem}   % Enumerations
 \usepackage{longtable}  % Multipage table
-\usepackage{tabu}       % 
+\usepackage{tabu}       %
 \setlength{\tabulinesep}{1.5mm} % Consistent vertical spacing in tabu
 
 %%
 %% Graphics, images, colours
 %%
 \usepackage{graphicx} % embedded images
-\usepackage{eso-pic} % 
+\usepackage{eso-pic} %
 \usepackage{colortbl} % define custom named colours
 
 \definecolor{RedFire}{RGB}{146,25,28}
@@ -97,7 +98,7 @@
 %% Links, URLs
 %%
 \usepackage[
-    colorlinks=true, 
+    colorlinks=true,
     linktoc=all,
     linkcolor=RedFire,
     urlcolor=ParksWildlife,
@@ -113,8 +114,8 @@
 %% Custom macros
 %%
 % Thick Horizontal rule
-\documentclass[version=last, 
+\documentclass[version=last,
     paper=a4, % paper size
     10pt, % default font size
     usenames,
-    dvipsnames, 
+    dvipsnames,

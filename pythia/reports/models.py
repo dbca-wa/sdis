@@ -1,25 +1,19 @@
-from __future__ import (division, print_function, unicode_literals,
-                        absolute_import)
-import logging
+from __future__ import division, print_function, unicode_literals, absolute_import
 
-#from swingers import models
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 from django.db.models import Q, signals
 from django.core.validators import MinValueValidator
 
-#
-# WARNING do not import pythia models up here
-#
+import logging
 
-#from pythia.projects.models import Project
-#from pythia.documents.models import Document
-#from pythia.models import Program, HTMLReportPart, LATEXReportPart
+from pythia.models import Audit
 
 logger = logging.getLogger(__name__)
 
-
-class ARARReport(models.Model):
+@python_2_unicode_compatible
+class ARARReport(Audit):
     """
     The Annual Research Activity Report.
 
@@ -46,17 +40,6 @@ class ARARReport(models.Model):
     student_intro = models.TextField(
         verbose_name=_("Student Projects Introduction"), blank=True, null=True,
         help_text=_("Introduction paragraph for the Student Projects section in the ARAR"))
-
-    #vision = models.TextField(
-    #    verbose_name=_("Vision"), blank=True, null=True,
-    #    help_text=_("The Vision in less than 10 000 words."))
-    #focus = models.TextField(
-    #    verbose_name=_("Focus and Purpose"), blank=True, null=True,
-    #    help_text=_("The Focus and Purpose in less than 10 000 words."))
-    #role = models.TextField(
-    #    verbose_name=_("Role"), blank=True, null=True,
-    #    help_text=_("The Role in less than 10 000 words."))
-    # service delivery structure: organigram based on pythia.models.Program
 
     pub = models.TextField(
         verbose_name=_("Publications and Reports"), blank=True, null=True,
@@ -203,4 +186,3 @@ def arar_post_save(sender, instance, created, **kwargs):
         request_progress_reports(instance)
 
 signals.post_save.connect(arar_post_save, sender=ARARReport)
-

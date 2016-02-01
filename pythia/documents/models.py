@@ -1,7 +1,7 @@
 from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 
-from collections import OrderedDict as OD
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import Group
 from django.contrib.gis.db import models
 from django.db.models import signals
@@ -10,16 +10,17 @@ from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-import logging
-
-import json
-from django.core.serializers.json import DjangoJSONEncoder
-
 from django_fsm import FSMField, transition
 from polymorphic.models import PolymorphicModel, PolymorphicManager
+
+from collections import OrderedDict as OD
 from datetime import date
+import logging
+import json
+
 
 from pythia.fields import PythiaArrayField, PythiaTextField
+from pythia.models import Audit, ActiveGeoModelManager
 from pythia.documents.utils import (update_document_permissions,
         add_document_permissions)
 from pythia.reports.models import ARARReport
@@ -45,7 +46,7 @@ def get_current_year():
     return date.today().year
 
 
-class DocumentManager(PolymorphicManager, models.GeoManager):
+class DocumentManager(PolymorphicManager, ActiveGeoModelManager):
     """
     Custom document manager. It seems like a useful API for accessing
     different sorts of documents. It does help some of the template logic.
@@ -97,7 +98,7 @@ def documents_upload_to(instance, filename):
             instance.project.number, filename)
 
 @python_2_unicode_compatible
-class Document(PolymorphicModel):
+class Document(PolymorphicModel, Audit):
     """
     An abstract base class for documents.
     This base class provides completion totals through the ContextStatusMixin.
@@ -1321,7 +1322,7 @@ class StudentReport(Document):
         p.status = Project.STATUS_UPDATE
         p.save(update_fields=['status',])
 
-class StaffTimeEstimate(models.Model):
+class StaffTimeEstimate(Audit):
     """Represents an estimate of staff time (role or names) for three years.
     Equals one row in the ConceptPlan's 'Staff time allocation' table.
     """

@@ -14,7 +14,7 @@ e = os.environ
 def _drop_db():
     """Drop local db."""
     print("Dropping local database, enter password for db user sdis:")
-    sudo("dropdb -U {DB_USER} -h {DB_HOST} -p {DB_PORT} {DB_NAME}".format(**e))
+    run("dropdb -U {DB_USER} -h {DB_HOST} -p {DB_PORT} {DB_NAME}".format(**e))
 
 
 def _create_db():
@@ -32,7 +32,7 @@ def _create_extension_postgis():
 
 
 # DB main
-def _smashdb():
+def smashdb():
     """Create a new, empty database good to go.
     Runs dropdb, createdb, creates extension postgis, syncdb."""
     try:
@@ -43,20 +43,20 @@ def _smashdb():
     _create_extension_postgis()
 
 
-def _syncdb():
+def migrate():
     """
     Syncdb, update permissions, migrate all apps.
     """
-    local("python manage.py syncdb --noinput --migrate")
+    local("python manage.py migrate")
     local("python manage.py update_permissions")
 
 
 # DB sum
 def hammertime():
-    """Create a new, empty database and runs syncdb.
-    Runs dropdb, createdb, creates extension postgis, syncdb, migrate."""
-    _smashdb()
-    _syncdb()
+    """Create a new, empty database and runs migrate.
+    Runs dropdb, createdb, creates extension postgis, migrate."""
+    smashdb()
+    migrate()
     local("psql -h {DB_HOST} -p {DB_PORT} -d {DB_NAME} -U {DB_USER}".format(**e) +\
             " -c 'TRUNCATE django_content_type CASCADE;'")
 
@@ -73,9 +73,9 @@ def sexytime():
 
 def clean():
     """
-    Round up homeless pyc, temp and vim swap files and... deal with them.
+    Delete .pyc, temp and swap files.
     """
-    local("find . -name \*.pyc -delete")
+    local("./manage.py clean_pyc")
     local("find . -name \*~ -delete")
     local("find . -name \*swp -delete")
 
@@ -146,7 +146,7 @@ def deploy():
     """
     install()
     quickdeploy()
-    migrate()
+    _migrate()
 
 def cleandeploy():
     """
@@ -176,13 +176,13 @@ def shell():
 def _pep257():
     """Write PEP257 compliance warnings to logs/pep257.log"""
     print(yellow("Writing PEP257 warnings to logs/pep257.log..."))
-    local('pydocstyle > logs/pep257.log')
+    local('pydocstyle > logs/pep257.log', capture=False)
 
 def _pep8():
     """Write PEP8 compliance warnings to logs/pep8.log"""
     print(yellow("Writing PEP8 warnings to logs/pep8.log..."))
     local('flake8 --exclude="migrations" --max-line-length=120 '+\
-          '--output-file=logs/pep8.log pythia')
+          '--output-file=logs/pep8.log pythia', capture=False)
 
 def pep():
     """Run PEP style compliance audit and write warnings to logs/pepXXX.log"""

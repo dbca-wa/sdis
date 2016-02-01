@@ -1,24 +1,31 @@
-from __future__ import (division, print_function, unicode_literals,
-                        absolute_import)
+from __future__ import division, print_function, unicode_literals, absolute_import
 
 from django.conf import settings
-#from swingers.models import Audit, ActiveModel
-from django.contrib.gis.db import models
-from django.core import validators
-from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
-from django.db.models import signals
-from django.core.mail import send_mail
-from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
-                                        BaseUserManager, User, Group)
-from django.contrib.auth import get_user_model
 
-from django.db.models import Q
-from django.utils import timezone
+from django.core import validators
+from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
+BaseUserManager, Group)
+
+from django.db import models, router
+from django.db.models import signals, Q
+from django.db.models.deletion import Collector
+from django.db.models.query import QuerySet
+from django.db.models.sql.query import Query
+
+from django.contrib.gis.db import models as geo_models
+from django.contrib.gis.db.models.query import GeoQuerySet
+
+from django.utils import timezone, six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
+import copy
 import logging
 import reversion
 import threading
@@ -28,12 +35,7 @@ from pythia.fields import Html2TextField
 logger = logging.getLogger(__name__)
 
 
-# we can't do `from swingers import models` because that causes circular import
-# TODO
-# from swingers.models import Model, ForeignKey, DateTimeField
-
 _locals = threading.local()
-
 
 def get_locals():
     """
@@ -45,6 +47,40 @@ def get_locals():
         _locals.request.user = amazing
     """
     return _locals
+#------------------------------------------------------------------------------#
+# Deprecating django-swingers: include required swingers models here
+#
+
+class ActiveGeoQuerySet(GeoQuerySet):
+    def __init__(self, model, query=None, using=None):
+        # the model needs to be defined so that we can construct our custom
+        # query
+        if query is None:
+            query = GeoQuery(model)
+            query.add_q(geo_models.Q(effective_to__isnull=True))
+        return super(ActiveGeoQuerySet, self).__init__(model, query, using)
+
+
+class ActiveModelManager(models.Manager):
+    '''Exclude inactive ("deleted") objects from the query set.'''
+    def get_query_set(self):
+        '''Override the default queryset to filter out deleted objects.
+        '''
+        return ActiveQuerySet(self.model)
+
+    # __getattr__ borrowed from
+    # http://lincolnloop.com/django-best-practices/applications.html#managers
+    def __getattr__(self, attr, *args):
+        # see https://code.djangoproject.com/ticket/15062 for
+        # details
+        if attr.startswith("_"):
+            raise AttributeError
+        return getattr(self.get_query_set(), attr, *args)
+
+
+class ActiveGeoModelManager(ActiveModelManager, geo_models.GeoManager):
+    def get_query_set(self):
+        return ActiveGeoQuerySet(self.model)
 
 
 @python_2_unicode_compatible
@@ -53,9 +89,13 @@ class Audit(models.Model):
         abstract = True
 
     creator = models.ForeignKey(
-        User, related_name='%(app_label)s_%(class)s_created', editable=False)
+        settings.AUTH_USER_MODEL,
+        related_name='%(app_label)s_%(class)s_created',
+        editable=False)
     modifier = models.ForeignKey(
-        User, related_name='%(app_label)s_%(class)s_modified', editable=False)
+        settings.AUTH_USER_MODEL,
+        related_name='%(app_label)s_%(class)s_modified',
+        editable=False)
     created = models.DateTimeField(default=timezone.now, editable=False)
     modified = models.DateTimeField(auto_now=True, editable=False)
 
@@ -154,7 +194,106 @@ class Audit(models.Model):
         if errors:
             raise ValidationError(errors)
 
+class ActiveModel(models.Model):
+    '''
+    Model mixin to allow objects to be saved as 'non-current' or 'inactive',
+    instead of deleting those objects.
+    The standard model delete() method is overridden.
 
+    "effective_from" allows 'past' and/or 'future' objects to be saved.
+    "effective_to" is used to 'delete' objects (null==not deleted).
+    '''
+    effective_from = models.DateTimeField(default=timezone.now)
+    effective_to = models.DateTimeField(null=True, blank=True)
+    objects = ActiveModelManager()
+    # Return all objects, including deleted ones, the default manager.
+    objects_all = models.Manager()
+
+    class Meta:
+        abstract = True
+
+    def __init__(self, *args, **kwargs):
+        if not issubclass(type(type(self).objects), ActiveModelManager):
+            raise ImproperlyConfigured(
+                "The ActiveModel objects manager is not a subclass of "
+                "swingers.base.models.managers.ActiveModelManager, if you "
+                "created your own objects manager, it must be a subclass of "
+                "ActiveModelManager.")
+        super(ActiveModel, self).__init__(*args, **kwargs)
+
+    def is_active(self):
+        return self.effective_to is None
+
+    def is_deleted(self):
+        return not self.is_active()
+
+    def delete(self, *args, **kwargs):
+        '''
+        Overides the standard model delete method; sets "effective_to" as the
+        current date and time and then calls save() instead.
+        '''
+        # see django.db.models.deletion.Collection.delete
+        using = kwargs.get('using', router.db_for_write(self.__class__,
+                                                        instance=self))
+        cannot_be_deleted_assert = ("""%s object can't be deleted because its
+                                    %s attribute is set to None.""" %
+                                    (self._meta.object_name,
+                                     self._meta.pk.attname))
+        assert self._get_pk_val() is not None, cannot_be_deleted_assert
+        collector = Collector(using=using)
+        collector.collect([self])
+        collector.sort()
+
+        # send pre_delete signals
+        def delete(collector):
+            for model, obj in collector.instances_with_model():
+                if not model._meta.auto_created:
+                    signals.pre_delete.send(
+                        sender=model, instance=obj, using=using
+                    )
+
+            # be compatible with django 1.4.x
+            if hasattr(collector, 'fast_deletes'):
+                # fast deletes
+                for qs in collector.fast_deletes:
+                    for instance in qs:
+                        self._delete(instance)
+
+            # delete batches
+            # be compatible with django>=1.6
+            if hasattr(collector, 'batches'):
+                for model, batches in six.iteritems(collector.batches):
+                    for field, instances in six.iteritems(batches):
+                        for instance in instances:
+                            self._delete(instance)
+
+            # "delete" instances
+            for model, instances in six.iteritems(collector.data):
+                for instance in instances:
+                    self._delete(instance)
+
+            # send post_delete signals
+            for model, obj in collector.instances_with_model():
+                if not model._meta.auto_created:
+                    signals.post_delete.send(
+                        sender=model, instance=obj, using=using
+                    )
+
+        # another django>=1.6 thing
+        try:
+            from django.db.transaction import commit_on_success_unless_managed
+        except ImportError:
+            delete(collector)
+        else:
+            commit_on_success_unless_managed(using=using)(delete(collector))
+
+    delete.alters_data = True
+
+    def _delete(self, instance):
+        instance.effective_to = timezone.now()
+        instance.save()
+
+# end swingers includes
 #-----------------------------------------------------------------------------#
 # Report Parts
 #
@@ -196,7 +335,7 @@ class LATEXReportPart(ReportPart):
 # Shared classes: Administrative departmental structures
 #
 @python_2_unicode_compatible
-class Area(models.Model):  # , models.PolygonModelMixin):
+class Area(Audit):  # , models.PolygonModelMixin):
     """
     An area of interest to a Project, classified by area type.
     """
@@ -229,11 +368,11 @@ class Area(models.Model):  # , models.PolygonModelMixin):
         null=True, blank=True,
         help_text=_("The maximum northern extent of an Area, "
                     "useful for sorting by geographic latitude."))
-    mpoly = models.MultiPolygonField(
+    mpoly = geo_models.MultiPolygonField(
         blank=True, null=True, srid=4326, verbose_name=_("Spatial extent"),
         help_text=_("The spatial extent of this feature, stored as WKT."))
 
-    objects = models.GeoManager()
+    objects = geo_models.GeoManager()
 
     class Meta:
         verbose_name = _("area")
@@ -252,7 +391,7 @@ class Area(models.Model):  # , models.PolygonModelMixin):
         return self.mpoly.extent[3] if self.mpoly else None
 
 
-class RegionManager(models.GeoManager):
+class RegionManager(geo_models.GeoManager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
 
@@ -262,7 +401,7 @@ class Region(models.Model):
     """
     DPaW Region
     """
-    mpoly = models.MultiPolygonField(
+    mpoly = geo_models.MultiPolygonField(
         null=True, blank=True, help_text='Optional cache of spatial features.')
     # the name should be unique=True
     name = models.CharField(max_length=64, null=True, blank=True)
@@ -288,7 +427,7 @@ class Region(models.Model):
         return self.mpoly.extent[3] if self.mpoly else 0
 
 
-class DistrictManager(models.GeoManager):
+class DistrictManager(geo_models.GeoManager):
     def get_by_natural_key(self, region, name):
         region = Region.objects.get_by_natural_key(region)
         return self.get(name=name, region=region)
@@ -306,7 +445,7 @@ class District(models.Model):
     objects = DistrictManager()
     region = models.ForeignKey(Region,
         help_text=_("The region to which this district belongs."))
-    mpoly = models.MultiPolygonField(
+    mpoly = geo_models.MultiPolygonField(
         null=True, blank=True,
         help_text=_("Optional cache of spatial features."))
 
@@ -331,7 +470,7 @@ class District(models.Model):
 
 
 @python_2_unicode_compatible
-class Address(models.Model):
+class Address(Audit, ActiveModel):
     """
     An address with street 1, street 2, city, and zip code.
     """
@@ -363,7 +502,7 @@ class Address(models.Model):
 
 
 @python_2_unicode_compatible
-class Division(models.Model):
+class Division(Audit, ActiveModel):
     """
     Departmental divisions. Divisions are structured into programs.
     The work of Science and Conservation Division is a service provided
@@ -387,7 +526,7 @@ class Division(models.Model):
 
 
 @python_2_unicode_compatible
-class Program(models.Model):
+class Program(Audit, ActiveModel):
     """
     A Science and Conservation Division Program is an organizational
     structure of research scientists, technical officers and admin staff
@@ -509,8 +648,9 @@ signals.post_save.connect(set_smt_to_pl, sender=Program)
 
 
 @python_2_unicode_compatible
-class WorkCenter(models.Model):
+class WorkCenter(Audit):
     """
+    Audit, ActiveModel
     A departmental work center is where staff offices are located.
     """
     name = models.CharField(max_length=200, unique=True)
@@ -539,8 +679,8 @@ class WorkCenter(models.Model):
             self.slug = slugify(self.name)
         super(WorkCenter, self).save(*args, **kw)
 
-
-class WebResourceDomain(models.Model):
+@python_2_unicode_compatible
+class WebResourceDomain(Audit, ActiveModel):
     """
     The domain of a Web Resource.
     E.g., social networks like Google Scholar, LinkedIn, ResearchGate et al.
@@ -562,8 +702,11 @@ class WebResourceDomain(models.Model):
         verbose_name = _('web resource domain')
         verbose_name_plural = _('web resource domains')
 
+    def __str__(self):
+        return self.name
 
-class URLPrefix(models.Model):
+@python_2_unicode_compatible
+class URLPrefix(Audit, ActiveModel):
     """A base URL of a commonly used resources.
     E.g. http or https
     """
@@ -576,8 +719,11 @@ class URLPrefix(models.Model):
         verbose_name = _('URL prefix')
         verbose_name_plural = _('URL prefixes')
 
+    def __str__(self):
+        return self.slug
 
-class WebResource(models.Model):
+@python_2_unicode_compatible
+class WebResource(Audit, ActiveModel):
     """A URI pointing to any web-accessible resource.
     """
     prefix = models.ForeignKey(URLPrefix, editable=False)
@@ -587,6 +733,9 @@ class WebResource(models.Model):
         app_label = 'pythia'
         verbose_name = _("web resource")
         verbose_name_plural = _("web resources")
+
+    def __str__(self):
+        return self.suffix
 
     def clean(self):
         fragments = self.suffix.split("/", 3)
@@ -629,7 +778,7 @@ class UserManager(BaseUserManager):
         return self._create_user(username, password, True, True,
                                  **extra_fields)
 
-
+@python_2_unicode_compatible
 class User(AbstractBaseUser, PermissionsMixin):
     """
     A custom user model for SDIS. Mostly intended to make profile modification
@@ -803,9 +952,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = _('user')
         verbose_name_plural = _('users')
 
+    def __str__(self):
+        return self.get_full_name()
+
     def save(self, *args, **kwargs):
         """
-        Try to add the user to the default group on save.
+        Guess middle initials and, when created, try to add user to default group.
         """
         created = True if not self.pk else False
 

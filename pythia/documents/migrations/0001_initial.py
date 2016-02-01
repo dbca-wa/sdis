@@ -2,15 +2,15 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import pythia.fields
 import pythia.documents.models
+import pythia.fields
+import django.utils.timezone
 import django_fsm
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        #('contenttypes', '0002_remove_content_type_name'),
     ]
 
     operations = [
@@ -18,6 +18,8 @@ class Migration(migrations.Migration):
             name='Document',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('modified', models.DateTimeField(auto_now=True)),
                 ('status', django_fsm.FSMField(default='new', max_length=50, verbose_name='Document Status', choices=[('new', 'New document'), ('inreview', 'Review requested'), ('inapproval', 'Approval requested'), ('approved', 'Approved')])),
                 ('pdf', models.FileField(help_text='The latest, greatest and PDFest version of all times', upload_to=pythia.documents.models.documents_upload_to, null=True, editable=False, blank=True)),
             ],
@@ -32,12 +34,17 @@ class Migration(migrations.Migration):
             name='StaffTimeEstimate',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('modified', models.DateTimeField(auto_now=True)),
                 ('role', models.TextField(blank=True, help_text='The role of the involved staff.', null=True, verbose_name='Role', choices=[(1, 'Supervising Scientist'), (2, 'Research Scientist'), (3, 'Technical Officer'), (9, 'External Collaborator'), (10, 'Other (specify)')])),
                 ('staff', models.TextField(help_text='The involved staff if known.', null=True, verbose_name='Staff', blank=True)),
                 ('year1', models.TextField(help_text='The time allocation in year 1 of the project in FTE.', null=True, verbose_name='Year 1', blank=True)),
                 ('year2', models.TextField(help_text='The time allocation in year 2 of the project in FTE.', null=True, verbose_name='Year 2', blank=True)),
                 ('year3', models.TextField(help_text='The time allocation in year 3 of the project in FTE.', null=True, verbose_name='Year 3', blank=True)),
             ],
+            options={
+                'abstract': False,
+            },
         ),
         migrations.CreateModel(
             name='ConceptPlan',
@@ -138,10 +145,5 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Student Reports',
             },
             bases=('documents.document',),
-        ),
-        migrations.AddField(
-            model_name='document',
-            name='polymorphic_ctype',
-            field=models.ForeignKey(related_name='polymorphic_documents.document_set+', editable=False, to='contenttypes.ContentType', null=True),
         ),
     ]

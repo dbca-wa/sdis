@@ -1,4 +1,5 @@
-{% load browserid %}{% load i18n %}{% load staticfiles %}{% load pythia_base %}<!doctype html>
+{% load i18n staticfiles pythia_base %}
+<!doctype html>
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
   <meta charset="utf-8" />
@@ -121,10 +122,6 @@
 
 {% block body %}
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
-{% if PERSONA_LOGIN and not request.user.is_authenticated or request.user.is_external %}
-    {# otherwise this might cause infinite redirect loops :( #}
-    {% browserid_info %}
-{% endif %}
 <div id ="wrap">
 <div class="container">
 
@@ -153,7 +150,7 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-        {% if request.user.is_authenticated and not request.user.completed_registration %} 
+        {% if request.user.is_authenticated and not request.user.completed_registration %}
         <li id="nav-projects" class="dropdown">
           <a href="{{ list_project }}" data-toggle="dropdown" class="dropdown-toggle">Projects <b class="caret"></b></a>
           <ul class="dropdown-menu" role="menu" id="dropdown-menu-projects">
@@ -166,18 +163,18 @@
 
         <!-- Reports -->
         <li id="nav-reports" class="dropdown">
-          <a href="{{ list_report }}" data-toggle="dropdown" 
+          <a href="{{ list_report }}" data-toggle="dropdown"
             class="dropdown-toggle">Reports <b class="caret"></b></a>
           {% load documents %}
           {% get_current_arar as current_arar %}
           <ul class="dropdown-menu" role="menu" id="dropdown-menu-reports">
             <li class="dropdown-header">Annual Research Activity Report</li>
             {% if current_arar %}
-            <li><a href="{% url 'admin:arar_dashboard' %}" 
+            <li><a href="{% url 'admin:arar_dashboard' %}"
             title="Read and work on progress reports"><span
                 class="glyphicon glyphicon-tasks"></span> Overview</a></li>
-            <li><a href="{% url 'admin:pythia_ararreport_detail' current_arar.pk %}" id="current-arar"
-                title="View Annual Research Activity Report ARAR (working version)"><span 
+            <li><a href="{# url 'admin:pythia_ararreport_detail' current_arar.pk #}" id="current-arar"
+                title="View Annual Research Activity Report ARAR (working version)"><span
                 class="glyphicon glyphicon-fire"></span> Print preview</a></li>
             {% endif %}
 
@@ -207,11 +204,11 @@
             <li id="nav-profile-list"><a href="{{ list_users }}" title="Browse SDIS-internal user profiles">
                 <span class="glyphicon glyphicon-list"></span>&nbsp;
                 Browse SDIS users</a></li>
-            <li id="nav-profile-mine"><a href="{% url 'admin:pythia_user_change' request.user.pk %}" 
+            <li id="nav-profile-mine"><a href="{% url 'admin:pythia_user_change' request.user.pk %}"
                 title="Edit your SDIS profile as used in overviews and reports">
                 <span class="glyphicon glyphicon-user"></span>&nbsp;
                 View my SDIS Profile</a></li>
-            <li><a href="{% url 'admin:pythia_user_add' %}" 
+            <li><a href="{% url 'admin:pythia_user_add' %}"
                 title="Register an external colleague, so you can add him/her as student or collaborator to team lists">
                 <span class="glyphicon glyphicon-plus"></span>&nbsp;Register an external colleague</a></li>
             {% if request.user.is_superuser %}
@@ -220,7 +217,7 @@
                 <span class="text-info">Manage User Groups</span></a></li>
             {% endif %}
                 <li class="dropdown-header">Science Division Intranet</li>
-            <li id="nav-profile-mine"><a href="http://herb:8080/sww" 
+            <li id="nav-profile-mine"><a href="http://herb:8080/sww"
                 title="View my Divisional Profile in the Science Website Workbench" target="_">
                 <span class="glyphicon glyphicon-user"></span>&nbsp;
                 View my Divisional Profile</a></li>
@@ -241,62 +238,62 @@
           <a href="" data-toggle="dropdown" class="dropdown-toggle">Backstage <b class="caret"></b></a>
           <ul class="dropdown-menu" role="menu" id="dropdown-menu-backstage">
                 <li class="dropdown-header">Administrative Structures</li>
-                <li><a href="{{ list_area }}" id="nav-program-list" 
+                <li><a href="{{ list_area }}" id="nav-program-list"
                     title="List Administrative Regions">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Administrative Regions</span></a></li>
-                <li><a href="{{ list_region }}" id="nav-region-list" 
+                <li><a href="{{ list_region }}" id="nav-region-list"
                     title="List and create DPaW Regions">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">DPaW Regions</span></a></li>
-                <li><a href="{{ list_district }}" id="nav-district-list" 
+                <li><a href="{{ list_district }}" id="nav-district-list"
                     title="List and create DPaW Districts">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">DPaW Districts</span></a></li>
-                <li><a href="{{ list_address }}" id="nav-address-list" 
+                <li><a href="{{ list_address }}" id="nav-address-list"
                     title="List and create Addresses">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Addresses</span></a></li>
-                <li><a href="{{ list_workcenter }}" id="nav-workcenter-list" 
+                <li><a href="{{ list_workcenter }}" id="nav-workcenter-list"
                     title="List and create work centers">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Work Centers</span></a></li>
-                <li><a href="{{ list_division }}" id="nav-division-list" 
+                <li><a href="{{ list_division }}" id="nav-division-list"
                     title="List and create departmental services">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Departmental Services</span></a></li>
-                <li><a href="{{ list_researchfunction }}" id="nav-division-list" 
+                <li><a href="{{ list_researchfunction }}" id="nav-division-list"
                     title="List and create divisional research functions">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Divisional Research Functions</span></a></li>
-                <li><a href="{{ list_program }}" id="nav-program-list" 
+                <li><a href="{{ list_program }}" id="nav-program-list"
                     title="List and create Science and Conservation Division Programs">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Divisional Programs</span></a></li>
                 <li class="divider"></li>
                 <li class="dropdown-header">Documents</li>
-                <li><a href="{{ list_conceptplan }}" id="nav-conceptplan-list" 
+                <li><a href="{{ list_conceptplan }}" id="nav-conceptplan-list"
                     title="List Concept Plans">
                     <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
                     <span class="text-info">Concept Plans</span></a></li>
-                <li><a href="{{ list_projectplan }}" id="nav-projectplan-list" 
+                <li><a href="{{ list_projectplan }}" id="nav-projectplan-list"
                     title="List Project Plans">
                     <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
                     <span class="text-info">Project Plans</span></a></li>
-                <li><a href="{{ list_progressreport }}" id="nav-progressreport-list" 
+                <li><a href="{{ list_progressreport }}" id="nav-progressreport-list"
                     title="List Progress Reports">
                     <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
                     <span class="text-info">Progress Reports</span></a></li>
-                <li><a href="{{ list_studentreport }}" id="nav-studentreport-list" 
+                <li><a href="{{ list_studentreport }}" id="nav-studentreport-list"
                     title="List Student Reports">
                     <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
                     <span class="text-info">Student Reports</span></a></li>
-                <li><a href="{{ list_closureform }}" id="nav-closureform-list" 
+                <li><a href="{{ list_closureform }}" id="nav-closureform-list"
                     title="List Closure Forms">
                     <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
                     <span class="text-info">Closure Forms</span></a></li>
                 <li class="dropdown-header">Administrative Commands</li>
-                <li><a href="{{ update_cache }}" id="nav-update-cache" 
+                <li><a href="{{ update_cache }}" id="nav-update-cache"
                     title="Update cached team and area lists, guess user initials">
                     <span class="glyphicon glyphicon-refresh text-info"></span>&nbsp;
                     <span class="text-info">Update caches</span></a></li>
@@ -311,22 +308,22 @@
         {% if request.user.is_authenticated %}
         {# block topsearch #}
         {% if not request.user.completed_registration %}
-            <form id="form-project-search" action="{{ list_project }}" method="get" 
+            <form id="form-project-search" action="{{ list_project }}" method="get"
                 class="navbar-form navbar-right hidden-xs" role="search">
               <div class="search input-group input-group-sm">
-                <input name="q" id="mod-search-searchword" maxlength="20" 
-                    class="form-control" type="text" 
-                    size="20" value="Search Projects..."  
-                    onblur="if (this.value=='') this.value='Search Projects...';" 
+                <input name="q" id="mod-search-searchword" maxlength="20"
+                    class="form-control" type="text"
+                    size="20" value="Search Projects..."
+                    onblur="if (this.value=='') this.value='Search Projects...';"
                     onfocus="if (this.value=='Search Projects...') this.value='';" />
                 <span class="input-group-btn">
-                    <button type="submit" value="Go!" 
+                    <button type="submit" value="Go!"
                     class="btn" onclick="this.form.searchword.focus();">Go!</button>
                 </span>
               </div>
             </form>
         {% endif %}
-            <!--p><small><a href="http://wa.gov.au/search/" data-original-title="" 
+            <!--p><small><a href="http://wa.gov.au/search/" data-original-title=""
                 title="">Go to whole of WA Government search</a></small></p-->
         {# endblock topsearch #}
 
@@ -337,11 +334,11 @@
             {% block userlinks %}
                 <li class="dropdown-header">{% if request.user.is_external %}Persona{% else %}DPaW{% endif %} account</li>
                 {% if not request.user.completed_registration %}
-                <li><a href="{% url 'admin:pythia_user_change' request.user.pk %}" 
+                <li><a href="{% url 'admin:pythia_user_change' request.user.pk %}"
                     title="View and edit your SDIS Profile">
                     <span class="glyphicon glyphicon-user"></span>&nbsp;
                     My SDIS Profile</a></li>
-                <li id="nav-profile-mine"><a href="http://herb:8080/sww" 
+                <li id="nav-profile-mine"><a href="http://herb:8080/sww"
                     title="View my Divisional Profile on the Science Website Workbench" target="_">
                 <span class="glyphicon glyphicon-user"></span>&nbsp;
                 My Divisional Profile</a></li>
@@ -353,19 +350,13 @@
                 <li><a href="{{ password_change }}">{% trans 'Change password' %}</a></li>
                 {% endif %}
 
-                {% if PERSONA_LOGIN %}
-                  <li>{% browserid_logout text='Log out' %}</li>
-                {% else %}
-                  <li><a href="{% url 'admin:logout' %}" title="Log out">Log out</a></li>
-                {% endif %}
-
                 {% if not request.user.completed_registration %}<!-- FIXME add complete registration -->
                 {% endif %}
                 <li class="divider"></li>
                 <li class="dropdown-header">Documentation</li>
                 {% url 'django-admindocs-docroot' as docsroot %}
                 {% if docsroot %}
-                <li><a href="{{ docsroot }}" target ="_" id="menu-admin-docs" 
+                <li><a href="{{ docsroot }}" target ="_" id="menu-admin-docs"
                     title="Read admin docs in new tab">{% trans 'Help' %}</a></li>
                 {% endif %}
                 <li><a href="{% static 'docs/dev/html/index.html' %}" target="_" id="dev-docs" title="Browse developer docs in new tab">Developer documentation</a></li>
@@ -389,7 +380,7 @@
     <div class="container marginfix-inner">
       {% block breadcrumbs %}
       {% endblock %}
-    
+
       {% if not is_popup %}
       {% if not user.is_anonymous %}
       {% block navigation %}
@@ -456,9 +447,5 @@
 {% endblock %}
 
 {% endblock %}
-{% if PERSONA_LOGIN %}
-{% browserid_css %}
-{% browserid_js %}
-{% endif %}
 </body>
 </html>
