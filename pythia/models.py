@@ -51,6 +51,26 @@ def get_locals():
 # Deprecating django-swingers: include required swingers models here
 #
 
+class ActiveQuerySet(QuerySet):
+    def __init__(self, model, query=None, using=None):
+        # the model needs to be defined so that we can construct our custom
+        # query
+        if query is None:
+            query = Query(model)
+            query.add_q(models.Q(effective_to__isnull=True))
+        return super(ActiveQuerySet, self).__init__(model, query, using)
+
+    def __deepcopy__(self, memo):
+        # borrowed from django.db.models.query.QuerySet because we need to pass
+        # self.model to the self.__class__ call
+        obj = self.__class__(self.model)
+        for k, v in self.__dict__.items():
+            if k in ('_iter', '_result_cache'):
+                obj.__dict__[k] = None
+            else:
+                obj.__dict__[k] = copy.deepcopy(v, memo)
+                return obj
+                
 class ActiveGeoQuerySet(GeoQuerySet):
     def __init__(self, model, query=None, using=None):
         # the model needs to be defined so that we can construct our custom

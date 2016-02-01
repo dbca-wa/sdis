@@ -8,7 +8,7 @@ django-extensions>=1.5.2
 # DPaW custom
 #-e hg+https://bitbucket.org/dpaw/django-swingers/@924cc47ecdf5216b259dc90a4c712e95a869d896#egg=django_swingers-dev
 #django-swingers==1.1.1
-https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a3.tar.gz
+https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a4.tar.gz
 
 # django-swingers deps
 django-model-utils==2.0.3

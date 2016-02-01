@@ -86,16 +86,17 @@ if DEBUG:
 INSTALLED_APPS += PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'reversion.middleware.RevisionMiddleware',
+    # auth:
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'dpaw_utils.middleware.SSOLoginMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 )
 
 DEBUG_MIDDLEWARE = (
