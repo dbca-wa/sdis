@@ -1,15 +1,19 @@
 from __future__ import (unicode_literals, absolute_import)
+from functools import update_wrapper
+import os
 
 from django.db.models.base import ModelBase
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import GroupAdmin
 from django.contrib import admin, messages
+from django.conf import settings
+from django.conf.urls.static import static as staticserve
+from django.views import static
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
-from functools import update_wrapper
 
 from pythia.admin import (AuditAdmin, UserAdmin, ProgramAdmin, DivisionAdmin,
     WorkCenterAdmin, AreaAdmin, RegionAdmin, DistrictAdmin)
@@ -26,12 +30,6 @@ from pythia.projects.models import (Project, ScienceProject,
     ProjectMembership, ResearchFunction)
 from pythia.reports.admin import ARARReportAdmin
 from pythia.reports.models import ARARReport
-
-import os
-
-from django.conf import settings
-from django.views import static
-from django.conf.urls.static import static as staticserve
 from pythia.views import (CommentUpdateView, comments_delete, comments_post,
         update_cache, arar_dashboard)
 from pythia.models import Audit
@@ -39,7 +37,7 @@ from pythia.models import Audit
 
 
 class PythiaSite(admin.AdminSite):
-    login_template = "swingers/login.html"
+    login_template = "login.html"
 
     def register(self, model_or_iterable, admin_class=None, **options):
         """Salvaged from deleted django-swingers AuditSite

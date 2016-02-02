@@ -47,6 +47,9 @@ django-redis-sessions==0.4.0
 django-disqus
 django-contrib-comments
 
+# django-compressor
+simplejson
+
 # DevOps
 argparse==1.2.1
 django-confy>=1.0.4
@@ -106,7 +109,7 @@ django-polymorphic==0.8.1
 # Static files
 #static==1.0.2
 dj-static==0.0.6
-django-compressor==1.3
+django-compressor>=2.0
 django-htmlmin==0.7.0
 unipath>=1.1
 

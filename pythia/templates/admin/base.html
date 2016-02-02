@@ -1,4 +1,4 @@
-{% load i18n staticfiles pythia_base %}
+{% load i18n staticfiles compress pythia_base %}
 <!doctype html>
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
@@ -12,13 +12,13 @@
   <title>{% block title %}{% endblock %}</title>
 
   <!-- Site-level CSS -->
+  {% compress css %}
   <link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/jqueryui/1.11.4/jquery-ui.min.css">
   <link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.min.css">
   <link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/joyride/2.1.0/joyride.min.css">
   <link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/handsontable/0.9.9/jquery.handsontable.css">
-  <link rel="stylesheet" type="text/css" href="{% static "font-awesome/css/font-awesome.min.css" %}">
-  <link rel="stylesheet" type="text/css" href="{% static "css/fonts.css" %}"> <!-- from swingers static files -->
+  <!--link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/font-awesome/4.5.0/css/font-awesome.min.css"-->
   <!-- /Site-level CSS -->
 
   <!-- Page-level CSS -->
@@ -26,74 +26,15 @@
   <!-- /Page-level CSS -->
 
   {% if LANGUAGE_BIDI %}
-    <link rel="stylesheet" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}">
+    <link rel="stylesheet"
+    href="{% block stylesheet_rtl %}https://static.dpaw.wa.gov.au/static/libs/bootstrap-rtl/3.2.0-rc2/css/bootstrap-rtl.min.css{% endblock %}">
   {% endif %}
   <link rel="stylesheet" href="{% static "css/pythia-ext.css" %}">
-
-  <!-- Site-level JS -->
-  <script src="https://static.dpaw.wa.gov.au/static/libs/jquery/2.2.0/jquery.min.js"></script>
-  <script src="https://static.dpaw.wa.gov.au/static/libs/jquery/2.2.0/jquery.min.map"></script>
-  <script src="https://static.dpaw.wa.gov.au/static/libs/modernizr/2.8.3/modernizr.min.js"></script>
-  <script src="https://static.dpaw.wa.gov.au/static/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <script src="https://static.dpaw.wa.gov.au/static/libs/favico.js/0.3.9/favico.min.js"></script>
-  <script src="https://static.dpaw.wa.gov.au/static/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-  <script src="https://static.dpaw.wa.gov.au/static/libs/handsontable/0.9.9/jquery.handsontable.js"></script>
-  <script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.min.js"></script>
-  <script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.widgets.min.js"></script>
-  <script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.widgets-filter-formatter.min.js"></script>
-
-  <!-- joyride site tour -->
-  <script src="https://static.dpaw.wa.gov.au/static/libs/joyride/2.1.0/jquery.joyride.min.js"></script>
-
-  <!-- black magic -->
-  <script src="{% static 'js/pythia.js' %}"></script>
-
-  <script>
-      window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";
-      // fix standard addrelated popup closure
-      var SelectBox = SelectBox || {
-          add_to_cache: function() {},
-          redisplay: function() { window.location.reload(true); }
-      };
-      $(function() {
-          $("li.dropdown li.active").parents("li.dropdown").addClass("active");
-          function textAreaAdjust(o) {
-              o.target.style.height = "1.5em";
-              if (o.target.scrollHeight > $(o.target).height()) {
-                o.target.style.height = "1px";
-                o.target.style.height = (25 + o.target.scrollHeight) + "px";
-              }
-          }
-          //$("textarea").keyup(textAreaAdjust).keyup();
-          //tinyMCE.init({selector: "textarea.vLargeTextField"});
-          $("body").on('keyup', 'textarea', textAreaAdjust);
-          $("body textarea").keyup();
-
-          // Check browser features/version (below test fails on firefox 3.6/ie8)
-          // May need subcheck for mobile browsers?
-          /*var testEl = $("div.unsupported").show();
-          var viewport = $(window);
-          testEl.css({
-            width: "100vw"
-          });
-          var difference = testEl.width() - viewport.width();
-          if (Math.round(difference) == 0 || window.indexedDB) {
-             $("div.unsupported").hide();
-          } else {
-             $("div.unsupported").show();
-          };*/
-      });
-  </script>
-
-  <!-- Page-level JS -->
-  {% block extrahead %}{% endblock %}
-  <!-- /Page-level JS -->
-
+  {% endcompress %}
 </head>
 
 <!-- Application navigation links -->
 {% url 'admin:index' as pythia_home %}
-
 {% url 'admin:projects_project_changelist' as list_project %}
 {% url 'admin:projects_project_add' as add_project %}
 {% url 'admin:projects_researchfunction_changelist' as list_researchfunction %}
@@ -112,7 +53,6 @@
 {% url 'admin:documents_progressreport_changelist' as list_progressreport %}
 {% url 'admin:documents_studentreport_changelist' as list_studentreport %}
 {% url 'admin:documents_projectclosure_changelist' as list_closureform %}
-
 {% url 'admin:pythia_conceptplan_change' original.conceptplan.id as change_conceptplan %}
 {% url 'admin:pythia_user_changelist' as list_users %}
 {% url 'admin:pythia_user_change' request.user.pk as change_user %}
@@ -438,7 +378,7 @@
             {% block extra_footer %}
             {% load pythia_base %}
             {% get_version_info %}
-            &copy; 2013 Department of Parks and Wildlife
+            &copy; 2012&ndash;2016 Department of Parks and Wildlife
             {% endblock %}
         </p>
     </div><!-- /.container -->
@@ -448,4 +388,62 @@
 
 {% endblock %}
 </body>
+
+<!-- Page-level JS -->
+{% compress js %}
+<script src="https://static.dpaw.wa.gov.au/static/libs/jquery/2.2.0/jquery.min.js"></script>
+<script src="https://static.dpaw.wa.gov.au/static/libs/modernizr/2.8.3/modernizr.min.js"></script>
+<script src="https://static.dpaw.wa.gov.au/static/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="https://static.dpaw.wa.gov.au/static/libs/favico.js/0.3.9/favico.min.js"></script>
+<script src="https://static.dpaw.wa.gov.au/static/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://static.dpaw.wa.gov.au/static/libs/handsontable/0.9.9/jquery.handsontable.js"></script>
+<script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.min.js"></script>
+<script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.widgets.min.js"></script>
+<script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.widgets-filter-formatter.min.js"></script>
+
+<!-- joyride site tour -->
+<script src="https://static.dpaw.wa.gov.au/static/libs/joyride/2.1.0/jquery.joyride.min.js"></script>
+
+<!-- black magic -->
+<script src="{% static 'js/pythia.js' %}"></script>
+
+<script>
+    window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";
+    // fix standard addrelated popup closure
+    var SelectBox = SelectBox || {
+        add_to_cache: function() {},
+        redisplay: function() { window.location.reload(true); }
+    };
+    $(function() {
+        $("li.dropdown li.active").parents("li.dropdown").addClass("active");
+        function textAreaAdjust(o) {
+            o.target.style.height = "1.5em";
+            if (o.target.scrollHeight > $(o.target).height()) {
+              o.target.style.height = "1px";
+              o.target.style.height = (25 + o.target.scrollHeight) + "px";
+            }
+        }
+        //$("textarea").keyup(textAreaAdjust).keyup();
+        //tinyMCE.init({selector: "textarea.vLargeTextField"});
+        $("body").on('keyup', 'textarea', textAreaAdjust);
+        $("body textarea").keyup();
+
+        // Check browser features/version (below test fails on firefox 3.6/ie8)
+        // May need subcheck for mobile browsers?
+        /*var testEl = $("div.unsupported").show();
+        var viewport = $(window);
+        testEl.css({
+          width: "100vw"
+        });
+        var difference = testEl.width() - viewport.width();
+        if (Math.round(difference) == 0 || window.indexedDB) {
+           $("div.unsupported").hide();
+        } else {
+           $("div.unsupported").show();
+        };*/
+    });
+</script>
+{% block extrahead %}{% endblock %}
+<!-- /Page-level JS -->
+{% endcompress %}
 </html>

@@ -32,12 +32,12 @@ else:
     ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ['127.0.0.1', '::1']
 
-
 # Application definition
-SITE_TITLE = 'SDIS - Science Directorate Information System'
-APPLICATION_VERSION_NO = '4.0'
 SITE_ID = 1
 SITE_NAME = 'SDIS'
+SITE_TITLE = 'Science Directorate Information System'
+APPLICATION_VERSION_NO = '4.0'
+
 DATABASES = {'default': database.config()}
 ROOT_URLCONF = 'sdis.urls'
 WSGI_APPLICATION = 'sdis.wsgi.application'
@@ -54,9 +54,6 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.gis',
     'django.contrib.postgres',
-)
-
-THIRD_PARTY_APPS = (
     'django_extensions',
     'django_comments', # replace with django-disqus
     'crispy_forms', # required?
@@ -64,7 +61,7 @@ THIRD_PARTY_APPS = (
     'django_select2',
     'markup_deprecated',
     'guardian',
-    'compressor', # set up correctly
+    'compressor', # compress static assets
     'mail_templated', # replace with envelope
     'envelope',
     'reversion',
@@ -75,12 +72,6 @@ THIRD_PARTY_APPS = (
     'django_nose',
 )
 
-DEBUG_APPS = (
-    'debug_toolbar',
-    'debug_toolbar_htmltidy',
-    'django_pdb',
-)
-
 PROJECT_APPS = (
     'pythia',
     'pythia.documents',
@@ -88,9 +79,6 @@ PROJECT_APPS = (
     'pythia.reports',
 )
 
-INSTALLED_APPS += THIRD_PARTY_APPS
-if DEBUG:
-    INSTALLED_APPS += DEBUG_APPS
 INSTALLED_APPS += PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
@@ -101,17 +89,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'reversion.middleware.RevisionMiddleware',
-    # 'django.middleware.security.SecurityMiddleware',
-    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'dpaw_utils.middleware.SSOLoginMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'dpaw_utils.middleware.SSOLoginMiddleware',
 )
-
-DEBUG_MIDDLEWARE = (
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'django_pdb.middleware.PdbMiddleware',
-)
-if DEBUG:
-    MIDDLEWARE_CLASSES += DEBUG_MIDDLEWARE
 
 
 TEMPLATES = [
@@ -130,7 +111,7 @@ TEMPLATES = [
                 "django.core.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "django.core.context_processors.request",
-                # "sdis.context_processors.standard",
+                "pythia.context_processors.template_context",
             ],
         },
     },
@@ -153,13 +134,10 @@ DATE_INPUT_FORMATS = (
 
 
 # Uploads
-
-
 if not os.path.exists(os.path.join(BASE_DIR, 'media')):
     os.mkdir(os.path.join(BASE_DIR, 'media'))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
 
 
 # Static files (CSS, JavaScript, Images)
@@ -193,6 +171,7 @@ LOGIN_REDIRECT_URL_FAILURE = LOGIN_URL
 LOGOUT_URL = '/logout/'
 LOGOUT_REDIRECT_URL = LOGOUT_URL
 
+
 # Cache
 # see http://django-select2.readthedocs.org/en/latest/django_select2.html
 CACHES = {
@@ -212,6 +191,7 @@ CACHES = {
 # Set the cache backend to select2
 SELECT2_CACHE_BACKEND = 'select2'
 
+
 # Django-Restframework
 REST_FRAMEWORK = {
 # Use hyperlinked styles by default.
@@ -226,14 +206,14 @@ REST_FRAMEWORK = {
 }
 
 # Misc settings
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'alerts.corporateict.domain')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'email.host')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
 
 # Envelope email
 ENVELOPE_EMAIL_RECIPIENTS = ['sdis@DPaW.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True
 
-COMPRESS_ENABLED = False
+# COMPRESS_ENABLED = False
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
@@ -311,6 +291,17 @@ LOGGING = {
 if DEBUG:
     # Set up logging differently to give us some more information about what's
     # going on
+    INSTALLED_APPS += (
+        'debug_toolbar',
+        'debug_toolbar_htmltidy',
+        'django_pdb',
+    )
+
+    MIDDLEWARE_CLASSES += (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+        'django_pdb.middleware.PdbMiddleware',
+    )
+
     LOGGING['loggers'] = {
         'django.request': {
             'handlers': ['file'],
