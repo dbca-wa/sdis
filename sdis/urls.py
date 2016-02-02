@@ -21,6 +21,8 @@ urlpatterns = patterns(
             template_name="../../staticfiles/docs/dev/html/index.html"),
             name='dev-docs'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login',
+        kwargs={'template_name': 'login.html'}),
     url(r'', include(site.urls)),
 )
 

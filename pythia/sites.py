@@ -37,7 +37,7 @@ from pythia.models import Audit
 
 
 class PythiaSite(admin.AdminSite):
-    login_template = "login.html"
+    # login_template = "login.html" # replaced by login url
 
     def register(self, model_or_iterable, admin_class=None, **options):
         """Salvaged from deleted django-swingers AuditSite

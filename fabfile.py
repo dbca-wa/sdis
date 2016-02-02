@@ -95,16 +95,8 @@ def _aptget():
     local("bower install")
 
 
-def _setupfolders():
-    """Fix owership and permissions on project folders"""
-    local("mkdir -p media")
-    local("mkdir -p logs")
-    local("mkdir -p staticfiles/docs/user")
-
-
 def _pipinstall():
     """Install python requirements"""
-    local("pip install markdown")
     local("pip install -r requirements.txt")
 
 
@@ -131,7 +123,6 @@ def install():
     """
     Make folders and install required dependencies into current virtualenv.
     """
-    _setupfolders()
     _aptget()
     _pipinstall()
 

@@ -153,6 +153,7 @@ STATICFILES_FINDERS = (
 )
 # This is required to add context variables to all templates:
 STATIC_CONTEXT_VARS = {}
+COMPRESS_ROOT = STATIC_ROOT
 
 
 # User settings - enable SDIS custom user.
@@ -178,16 +179,13 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        "OPTIONS": { "CLIENT_CLASS": "django_redis.client.DefaultClient" }
     },
     'select2': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
     }
 }
-
 # Set the cache backend to select2
 SELECT2_CACHE_BACKEND = 'select2'
 
@@ -201,15 +199,13 @@ REST_FRAMEWORK = {
 # Use Django's standard `django.contrib.auth` permissions,
 # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ]
 }
 
 # Misc settings
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'email.host')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
-
-# Envelope email
 ENVELOPE_EMAIL_RECIPIENTS = ['sdis@DPaW.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True
 
@@ -220,7 +216,7 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': False,
     'INTERCEPT_REDIRECTS': False,
-    'SHOW_TOOLBAR_CALLBACK': 'sdis.utils.show_toolbar'
+    'SHOW_TOOLBAR_CALLBACK': 'sdis.utils.show_toolbar',
 }
 
 # Logging configuration

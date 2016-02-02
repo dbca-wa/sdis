@@ -1,27 +1,16 @@
 {% extends "admin/base_site.html" %}
-{% load i18n admin_static staticfiles %}
-{% load pythia_base %}
-{% block title %}SDIS{% endblock %}
-{% block extrastyle %}
-{{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />
-{% include "admin/includes/leaflet-css.html" %}
-<!-- Task counter in favicon becase we CAN -->
-{% endblock %}
+{% load i18n admin_static staticfiles pythia_base %}
 
 {% block extrahead %}
 {{ block.super }}
 <script>
 {% with request.user.tasklist as my_tasklist %}
 {% if my_tasklist.count > 0 %}
-var favicon=new Favico({
-animation:'popFade'
-});
+var favicon=new Favico({animation:'popFade'});
 favicon.badge({{ my_tasklist.count }});
 {% endif %}
 {% endwith %}
 </script>
-{% include 'admin/includes/leaflet-js.html' %}
 {% endblock %}
 
 {% block coltype %}colMS{% endblock %}
@@ -31,7 +20,8 @@ favicon.badge({{ my_tasklist.count }});
 {% block contentwrapper %}
 <div class="jumbotron">
     <h1>Science Directorate Information System</h1>
-    <p>Hello, {% firstof request.user.first_name request.user.username %}! This is SDIS, our one-stop shop for project approval and reporting.</p>
+    <p>Hello, {% firstof request.user.first_name request.user.username %}!
+      This is SDIS, our one-stop shop for project approval and reporting.</p>
 </div>
 <div class="row">
     <div class="col-md-4">
@@ -39,7 +29,8 @@ favicon.badge({{ my_tasklist.count }});
         <div class="panel panel-default" id="panel-tasks">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#panel-tasks" href="#collapseTasks">My Tasks
+                    <a data-toggle="collapse" data-parent="#panel-tasks"
+                        href="#collapseTasks">My Tasks
                         <span class="pull-right {% if my_tasklist.count > 0 %}text-danger{% endif %}">
                             <i class="glyphicon{% if my_tasklist.count == 0 %} glyphicon-ok{% else %} glyphicon-flag{% endif %}"></i>
                             {{ my_tasklist.count }}
@@ -49,17 +40,18 @@ favicon.badge({{ my_tasklist.count }});
             </div>
             <div class="panel-collapse list-group collapse in" id="collapseTasks">
                 {% if my_tasklist.count == 0 %}
-                <a href="#" class="list-group-item"><span class="glyphicon glyphicon-ok"></span>All done!</a>
+                <a href="#" class="list-group-item">
+                  <span class="glyphicon glyphicon-ok"></span>All done!</a>
                 {% else %}
                 {% for doc in my_tasklist.approvals %}
-                <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}" 
-                    class="list-group-item portfolio"><span 
+                <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}"
+                    class="list-group-item portfolio"><span
                         class="glyphicon glyphicon-flag text-danger"></span>
                     {{ doc.project.project_name_html|safe }}
                 </a>
                 {% endfor %}
-                {% for doc in my_tasklist.endorsements %} 
-                <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}" 
+                {% for doc in my_tasklist.endorsements %}
+                <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}"
                     class="list-group-item portfolio">
                     <span class="glyphicon glyphicon-thumbs-up"></span>
                     {{ doc.project.project_name_html|safe }}
@@ -109,7 +101,7 @@ favicon.badge({{ my_tasklist.count }});
         <div class="panel panel-default" id="panel-collaborations">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#panel-collaborations" 
+                    <a data-toggle="collapse" data-parent="#panel-collaborations"
                         href="#collapseCollaborations">My Collaborations
                         {% if my_portfolio.collabs %}
                         <span class="pull-right">
@@ -147,7 +139,7 @@ favicon.badge({{ my_tasklist.count }});
             <div class="panel-collapse list-group collapse in" id="collapseProfile">
                 <a href="#" class="list-group-item"><span class="glyphicon glyphicon-envelope"></span>Contact details</a>
                 <a href="#" class="list-group-item"><span class="glyphicon glyphicon-book"></span>Publications</a>
-                <a href="http://data-demo.dpaw.wa.gov.au/dataset?groups=outputs" target="_" 
+                <a href="http://data-demo.dpaw.wa.gov.au/dataset?groups=outputs" target="_"
                     class="list-group-item"><span class="glyphicon glyphicon-dashboard"></span>Productivity metrics</a>
                 <a href="#" class="list-group-item"><span class="glyphicon glyphicon-time"></span>Time allocation</a>
             </div>
@@ -166,32 +158,37 @@ favicon.badge({{ my_tasklist.count }});
                 {% load documents %}
                 {% get_current_arar as current_arar %}
                 {% if current_arar %}
-                <a class="btn btn-success btn-block" href="{% url 'admin:arar_dashboard' %}" 
-                    title="Read and work on progress reports">Current ARAR (progress report overview)</a>
-                <a class="btn btn-primary btn-block" href="{% url 'admin:pythia_ararreport_detail' current_arar.pk %}"
-                    title="View the current ARAR online">Current ARAR (print preview)</a>
-                <button class="btn btn-default btn-block dropdown-toggle" 
-                    data-toggle="dropdown">Download published ARAR <span class="caret"></span></button>
+                <a class="btn btn-success btn-block"
+                    href="{% url 'admin:arar_dashboard' %}"
+                    title="Read and work on progress reports">
+                    Current ARAR (progress report overview)</a>
+                <a class="btn btn-primary btn-block"
+                    href="{# url 'admin:pythia_ararreport_detail' current_arar.pk #}"
+                    title="View the current ARAR online">
+                    Current ARAR (print preview)</a>
+                <button class="btn btn-default btn-block dropdown-toggle"
+                    data-toggle="dropdown">
+                    Download published ARAR <span class="caret"></span></button>
                 {% endif %}
                 <ul class="dropdown-menu" role="menu">
                     {% include 'admin/includes/arar_list_static.html' %}
                 </ul>
-                
+
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6">
             <h2>Data</h2>
-                <a class="btn btn-primary btn-block" 
-                    href="http://internal-data.dpaw.wa.gov.au/" 
+                <a class="btn btn-primary btn-block"
+                    href="http://internal-data.dpaw.wa.gov.au/"
                     target="_"
                     title="Browse the data catalogue (new tab)">Data Catalogue</a>
             </div>
             <div class="col-md-6">
             <h2>Sites</h2>
-                <a class="btn btn-primary btn-block" 
-                    href="http://scientificsites.dpaw.wa.gov.au/" 
+                <a class="btn btn-primary btn-block"
+                    href="http://scientificsites.dpaw.wa.gov.au/"
                     target="_"
                     title="Browse the Scientific Site Register (new tab)">Scientific Site Register</a>
             </div>
