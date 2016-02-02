@@ -1,10 +1,13 @@
 from confy import database
 import os
 import sys
+from unipath import Path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).ancestor(2)
+PROJECT_DIR = os.path.join(BASE_DIR, 'pythia')
+sys.path.insert(0, PROJECT_DIR)
+
 root = lambda *x: os.path.join(BASE_DIR, *x)
-sys.path.insert(0, root('pythia'))
 
 SECRET_KEY = os.environ['SECRET_KEY'] if os.environ.get('SECRET_KEY', False) else 'foo'
 DEBUG = True if os.environ.get('DEBUG', False) == 'True' else False
@@ -27,12 +30,17 @@ if not DEBUG:
     ]
 else:
     ALLOWED_HOSTS = ['*']
+INTERNAL_IPS = ['127.0.0.1', '::1']
+
 
 # Application definition
 SITE_TITLE = 'SDIS - Science Directorate Information System'
 APPLICATION_VERSION_NO = '4.0'
 SITE_ID = 1
 SITE_NAME = 'SDIS'
+DATABASES = {'default': database.config()}
+ROOT_URLCONF = 'sdis.urls'
+WSGI_APPLICATION = 'sdis.wsgi.application'
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -87,16 +95,15 @@ INSTALLED_APPS += PROJECT_APPS
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'reversion.middleware.RevisionMiddleware',
-    # auth:
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'dpaw_utils.middleware.SSOLoginMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'reversion.middleware.RevisionMiddleware',
+    # 'django.middleware.security.SecurityMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'dpaw_utils.middleware.SSOLoginMiddleware',
 )
 
 DEBUG_MIDDLEWARE = (
@@ -106,14 +113,14 @@ DEBUG_MIDDLEWARE = (
 if DEBUG:
     MIDDLEWARE_CLASSES += DEBUG_MIDDLEWARE
 
-ROOT_URLCONF = 'sdis.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [root('pythia','templates')],
+        'DIRS': [os.path.join(PROJECT_DIR, 'templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
+            'debug': DEBUG,
             'context_processors': [
                 "django.contrib.auth.context_processors.auth",
                 "django.core.context_processors.debug",
@@ -123,16 +130,12 @@ TEMPLATES = [
                 "django.core.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "django.core.context_processors.request",
-                #"sdis.context_processors.standard",
+                # "sdis.context_processors.standard",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'sdis.wsgi.application'
-
-# Database
-DATABASES = {'default': database.config()}
 
 # I8n
 LANGUAGE_CODE = 'en-au'
@@ -150,17 +153,29 @@ DATE_INPUT_FORMATS = (
 
 
 # Uploads
-MEDIA_ROOT = root('media')
+
+
+if not os.path.exists(os.path.join(BASE_DIR, 'media')):
+    os.mkdir(os.path.join(BASE_DIR, 'media'))
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+
+
 # Static files (CSS, JavaScript, Images)
-STATIC_ROOT = root('staticfiles')
+if not os.path.exists(os.path.join(BASE_DIR, 'staticfiles')):
+    os.mkdir(os.path.join(BASE_DIR, 'staticfiles'))
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (os.path.join(PROJECT_DIR, 'static'),)
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
+# This is required to add context variables to all templates:
+STATIC_CONTEXT_VARS = {}
+
 
 # User settings - enable SDIS custom user.
 AUTHENTICATION_BACKENDS = (
@@ -229,6 +244,9 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 # Logging configuration
+if not os.path.exists(os.path.join(BASE_DIR, 'logs')):
+    os.mkdir(os.path.join(BASE_DIR, 'logs'))
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
