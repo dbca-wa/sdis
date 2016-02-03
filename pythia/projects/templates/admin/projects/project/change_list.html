@@ -8,12 +8,6 @@
   {{ media.css }}
   <link rel="stylesheet" type="text/css" href="{% static "admin/css/widgets.css" %}" />
   <link rel="stylesheet" href="{% static "css/changelists.css" %}">
-
-  {% if not actions_on_top and not actions_on_bottom %}
-    <style>
-      #changelist table thead th:first-child {width: inherit}
-    </style>
-  {% endif %}
 {% endblock %}
 
 {% block extrahead %}
@@ -141,35 +135,6 @@ $(function() {
 });//document.ready
 
 
-
-
-
-/*
-    $(function() {
-      var row = $('table#result_list thead').append('<tr>' +
-        '<th><input type="checkbox" /></th>' +
-        '<th><input type="text" name="project_id" value="" /></th>' +
-        '<th><input type="text" name="project_title" value="" /></th>' +
-        '<th><input type="text" name="type" value="" /></th>' +
-        '<th><input type="text" name="year" value="" /></th>' +
-        '<th><input type="text" name="number" value="" /></th>' +
-        '<th><input type="text" name="project_owner_name" value="" /></th>' +
-        '<th><input type="text" name="program" value="" /></th>' +
-        '<th><input type="text" name="fm_start_date" value="" /></th>' +
-        '<th><input type="text" name="fm_end_date" value="" /></th>' +
-        '</tr>'
-      );
-      row.change(function() {
-        var params = Array();
-        $(this).find("input").each(function() {
-          if (this.name)
-            params.push(this.name + '=' + $(this).val());
-        });
-        alert(params.join('&'));
-        hasChanged = false;   // TODO
-      });
-    });
-*/
   </script>
 {% endblock %}
 {% block bodyclass %}change-list{% endblock %}
@@ -218,7 +183,7 @@ $(function() {
       <div class="object-tools pull-right">
           {% block object-tools-items %}
           <a class="btn btn-small btn-info"
-              href="{% if current %}{% url cl.opts|pythia_urlname:'add' current.id %}{% else %}{% url cl.opts|pythia_urlname:'add' %}{% endif %}{% if is_popup %}?_popup=1{% endif %}">
+href="{% if current %}{% url cl.opts|pythia_urlname:'add' current.id %}{% else %}{% url cl.opts|pythia_urlname:'add' %}{% endif %}{% if is_popup %}?_popup=1{% endif %}">
           <i class="glyphicon-plus glyphicon-white"></i>
           {% blocktrans with cl.opts.verbose_name as name %}Create {{ name }}{% endblocktrans %}
           </a>
