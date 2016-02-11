@@ -131,7 +131,7 @@ class FormfieldOverridesMixin(object):
         return formfield
 
 
-class BaseAdmin(FormfieldOverridesMixin, ModelAdmin):
+class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
     list_editable_extra = 0
     list_empty_form = False
     object_diff_template = None

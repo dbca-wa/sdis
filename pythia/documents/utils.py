@@ -135,8 +135,8 @@ def setup_user_permissions(sender, **kwargs):
 
 
 # Comment out before loaddata of production data in dev/test/uat
-#post_syncdb.connect(add_document_permissions, dispatch_uid='add_document_permissions')
-#post_syncdb.connect(setup_user_permissions, dispatch_uid='setup_user_permissions')
+post_syncdb.connect(add_document_permissions, dispatch_uid='add_document_permissions')
+post_syncdb.connect(setup_user_permissions, dispatch_uid='setup_user_permissions')
 
 
 def migrate_documents_to_html(debug=False):

@@ -6,7 +6,6 @@ from pythia.documents.models import ConceptPlan
 
 from .base import BaseTestCase, UserFactory, ScienceProjectFactory
 
-
 class ConceptPlanAdminTests(BaseTestCase):
 
     def setUp(self):
@@ -35,8 +34,8 @@ class ConceptPlanAdminTests(BaseTestCase):
         data = {
             'id': self.plan.id,
             'summary': "New summary",
-            'budget': '[["test"]]',
-            'staff': '[["test"]]'
+            'budget': '',
+            'staff': ''
         }
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -79,7 +78,7 @@ class ConceptPlanAdminTests(BaseTestCase):
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, 200)
         plan = self.project.documents.instance_of(ConceptPlan).get()
-        self.assertEqual(plan.summary, "New summary") 
+        self.assertEqual(plan.summary, "New summary")
         # TODO test whether conceptplan is editable
 
     def test_concept_plan_request(self):

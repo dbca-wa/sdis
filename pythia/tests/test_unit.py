@@ -8,11 +8,11 @@ from pythia.projects.models import (
     Project, ScienceProject, CoreFunctionProject, CollaborationProject,
     StudentProject, ProjectMembership)
 
-from .base import (ProjectFactory, ScienceProjectFactory,
+from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
                    CoreFunctionProjectFactory, CollaborationProjectFactory,
                    StudentProjectFactory, UserFactory)
 
-class TemplateTagTests(TestCase):
+class TemplateTagTests(BaseTestCase):
     def setUp(self):
         users, created = Group.objects.get_or_create(name='Users')
         self.project = ScienceProjectFactory.create()
@@ -35,3 +35,19 @@ class TemplateTagTests(TestCase):
         print output
         #self.fail("blah")
         pass
+
+class AreaTest(BaseTestCase):
+    def dummy_fail():
+        self.fail("blah")
+
+class RegionTest(BaseTestCase):
+    pass
+
+class DistrictTest(BaseTestCase):
+    pass
+
+class AddressTest(BaseTestCase):
+    pass
+
+class DivisionTest(BaseTestCase):
+    pass

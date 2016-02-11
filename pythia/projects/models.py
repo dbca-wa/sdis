@@ -33,11 +33,11 @@ from django_fsm import FSMField, transition
 from polymorphic.models import PolymorphicModel, PolymorphicManager
 
 
-from pythia.documents.models import (ConceptPlan, ProjectPlan,
-        ProgressReport, ProjectClosure, StudentReport)
+from pythia.documents.models import (ConceptPlan, ProjectPlan, ProgressReport,
+                                     ProjectClosure, StudentReport)
 from pythia.fields import Html2TextField, PythiaArrayField
 from pythia.models import (Audit, ActiveModel, ActiveGeoModelManager,
-    Program, WebResource, Division, Area, User)
+                           Program, WebResource, Division, Area, User)
 from pythia.reports.models import ARARReport
 
 logger = logging.getLogger(__name__)

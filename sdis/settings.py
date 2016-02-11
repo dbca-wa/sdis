@@ -211,6 +211,7 @@ ENVELOPE_USE_HTML_EMAIL = True
 
 # COMPRESS_ENABLED = False
 
+# Testing: django_nose
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 DEBUG_TOOLBAR_CONFIG = {

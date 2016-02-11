@@ -85,8 +85,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
 
     # end list_display crutches
 
-    # normally you just specify two strings for the django-swingers download latex hook to work,
-    # here we generate them on the fly based on whatever document class we use to access it
+    # generate download template name on the fly based on document class
     @property
     def download_template(self):
         return "doc_"+self.model._meta.model_name

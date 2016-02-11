@@ -182,9 +182,16 @@ def pep():
 
 
 def test():
-    """Write PEP8 warnings to logs/pep8.log and run test suite."""
-    print(yellow("Runnings tests..."))
-    local('python manage.py test -v 2 pythia')
+    """Write PEP8 warnings to logs/pep8.log and run test suite, re-use db."""
+    print(yellow("Running tests, re-use test DB."))
+    local('REUSE_DB=1 python manage.py test -v 2')
+    print(green("Completed running tests."))
+
+def longtest():
+    """Write PEP8 warnings to logs/pep8.log and run test suite, re-use db."""
+    print(yellow("Running tests, use new test DB."))
+    local('python manage.py test -v 2')
+    print(green("Completed running tests."))
 
 #-----------------------------------------------------------------------------#
 # Documentation
