@@ -1,4 +1,3 @@
-{% load pythia_base texify %}
 \documentclass[version=last,
     paper=a4, % paper size
     10pt, % default font size
@@ -39,9 +38,10 @@
 %\setlength{\parskip}{1.3 ex plus 0.5ex minus 0.3ex} % 1-1.8 ex vertical space between paragraphs - ONLINE
 
 % Spacing of headings
-\RedeclareSectionCommand[afterskip=3pt]{section} % less space after section
-\RedeclareSectionCommand[beforeskip=0cm]{subsection} % less space between HRule and project name
-\RedeclareSectionCommand[afterskip=0.1\baselineskip]{subsubsection} % less space after progressreport subheadings
+% SDIS-1 spacing pending upgrade of texlive on aws-eco-001
+%\RedeclareSectionCommand[afterskip=3pt]{section} % less space after section
+%\RedeclareSectionCommand[beforeskip=0cm]{subsection} % less space between HRule and project name
+%\RedeclareSectionCommand[afterskip=0.1\baselineskip]{subsubsection} % less space after progressreport subheadings
 
 % Table font size
 \usepackage{etoolbox}
@@ -113,9 +113,11 @@
 %%
 %% Custom macros
 %%
+%%
+%% Custom macros
+%%
 % Thick Horizontal rule
-\documentclass[version=last,
-    paper=a4, % paper size
-    10pt, % default font size
-    usenames,
-    dvipsnames,
+\newcommand{\HRule}{\vspace{8mm}\\\noindent\rule{\linewidth}{0.1pt}}
+
+% Custom Tikz node for SDS diagram
+\newcommand\mynode[6][]{\node[#1] (#2){\parbox{#3\relax}{\begin{center}\textbf{#4}\\#5\\\footnotesize{#6}\end{center}}};}
