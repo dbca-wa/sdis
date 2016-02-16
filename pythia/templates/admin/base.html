@@ -25,8 +25,8 @@
   <script src="https://raw.githubusercontent.com/calvinmetcalf/leaflet-ajax/master/dist/leaflet.ajax.min.js"></script>
   <script src="http://static.dpaw.wa.gov.au/static/libs/leaflet.fullscreen/1.0.0/Control.FullScreen.min.js"></script>
   <script src="https://raw.githubusercontent.com/kartena/Proj4Leaflet/leaflet-proj-refactor/src/proj4leaflet.js"></script>
+  {{ form.media.css }}
   <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />
-
   <!-- /Site-level CSS -->
 
   <!-- Page-level CSS -->
@@ -451,6 +451,7 @@
         };*/
     });
 </script>
+{{ form.media.js }}
 {% block extrahead %}{% endblock %}
 <!-- /Page-level JS -->
 {% endcompress %}

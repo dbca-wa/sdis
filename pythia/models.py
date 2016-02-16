@@ -70,7 +70,7 @@ class ActiveQuerySet(QuerySet):
             else:
                 obj.__dict__[k] = copy.deepcopy(v, memo)
                 return obj
-                
+
 class ActiveGeoQuerySet(GeoQuerySet):
     def __init__(self, model, query=None, using=None):
         # the model needs to be defined so that we can construct our custom
@@ -791,12 +791,10 @@ class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         extra_fields = extra_fields or {}
         extra_fields.setdefault('email', email)
-        return self._create_user(username, password, True, False,
-                                 **extra_fields)
+        return self._create_user(username, password, True, False, **extra_fields)
 
     def create_superuser(self, username, password, **extra_fields):
-        return self._create_user(username, password, True, True,
-                                 **extra_fields)
+        return self._create_user(username, password, True, True, **extra_fields)
 
 @python_2_unicode_compatible
 class User(AbstractBaseUser, PermissionsMixin):

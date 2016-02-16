@@ -27,26 +27,26 @@ from django.views.decorators.csrf import csrf_exempt
 
 def arar_dashboard(request):
     from pythia.reports.models import ARARReport
-    return TemplateResponse(request, 
-            'arar_dashboard/arar.html', 
+    return TemplateResponse(request,
+            'arar_dashboard/arar.html',
             {"original":ARARReport.objects.latest()})
 
 
 
 @csrf_exempt
 def update_cache(request):
-    """Updates cached fields on Projects, 
+    """Updates cached fields on Projects,
     guesses initials for Users without initials.
     """
     from pythia.projects.models import refresh_all_project_caches
     no_projects = refresh_all_project_caches()
-    messages.success(request, 
+    messages.success(request,
     "Team lists and areas updated for {0} projects".format(no_projects))
 
     from pythia.models import User
     [u.save() for u in User.objects.all()]
     no_users = User.objects.all().count()
-    messages.success(request, 
+    messages.success(request,
     "Missing initials guessed from first name for {0} users".format(no_users))
 
     return HttpResponseRedirect("/")
@@ -75,7 +75,7 @@ def spell_check(request):
             checker = enchant.Dict(str(lang))
 
             if method == 'spellcheck':
-                for x in [word for word in arg if word and not 
+                for x in [word for word in arg if word and not
                         checker.check(word)]:
                     result[x] = checker.suggest(x)
 
@@ -100,7 +100,7 @@ def comments_post(request):
 
 
 def comments_delete(request, comment_id):
-    comment = get_object_or_404(django_comments.get_model(), pk=comment_id, 
+    comment = get_object_or_404(django_comments.get_model(), pk=comment_id,
             site__pk=settings.SITE_ID)
     context = {
         'next': request.GET.get('next'),
@@ -114,7 +114,7 @@ def comments_delete(request, comment_id):
             return render_to_response('admin/close_popup.html', context,
                     RequestContext(request))
         else:
-            return next_redirect(request, fallback=request.GET.get('next') or 
+            return next_redirect(request, fallback=request.GET.get('next') or
                     'comments-delete-done', c=comment.pk)
 
     else:
@@ -127,6 +127,9 @@ class CommentUpdateForm(ModelForm):
         model = Comment
         fields = ('comment',)
 
+def home(request):
+    return HttpResponse('yo')
+
 
 class CommentUpdateView(edit.UpdateView):
     model = Comment
@@ -136,7 +139,7 @@ class CommentUpdateView(edit.UpdateView):
     def get_context_data(self, **kwargs):
         context = {
             'next': self.request.REQUEST.get('next'),
-            'is_popup': self.request.REQUEST.get('_popup') 
+            'is_popup': self.request.REQUEST.get('_popup')
         }
         context.update(kwargs)
         return super(CommentUpdateView, self).get_context_data(**context)

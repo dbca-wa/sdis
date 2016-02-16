@@ -23,7 +23,10 @@ urlpatterns = patterns(
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login',
         kwargs={'template_name': 'login.html'}),
+    url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout',
+        kwargs={'template_name': 'logout.html'}),
     url(r'', include(site.urls)),
+    url(r'^$', 'pythia.views.home', name='homepage')
 )
 
 urlpatterns += staticfiles_urlpatterns()

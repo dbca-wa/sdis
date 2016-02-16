@@ -1,14 +1,7 @@
-/* Blue bg for table header */
-th.tablesorter-header.resizable-false {background-color: #e6bf99;}
+//th.tablesorter-header.resizable-false {background-color: #e6bf99;}
 
-/* White bg for all table cells */
+/* fix empty cells over blue background picture */
 table {background-color: white;}
-
-/* Light blue active inputs */
-input:focus, select:focus {background-color: #D1F0FF;}
-
-/* the "search for project year, number, title" form input */
-.search-query {width: 160px;}
 
 
 @media only screen and (max-width: 760px),
@@ -23,26 +16,27 @@ input:focus, select:focus {background-color: #D1F0FF;}
     tr {border: 1px solid #ccc; background-color: white;}
 
     td {
-        /* Behave  like a "row" */
-        border: none;
+        border: none; /* Behave  like a "row" */
         border-bottom: 1px solid #eee;
         position: relative;
         padding-left: 50%;
     }
 
     td:before {
-        /* Now like a table header */
-        position: absolute;
-        /* Top/left values mimic padding */
-        top: 6px;
+        position: absolute; /* Now like a table header */
+        top: 6px; /* Top/left values mimic padding */
         left: 6px;
         width: 45%;
         padding-right: 10px;
         white-space: nowrap;
     }
+
 }
 
-/* fixed table header when scrolling down */
+input:focus, select:focus {background-color: #D1F0FF;}
+
+textarea {height: 1.5em; width: 95%; overflow-y: hidden;}
+
 table .header-fixed {
     position: fixed;
     //top: 40px; /* commented out because no fixed navbar */
@@ -54,6 +48,11 @@ table .header-fixed {
     -moz-border-radius: 0;
     border-radius: 0;
 }
+
+/* the "search for project year, number, title" form input */
+.search-query {width: 160px;}
+
+input.vForeignKeyRawIdAdminField, input.vIntegerField {width: 40px;}
 
 /* 10 more than .navbar-fixed */
 .chzn-drop { z-index: 1040 !important;}

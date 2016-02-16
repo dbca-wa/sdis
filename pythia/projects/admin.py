@@ -183,9 +183,9 @@ class ProjectAdmin(BaseAdmin):
 
         return ProjectChangeList
 
-    def get_queryset(self, request):
-        return super(ProjectAdmin, self).queryset(request).select_related(
-            'program', 'project_owner', 'modifier')
+    #def get_queryset(self, request):
+    #    return super(ProjectAdmin, self).queryset(request).select_related(
+    #        'program', 'project_owner', 'modifier')
 
     def response_add(self, request, obj, post_url_continue=None):
         #if post_url_continue is None:

@@ -67,9 +67,9 @@ INSTALLED_APPS = (
     'reversion',
     'rest_framework',
     'webtemplate_dpaw',
-    'gunicorn', # replace with wsgiserver
+    #'gunicorn', # replace with wsgiserver
     'django_wsgiserver',
-    'django_nose',
+    #'django_nose',
 )
 
 PROJECT_APPS = (
@@ -91,7 +91,7 @@ MIDDLEWARE_CLASSES = (
     'reversion.middleware.RevisionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    # 'dpaw_utils.middleware.SSOLoginMiddleware',
+    'dpaw_utils.middleware.SSOLoginMiddleware',
 )
 
 
@@ -212,7 +212,7 @@ ENVELOPE_USE_HTML_EMAIL = True
 # COMPRESS_ENABLED = False
 
 # Testing: django_nose
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': False,

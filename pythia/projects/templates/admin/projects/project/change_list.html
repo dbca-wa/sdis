@@ -1,5 +1,7 @@
 {% extends "admin/base_site.html" %}
-{% load i18n staticfiles admin_list markup pythia_base %}
+{% load i18n staticfiles admin_list %}
+{% load markup %}
+{% load pythia_base %}
 
 {% block extrastyle %}
   {{ block.super }}
@@ -21,7 +23,9 @@
   {% if action_form %}{% if actions_on_top or actions_on_bottom %}
   <script type="text/javascript">
     (function($) {
-      $(document).ready(function($) {$("tr input.action-select").actions();});
+      $(document).ready(function($) {
+        $("tr input.action-select").actions();
+      });
     })(django.jQuery);
   </script>
   {% endif %}{% endif %}
@@ -129,7 +133,9 @@ $(function() {
     });
     //$("#cfspp").click();
 });//document.ready
-</script>
+
+
+  </script>
 {% endblock %}
 {% block bodyclass %}change-list{% endblock %}
 
@@ -147,7 +153,6 @@ $(function() {
 </ul>
 {% endif %}
 {% endblock %}
-
 {% block coltype %}flex{% endblock %}
 
 {% block header %}{% endblock %}

@@ -43,7 +43,7 @@ Breadcrumb = namedtuple('Breadcrumb', ['name', 'url'])
 
 
 class AuditAdmin(VersionAdmin, GuardedModelAdmin, ModelAdmin):
-    """Salvaged from deleted django-swingers package
+    """Salvaged from deleted django-swingers package.
     """
 
     search_fields = ['id', 'creator__username', 'modifier__username',
@@ -82,6 +82,95 @@ class AuditAdmin(VersionAdmin, GuardedModelAdmin, ModelAdmin):
         inner.short_description = related.opts.verbose_name_plural.title()
         return inner
 
+class DetailAdmin(ModelAdmin):
+    """Salvaged from django-swingers."""
+    detail_template = None
+    changelist_link_detail = False
+    # prevents django-guardian from clobbering change_form template (Scott)
+    change_form_template = None
+
+    def get_changelist(self, request, **kwargs):
+        from swingers.admin.views import DetailChangeList
+        return DetailChangeList
+
+    def has_view_permission(self, request, obj=None):
+        opts = self.opts
+        return request.user.has_perm(
+            opts.app_label + '.' + 'view_%s' % opts.object_name.lower()
+        )
+
+    def get_urls(self):
+        from django.conf.urls import patterns, url
+
+        def wrap(view):
+            def wrapper(*args, **kwargs):
+                return self.admin_site.admin_view(view)(*args, **kwargs)
+            return update_wrapper(wrapper, view)
+
+        info = self.model._meta.app_label, self.model._meta.model_name
+
+        urlpatterns = patterns(
+            '',
+            url(r'^$',
+                wrap(self.changelist_view),
+                name='%s_%s_changelist' % info),
+            url(r'^add/$',
+                wrap(self.add_view),
+                name='%s_%s_add' % info),
+            url(r'^(\d+)/history/$',
+                wrap(self.history_view),
+                name='%s_%s_history' % info),
+            url(r'^(\d+)/delete/$',
+                wrap(self.delete_view),
+                name='%s_%s_delete' % info),
+            url(r'^(\d+)/change/$',
+                wrap(self.change_view),
+                name='%s_%s_change' % info),
+            url(r'^(\d+)/$',
+                wrap(self.detail_view),
+                name='%s_%s_detail' % info),
+        )
+        return urlpatterns
+
+    def detail_view(self, request, object_id, extra_context=None):
+        opts = self.opts
+
+        obj = self.get_object(request, unquote(object_id))
+
+        if not self.has_view_permission(request, obj):
+            raise PermissionDenied
+
+        if obj is None:
+            raise Http404(_('%(name)s object with primary key %(key)r does '
+                            'not exist.') % {
+                                'name': force_text(opts.verbose_name),
+                                'key': escape(object_id)})
+
+        context = {
+            'title': _('Detail %s') % force_text(opts.verbose_name),
+            'object_id': object_id,
+            'original': obj,
+            'is_popup': "_popup" in request.REQUEST,
+            'media': self.media,
+            'app_label': opts.app_label,
+            'opts': opts,
+            'has_change_permission': self.has_change_permission(request, obj),
+        }
+        context.update(extra_context or {})
+        return TemplateResponse(request, self.detail_template or [
+            "admin/%s/%s/detail.html" % (opts.app_label,
+                                         opts.object_name.lower()),
+            "admin/%s/detail.html" % opts.app_label,
+            "admin/detail.html"
+        ], context, current_app=self.admin_site.name)
+
+    def queryset(self, request):
+        qs = super(DetailAdmin, self).queryset(request)
+        return qs.select_related(
+            *[field.rsplit('__', 1)[0]
+              for field in self.list_display if '__' in field]
+        )
+
 
 class UserChoices(ModelSelect2Widget):
     """
@@ -96,9 +185,10 @@ class UserChoices(ModelSelect2Widget):
         'affiliation__icontains'
     ]
 
-    # def __init__(self, *args, **kwargs):
-    #    super(UserChoices, self).__init__(*args, **kwargs)
-    #    self.widget = Select2Widget()
+    def __init__(self, *args, **kwargs):
+        #kwargs.pop('limit_choices_to')
+        super(UserChoices, self).__init__(*args, **kwargs)
+        self.widget = ModelSelect2Widget()
 
     def label_from_instance(self, obj):
         return "{0} - {1}".format(obj.username, obj.fullname)
@@ -561,7 +651,7 @@ class DownloadAdminMixin(ModelAdmin):
 
         return response
 
-class DivisionAdmin(BaseAdmin, ModelAdmin):
+class DivisionAdmin(BaseAdmin, DetailAdmin):
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__','director_name')
 
@@ -570,22 +660,22 @@ class DivisionAdmin(BaseAdmin, ModelAdmin):
     director_name.short_description = 'Director'
     director_name.admin_order_field = 'director__last_name'
 
-class ProgramAdmin(BaseAdmin, ModelAdmin):
+class ProgramAdmin(BaseAdmin, DetailAdmin):
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__','cost_center','published','position',
             'program_leader','finance_admin','data_custodian')
 
-class WorkCenterAdmin(BaseAdmin, ModelAdmin):
+class WorkCenterAdmin(BaseAdmin, DetailAdmin):
     exclude = ('effective_to', 'effective_from')
     _skip_relatedFieldWidget = False
     list_display = ('__str__','district','physical_address')
 
-class AreaAdmin(BaseAdmin, ModelAdmin):
+class AreaAdmin(BaseAdmin, DetailAdmin):
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__','area_type')
 
-class RegionAdmin(ModelAdmin):
+class RegionAdmin(DetailAdmin):
     list_display = ('__str__', 'northern_extent')
 
-class DistrictAdmin(ModelAdmin):
+class DistrictAdmin(DetailAdmin):
     list_display = ('__str__','region','northern_extent')

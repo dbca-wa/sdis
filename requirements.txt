@@ -80,7 +80,7 @@ django-bootstrap-pagination>=1.5.1
 django-extra-views>=0.7.1
 django-crispy-forms
 django-markup-deprecated
-Django-Select2
+Django-Select2>=5.8.0
 django-smart-selects>=1.2.1
 #django-uni-form
 
