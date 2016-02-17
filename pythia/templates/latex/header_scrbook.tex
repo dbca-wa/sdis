@@ -113,9 +113,11 @@
 %%
 %% Custom macros
 %%
+%%
+%% Custom macros
+%%
 % Thick Horizontal rule
-\documentclass[version=last,
-    paper=a4, % paper size
-    10pt, % default font size
-    usenames,
-    dvipsnames,
+\newcommand{\HRule}{\vspace{8mm}\\\noindent\rule{\linewidth}{0.1pt}}
+
+% Custom Tikz node for SDS diagram
+\newcommand\mynode[6][]{\node[#1] (#2){\parbox{#3\relax}{\begin{center}\textbf{#4}\\#5\\\footnotesize{#6}\end{center}}};}

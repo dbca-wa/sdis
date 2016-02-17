@@ -1,62 +1,97 @@
-import dj_database_url
+from confy import database
 import ldap
 import os
+import sys
+from unipath import Path
 
 from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType,
                                      LDAPSearchUnion)
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = Path(__file__).ancestor(2)
+PROJECT_DIR = os.path.join(BASE_DIR, 'pythia')
+sys.path.insert(0, PROJECT_DIR)
 
-SECRET_KEY = os.environ['SECRET_KEY']
+root = lambda *x: os.path.join(BASE_DIR, *x)
 
-DEBUG = os.environ.get('DEBUG', False)
+SECRET_KEY = os.environ['SECRET_KEY'] if os.environ.get('SECRET_KEY', False) else 'foo'
+DEBUG = True if os.environ.get('DEBUG', False) == 'True' else False
+CSRF_COOKIE_SECURE = True if os.environ.get('CSRF_COOKIE_SECURE', False) == 'True' else False
+SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) == 'True' else False
+
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = ['*']
-INTERNAL_IPS = ('127.0.0.1',)
+if not DEBUG:
+    # Localhost, UAT and Production hosts
+    ALLOWED_HOSTS = [
+        'localhost',
+        '127.0.0.1',
+        'sdis.dpaw.wa.gov.au',
+        'sdis.dpaw.wa.gov.au.',
+        'sdis-dev.dpaw.wa.gov.au',
+        'sdis-dev.dpaw.wa.gov.au.',
+        'sdis-test.dpaw.wa.gov.au',
+        'sdis-test.dpaw.wa.gov.au.',
+        'sdis-uat.dpaw.wa.gov.au',
+        'sdis-uat.dpaw.wa.gov.au.',
+    ]
+else:
+    ALLOWED_HOSTS = ['*']
+INTERNAL_IPS = ['127.0.0.1', '::1']
+
 
 # Application definition
+SITE_ID = 1
+SITE_URL = os.environ.get('SITE_URL', None)
+SITE_NAME = 'SDIS'
+SITE_TITLE = 'Science Directorate Information System'
+APPLICATION_VERSION_NO = '4.0'
+
+DATABASES = {'default': database.config()}
+ROOT_URLCONF = 'sdis.urls'
+WSGI_APPLICATION = 'sdis.wsgi.application'
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django.contrib.contenttypes',
     'django.contrib.auth',
+    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.humanize',
     'django.contrib.gis',
+    #'django.contrib.postgres',
+    'django_extensions',
+    'django_comments',
+
+    'crispy_forms',
+    'smart_selects',
+    'django_select2',
+    'markup_deprecated',
+    'guardian',
+    #'compressor',
+    'mail_templated',
+    'reversion',
+    'rest_framework',
+
+    'django_browserid',
+    'django_pdb',
+    'django_nose',
+    'debug_toolbar',
+    'debug_toolbar_htmltidy',
+
+    'leaflet',
+    'south',
+    'gunicorn',
+    'django_wsgiserver',
+
+    'swingers',
 
     'pythia',
     'pythia.documents',
     'pythia.projects',
     'pythia.reports',
-
-    'swingers',
-    'django_comments',
-    'django_browserid',
-    'django_extensions',
-    'rest_framework',
-    'django_pdb',
-    'django_select2',
-    'django_nose',
-    'markup_deprecated',
-    'smart_selects',
-    'crispy_forms',
-    'guardian',
-    'debug_toolbar',
-    'debug_toolbar_htmltidy',
-    'leaflet',
-    'mail_templated',
-    'reversion',
-    'compressor',
-    'south',
-    'gunicorn',
-    'django_nose',
-    'djangular',
-    'django_wsgiserver',
-
 )
 
 MIDDLEWARE_CLASSES = (
@@ -68,8 +103,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'django_pdb.middleware.PdbMiddleware'
+    # loaded if DEBUG (below):
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
+    #'django_pdb.middleware.PdbMiddleware'
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -85,39 +121,44 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'pythia.context_processors.persona',
 )
 
-ROOT_URLCONF = 'sdis.urls'
 
-WSGI_APPLICATION = 'sdis.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-DATABASES = {'default': dj_database_url.config()}
-CONN_MAX_AGE = None
-
-# Internationalization
-# https://docs.djangoproject.com/en/1.6/topics/i18n/
-SITE_ID = 1
-SITE_URL = os.environ.get('SITE_URL', None)
-SITE_NAME = 'SDIS'
-LANGUAGE_CODE = 'en-us'
+# I8n
+LANGUAGE_CODE = 'en-au'
 TIME_ZONE = 'Australia/Perth'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+DATE_FORMAT = '%d/%m/%Y'      # O5/10/2006
+# Set the formats that will be accepted in date input fields
+DATE_INPUT_FORMATS = (
+    '%d/%m/%Y',             # '25/10/2006'
+    '%Y-%m-%d',             # '2006-10-25'
+    '%Y_%m_%d',             # '2006_10_25'
+)
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
+
+# Uploads
+if not os.path.exists(os.path.join(BASE_DIR, 'media')):
+    os.mkdir(os.path.join(BASE_DIR, 'media'))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+
+# Static files (CSS, JavaScript, Images)
+if not os.path.exists(os.path.join(BASE_DIR, 'staticfiles')):
+    os.mkdir(os.path.join(BASE_DIR, 'staticfiles'))
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-
+STATICFILES_DIRS = (os.path.join(PROJECT_DIR, 'static'),)
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
+# This is required to add context variables to all templates:
+STATIC_CONTEXT_VARS = {}
+COMPRESS_ROOT = STATIC_ROOT
+
 
 TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', (
@@ -197,16 +238,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly']
 }
 
-# Misc settings
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
+# Email
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'email.host')
 EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', None)
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', None)
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', False)
+ENVELOPE_EMAIL_RECIPIENTS = ['sdis@DPaW.wa.gov.au']
+ENVELOPE_USE_HTML_EMAIL = True
 DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dpaw.wa.gov.au>'
 
 
-COMPRESS_ENABLED = False
+#COMPRESS_ENABLED = False
 
 SOUTH_TESTS_MIGRATE = False
 SKIP_SOUTH_TESTS = True
@@ -270,7 +310,22 @@ LOGGING = {
     }
 }
 
+
 if DEBUG:
+    # Set up logging differently to give us some more information about what's
+    # going on
+    INSTALLED_APPS += (
+        'debug_toolbar',
+        'debug_toolbar_htmltidy',
+        'django_pdb',
+    )
+
+    MIDDLEWARE_CLASSES += (
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+        'django_pdb.middleware.PdbMiddleware',
+    )
+
+
     # Set up logging differently to give us some more information about what's
     # going on
     LOGGING['loggers'] = {
