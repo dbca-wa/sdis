@@ -15,16 +15,14 @@
 import sys
 import os
 
+import confy
+confy.read_environment_file()
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../../')) # must be top level of project
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sdis.settings")
-for e in open('../../.env'):
-    var, val = e.split('=',1)
-    print(var, val)
-    os.environ[var] = val
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -58,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'SDIS'
-copyright = u'2014, Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
+copyright = u'2012-2016, Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

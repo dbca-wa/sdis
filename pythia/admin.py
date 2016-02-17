@@ -1,6 +1,10 @@
 from __future__ import unicode_literals
 
+from collections import namedtuple
 from functools import update_wrapper
+import logging
+import os
+import subprocess
 
 
 from django import forms
@@ -22,14 +26,7 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
-
-import logging
-import os
-import subprocess
-
-from collections import namedtuple
 from django_select2 import AutoModelSelect2Field, Select2Widget
-from pythia.fields import PythiaArrayField
 from reversion.models import Version
 
 from swingers.admin import DetailAdmin
