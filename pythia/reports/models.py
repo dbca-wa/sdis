@@ -2,7 +2,7 @@ from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 import logging
 
-from swingers import models
+#from swingers import models
 
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q, signals
@@ -15,11 +15,14 @@ from django.core.validators import MinValueValidator
 #from pythia.projects.models import Project
 #from pythia.documents.models import Document
 #from pythia.models import Program, HTMLReportPart, LATEXReportPart
+from pythia import models as pythia_models
+from django.db import models
+
 
 logger = logging.getLogger(__name__)
 
 
-class ARARReport(models.Audit):
+class ARARReport(pythia_models.Audit):
     """
     The Annual Research Activity Report.
 
@@ -203,4 +206,3 @@ def arar_post_save(sender, instance, created, **kwargs):
         request_progress_reports(instance)
 
 signals.post_save.connect(arar_post_save, sender=ARARReport)
-

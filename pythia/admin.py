@@ -6,10 +6,14 @@ import logging
 import os
 import subprocess
 
+from guardian.admin import GuardedModelAdmin
+from reversion.models import Version
+from reversion.admin import VersionAdmin
 
 from django import forms
 from django.conf import settings
 from django.contrib import messages
+from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.contrib.admin.util import flatten_fieldsets, unquote
@@ -27,10 +31,10 @@ from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django_select2 import AutoModelSelect2Field, Select2Widget
-from reversion.models import Version
 
-from swingers.admin import DetailAdmin
-from swingers.sauth.admin import AuditAdmin
+
+#from swingers.admin import DetailAdmin
+#from swingers.sauth.admin import AuditAdmin
 
 from pythia.fields import Html2TextField, PythiaArrayField
 from pythia.forms import (SdisModelForm, BaseInlineEditForm,
@@ -44,6 +48,139 @@ logger = logging.getLogger(__name__)
 User = get_user_model()
 Breadcrumb = namedtuple('Breadcrumb', ['name', 'url'])
 
+#------------------------------------------------------------------------------#
+# swingers.sauth.AuditAdmin, swingers.admin.DetailAdmin
+
+class DetailAdmin(ModelAdmin):
+    detail_template = None
+    changelist_link_detail = False
+    # prevents django-guardian from clobbering change_form template (Scott)
+    change_form_template = None
+
+    def get_changelist(self, request, **kwargs):
+        from swingers.admin.views import DetailChangeList
+        return DetailChangeList
+
+    def has_view_permission(self, request, obj=None):
+        opts = self.opts
+        return request.user.has_perm(
+            opts.app_label + '.' + 'view_%s' % opts.object_name.lower()
+        )
+
+    def get_urls(self):
+        from django.conf.urls import patterns, url
+
+        def wrap(view):
+            def wrapper(*args, **kwargs):
+                return self.admin_site.admin_view(view)(*args, **kwargs)
+            return update_wrapper(wrapper, view)
+
+        info = self.model._meta.app_label, self.model._meta.module_name
+
+        urlpatterns = patterns(
+            '',
+            url(r'^$',
+                wrap(self.changelist_view),
+                name='%s_%s_changelist' % info),
+            url(r'^add/$',
+                wrap(self.add_view),
+                name='%s_%s_add' % info),
+            url(r'^(\d+)/history/$',
+                wrap(self.history_view),
+                name='%s_%s_history' % info),
+            url(r'^(\d+)/delete/$',
+                wrap(self.delete_view),
+                name='%s_%s_delete' % info),
+            url(r'^(\d+)/change/$',
+                wrap(self.change_view),
+                name='%s_%s_change' % info),
+            url(r'^(\d+)/$',
+                wrap(self.detail_view),
+                name='%s_%s_detail' % info),
+        )
+        return urlpatterns
+
+    def detail_view(self, request, object_id, extra_context=None):
+        opts = self.opts
+
+        obj = self.get_object(request, unquote(object_id))
+
+        if not self.has_view_permission(request, obj):
+            raise PermissionDenied
+
+        if obj is None:
+            raise Http404(_('%(name)s object with primary key %(key)r does '
+                            'not exist.') % {
+                                'name': force_text(opts.verbose_name),
+                                'key': escape(object_id)})
+
+        context = {
+            'title': _('Detail %s') % force_text(opts.verbose_name),
+            'object_id': object_id,
+            'original': obj,
+            'is_popup': "_popup" in request.REQUEST,
+            'media': self.media,
+            'app_label': opts.app_label,
+            'opts': opts,
+            'has_change_permission': self.has_change_permission(request, obj),
+        }
+        context.update(extra_context or {})
+        return TemplateResponse(request, self.detail_template or [
+            "admin/%s/%s/detail.html" % (opts.app_label,
+                                         opts.object_name.lower()),
+            "admin/%s/detail.html" % opts.app_label,
+            "admin/detail.html"
+        ], context, current_app=self.admin_site.name)
+
+    def queryset(self, request):
+        qs = super(DetailAdmin, self).queryset(request)
+        return qs.select_related(
+            *[field.rsplit('__', 1)[0]
+              for field in self.list_display if '__' in field]
+        )
+
+
+
+class AuditAdmin(VersionAdmin, GuardedModelAdmin, ModelAdmin):
+    search_fields = ['id', 'creator__username', 'modifier__username',
+                     'creator__email', 'modifier__email']
+    list_display = ['__unicode__', 'creator', 'modifier', 'created',
+                    'modified']
+    raw_id_fields = ['creator', 'modifier']
+    change_list_template = None
+
+    def get_list_display(self, request):
+        list_display = list(self.list_display)
+        for index, field_name in enumerate(list_display):
+            field = getattr(self.model, field_name, None)
+            if hasattr(field, "related"):
+                list_display.remove(field_name)
+                list_display.insert(
+                    index, self.display_add_link(request, field.related))
+        return list_display
+
+    def display_add_link(self, request, related):
+        def inner(obj):
+            opts = related.model._meta
+            kwargs = {related.field.name: obj}
+            count = related.model._default_manager.filter(**kwargs).count()
+            context = {
+                'related': related,
+                'obj': obj,
+                'opts': opts,
+                'count': count
+            }
+            return render_to_string(
+                'admin/change_list_links.html',
+                RequestContext(request, context)
+            )
+        inner.allow_tags = True
+        inner.short_description = related.opts.verbose_name_plural.title()
+        return inner
+
+
+# end Swingers Admin
+#------------------------------------------------------------------------------#
 
 class UserChoices(AutoModelSelect2Field):
     """

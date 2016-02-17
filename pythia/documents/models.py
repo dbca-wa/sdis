@@ -10,21 +10,22 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 
-from swingers import models
-from swingers.models import Audit
-from swingers.models.managers import ActiveGeoModelManager
+#from swingers import models
+#from swingers.models import Audit
+#from swingers.models.managers import ActiveGeoModelManager
 
 import logging
 
 import json
 from django.core.serializers.json import DjangoJSONEncoder
-
+from django.db import models
 from django_fsm.db.fields import FSMField, transition
 from polymorphic import PolymorphicModel, PolymorphicManager
 from datetime import date
 
+from pythia.models import Audit, ActiveGeoModelManager
 from pythia.fields import PythiaArrayField, PythiaTextField
-from pythia.documents.utils import (update_document_permissions, 
+from pythia.documents.utils import (update_document_permissions,
         add_document_permissions)
 from pythia.reports.models import ARARReport
 
@@ -89,7 +90,7 @@ class DocumentManager(PolymorphicManager, ActiveGeoModelManager):
         return documents
 
 def documents_upload_to(instance, filename):
-    return "documents/{0}-{1}/{2}".format(instance.project.year, 
+    return "documents/{0}-{1}/{2}".format(instance.project.year,
             instance.project.number, filename)
 
 @python_2_unicode_compatible
@@ -109,14 +110,14 @@ class Document(PolymorphicModel, Audit):
         (STATUS_INAPPROVAL, _("Approval requested")),
         (STATUS_APPROVED, _("Approved"))
     )
-    
+
     STATUS_LABELS = {
         STATUS_NEW: "danger",
         STATUS_INREVIEW: "warning",
         STATUS_INAPPROVAL: "info",
         STATUS_APPROVED: "success"
     }
-    
+
     ENDORSEMENT_NOTREQUIRED = 'not required'
     ENDORSEMENT_REQUIRED = 'required'
     ENDORSEMENT_DENIED = 'denied'
@@ -173,7 +174,7 @@ class Document(PolymorphicModel, Audit):
 
     def __str__(self):
         return mark_safe("{0} {1}-{2:03d}".format(
-            self._meta.verbose_name, self.project.type, self.project.year, self.project.number)) 
+            self._meta.verbose_name, self.project.type, self.project.year, self.project.number))
 
     @property
     def download_title(self):
@@ -182,7 +183,7 @@ class Document(PolymorphicModel, Audit):
     @property
     def download_subtitle(self):
         return self.__str__()
-        
+
 
     def setup(self):
         """
@@ -204,7 +205,7 @@ class Document(PolymorphicModel, Audit):
         """Return the submitter's endorsement css class and status as string.
 
         Infers the endorsement status from `self.status`.
-        Submitter endorsement is assumed as soon as Document is `submitted for 
+        Submitter endorsement is assumed as soon as Document is `submitted for
         review`.
         """
         if self.status == Document.STATUS_NEW:
@@ -217,7 +218,7 @@ class Document(PolymorphicModel, Audit):
         """Return the reviewer's endorsement css class and status as string.
 
         Infers the endorsement status from `self.status`.
-        Reviewer endorsement is assumed as soon as Document is `submitted for 
+        Reviewer endorsement is assumed as soon as Document is `submitted for
         approval`.
         """
         if self.status in [Document.STATUS_INAPPROVAL,Document.STATUS_APPROVED]:
@@ -241,8 +242,8 @@ class Document(PolymorphicModel, Audit):
     @property
     def endorsements(self):
         """Returns endorsements as a list of strings: role, css classes, status.
-        
-        Placing this method on the base Document class guarantees that any 
+
+        Placing this method on the base Document class guarantees that any
         document class has this attribute.
 
         By default, returns three endorsement roles:
@@ -295,7 +296,7 @@ class Document(PolymorphicModel, Audit):
         Default: Divisional Directorate members."""
         return Group.objects.get(name='SCD').user_set.all()
 
-    
+
     #-------------------------------------------------------------------------#
     # Author actions
     #
@@ -412,11 +413,11 @@ class Document(PolymorphicModel, Audit):
     def get_users_to_notify(self, status):
         """Return a set of recipients for a given destination status.
 
-        Default: use self.submitters, .reviewers and approvers and 
+        Default: use self.submitters, .reviewers and approvers and
         override in Document models
         """
-        if status in [Document.STATUS_NEW, Document.STATUS_APPROVED]: 
-            #if transition in ["request_revision_from_authors", 
+        if status in [Document.STATUS_NEW, Document.STATUS_APPROVED]:
+            #if transition in ["request_revision_from_authors",
             #"approve","request_author_revision"]:
             print("[DEBUG] status {0} has recipients {1}".format(
                 transition, self.submitters))
@@ -444,7 +445,7 @@ class ConceptPlan(Document):
     """
     template = "admin/pythia/ararreport/includes/conceptplan.html"
     template_tex = "latex/includes/conceptplan.tex"
-    
+
     #summary = PythiaTextField(
     summary = models.TextField(
         verbose_name=_("Background and Aims"), blank=True, null=True,
@@ -471,7 +472,7 @@ class ConceptPlan(Document):
                 ['Technical','','',''],
                 ['Volunteer','','',''],
                 ['Collaborator','','',''],
-            ], cls=DjangoJSONEncoder)        
+            ], cls=DjangoJSONEncoder)
         )
     budget = PythiaArrayField(
         verbose_name=_("Indicative operating budget"), blank=True, null=True,
@@ -479,7 +480,7 @@ class ConceptPlan(Document):
                     "or for a time span appropriate for the Project's life "
                     "time."),
         #default = '<table style="width:400px;" border="1" cellpadding="2"><tbody><tr><td>Source</td><td>Year 1</td><td>Year 2</td><td>Year 3</td></tr><tr><td>Consolidated Funds (DPaW)</td><td></td><td></td><td></td></tr><tr><td>External Funding</td><td></td><td></td><td></td></tr></tbody></table>'
-        default=json.dumps([ 
+        default=json.dumps([
                 ['Source', 'Year 1', 'Year 2', 'Year 3'],
                 ['Consolidated Funds (DPaW)', '', '', ''],
                 ['External Funding', '', '', ''],
@@ -500,7 +501,7 @@ class ConceptPlan(Document):
 
     def repair_staff(self):
         """Reset the staff table to its default.
-        
+
         [doc.repair_staff() for doc in ConceptPlan.objects.filter(staff=None)]
         """
         self.staff = json.dumps([
@@ -513,11 +514,11 @@ class ConceptPlan(Document):
         self.save(update_fields=['staff'])
         logger.info("ConceptPlan {0} field 'staff' reset to default".format(
                     self.__str__()))
- 
+
 
     def repair_budget(self):
         """Reset the budget table to its default.
-        
+
         [doc.repair_budget() for doc in ConceptPlan.objects.filter(budget=None)]
         """
         self.budget = json.dumps([
@@ -528,7 +529,7 @@ class ConceptPlan(Document):
         self.save(update_fields=['budget'])
         logger.info("ConceptPlan {0} field 'budget' reset to default".format(
                     self.__str__()))
- 
+
 
     #-------------------------------------------------------------------------#
     # custom transitions and conditions
@@ -544,7 +545,7 @@ class ConceptPlan(Document):
         # doc permission "submit" restricts seek_review to team already
         return True
 
-    
+
     def can_seek_approval(self):
         """
         Return true if this document can seek approval.
@@ -560,7 +561,7 @@ class ConceptPlan(Document):
     def can_approve(self):
         """
         Return true if this document can be approved.
-        
+
         Insert here any restrictions (originating from project status etc)
         which could prevent an INAPPROVAL document from being approved
         by users with the permission "approve".
@@ -571,7 +572,7 @@ class ConceptPlan(Document):
     @transition(field='status', save=True,
                 source=Document.STATUS_INAPPROVAL,
                 target=Document.STATUS_APPROVED,
-                conditions=['can_approve'], 
+                conditions=['can_approve'],
                 verbose_name=_("Approve"),
                 permission="approve")
     def approve(self):
@@ -587,11 +588,11 @@ class ConceptPlan(Document):
         """Return True if the document can be reset to NEW."""
         return True
 
-    @transition(field='status', save=True, 
+    @transition(field='status', save=True,
                 source=Document.STATUS_APPROVED,
-                target=Document.STATUS_NEW, 
+                target=Document.STATUS_NEW,
                 conditions=['can_reset'],
-                verbose_name=_("Reset approval status"), 
+                verbose_name=_("Reset approval status"),
                 permission="approve")
     def reset(self):
         """Push back to NEW to reset document approval."""
@@ -602,7 +603,7 @@ class ConceptPlan(Document):
         verbose_name = _("Concept Plan")
         verbose_name_plural = _("Concept Plans")
         display_order = 10
-        
+
 
 
 class ProjectPlan(Document):
@@ -615,7 +616,7 @@ class ProjectPlan(Document):
     """
     template = "admin/pythia/ararreport/includes/projectplan.html"
     template_tex = "latex/includes/projectplan.tex"
-    
+
     related_projects = models.TextField(
         verbose_name=_("Related Science Projects"), blank=True, null=True,
         editable=False,
@@ -701,7 +702,7 @@ class ProjectPlan(Document):
             help_text=_("The Animal Ethics Committee's endorsement of the"
                 " planned direct interaction with animals. Approval process"
                 " is currently handled outside of SDIS."))
-    
+
     data_management = models.TextField(
         verbose_name=_("Data management"), blank=True, null=True,
         help_text=_("Describe how and where data will be maintained, archived,"
@@ -760,7 +761,7 @@ class ProjectPlan(Document):
         verbose_name = _("Project Plan")
         verbose_name_plural = _("Project Plans")
         display_order = 20
-        
+
     def repair_operating_budget(self):
         """Reset the operating budget to its default
         [p.repair_operating_budget() for p in ProjectPlan.objects.filter(operating_budget=None)]
@@ -778,10 +779,10 @@ class ProjectPlan(Document):
         self.save(update_fields=['operating_budget'])
         logger.info("ProjectPlan {0} field 'operating_budget' reset to default".format(
                     self.__str__()))
- 
+
     def repair_operating_budget_external(self):
         """Reset the external operating budget to its default.
-        
+
         [p.repair_operating_budget_external() for p in ProjectPlan.objects.filter(operating_budget_external=None)]
         """
         self.operating_budget_external = json.dumps([
@@ -797,7 +798,7 @@ class ProjectPlan(Document):
         self.save(update_fields=['operating_budget_external'])
         logger.info("ProjectPlan {0} field 'operating_budget_external' reset to default".format(
                     self.__str__()))
- 
+
 
     #-------------------------------------------------------------------------#
     # custom transitions and conditions
@@ -852,7 +853,7 @@ class ProjectPlan(Document):
         """Returns True if HC endorsement is required and granted, or not
         required.
 
-        Recipient of endorsement request: 
+        Recipient of endorsement request:
         Animal Ethics Committee representative(s)
         Group.objects.get(name='AE').user_set.all()
         """
@@ -877,7 +878,7 @@ class ProjectPlan(Document):
             return ["label label-danger", Document.ENDORSEMENT_REQUIRED]
     @property
     def dm_endorsement_status(self):
-        """Return the data manager's endorsement css class and status as 
+        """Return the data manager's endorsement css class and status as
         string.
 
         Determines the endorsement status from property `cleared_dm`.
@@ -888,7 +889,7 @@ class ProjectPlan(Document):
             return ["label label-danger", Document.ENDORSEMENT_REQUIRED]
     @property
     def hc_endorsement_status(self):
-        """Return the herbarium curator's endorsement css class and status as 
+        """Return the herbarium curator's endorsement css class and status as
         string.
 
         Determines the endorsement status from property `cleared_hc`.
@@ -902,7 +903,7 @@ class ProjectPlan(Document):
                 return ["label label-danger", Document.ENDORSEMENT_REQUIRED]
     @property
     def ae_endorsement_status(self):
-        """Return the animal ethics committee's endorsement css class and 
+        """Return the animal ethics committee's endorsement css class and
         status as string.
 
         Determines the endorsement status from property `cleared_ae`.
@@ -915,7 +916,7 @@ class ProjectPlan(Document):
             else:
                 return ["label label-danger", Document.ENDORSEMENT_REQUIRED]
 
-    
+
     @property
     def endorsements(self):
         """Extends Document.endorsements with endorsements of Biometrician,
@@ -962,7 +963,7 @@ class ProjectPlan(Document):
     def can_approve(self):
         """
         Return true if this document can be approved.
-        
+
         Insert here any restrictions (originating from project status etc)
         which could prevent an INAPPROVAL document from being approved
         by users with the permission "approve".
@@ -973,7 +974,7 @@ class ProjectPlan(Document):
         return self.cleared_ae
 
     @transition(field='status', save=True,
-                source=Document.STATUS_INAPPROVAL, 
+                source=Document.STATUS_INAPPROVAL,
                 target=Document.STATUS_APPROVED,
                 conditions=['can_approve'], verbose_name=_("Approve"),
                 permission="approve")
@@ -983,11 +984,11 @@ class ProjectPlan(Document):
         """
         self.project.approve()
 
-    @transition(field='status', save=True, 
+    @transition(field='status', save=True,
                 source=Document.STATUS_APPROVED,
-                target=Document.STATUS_NEW, 
+                target=Document.STATUS_NEW,
                 conditions=['can_reset'],
-                verbose_name=_("Reset approval status"), 
+                verbose_name=_("Reset approval status"),
                 permission="approve")
     def reset(self):
         """Push back to NEW to reset document approval."""
@@ -999,7 +1000,7 @@ def projectplan_post_save(sender, instance, created, **kwargs):
 
     If the project owner indicates that the project will involve
     plant specimen collection or animal interaction,
-    the respective endorsement from Herbarium Curator (HC) or 
+    the respective endorsement from Herbarium Curator (HC) or
     Animal Ethics Committee (AE) will be set to "requested".
 
     NB: the mandatory Biometrician's endorsement defaults to "requested".
@@ -1020,7 +1021,7 @@ def projectplan_post_save(sender, instance, created, **kwargs):
             logger.info('Setting AE endorsement from default to "required".')
             instance.ae_endorsement = Document.ENDORSEMENT_REQUIRED
             instance.save(update_fields=['ae_endorsement'])
-    
+
 signals.post_save.connect(projectplan_post_save, sender=ProjectPlan)
 
 class ProgressReport(Document):
@@ -1032,7 +1033,7 @@ class ProgressReport(Document):
     template = "admin/pythia/ararreport/includes/progressreport.html"
     template_tex = "latex/includes/progressreport.tex"
 
-    is_final_report = models.BooleanField(verbose_name=_("Is final report"), 
+    is_final_report = models.BooleanField(verbose_name=_("Is final report"),
             default=False, editable=False,
             help_text="Whether this report is the final progress report after"
             " submitting a project closure request.")
@@ -1041,7 +1042,7 @@ class ProgressReport(Document):
         editable=False, default=lambda: date.today().year,
         help_text=_("The year on which this progress report reports on "
                     "with four digits, e.g. 2014 for FY 2013/14."))
-    report = models.ForeignKey(ARARReport, 
+    report = models.ForeignKey(ARARReport,
         blank=True, null=True, editable=False,
         help_text=_("The annual report publishing this StudentReport"))
     context = models.TextField(
@@ -1097,7 +1098,7 @@ class ProgressReport(Document):
         # doc permission "submit" restricts seek_review to team already
         return True
 
-    
+
     def can_seek_approval(self):
         """
         Return true if this document can seek approval.
@@ -1113,7 +1114,7 @@ class ProgressReport(Document):
     def can_approve(self):
         """
         Return true if this document can be approved.
-        
+
         Insert here any restrictions (originating from project status etc)
         which could prevent an INAPPROVAL document from being approved
         by users with the permission "approve".
@@ -1122,7 +1123,7 @@ class ProgressReport(Document):
         return True
 
     @transition(field='status', save=True,
-                source=Document.STATUS_INAPPROVAL, 
+                source=Document.STATUS_INAPPROVAL,
                 target=Document.STATUS_APPROVED,
                 conditions=['can_approve'], verbose_name=_("Approve"),
                 permission="approve")
@@ -1134,19 +1135,19 @@ class ProgressReport(Document):
         elif self.project.status == Project.STATUS_FINAL_UPDATE:
             self.project.complete()
 
-    @transition(field='status', save=True, 
+    @transition(field='status', save=True,
                 source=Document.STATUS_APPROVED,
-                target=Document.STATUS_NEW, 
+                target=Document.STATUS_NEW,
                 conditions=['can_reset'],
-                verbose_name=_("Reset approval status"), 
+                verbose_name=_("Reset approval status"),
                 permission="approve")
     def reset(self):
         """Push back to NEW to reset document approval."""
-        # Push project back to UPDATE_REQUESTED 
+        # Push project back to UPDATE_REQUESTED
         # to cancel ARAR update approval
         from pythia.projects.models import Project
         if self.project.status == Project.STATUS_ACTIVE:
-            self.project.request_update() 
+            self.project.request_update()
             # request update again, possibly sending email
         elif self.project.status == Project.STATUS_COMPLETED:
             self.project.request_final_update() # resurrect completed project
@@ -1163,10 +1164,10 @@ class ProjectClosure(Document):
     On last Progress Report approval, after ARAR publication, Project status
     changes to completed, suspended or terminated.
     """
-    
+
     template = "admin/pythia/ararreport/includes/projectclosure.html"
     template_tex = "latex/includes/projectclosure.tex"
-    
+
     scientific_outputs = models.TextField(
         verbose_name=_("Key publications and documents"), blank=True, null=True,
         help_text=_("List key publications and documents."))
@@ -1195,14 +1196,14 @@ class ProjectClosure(Document):
     @property
     def fullname(self):
         return mark_safe("Projet Closure {0}-{1}".format(
-                self.project.year, 
+                self.project.year,
                 self.project.number))
 
     class Meta:
         verbose_name = _("Project Closure")
         verbose_name_plural = _("Project Closures")
         display_order = 50
-        
+
 
     @transition(field='status', save=True, verbose_name=_("Approve"),
             source=Document.STATUS_INAPPROVAL, target=Document.STATUS_APPROVED,
@@ -1211,11 +1212,11 @@ class ProjectClosure(Document):
         """Auto-advance the project to CLOSING."""
         self.project.accept_closure()
 
-    @transition(field='status', save=True, 
+    @transition(field='status', save=True,
                 source=Document.STATUS_APPROVED,
-                target=Document.STATUS_NEW, 
+                target=Document.STATUS_NEW,
                 conditions=['can_reset'],
-                verbose_name=_("Reset approval status"), 
+                verbose_name=_("Reset approval status"),
                 permission="approve")
     def reset(self):
         """Push back to NEW to reset document approval."""
@@ -1229,11 +1230,11 @@ class ProjectClosure(Document):
 
 @python_2_unicode_compatible
 class StudentReport(Document):
-   
+
     template = "admin/pythia/ararreport/includes/studentreport.html"
     template_tex = "latex/includes/studentreport.tex"
-    
-    
+
+
     year = models.PositiveIntegerField(
         verbose_name=_("Report year"),
         editable=False, default=lambda: date.today().year,
@@ -1242,10 +1243,10 @@ class StudentReport(Document):
     progress_report = models.TextField(
         verbose_name=_("Progress Report"), blank=True, null=True,
         help_text=_("Report the Progress in max. 150 words."))
-    report = models.ForeignKey(ARARReport, 
+    report = models.ForeignKey(ARARReport,
             blank=True, null=True, editable=False,
             help_text=_("The annual report publishing this StudentReport"))
-        
+
     def __str__(self):
         return "Progress Report {0}-{1} (FY {2}-{3})".format(
                 self.project.year, self.project.number,
@@ -1262,16 +1263,16 @@ class StudentReport(Document):
         verbose_name_plural = _("Student Reports")
         #unique_together = (("year", "project"))
         display_order = 40
-        
+
 
     @transition(field='status', save=True,
-                source=Document.STATUS_INAPPROVAL, 
+                source=Document.STATUS_INAPPROVAL,
                 target=Document.STATUS_APPROVED,
                 conditions=['can_approve'], verbose_name=_("Approve"),
                 permission="approve")
     def approve(self):
         """Auto-advance the project to active if an update has been
-        requested. Do nothing on project level if project is not in 
+        requested. Do nothing on project level if project is not in
         update requested stage."""
         from pythia.projects.models import Project
         if self.project.status == Project.STATUS_UPDATE:
@@ -1279,11 +1280,11 @@ class StudentReport(Document):
         else:
             return True
 
-    @transition(field='status', save=True, 
+    @transition(field='status', save=True,
                 source=Document.STATUS_APPROVED,
-                target=Document.STATUS_NEW, 
+                target=Document.STATUS_NEW,
                 conditions=['can_reset'],
-                verbose_name=_("Reset approval status"), 
+                verbose_name=_("Reset approval status"),
                 permission="approve")
     def reset(self):
         """Push back to NEW to reset document approval.
@@ -1329,4 +1330,3 @@ class StaffTimeEstimate(Audit):
     year3 = models.TextField(
         verbose_name=_("Year 3"), blank=True, null=True,
         help_text=_("The time allocation in year 3 of the project in FTE."))
-

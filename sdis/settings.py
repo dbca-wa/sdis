@@ -70,7 +70,7 @@ INSTALLED_APPS = (
     'django_select2',
     'markup_deprecated',
     'guardian',
-    #'compressor',
+    'compressor',
     'mail_templated',
     'reversion',
     'rest_framework',
@@ -86,7 +86,7 @@ INSTALLED_APPS = (
     'gunicorn',
     'django_wsgiserver',
 
-    'swingers',
+    #'swingers',
 
     'pythia',
     'pythia.documents',
@@ -97,7 +97,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'swingers.middleware.common.CommonMiddleware',
+    #'swingers.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -118,7 +118,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
-    'pythia.context_processors.persona',
+    #'pythia.context_processors.persona',
 )
 
 

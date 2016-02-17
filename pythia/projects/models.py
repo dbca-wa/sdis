@@ -14,33 +14,33 @@ occurs), Areas of relevance (Project findings apply to).
 from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 
+from datetime import date
+import json
+import logging
+import markdown
+
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import models
 from django.db.models import signals
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-from swingers import models
-from swingers.models.managers import ActiveGeoModelManager
+from django_fsm.db.fields import FSMField, transition
+from polymorphic import PolymorphicModel, PolymorphicManager
 
 from pythia.documents.models import (
     ConceptPlan, ProjectPlan, ProgressReport, ProjectClosure, StudentReport)
 from pythia.fields import Html2TextField, PythiaArrayField
+from pythia.models import ActiveGeoModelManager, Audit, ActiveModel
 from pythia.models import Program, WebResource, Division, Area, User
 from pythia.reports.models import ARARReport
 
-import logging
-import markdown
 
-import json
-from django.core.serializers.json import DjangoJSONEncoder
-
-from datetime import date
-from django_fsm.db.fields import FSMField, transition
-from polymorphic import PolymorphicModel, PolymorphicManager
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,7 @@ def get_next_available_number_for_year(year):
                 year=year).values("number")]) + 1
 
 @python_2_unicode_compatible
-class ResearchFunction(PolymorphicModel, models.Audit, models.ActiveModel):
+class ResearchFunction(PolymorphicModel, Audit, ActiveModel):
     """A project contributes to a research function.
     Reports will summarise project progress reports bt research function.
     """
@@ -99,9 +99,9 @@ class ResearchFunction(PolymorphicModel, models.Audit, models.ActiveModel):
 
     def __str__(self):
         return mark_safe(strip_tags(self.name))
-        
+
 @python_2_unicode_compatible
-class Project(PolymorphicModel, models.Audit, models.ActiveModel):
+class Project(PolymorphicModel, Audit, ActiveModel):
     """
     A Project is the core object in the system.
     A Project is an endeavour of a team of staff, where staff and financial
@@ -126,15 +126,15 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
     STATUS_TERMINATED = 'terminated'
     STATUS_SUSPENDED = 'suspended'
 
-    ACTIVE = (STATUS_NEW, STATUS_PENDING, STATUS_ACTIVE, STATUS_UPDATE, 
+    ACTIVE = (STATUS_NEW, STATUS_PENDING, STATUS_ACTIVE, STATUS_UPDATE,
             STATUS_CLOSURE_REQUESTED, STATUS_CLOSING, STATUS_FINAL_UPDATE)
-    
+
     STATUS_CHOICES = (
         (STATUS_NEW, _("New project, pending concept plan approval")),
         (STATUS_PENDING, _("Pending project plan approval")),
         (STATUS_ACTIVE, _("Approved and active")),
         (STATUS_UPDATE, _("Update requested")),
-        (STATUS_CLOSURE_REQUESTED, 
+        (STATUS_CLOSURE_REQUESTED,
             _("Closure pending approval of closure form")),
         (STATUS_CLOSING, _("Closure pending final update")),
         (STATUS_FINAL_UPDATE, _("Final update requested")),
@@ -173,7 +173,7 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         verbose_name=_("Project Status"))
     year = models.PositiveIntegerField(
         verbose_name=_("Project year"),
-        #editable=False, 
+        #editable=False,
         default=lambda: date.today().year,
         help_text=_("The project year with four digits, e.g. 2014"))
     number = models.PositiveIntegerField(
@@ -309,7 +309,7 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
     def __str__(self):
         return mark_safe("%s %s-%s %s" % (
             self.get_type_display(), self.year, self.number, strip_tags(self.title)))
-        
+
     @property
     def fullname(self):
         return self.__str__()
@@ -320,7 +320,7 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         Save the project and call its setup method.
 
         The setup method is the transition into the state PROJECT_NEW.
-        
+
         The project owner is a project member by default (refs SDIS-241):
         If created, add a ProjectMembership for the project owner.
         """
@@ -368,7 +368,7 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
     #        cd = self.get_doc('collaborationdetails')
     #        return cd.name
     #    if self.project_type == 'STP':
-    #        return ('{0}, {1}'.format(self.project_owner.last_name, 
+    #        return ('{0}, {1}'.format(self.project_owner.last_name,
     #        self.project_owner.first_name))
     #    else:
     #        return self.title
@@ -387,7 +387,7 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         """
         Gate-check prior to `endorse()`.
 
-        A science project or core function can only become PENDING if its 
+        A science project or core function can only become PENDING if its
         Concept Plan has been approved.
         Other projects are fast-tracked to status PROJECT_ACTIVE on `setup()`.
         """
@@ -403,25 +403,25 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
             logger.info(msg); print(msg)
             return False
 
-    @transition(field=status, 
-            source=STATUS_NEW, 
+    @transition(field=status,
+            source=STATUS_NEW,
             target=STATUS_PENDING,
-            conditions=['can_endorse'], 
+            conditions=['can_endorse'],
             permission="approve",
             save=True,
             verbose_name=_("Endorse Project"))
     def endorse(self):
         """
         Transition to move project to PENDING.
-        
+
         Generates ProjectPlan as required for SPP and CF, skipped by others.
         """
         msg = "Project.endorse() about to add a ProjectPlan"
         logger.info(msg)
         if not self.documents.instance_of(ProjectPlan):
             ProjectPlan.objects.create(
-                    project=self, 
-                    creator=self.creator, 
+                    project=self,
+                    creator=self.creator,
                     modifier=self.modifier)
         msg = self.__dict__
         logger.info(msg)
@@ -440,10 +440,10 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
                     ' approved ProjectPlan!')
             return False
 
-    @transition(field=status, 
-            source=STATUS_PENDING, 
+    @transition(field=status,
+            source=STATUS_PENDING,
             target=STATUS_ACTIVE,
-            conditions=['can_approve'], 
+            conditions=['can_approve'],
             save=True,
             verbose_name=_("Approve Project"),
             permission="approve")
@@ -463,18 +463,18 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         # Does an ARAR need to exist?
         return True
 
-    @transition(field=status, 
-            source=STATUS_ACTIVE, 
+    @transition(field=status,
+            source=STATUS_ACTIVE,
             target=STATUS_UPDATE,
-            conditions=['can_request_update'], 
+            conditions=['can_request_update'],
             save=True,
             verbose_name=_("Request update"),
             permission="approve")
     def request_update(self, report=None):
         """
         Transition to move the project to STATUS_UPDATING.
-        
-        Creates ProgressReport as required for SPP, CF. 
+
+        Creates ProgressReport as required for SPP, CF.
         Override for STP to generate StudentReport, ignore for COL.
         """
 	if report is None:
@@ -489,9 +489,9 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
 
         Allow the update to be complete when the document has been approved.
         WARNING: will check against the latest progress report to be approved.
-        Could return True if no current ProgressReport has been requested and 
+        Could return True if no current ProgressReport has been requested and
         previous ProgressReport is approved. Assumes that `request_update()`
-        has been called, and new projects joining the party during an active 
+        has been called, and new projects joining the party during an active
         ARAR reporting cycle will get their `request_update()` called.
 
         Needs override for STP to check for StudentReport to be approved.
@@ -503,10 +503,10 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
                     'approved Progress Report!')
             return False
 
-    @transition(field=status, 
-            source=STATUS_UPDATE, 
+    @transition(field=status,
+            source=STATUS_UPDATE,
             target=STATUS_ACTIVE,
-            #conditions=['can_complete_update'], 
+            #conditions=['can_complete_update'],
             save=True,
             verbose_name=_("Complete update"),
             permission="submit")
@@ -526,20 +526,20 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
 
         return True
 
-    @transition(field=status, 
-            source=STATUS_ACTIVE, 
+    @transition(field=status,
+            source=STATUS_ACTIVE,
             target=STATUS_CLOSURE_REQUESTED,
-            conditions=['can_request_closure'], 
+            conditions=['can_request_closure'],
             save=True,
-            verbose_name=_("Request closure"), 
+            verbose_name=_("Request closure"),
             permission="submit")
     def request_closure(self):
         """Transition to move project to CLOSURE_REQUESTED.
-        
-        Creates ProjectClosure as required for SPP and CF, 
+
+        Creates ProjectClosure as required for SPP and CF,
         requires override to fast-track STP and COL to STATUS_COMPLETED.
         """
-        ProjectClosure.objects.create(project=self, 
+        ProjectClosure.objects.create(project=self,
              creator=self.creator, modifier=self.modifier)
 
 
@@ -548,7 +548,7 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         """
         Gate-check prior to `accept_closure()`.
 
-        Allow the update to progress to closing if the closure form 
+        Allow the update to progress to closing if the closure form
         has been approved.
 
         TODO: insert gate checks: is the projectplan updated with latest data
@@ -556,12 +556,12 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         """
         return self.documents.instance_of(ProjectClosure).latest().is_approved
 
-    @transition(field=status, 
-            source=STATUS_CLOSURE_REQUESTED, 
+    @transition(field=status,
+            source=STATUS_CLOSURE_REQUESTED,
             target=STATUS_CLOSING,
-            conditions=['can_accept_closure'], 
+            conditions=['can_accept_closure'],
             save=True,
-            verbose_name=_("Accept closure"), 
+            verbose_name=_("Accept closure"),
             permission="approve")
     def accept_closure(self):
         """
@@ -582,18 +582,18 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         """
         return True
 
-    @transition(field=status, 
+    @transition(field=status,
             source=[STATUS_CLOSING, STATUS_COMPLETED],
             target=STATUS_FINAL_UPDATE,
-            conditions=['can_request_final_update'], 
+            conditions=['can_request_final_update'],
             save=True,
-            verbose_name=_("Request final update"), 
+            verbose_name=_("Request final update"),
             permission="approve")
     def request_final_update(self):
         """
         Transition to move the project to STATUS_FINAL_UPDATE.
         """
-        ProgressReport.objects.create(project=self, creator=self.creator, 
+        ProgressReport.objects.create(project=self, creator=self.creator,
                 is_final_report=True,
                 modifier=self.modifier, year= date.today().year)
 
@@ -602,24 +602,24 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         """
         Gate-check prior to `complete()`.
 
-        Projects can be completed if the final progress report and project 
+        Projects can be completed if the final progress report and project
         closure are approved.
         """
         lpr = self.documents.instance_of(ProgressReport).latest()
         return (lpr.is_final_report and lpr.is_approved and
                 self.documents.instance_of(ProjectClosure).latest().is_approved)
 
-    @transition(field=status, 
+    @transition(field=status,
             source=STATUS_FINAL_UPDATE,
             target=STATUS_COMPLETED,
-            #conditions=['can_complete'], 
+            #conditions=['can_complete'],
             save=True,
             verbose_name=_("Complete final update"),
             permission="approve")
     def complete(self):
         """
-        Transition to move the project to its COMPLETED state. 
-        No more actions are required of this project. 
+        Transition to move the project to its COMPLETED state.
+        No more actions are required of this project.
         Only reactivate() should be possible now.
         """
 
@@ -627,17 +627,17 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
     def can_reactivate(self):
         """
         Gate-check prior to `reqctivate()`.
-        
+
         Return true if the project can be reactivated.
 
         Currently no checks.
         """
         return True
 
-    @transition(field=status, 
+    @transition(field=status,
             source=STATUS_COMPLETED,
             target=STATUS_ACTIVE,
-            conditions=['can_reactivate'], 
+            conditions=['can_reactivate'],
             save=True,
             verbose_name=_("Reactivate project"),
             permission="approve")
@@ -654,10 +654,10 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         """
         return True
 
-    @transition(field=status, 
+    @transition(field=status,
             source=STATUS_ACTIVE,
             target=STATUS_TERMINATED,
-            conditions=['can_terminate'], 
+            conditions=['can_terminate'],
             save=True,
             verbose_name=_("Terminate project"),
             permission="approve")
@@ -674,10 +674,10 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         """
         return True
 
-    @transition(field=status, 
+    @transition(field=status,
             source=STATUS_TERMINATED,
             target=STATUS_ACTIVE,
-            conditions=['can_reactivate_terminated'], 
+            conditions=['can_reactivate_terminated'],
             save=True,
             verbose_name=_("Reactivate terminated project"),
             permission="approve")
@@ -694,10 +694,10 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         """
         return True
 
-    @transition(field=status, 
+    @transition(field=status,
             source=STATUS_ACTIVE,
             target=STATUS_SUSPENDED,
-            conditions=['can_suspend'], 
+            conditions=['can_suspend'],
             save=True,
             verbose_name=_("Suspend project"),
             permission="approve")
@@ -714,10 +714,10 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         """
         return True
 
-    @transition(field=status, 
+    @transition(field=status,
             source=STATUS_SUSPENDED,
             target=STATUS_ACTIVE,
-            conditions=['can_reactivate_suspended'], 
+            conditions=['can_reactivate_suspended'],
             save=True,
             verbose_name=_("Reactivate suspended project"),
             permission="approve")
@@ -729,10 +729,10 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
     # EMAIL NOTIFICATIONS ----------------------------------------------------#
     def get_users_to_notify(self, transition):
         #result = set()
-        #if transition in (STATUS_ACTIVE, STATUS_COMPLETED, 
+        #if transition in (STATUS_ACTIVE, STATUS_COMPLETED,
         #        STATUS_TERMINATED, STATUS_SUSPENDED):
         result = set(self.members.all()) # reduce some duplication
-        
+
         return result
 
     #-------------------------------------------------------------------------#
@@ -773,7 +773,7 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         #    self.PROJECT_ABBREVIATIONS[self.type], self.year, str(self.number).zfill(3),
         #    self.title), extensions=['pythia.md_ext.subscript', 'pythia.md_ext.superscript',
         #                             'nl2br'], safe_mode='escape'))
-        return mark_safe('{0} {1}-{2} {3}'.format(self.PROJECT_ABBREVIATIONS[self.type], 
+        return mark_safe('{0} {1}-{2} {3}'.format(self.PROJECT_ABBREVIATIONS[self.type],
             self.year, str(self.number).zfill(3), self.title))
 
 
@@ -796,17 +796,17 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
         """
         Returns a plain text version of the team list.
         """
-        return ", ".join([m.user.abbreviated_name for m in 
+        return ", ".join([m.user.abbreviated_name for m in
             self.projectmembership_set.select_related('user').all().order_by(
                 "position","user__last_name","user__first_name" )])
 
     def get_supervising_scientist_list_plain(self):
         """Return a string of Supervising Scientist names."""
-        return ', '.join([x.user.abbreviated_name for x in 
+        return ', '.join([x.user.abbreviated_name for x in
             ProjectMembership.objects.filter(project=self).filter(
             role=ProjectMembership.ROLE_SUPERVISING_SCIENTIST)])
 
-        
+
     @property
     def progressreport(self, year):
         """Stub to return the progress report for a given year."""
@@ -818,17 +818,17 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
     @property
     def team_students(self):
         """Return a string of all team members in role Student"""
-        return ', '.join([x.user.get_full_name() for x in 
-            ProjectMembership.objects.filter(project=self, 
+        return ', '.join([x.user.get_full_name() for x in
+            ProjectMembership.objects.filter(project=self,
             role=ProjectMembership.ROLE_SUPERVISED_STUDENT)])
-    
+
     @property
     def team_list(self):
         "Return a list of lists of project team memberships"
-        return[[m.get_role_display(), 
+        return[[m.get_role_display(),
                 m.user.fullname,
                 m.time_allocation] for m in self.projectmembership_set.all()]
-    
+
     #-------------------------------------------------------------------------#
     # Areas
     #
@@ -848,7 +848,7 @@ class Project(PolymorphicModel, models.Audit, models.ActiveModel):
     def area_ibra_imcra_region(self):
         """Return a string of all areas of type IBRA or IMCRA Region"""
         return ', '.join([area.name for area in self.areas.filter(
-            area_type__in=[Area.AREA_TYPE_IBRA_REGION, 
+            area_type__in=[Area.AREA_TYPE_IBRA_REGION,
                 Area.AREA_TYPE_IMCRA_REGION])])
 
     @property
@@ -902,17 +902,17 @@ class ScienceProject(Project):
         if not ProgressReport.objects.filter(project=self, year=year).exists():
             a = ARARReport.objects.get(year=year)
             self.make_progressreport(a)
-        return ProgressReport.objects.get(project=self, year=year)    
-    
+        return ProgressReport.objects.get(project=self, year=year)
+
     def make_progressreport(self, report):
         """Create (if neccessary) a ProgressReport for the given year.
         Populate fields from previous ProgressReport.
         Call this function for each participating project when creating an ARAR.
 
-        :param year: the integer year of the ProgressReport delivery, 
+        :param year: the integer year of the ProgressReport delivery,
             e.g. 2014 for FY2013-14
         :param report: an instance of ARARReport
-        """ 
+        """
         msg = "Creating ProgressReport for {0}".format(self.__str__())
         logger.info(msg); print(msg)
         p, created = ProgressReport.objects.get_or_create(
@@ -926,7 +926,7 @@ class ScienceProject(Project):
             p.progress = p0.progress
             p.implications = p0.implications
             p.future = p0.future
-        p.save() 
+        p.save()
         msg = "{0} Added ProgressReport for year {1} in report {2}".format(
             p.project.project_type_year_number, p.year, p.report)
         logger.info(msg); print(msg)
@@ -961,13 +961,13 @@ class CoreFunctionProject(Project):
             a = ARARReport.objects.get(year=year)
             self.make_progressreport(a)
         return ProgressReport.objects.get(project=self, year=year)
-        
+
     def make_progressreport(self, report):
         """Create (if neccessary) a ProgressReport for the given year.
         Populate fields from previous ProgressReport.
         Call this function for each participating project when creating an ARAR.
 
-        :param year: the integer year of the ProgressReport delivery, 
+        :param year: the integer year of the ProgressReport delivery,
             e.g. 2014 for FY2013-14
         :param report: an instance of ARARReport
         """
@@ -998,7 +998,7 @@ class CollaborationProject(Project):
         max_length=2000,
         verbose_name=_("Collaboration name (with formatting)"),
         help_text=_("The collaboration name with formatting if required."))
-    budget = Html2TextField( 
+    budget = Html2TextField(
             #PythiaArrayField(
         verbose_name=_("Total Budget"),
         help_text=_("Specify the total financial and staff time budget."),
@@ -1031,7 +1031,7 @@ class CollaborationProject(Project):
 
     def get_staff_list_plain(self):
         """Return a string of DPaW staff."""
-        return ', '.join([x.user.abbreviated_name for x in 
+        return ', '.join([x.user.abbreviated_name for x in
             ProjectMembership.objects.filter(project=self).filter(
             role__in=[
                 ProjectMembership.ROLE_SUPERVISING_SCIENTIST,
@@ -1104,7 +1104,7 @@ class StudentProject(Project):
             editable=False,
             null=True, blank=True,
             help_text=_("Academic supervisors in order of membership rank."
-                " Update by adding team members as academic supervisors."))    
+                " Update by adding team members as academic supervisors."))
     academic_list_plain_no_affiliation = models.TextField(
             verbose_name="Academic without affiliation",
             editable=False,
@@ -1120,22 +1120,22 @@ class StudentProject(Project):
     def sort_value(self):
         """Return a value by which all objects of this class can be sorted by"""
         return self.project_owner.last_name
-    
+
     def get_student_list_plain(self):
         """Return a string of Student names."""
-        return ', '.join([x.user.abbreviated_name for x in 
+        return ', '.join([x.user.abbreviated_name for x in
             ProjectMembership.objects.filter(project=self).filter(
             role=ProjectMembership.ROLE_SUPERVISED_STUDENT)])
 
     def get_academic_list_plain(self):
         """Return a string of DPaW staff."""
-        return ', '.join([x.user.abbreviated_name for x in 
+        return ', '.join([x.user.abbreviated_name for x in
             ProjectMembership.objects.filter(project=self).filter(
             role=ProjectMembership.ROLE_ACADEMIC_SUPERVISOR)])
 
     def get_academic_list_plain_no_affiliation(self):
         """Return a string of DPaW staff without their affiliation."""
-        return ', '.join([x.user.abbreviated_name_no_affiliation for x in 
+        return ', '.join([x.user.abbreviated_name_no_affiliation for x in
             ProjectMembership.objects.filter(project=self).filter(
             role=ProjectMembership.ROLE_ACADEMIC_SUPERVISOR)])
 
@@ -1143,7 +1143,7 @@ class StudentProject(Project):
     def academic(self):
         """Return a string of the Academic Supervisor name(s).
         """
-        return ', '.join([x.user.abbreviated_name for x in 
+        return ', '.join([x.user.abbreviated_name for x in
             ProjectMembership.objects.filter(project=self).filter(
             role=ProjectMembership.ROLE_ACADEMIC_SUPERVISOR)])
 
@@ -1152,7 +1152,7 @@ class StudentProject(Project):
         """Return a string of the Academic Supervisor name(s) without
         their affiliations.
         """
-        return ', '.join([x.user.abbreviated_name_no_affiliation for x in 
+        return ', '.join([x.user.abbreviated_name_no_affiliation for x in
             ProjectMembership.objects.filter(project=self).filter(
             role=ProjectMembership.ROLE_ACADEMIC_SUPERVISOR)])
 
@@ -1191,8 +1191,8 @@ class StudentProject(Project):
         else:
             return False
 
-    @transition(field='status', 
-            source=Project.STATUS_ACTIVE, 
+    @transition(field='status',
+            source=Project.STATUS_ACTIVE,
             target=Project.STATUS_CLOSURE_REQUESTED,
             conditions=['can_request_closure'], save=True,
             verbose_name=_("Request closure"), permission="submit")
@@ -1226,14 +1226,14 @@ class StudentProject(Project):
         if not StudentReport.objects.filter(project=self, year=year).exists():
             a = ARARReport.objects.get(year=year)
             self.make_progressreport(year, a.id)
-        return ProgressReport.objects.get(project=self, year=year)    
-    
+        return ProgressReport.objects.get(project=self, year=year)
+
     def make_progressreport(self, report):
         """Create (if neccessary) a StudentReport for the given year.
         Populate fields from previous StudentReport.
         Call this function for each participating project when creating an ARAR.
 
-        :param year: the integer year of the StudentReport delivery, 
+        :param year: the integer year of the StudentReport delivery,
             e.g. 2014 for FY2013-14
         :param report: an instance of ARARReport
         """
@@ -1316,7 +1316,7 @@ class ProjectMembership(models.Model):
         return mark_safe("{0} ({1} - {2} - {3} FTE) [List position {4}] {5}".format(
             self.user.__str__(),
             self.project.project_type_year_number,
-            self.get_role_display(), self.time_allocation, 
+            self.get_role_display(), self.time_allocation,
             self.position, self.comments))
 
     # TODO
@@ -1345,13 +1345,13 @@ def refresh_project_cache(p):
         p.student_list_plain = p.get_student_list_plain()
         p.academic_list_plain = p.get_academic_list_plain()
         p.academic_list_plain_no_affiliation = p.get_academic_list_plain_no_affiliation()
-        p.save(update_fields=['student_list_plain','academic_list_plain',]) 
+        p.save(update_fields=['student_list_plain','academic_list_plain',])
         #p.staff_list_plain = p.get_staff_list_plain()
         #p.save(update_fields=['staff_list_plain'])
     return True
 
 def refresh_all_project_caches():
-    tmp = [refresh_project_cache(p) for p in 
+    tmp = [refresh_project_cache(p) for p in
             Project.objects.select_related("projectmembership_set","area_set")]
     return len(tmp)
 
@@ -1369,17 +1369,17 @@ def refresh_project_member_cache_fields(projectmembership_instance, remove=False
     # TODO remove user's permissions on documents
     #else:
     #    print("grant user permission to change or delete team memberships")
-    
+
 
     # some crazyness for StudentProjects and CollaborationProjects
     if projectmembership_instance.role==ProjectMembership.ROLE_SUPERVISING_SCIENTIST:
         p.supervising_scientist_list_plain = p.get_supervising_scientist_list_plain()
         p.save(update_fields=['supervising_scientist_list_plain'])
-    if (projectmembership_instance.role==ProjectMembership.ROLE_SUPERVISED_STUDENT and 
+    if (projectmembership_instance.role==ProjectMembership.ROLE_SUPERVISED_STUDENT and
     p._meta.model_name=='studentproject'):
         p.student_list_plain = p.get_student_list_plain()
         p.save(update_fields=['student_list_plain'])
-    if (projectmembership_instance.role==ProjectMembership.ROLE_ACADEMIC_SUPERVISOR and 
+    if (projectmembership_instance.role==ProjectMembership.ROLE_ACADEMIC_SUPERVISOR and
     p._meta.model_name=='studentproject'):
         p.academic_list_plain = p.get_academic_list_plain()
         p.academic_list_plain_no_affiliation = p.get_academic_list_plain_no_affiliation()

@@ -1,5 +1,9 @@
 from __future__ import (division, print_function, unicode_literals,
-                        absolute_import)
+absolute_import)
+import reversion
+import threading
+import logging
+
 
 from django.conf import settings
 from django.core import validators
@@ -18,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 import logging
 from smart_selects.db_fields import ChainedForeignKey
 
-from swingers.models import Audit, ActiveModel
+#from swingers.models import Audit, ActiveModel
 from django.contrib.gis.db import models
 
 from pythia.fields import Html2TextField
@@ -29,6 +33,355 @@ from south.modelsinspector import add_introspection_rules
 logger = logging.getLogger(__name__)
 
 
+#from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
+from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
+
+# we can't do `from swingers import models` because that causes circular import
+#from swingers.models import Model, ForeignKey, DateTimeField
+
+from django.contrib.gis.db import models as geo_models
+from django.core.exceptions import ImproperlyConfigured
+from django.utils import timezone, six
+from django.db import router, models
+from django.db.models import signals
+from django.db.models.deletion import Collector
+
+
+#from swingers.models.managers import ActiveModelManager, ActiveGeoModelManager
+from django.db import models
+from django.db.models.query import QuerySet
+from django.db.models.sql.query import Query
+
+from django.contrib.gis.db import models as geo_models
+from django.contrib.gis.db.models.query import GeoQuerySet
+from django.contrib.gis.db.models.sql.query import GeoQuery
+
+import copy
+
+logger = logging.getLogger("log." + __name__)
+
+_locals = threading.local()
+
+
+def get_locals():
+    """
+    Setup locals for a request thread so we can attach stuff and make it
+    available globally.
+    import from request.models::
+        from request.models import get_locals
+        _locals = get_locals
+        _locals.request.user = amazing
+    """
+    return _locals
+
+
+
+class ActiveQuerySet(QuerySet):
+    def __init__(self, model, query=None, using=None):
+        # the model needs to be defined so that we can construct our custom
+        # query
+        if query is None:
+            query = Query(model)
+            query.add_q(models.Q(effective_to__isnull=True))
+        return super(ActiveQuerySet, self).__init__(model, query, using)
+
+    def __deepcopy__(self, memo):
+        # borrowed from django.db.models.query.QuerySet because we need to pass
+        # self.model to the self.__class__ call
+        obj = self.__class__(self.model)
+        for k, v in self.__dict__.items():
+            if k in ('_iter', '_result_cache'):
+                obj.__dict__[k] = None
+            else:
+                obj.__dict__[k] = copy.deepcopy(v, memo)
+                return obj
+
+    def delete(self):
+        # see django.db.models.query.QuerySet.delete
+        assert_msg = "Cannot use 'limit' or 'offset' with delete."
+        assert self.query.can_filter(), assert_msg
+
+        del_query = self._clone()
+        del_query._for_write = True
+
+        # Disable non-supported fields.
+        del_query.query.select_for_update = False
+        del_query.query.select_related = False
+        del_query.query.clear_ordering(force_empty=True)
+
+        # TODO: this could probably be made more efficient via the django
+        # Collector, maybe
+        for obj in del_query:
+            obj.delete()
+
+        # Clear the result cache, in case this QuerySet gets reused.
+        self._result_cache = None
+    delete.alters_data = True
+
+
+class ActiveGeoQuerySet(ActiveQuerySet, GeoQuerySet):
+    def __init__(self, model, query=None, using=None):
+        # the model needs to be defined so that we can construct our custom
+        # query
+        if query is None:
+            query = GeoQuery(model)
+            query.add_q(geo_models.Q(effective_to__isnull=True))
+        return super(ActiveGeoQuerySet, self).__init__(model, query, using)
+
+
+class ActiveModelManager(models.Manager):
+    '''Exclude inactive ("deleted") objects from the query set.'''
+    def get_query_set(self):
+        '''Override the default queryset to filter out deleted objects.
+        '''
+        return ActiveQuerySet(self.model)
+
+    # __getattr__ borrowed from
+    # http://lincolnloop.com/django-best-practices/applications.html#managers
+    def __getattr__(self, attr, *args):
+        # see https://code.djangoproject.com/ticket/15062 for
+        # details
+        if attr.startswith("_"):
+            raise AttributeError
+        return getattr(self.get_query_set(), attr, *args)
+
+
+class ActiveGeoModelManager(ActiveModelManager, geo_models.GeoManager):
+    def get_query_set(self):
+        return ActiveGeoQuerySet(self.model)
+
+
+class ActiveModel(models.Model):
+    '''
+    Model mixin to allow objects to be saved as 'non-current' or 'inactive',
+    instead of deleting those objects.
+    The standard model delete() method is overridden.
+
+    "effective_from" allows 'past' and/or 'future' objects to be saved.
+    "effective_to" is used to 'delete' objects (null==not deleted).
+    '''
+    effective_from = models.DateTimeField(default=timezone.now)
+    effective_to = models.DateTimeField(null=True, blank=True)
+    objects = ActiveModelManager()
+    # Return all objects, including deleted ones, the default manager.
+    objects_all = models.Manager()
+
+    class Meta:
+        abstract = True
+
+    def __init__(self, *args, **kwargs):
+        if not issubclass(type(type(self).objects), ActiveModelManager):
+            raise ImproperlyConfigured(
+                "The ActiveModel objects manager is not a subclass of "
+                "swingers.base.models.managers.ActiveModelManager, if you "
+                "created your own objects manager, it must be a subclass of "
+                "ActiveModelManager.")
+        super(ActiveModel, self).__init__(*args, **kwargs)
+
+    def is_active(self):
+        return self.effective_to is None
+
+    def is_deleted(self):
+        return not self.is_active()
+
+    def delete(self, *args, **kwargs):
+        '''
+        Overides the standard model delete method; sets "effective_to" as the
+        current date and time and then calls save() instead.
+        '''
+        # see django.db.models.deletion.Collection.delete
+        using = kwargs.get('using', router.db_for_write(self.__class__,
+                                                        instance=self))
+        cannot_be_deleted_assert = ("""%s object can't be deleted because its
+                                    %s attribute is set to None.""" %
+                                    (self._meta.object_name,
+                                     self._meta.pk.attname))
+        assert self._get_pk_val() is not None, cannot_be_deleted_assert
+        collector = Collector(using=using)
+        collector.collect([self])
+        collector.sort()
+
+        # send pre_delete signals
+        def delete(collector):
+            for model, obj in collector.instances_with_model():
+                if not model._meta.auto_created:
+                    signals.pre_delete.send(
+                        sender=model, instance=obj, using=using
+                    )
+
+            # be compatible with django 1.4.x
+            if hasattr(collector, 'fast_deletes'):
+                # fast deletes
+                for qs in collector.fast_deletes:
+                    for instance in qs:
+                        self._delete(instance)
+
+            # delete batches
+            # be compatible with django>=1.6
+            if hasattr(collector, 'batches'):
+                for model, batches in six.iteritems(collector.batches):
+                    for field, instances in six.iteritems(batches):
+                        for instance in instances:
+                            self._delete(instance)
+
+            # "delete" instances
+            for model, instances in six.iteritems(collector.data):
+                for instance in instances:
+                    self._delete(instance)
+
+            # send post_delete signals
+            for model, obj in collector.instances_with_model():
+                if not model._meta.auto_created:
+                    signals.post_delete.send(
+                        sender=model, instance=obj, using=using
+                    )
+
+        # another django>=1.6 thing
+        try:
+            from django.db.transaction import commit_on_success_unless_managed
+        except ImportError:
+            delete(collector)
+        else:
+            commit_on_success_unless_managed(using=using)(delete(collector))
+
+    delete.alters_data = True
+
+    def _delete(self, instance):
+        instance.effective_to = timezone.now()
+        instance.save()
+
+
+class ActiveGeoModel(ActiveModel):
+    objects = ActiveGeoModelManager()
+    # Return all objects, including deleted ones, the default manager.
+    objects_all = geo_models.GeoManager()
+
+    def __init__(self, *args, **kwargs):
+        if not issubclass(type(type(self).objects), ActiveGeoModelManager):
+            raise ImproperlyConfigured(
+                "The ActiveGeoModel objects manager is not a subclass of "
+                "swingers.base.models.models.ActiveGeoModelManager, if you "
+                "created your own objects manager, it must be a subclass of "
+                "ActiveGeoModelManager.")
+        super(ActiveGeoModel, self).__init__(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+
+@python_2_unicode_compatible
+class Audit(geo_models.Model):
+    class Meta:
+        abstract = True
+
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='%(app_label)s_%(class)s_created',
+        editable=False)
+    modifier = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='%(app_label)s_%(class)s_modified',
+        editable=False)
+    created = models.DateTimeField(default=timezone.now, editable=False)
+    modified = models.DateTimeField(auto_now=True, editable=False)
+
+    def __init__(self, *args, **kwargs):
+        super(Audit, self).__init__(*args, **kwargs)
+        self._changed_data = None
+        self._initial = {}
+        if self.pk:
+            for field in self._meta.fields:
+                self._initial[field.attname] = getattr(self, field.attname)
+
+    def has_changed(self):
+        """
+        Returns true if the current data differs from initial.
+        """
+        return bool(self.changed_data)
+
+    def _get_changed_data(self):
+        if self._changed_data is None:
+            self._changed_data = []
+            for field, value in self._initial.items():
+                if field in ["modified", "modifier_id"]:
+                    continue
+                if getattr(self, field) != value:
+                    self._changed_data.append(field)
+        return self._changed_data
+    changed_data = property(_get_changed_data)
+
+    def save(self, *args, **kwargs):
+        """
+        This falls back on using an admin user if a thread request object
+        wasn't found.
+        """
+        if ((not hasattr(_locals, "request") or
+             _locals.request.user.is_anonymous())):
+            if hasattr(_locals, "user"):
+                user = _locals.user
+            else:
+                user = User.objects.get(id=1)
+                _locals.user = user
+        else:
+            user = _locals.request.user
+
+        # If saving a new model, set the creator.
+        if not self.pk:
+            self.creator = user
+            created = True
+        else:
+            created = False
+
+        self.modifier = user
+        super(Audit, self).save(*args, **kwargs)
+
+        if created:
+            with reversion.create_revision():
+                reversion.set_comment('Initial version.')
+        else:
+            if self.has_changed():
+                comment = 'Changed ' + ', '.join(self.changed_data) + '.'
+                with reversion.create_revision():
+                    reversion.set_comment(comment)
+            else:
+                with reversion.create_revision():
+                    reversion.set_comment('Nothing changed.')
+
+    def __str__(self):
+        return str(self.pk)
+
+    def get_absolute_url(self):
+        opts = self._meta.app_label, self._meta.module_name
+        return reverse("admin:%s_%s_change" % opts, args=(self.pk, ))
+
+    def clean_fields(self, exclude=None):
+        """
+        Override clean_fields to do what model validation should have done
+        in the first place -- call clean_FIELD during model validation.
+        """
+        errors = {}
+
+        for f in self._meta.fields:
+            if f.name in exclude:
+                continue
+            if hasattr(self, "clean_%s" % f.attname):
+                try:
+                    getattr(self, "clean_%s" % f.attname)()
+                except ValidationError as e:
+                    # TODO: Django 1.6 introduces new features to
+                    # ValidationError class, update it to use e.error_list
+                    errors[f.name] = e.messages
+
+        try:
+            super(Audit, self).clean_fields(exclude)
+        except ValidationError as e:
+            errors = e.update_error_dict(errors)
+
+        if errors:
+            raise ValidationError(errors)
+# end swingers models
 #-----------------------------------------------------------------------------#
 # Report Parts
 #
@@ -103,7 +456,7 @@ class Area(Audit):  # , models.PolygonModelMixin):
         null=True, blank=True,
         help_text=_("The maximum northern extent of an Area, "
                     "useful for sorting by geographic latitude."))
-    mpoly = models.MultiPolygonField(
+    mpoly = geo_models.MultiPolygonField(
         blank=True, null=True, srid=4326, verbose_name=_("Spatial extent"),
         help_text=_("The spatial extent of this feature, stored as WKT."))
 
@@ -133,7 +486,7 @@ class Region(models.Model):
     """
     DPaW Region
     """
-    mpoly = models.MultiPolygonField(
+    mpoly = geo_models.MultiPolygonField(
         null=True, blank=True, help_text='Optional cache of spatial features.')
     # the name should be unique=True
     name = models.CharField(max_length=64, null=True, blank=True)
@@ -177,11 +530,11 @@ class District(models.Model):
     objects = DistrictManager()
     region = models.ForeignKey(
     #ChainedForeignKey(
-        Region, 
+        Region,
     #    chained_field="name", chained_model_field="name",
     #    show_all=False, auto_choose=True,
         help_text=_("The region to which this district belongs."))
-    mpoly = models.MultiPolygonField(
+    mpoly = geo_models.MultiPolygonField(
         null=True, blank=True,
         help_text=_("Optional cache of spatial features."))
 
@@ -285,21 +638,21 @@ class Program(Audit, ActiveModel):
 
     # Key personnel ----------------------------------------------------------#
     program_leader = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        related_name='leads_programs', 
-        blank=True, null=True, 
+        settings.AUTH_USER_MODEL,
+        related_name='leads_programs',
+        blank=True, null=True,
         help_text='The Program Leader')
     # cost_center should be unique=True
     cost_center = models.CharField(
         max_length=3, blank=True, null=True,
         help_text='The three-digit cost center number for the Program.')
     finance_admin = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
+        settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='finance_admin_on_programs',
         help_text='The finance admin.')
     data_custodian = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
+        settings.AUTH_USER_MODEL,
         blank=True, null=True,
         related_name='pythia_data_custodian_on_programs',  # clashes with sdis2
         help_text='The default custodian of data sets of this Program.')
@@ -370,7 +723,7 @@ class Program(Audit, ActiveModel):
             Project.CORE_PROJECT]).prefetch_related('documents')
 
 def set_smt_to_pl(sender, instance, created, **kwargs):
-    """Add all Program Leaders to Group SMT. 
+    """Add all Program Leaders to Group SMT.
     If clobber==True, drop all SMT members beforehand.
     """
     smt, created = Group.objects.get_or_create(name='SMT')
@@ -536,56 +889,56 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # Name -------------------------------------------------------------------#
     title = models.CharField(
-        #_('title'), 
-	max_length=30, 
+        #_('title'),
+	max_length=30,
 	null=True, blank=True,
 	verbose_name=_("Academic Title"),
         help_text=_("Optional academic title, shown in team lists only if "
             "supplied, and only for external team members."))
     first_name = models.CharField(
-        #_('first name'), 
-	max_length=100, 
+        #_('first name'),
+	max_length=100,
 	null=True, blank=True,
-	verbose_name=_("First Name"), 
-	help_text=_("First name or given name.")) 
+	verbose_name=_("First Name"),
+	help_text=_("First name or given name."))
     # middle initials should just be called initials, at least label as such:
     middle_initials = models.CharField(
-        #_('middle initials'), 
-	max_length=100, 
+        #_('middle initials'),
+	max_length=100,
 	null=True, blank=True,
 	verbose_name=_("Initials"),
         help_text=_("Initials of first and middle names. Will be used in "
             "team lists with abbreviated names."))
     last_name = models.CharField(
-        #_('last name'), 
-	max_length=100, 
+        #_('last name'),
+	max_length=100,
 	null=True, blank=True,
 	verbose_name=_("Last Name"),
 	help_text=_("Last name or surname."))
 
     is_group = models.BooleanField(
-        #_('Is a group'), 
+        #_('Is a group'),
 	default=False,
 	verbose_name=_("Show as Group"),
         help_text=_("Whether this profile refers to a group, rather than a "
             "natural person. Groups are referred to with their group name, "
             "whereas first and last name refer to the group's contact person."))
     group_name = models.CharField(
-        #_('Group name'), 
-	max_length=200, 
+        #_('Group name'),
+	max_length=200,
 	null=True, blank=True,
 	verbose_name=_("Group name"),
         help_text=_("Group name, if this profile is not a natural "
             "person. E.g., 'Goldfields Regional Office'."))
 
     affiliation = models.CharField(
-        #_('Affiliation'), 
-	max_length=200, 
+        #_('Affiliation'),
+	max_length=200,
 	null=True, blank=True,
 	verbose_name=_("Affiliation"),
         help_text=_("Optional affiliation, not required for DPaW. If provided, the"
         " affiliation will be appended to the person or group name in parentheses."))
-    
+
     # Contact details --------------------------------------------------------#
     image = models.ImageField(
         upload_to="profiles", null=True, blank=True,
@@ -704,7 +1057,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                                    self.DEFAULT_GROUP, self.email))
             else:
                 self.groups.add(group)
-    
+
     def get_title(self):
         """Returns the title if supplied and user is_external
         SANITY WARNING this function will HIDE the title for internal staff
@@ -738,10 +1091,10 @@ class User(AbstractBaseUser, PermissionsMixin):
             full_name = "{0} {1}".format(self.group_name, self.get_affiliation())
         else:
             full_name = "{0} {1} {2} {3} {4}".format(
-                self.get_title(), 
-                self.first_name, 
-                self.get_middle_initials(), 
-                self.last_name, 
+                self.get_title(),
+                self.first_name,
+                self.get_middle_initials(),
+                self.last_name,
                 self.get_affiliation())
         return full_name.strip()
 
@@ -763,12 +1116,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         given name and surname.
         """
         if self.is_group:
-            return self.get_full_name() 
+            return self.get_full_name()
         else:
             full_name = "{0} {1} {2} {3}".format(
                     self.get_title(),
                     self.middle_initials, # remember these are full initials
-                    self.last_name, 
+                    self.last_name,
                     self.get_affiliation())
         return full_name.strip()
 
@@ -782,7 +1135,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         given name and surname.
         """
         if self.is_group:
-            return self.get_full_name() 
+            return self.get_full_name()
         else:
             full_name = "{0} {1} {2}".format(
                     self.get_title(),
@@ -841,7 +1194,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 doc.hc_endorsement == Document.ENDORSEMENT_REQUIRED) or (
                 doc.ae_endorsement == Document.ENDORSEMENT_REQUIRED):
                 excludes.add(doc)
-        
+
         endorsements = set()
 
         if is_bm:
@@ -861,9 +1214,9 @@ class User(AbstractBaseUser, PermissionsMixin):
             ).select_related('project'))
 
         approvals = set()
-        
+
         program_list = self.leads_programs.all()
-        # program -> projects is a reverse foreign key lookup, 
+        # program -> projects is a reverse foreign key lookup,
         # we can't batch this, so do one query per program
         for prog in program_list:
             projects = prog.project_set.prefetch_related('documents')
@@ -871,7 +1224,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 approvals.update(proj.documents.filter(
                     status=Document.STATUS_INREVIEW
                     ).select_related('project'))
-    
+
         member_list = ProjectMembership.objects.prefetch_related(
                 'project', 'project__documents').filter(user=self)
 
@@ -882,9 +1235,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         if is_scd:
             documents = Document.objects.filter(
                     status=Document.STATUS_INREVIEW).select_related('project')
-            # right now the can_approve method of most document classes is 
+            # right now the can_approve method of most document classes is
             # just True.
-            # if there's any logic that does heavy lookups, it may pay to 
+            # if there's any logic that does heavy lookups, it may pay to
             # add more prefetch arguments to the above query
             documents = set([d for d in documents if d.can_approve()])
             approvals.update(documents)
@@ -892,12 +1245,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         # remove all the endorsements from the approvals pool
         approvals.difference_update(excludes)
-        
+
         # TODO: presort the output lists by descending project ID
-        return {'approvals': list(approvals), 
-                'endorsements':list(endorsements), 
+        return {'approvals': list(approvals),
+                'endorsements':list(endorsements),
                 'count': len(approvals)+len(endorsements)}
-    
+
     @property
     def portfolio(self):
         """
@@ -909,14 +1262,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         tag!
         """
         from pythia.projects.models import (Project, ProjectMembership,
-            ScienceProject, CoreFunctionProject, CollaborationProject,  
+            ScienceProject, CoreFunctionProject, CollaborationProject,
             StudentProject)
         from pythia.documents.models import (ConceptPlan, ProjectPlan)
         from datetime import datetime, timedelta
 
-        # Fun fact: Django polymorphism casts the returned items from a 
-        # Project.objects query into the highest subclass, but does not 
-        # rig it for private key lookups. This is why we need to hit the 
+        # Fun fact: Django polymorphism casts the returned items from a
+        # Project.objects query into the highest subclass, but does not
+        # rig it for private key lookups. This is why we need to hit the
         # database again with pm_list to fetch the correctly casted object.
 
         best_before = datetime.now() - timedelta(days=30)
@@ -933,7 +1286,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         stuck_result = {"new":[], "pending":[]}
 
         for x in stuck_new:
-            # Projects stuck in approval for more than three months need a 
+            # Projects stuck in approval for more than three months need a
             # kick up the rear end
             doc = x.documents.instance_of(ConceptPlan).get()
             stuck_result["new"].append(doc)
