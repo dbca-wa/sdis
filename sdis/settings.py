@@ -77,7 +77,6 @@ INSTALLED_APPS = (
 
     'django_browserid',
     'django_pdb',
-    'django_nose',
     'debug_toolbar',
     'debug_toolbar_htmltidy',
 
@@ -247,11 +246,6 @@ DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dpaw.wa.gov.au>'
 
 
 #COMPRESS_ENABLED = False
-
-SOUTH_TESTS_MIGRATE = False
-SKIP_SOUTH_TESTS = True
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
 
 DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': False,

@@ -35,6 +35,8 @@
   {% endif %}
   <link rel="stylesheet" href="{% static "css/pythia-ext.css" %}">
   {% endcompress %}
+
+
 </head>
 
 <!-- Application navigation links -->
@@ -395,6 +397,7 @@
 
 <!-- Page-level JS -->
 {% compress js %}
+{% endcompress %}
 <script src="https://static.dpaw.wa.gov.au/static/libs/jquery/2.2.0/jquery.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/modernizr/2.8.3/modernizr.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -453,5 +456,4 @@
 {{ form.media.js }}
 {% block extrahead %}{% endblock %}
 <!-- /Page-level JS -->
-{% endcompress %}
 </html>
