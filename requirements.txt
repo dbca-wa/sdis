@@ -122,3 +122,4 @@ coverage==3.7.1
 flake8==2.4.0
 mixer==5.1.2
 selenium==2.45.0
+ipdbplugin==1.4.2
