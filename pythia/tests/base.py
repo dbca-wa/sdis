@@ -4,16 +4,17 @@ from django.test.utils import override_settings
 
 import factory
 
-from pythia.documents.models import (ConceptPlan, ProjectPlan, 
+from pythia.documents.models import (ConceptPlan, ProjectPlan,
         ProgressReport, ProjectClosure, StudentReport)
-from pythia.projects.models import (Project, ScienceProject, 
+from pythia.projects.models import (Project, ScienceProject,
         CoreFunctionProject, CollaborationProject, StudentProject)
 
 
 @override_settings(
     AUTHENTICATION_BACKENDS=(
         'django.contrib.auth.backends.ModelBackend',
-        'swingers.sauth.backends.EmailBackend'),
+        #'swingers.sauth.backends.EmailBackend'
+        ),
     PERSONA_LOGIN=False)
 class BaseTestCase(TestCase):
     pass
@@ -138,5 +139,3 @@ class StudentReportFactory(factory.django.DjangoModelFactory):
     year = 2014
     progress_report = "progress report"
     organisation = "organisation"
-
-

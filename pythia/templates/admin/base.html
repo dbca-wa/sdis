@@ -22,7 +22,6 @@
   <link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/leaflet.fullscreen/1.0.0/Control.FullScreen.css">
   <!--link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/font-awesome/4.5.0/css/font-awesome.min.css"-->
   {{ form.media.css }}
-  <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />
   <!-- /Site-level CSS -->
 
   <!-- Page-level CSS -->
@@ -33,9 +32,10 @@
     <link rel="stylesheet"
     href="{% block stylesheet_rtl %}https://static.dpaw.wa.gov.au/static/libs/bootstrap-rtl/3.2.0-rc2/css/bootstrap-rtl.min.css{% endblock %}">
   {% endif %}
-  <link rel="stylesheet" href="{% static "css/pythia-ext.css" %}">
-  {% endcompress %}
 
+  {% endcompress %}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />
+  <link rel="stylesheet" href="{% static "css/pythia-ext.css" %}">
 
 </head>
 
@@ -397,7 +397,6 @@
 
 <!-- Page-level JS -->
 {% compress js %}
-{% endcompress %}
 <script src="https://static.dpaw.wa.gov.au/static/libs/jquery/2.2.0/jquery.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/modernizr/2.8.3/modernizr.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -410,9 +409,11 @@
 
 <script src="https://static.dpaw.wa.gov.au/static/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/leaflet.fullscreen/1.0.0/Control.FullScreen.min.js"></script>
+<script src="https://static.dpaw.wa.gov.au/static/libs/joyride/2.1.0/jquery.joyride.min.js"></script>
+{% endcompress %}
 <script src="{% static 'leaflet-ajax/dist/leaflet.ajax.min.js' %}"></script>
 <script src="{% static 'proj4leaflet/src/proj4leaflet.js' %}"></script>
-<script src="https://static.dpaw.wa.gov.au/static/libs/joyride/2.1.0/jquery.joyride.min.js"></script>
+
 
 <!-- black magic -->
 <script src="{% static 'js/pythia.js' %}"></script>

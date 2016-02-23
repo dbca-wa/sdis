@@ -33,6 +33,7 @@ if not DEBUG:
         'sdis-test.dpaw.wa.gov.au.',
         'sdis-uat.dpaw.wa.gov.au',
         'sdis-uat.dpaw.wa.gov.au.',
+        'static.dpaw.wa.gov.au'
     ]
 else:
     ALLOWED_HOSTS = ['*']

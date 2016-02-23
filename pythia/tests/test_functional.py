@@ -16,7 +16,7 @@ from selenium.webdriver.common.keys import Keys
 
 from pythia.projects.models import *
 from pythia.documents.models import *
-from pythia.tests.base import (SuperUserFactory, UserFactory, 
+from pythia.tests.base import (SuperUserFactory, UserFactory,
         ScienceProjectFactory)
 
 import pdb
@@ -25,9 +25,7 @@ TEST_EMAIL = "florian.wendelin.mayer@gmail.com"
 
 
 @override_settings(
-    AUTHENTICATION_BACKENDS=(
-        'django.contrib.auth.backends.ModelBackend',
-        'swingers.sauth.backends.EmailBackend'),
+    AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend'),
     PERSONA_LOGIN=False)
 class BaseLiveServerTestCase(AdminSeleniumWebDriverTestCase):
     """
@@ -162,7 +160,7 @@ class ProfileTests(BaseLiveServerTestCase):
     def test_user_can_update_own_profile(self):
         """A user should be able to update own details, but not set permissions.
 
-        Fields that should be read-only to the user when viewing own profile: 
+        Fields that should be read-only to the user when viewing own profile:
         ('is_superuser', 'is_active', 'is_staff', 'date_joined', 'groups')
 
         All other fields should be writeable.
@@ -179,7 +177,7 @@ class ProfileTests(BaseLiveServerTestCase):
         pass
 
     def test_superuser_can_update_user_profile(self):
-        """A superuser should be able to update all fields on a 
+        """A superuser should be able to update all fields on a
         User profile.
         """
         pass
@@ -225,7 +223,7 @@ class ProjectTests(BaseLiveServerTestCase):
 
         # Project year should be shown and auto-set to current year
 
-        # Project number should be shown and auto-set to next available 
+        # Project number should be shown and auto-set to next available
         # within current year
 
         #self.fail("Finish this test")
@@ -247,34 +245,34 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
         self.scd, created = Group.objects.get_or_create(name='SCD')
         self.users, created = Group.objects.get_or_create(name='Users')
 
-        # Bob, a research scientist, wants to create a new science project. 
-        # Bob will be the principal scientist of that project, add team members, 
+        # Bob, a research scientist, wants to create a new science project.
+        # Bob will be the principal scientist of that project, add team members,
         # write project documentation, submit docs for approval, and write updates.
-        self.bob = UserFactory.create(username='bob', first_name='Bob', 
+        self.bob = UserFactory.create(username='bob', first_name='Bob',
                 last_name='Bobson')
 
-        # John will join Bob's team. Then he should be able to execute 
+        # John will join Bob's team. Then he should be able to execute
         # "team-only" actions.
-        self.john = UserFactory.create(username='john', first_name='John', 
+        self.john = UserFactory.create(username='john', first_name='John',
                 last_name='Johnson')
-        
-        # Steven is Bob's Program Leader. 
+
+        # Steven is Bob's Program Leader.
         # As a member of SMT, Steven is the first instance of approval.
-        self.steven = UserFactory.create(username='steven', first_name='Steven', 
+        self.steven = UserFactory.create(username='steven', first_name='Steven',
                 last_name='Stevenson')
         #self.steven.groups.add(Group.objects.get(name='SMT'))
         self.steven.groups.add(self.smt)
-        
+
         # Marge is the Divisional Director.
-        # As member of the Directorate, M is the highest instance of approval and has 
+        # As member of the Directorate, M is the highest instance of approval and has
         # resurrection powers for projects.
-        self.marge = UserFactory.create(username='marge', first_name='Marge', 
+        self.marge = UserFactory.create(username='marge', first_name='Marge',
                 last_name='Simpson')
         self.marge.groups.add(self.scd)
-        
-        # Peter won't have anything to do with the project. 
+
+        # Peter won't have anything to do with the project.
         # Peter should not be able to execute any "team-only" actions!
-        self.peter = UserFactory.create(username='peter', first_name='Peter', 
+        self.peter = UserFactory.create(username='peter', first_name='Peter',
                 last_name='Peterson')
 
         self.project = ScienceProjectFactory.create(
@@ -286,7 +284,7 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
         """Test that the new project has the correct status.
         """
         self.assertEqual(self.project.status, Project.STATUS_NEW)
-    
+
     def test_new_project_has_documents(self):
         """Test whether new project has correct documents.
 
@@ -325,11 +323,11 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
         The ConceptPlan should be readable to non-team members.
         Criterion: no "save changes" button.
         """
-        # Non team-member Peter logs in 
+        # Non team-member Peter logs in
         self.create_preauthenticated_session(self.peter)
 
         conceptplan = self.project.documents.instance_of(ConceptPlan).get()
-        
+
         url = reverse('admin:documents_conceptplan_change', args=(conceptplan.id,))
         self.selenium.get("%s%s" % (self.live_server_url, url))
         self.wait_page_loaded()
@@ -337,7 +335,7 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
     def test_new_conceptplan_permissions_team(self):
         """Test permissions of non-team members to the new ConceptPlan.
         """
-    
+
 
         # Peter should see the ConceptPlan read-only
         # TODO
@@ -348,11 +346,11 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
 
         # The SCP must be editable to team and higher (all but Peter)
 
-        # The Project team and higher must be able to submit the SCP for 
+        # The Project team and higher must be able to submit the SCP for
         # review to the PL
 
-        
-        
+
+
         # Bob clicks on the ConceptPlan
         # ConceptPlan must be new: Status New document
         # Actions: Submit for review
@@ -362,10 +360,10 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
     def test_project_add_teammember(self):
         # TODO Bob adds John to the team
         ProjectMembership.objects.create(project = self.project, user=self.john,
-                role=ProjectMembership.ROLE_RESEARCH_SCIENTIST) 
+                role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
         self.assertEqual(
                 ProjectMembership.objects.filter(project=self.project).count(), 2)
-        
+
         # The new team member must have team permissions
         # TODO
 
@@ -373,7 +371,7 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
         # change ordering: set bob's position lower than john's position
         # get project members, assert bob is listed first
         print('TODO: test whether project team is ordered by membership position!')
-        pass 
+        pass
 
     def test_submitting_concept_plan_for_review(self):
         """The project owner submits a ConceptPlan for review."""
@@ -392,7 +390,7 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
         #plan.director_scd_comment = "Science director's comment"
         #plan.director_outputprogram_comment = "Output director's comment"
         plan.save()
-        plan.setup() # this should call update_document_permissions() 
+        plan.setup() # this should call update_document_permissions()
         # which will assign guardian permissions
 
         # Bob logs in
@@ -425,7 +423,7 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
 
         # TODO Bob cancels and returns to the unsubmitted ConceptPlan.
 
-        # On the confirmation page, Bob confirms his desire to submit 
+        # On the confirmation page, Bob confirms his desire to submit
         # the concept plan for review.
         #self.selenium.find_element_by_id('id_confirm').click()
         #self.wait_page_loaded()
@@ -451,12 +449,12 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
 
     def test_adding_endorsement_to_conceptplan_in_review(self):
         """Test adding an endorsement while the document is in review.
-        
+
         Endorsements do not cause actions like approvals or rejections.
-        Each SMT member can endorse a document to indicate his personal OK, whereas 
+        Each SMT member can endorse a document to indicate his personal OK, whereas
         the decision will be made by the whole SMT.
         """
-        
+
         plan = self.project.documents.instance_of(ConceptPlan).get()
 
         plan.status = plan.STATUS_INREVIEW
@@ -494,7 +492,7 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
 
     def test_submitting_concept_plan_for_approval(self):
         """Test submitting the concept plan for approval.
-        
+
         The SMT has decided the project fits in with SCD's strategic goals and
         approves the ConceptPlan. This should prompt the Directors of SCD and
         the respective output program for their comments and final approval

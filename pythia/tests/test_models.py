@@ -21,7 +21,7 @@ class UserModelTests(TestCase):
     def test_user_is_valid_with_email_only(self):
         """Email is the unique user id.
 
-        A user profile must be valid with an email only. 
+        A user profile must be valid with an email only.
         Everything else is a bonus!
         """
         print("TODO")
@@ -33,7 +33,7 @@ class ProjectModelTests(BaseTestCase):
     Base project tests
     """
     def test_creation_adds_project_membership(self):
-        """The user nominated as supervising scientist must be also added to the 
+        """The user nominated as supervising scientist must be also added to the
         team list on Project creation.
         """
         project = ProjectFactory.create()
@@ -62,54 +62,54 @@ class ScienceProjectModelTests(BaseTestCase):
         self.scd, created = Group.objects.get_or_create(name='SCD')
         self.users, created = Group.objects.get_or_create(name='Users')
 
-        # Bob, a research scientist, wants to create a new science project. 
-        # Bob will be the principal scientist of that project, add team members, 
+        # Bob, a research scientist, wants to create a new science project.
+        # Bob will be the principal scientist of that project, add team members,
         # write project documentation, submit docs for approval, and write updates.
         self.bob = UserFactory.create(
-                username='bob', 
-                first_name='Bob', 
+                username='bob',
+                first_name='Bob',
                 last_name='Bobson')
 
-        # John will join Bob's team. Then he should be able to execute 
+        # John will join Bob's team. Then he should be able to execute
         # "team-only" actions.
         self.john = UserFactory.create(
-                username='john', 
-                first_name='John', 
+                username='john',
+                first_name='John',
                 last_name='Johnson')
-        
-        # Steven is Bob's Program Leader. 
+
+        # Steven is Bob's Program Leader.
         # As a member of SMT, Steven is the first instance of approval.
         self.steven = UserFactory.create(
-                username='steven', 
-                first_name='Steven', 
+                username='steven',
+                first_name='Steven',
                 last_name='Stevenson')
         #self.steven.groups.add(Group.objects.get(name='SMT'))
         self.steven.groups.add(self.smt)
-        
+
         # Marge is the Divisional Director.
-        # As member of the Directorate, M is the highest instance of approval and has 
+        # As member of the Directorate, M is the highest instance of approval and has
         # resurrection powers for projects.
         self.marge = UserFactory.create(
-                username='marge', 
-                first_name='Marge', 
+                username='marge',
+                first_name='Marge',
                 last_name='Simpson')
         self.marge.groups.add(self.scd)
-        
-        # Peter won't have anything to do with the project. 
+
+        # Peter won't have anything to do with the project.
         # Peter should not be able to execute any "team-only" actions!
         self.peter = UserFactory.create(
-                username='peter', 
-                first_name='Peter', 
+                username='peter',
+                first_name='Peter',
                 last_name='Peterson')
 
         self.program = Program.objects.create(
-                name="ScienceProgram", 
+                name="ScienceProgram",
                 slug="scienceprogram",
                 position=0,
                 program_leader=self.steven)
 
         self.project = ScienceProjectFactory.create(
-            creator=self.bob, 
+            creator=self.bob,
             modifier=self.bob,
             program=self.program,
             #data_custodian=self.bob, site_custodian=self.bob, # not nominated yet
@@ -120,10 +120,10 @@ class ScienceProjectModelTests(BaseTestCase):
         """Test all steps in a ScienceProject's life.
 
         Emphasis on transitions, pre- and postconditions, gate checks.
-        
+
         """
         #---------------------------------------------------------------------#
-        # New project 
+        # New project
         print("A new ScienceProject must be of STATUS_NEW.")
         self.assertEqual(self.project.status, Project.STATUS_NEW)
 
@@ -140,7 +140,7 @@ class ScienceProjectModelTests(BaseTestCase):
         scp = self.project.documents.instance_of(ConceptPlan).get()
 
         #---------------------------------------------------------------------#
-        # Member permissions 
+        # Member permissions
         print("Only project team members can submit the ConceptPlan.")
         # Bob's your uncle (and project owner)
         self.assertTrue(self.bob.has_perm('submit_conceptplan', scp))
@@ -172,14 +172,14 @@ class ScienceProjectModelTests(BaseTestCase):
         #self.assertTrue(self.marge.has_perm('approve_conceptplan', scp))
         self.assertFalse(self.steven.has_perm('approve_conceptplan', scp))
         self.assertFalse(self.bob.has_perm('approve_conceptplan', scp))
-        
+
         # Update the Project:  only project members and higher can update (currently everyone can)
         # TODO find permission name
         #self.assertTrue(self.steven.has_perm('projects.change_scienceproject', self.project))
         #self.assertTrue(self.bob.has_perm('projects.change_scienceproject', self.project))
         #self.assertTrue(self.john.has_perm('project.change_scenceproject', self.project))
 
-        
+
         # TODO Update the ConceptPlan:  only project members and higher can update (currently everyone can)
         self.assertTrue(self.steven.has_perm('pythia.change_conceptplan', scp))
         self.assertTrue(self.bob.has_perm('pythia.change_conceptplan', scp))
@@ -371,7 +371,7 @@ class CoreFunctionProjectModelTests(TestCase):
     #def test_new_core_function_project(self):
     #    project = CoreFunctionProjectFactory.create()
     #    self.assertEqual(project.status, Project.STATUS_ACTIVE)
-    
+
     #def test_cannot_close(self):
     #    project = CoreFunctionProjectFactory.create()
     #    self.assertFalse(project.can_complete())
@@ -490,10 +490,13 @@ class ConceptPlanTests(TestCase):
     def test_approval(self):
         project = ScienceProjectFactory.create()
         plan = project.documents.instance_of(ConceptPlan).get()
-        plan.status = plan.STATUS_INAPPROVAL
-        plan.save()
+
+        # fast forward to approval:
+        plan.seek_review()
+        plan.seek_approval()
         plan.approve()
-        project = ScienceProject.objects.get(pk=project.pk)
+
+        #project = ScienceProject.objects.get(pk=project.pk)
         self.assertEqual(plan.status, plan.STATUS_APPROVED)
         self.assertEqual(project.status, project.STATUS_PENDING)
 
