@@ -65,13 +65,14 @@ INSTALLED_APPS = (
     #'django.contrib.postgres',
     'django_extensions',
     'django_comments',
+    'compressor',
 
     'crispy_forms',
     'smart_selects',
     'django_select2',
     'markup_deprecated',
     'guardian',
-    'compressor',
+
     'mail_templated',
     'reversion',
     'rest_framework',
@@ -157,8 +158,9 @@ STATICFILES_FINDERS = (
 )
 # This is required to add context variables to all templates:
 STATIC_CONTEXT_VARS = {}
-COMPRESS_ROOT = STATIC_ROOT
 
+COMPRESS_ROOT = STATIC_URL
+COMPRESS_URL = STATIC_URL
 
 TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader', (

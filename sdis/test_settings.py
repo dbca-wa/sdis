@@ -15,7 +15,7 @@ NOSE_ARGS = [
     '--nocapture',
     '--nologcapture',
     '--with-fixture-bundling',
-    '--with-coverage',
-    '--cover-package=main',
+    #'--with-coverage',
+    '--cover-package=pythia',
     '--verbosity=2',
     '--detailed-errors']
