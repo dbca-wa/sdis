@@ -1,14 +1,13 @@
 {% extends "admin/base_site.html" %}
-{% load i18n staticfiles admin_modify %}
-{% load pythia_base %}
+{% load i18n staticfiles admin_modify pythia_base %}
 
 {% block extrastyle %}
 <link rel="stylesheet" href="{% static "admin/css/widgets.css" %}">
 {% endblock %}
 
-{% block extrahead %}{{ block.super }}
+{% block extrahead %}
 <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-<script src="//tinymce.cachefly.net/4.0/tinymce.min.js"></script>
+<script src="http://static.dpaw.wa.gov.au/static/libs/tinymce/4.3.5/tinymce.min.js"></script>
 <script>tinymce.init({selector:'textarea.tinymce'});</script>
 {{ media }}
 {% endblock %}
@@ -36,7 +35,7 @@
     <a href="{% if current %}
     {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote current.pk|pythia_urlquote %}
     {% else %}
-    {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote %}{% endif %}" 
+    {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote %}{% endif %}"
     class="historylink" target="_" title="Open change history in new tab">{% trans "History" %}</a>
   </li>
 {% endif %}

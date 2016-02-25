@@ -1,6 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n staticfiles admin_modify %}
-{% load pythia_base %}
+{% load i18n staticfiles admin_modify pythia_base %}
 
 {% block extrastyle %}
 <link rel="stylesheet" href="{% static "admin/css/widgets.css" %}">
@@ -63,7 +62,7 @@
         {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote current.pk|pythia_urlquote %}
         {% else %}
         {% url opts|pythia_urlname:'history' original.pk|pythia_urlquote %}
-        {% endif %}" 
+        {% endif %}"
         class="historylink" target="_" title="Open history in new tab">{% trans "History" %}</a>
   </li>
 {% endif %}
@@ -84,7 +83,7 @@
 {% block shinythings %}
 {% endblock shinythings %}
 
-<form 
+<form
     {% if has_file_field %}enctype="multipart/form-data" {% endif %}
     action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" class="form-horizontal">
         {% csrf_token %}{% block form_top %}{% endblock %}

@@ -394,8 +394,8 @@
 
 {% endblock %}
 </body>
-
-<!-- Page-level JS -->
+{% compress js %}
+<!-- Site-level JS -->
 <script src="https://static.dpaw.wa.gov.au/static/libs/jquery/2.2.0/jquery.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/modernizr/2.8.3/modernizr.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -409,12 +409,10 @@
 <script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.widgets.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.widgets-filter-formatter.min.js"></script>
-
 <script src="http://static.dpaw.wa.gov.au/static/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/leaflet.fullscreen/1.0.0/Control.FullScreen.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/joyride/2.1.0/jquery.joyride.min.js"></script>
 
-{% compress js %}
 <script src="{% static 'leaflet-ajax/dist/leaflet.ajax.min.js' %}"></script>
 <script src="{% static 'proj4leaflet/src/proj4leaflet.js' %}"></script>
 <script src="{% static 'js/pythia.js' %}"></script>
@@ -455,7 +453,10 @@
     });
 </script>
 {{ form.media.js }}
-{% endcompress %}
+<!-- /Site-level JS -->
+
+<!-- Page-level JS -->
 {% block extrahead %}{% endblock %}
-<!-- /Page-level JS -->
+<!-- Page-level JS -->
+{% endcompress %}
 </html>
