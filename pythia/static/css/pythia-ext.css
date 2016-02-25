@@ -5,15 +5,15 @@ body {
 }
 
 body, h1, h2, h3, h4, h5 {
-  font-family: Lato; 
+  font-family: Lato;
 }
 
 body p.help-block {
-    font-size: 0.9em; 
+    font-size: 0.9em;
 }
 
 body p.sub {
-    color: #999; 
+    color: #999;
 }
 
 a, a:hover, a:active {
@@ -26,7 +26,7 @@ a, a:hover, a:active {
     border-radius: 6px;
     padding: 15px;
     margin-top: 10px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Sticky footer hack - The html and body elements cannot have any padding or margin.  */
@@ -42,7 +42,7 @@ html, body {
     margin-bottom: -40px; /* Negative indent footer by its height */
     //padding-top: 55px;    /* Pad top by floating navbar height */
     padding-bottom: 55px; /* Pad bottom by footer height */
-    background-image:url('/static/img/80mile.jpg'); 
+    background-image:url('/static/img/80mile.jpg');
     background-size: cover;
     background-attachment: fixed;
 }
@@ -52,7 +52,7 @@ margin-right: 0px; /* we need less negativity, especially in margins */
 }
 
 /* Set the fixed height of the footer here */
-#footer {height: 40px; background-color: rgb(34,34,34);}   
+#footer {height: 40px; background-color: rgb(34,34,34);}
 .container .credit {margin: 10px 0;}
 
 /* Used on templates/admin/change_list.html to provide a toolbar area above the list */
@@ -168,7 +168,7 @@ input.vDateField, input.vTimeField {
     margin-right: 10px;
 }
 
-/* Make the Django date/time picking hoverwidgets look nicer */ 
+/* Make the Django date/time picking hoverwidgets look nicer */
 .calendarbox, .clockbox {
     border: 1px solid #aaaaaa;
     border-radius: 4px;
@@ -297,11 +297,9 @@ is encapsulated in a paragraph. Do some tweaks to work around this */
 }
 
 /* Force minimum table column width */
-th.min100px td.min100px { min-width:100px;}
-th.min150px td.min150px { min-width:150px;}
-th.min200px td.min200px { min-width:200px;}
+//th.min100px td.min100px { min-width:100px;}
+//th.min150px td.min150px { min-width:150px;}
+//th.min200px td.min200px { min-width:200px;}
 
 /* Hack messages row */
-.limit-height-50px {
- //height: 50px;
-}
+//.limit-height-50px {height: 50px;}

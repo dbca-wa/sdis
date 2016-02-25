@@ -24,18 +24,18 @@
   {{ form.media.css }}
   <!-- /Site-level CSS -->
 
-  <!-- Page-level CSS -->
-  {% block extrastyle %}{% endblock %}
-  <!-- /Page-level CSS -->
-
   {% if LANGUAGE_BIDI %}
     <link rel="stylesheet"
     href="{% block stylesheet_rtl %}https://static.dpaw.wa.gov.au/static/libs/bootstrap-rtl/3.2.0-rc2/css/bootstrap-rtl.min.css{% endblock %}">
   {% endif %}
   {% compress css %}
   <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />
-  <link rel="stylesheet" href="{% static "css/pythia-ext.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/pythia-ext.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/changelists.css" %}" />
   {% endcompress %}
+  <!-- Page-level CSS -->
+  {% block extrastyle %}{% endblock %}
+  <!-- /Page-level CSS -->
 
 </head>
 
@@ -399,6 +399,10 @@
 <script src="https://static.dpaw.wa.gov.au/static/libs/jquery/2.2.0/jquery.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/modernizr/2.8.3/modernizr.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="http://static.dpaw.wa.gov.au/static/libs/moment.js/2.11.2/moment-with-locales.min.js"></script>
+<script src="http://static.dpaw.wa.gov.au/static/libs/pikaday/1.4.0/pikaday.min.js"></script>
+<script src="http://static.dpaw.wa.gov.au/static/libs/zeroclipboard/2.2.0/ZeroClipboard.min.js"></script>
+<script src="http://static.dpaw.wa.gov.au/static/libs/handsontable/0.23.0/handsontable.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/favico.js/0.3.9/favico.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/handsontable/0.9.9/jquery.handsontable.js"></script>
@@ -406,17 +410,14 @@
 <script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.widgets.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/jquery.tablesorter/2.9.1/jquery.tablesorter.widgets-filter-formatter.min.js"></script>
 
-<script src="https://static.dpaw.wa.gov.au/static/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
+<script src="http://static.dpaw.wa.gov.au/static/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/leaflet.fullscreen/1.0.0/Control.FullScreen.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/joyride/2.1.0/jquery.joyride.min.js"></script>
+
 {% compress js %}
 <script src="{% static 'leaflet-ajax/dist/leaflet.ajax.min.js' %}"></script>
 <script src="{% static 'proj4leaflet/src/proj4leaflet.js' %}"></script>
-
-
-<!-- black magic -->
 <script src="{% static 'js/pythia.js' %}"></script>
-
 <script>
     window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";
     // fix standard addrelated popup closure

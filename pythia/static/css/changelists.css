@@ -8,7 +8,7 @@ table {background-color: white;}
 (min-device-width: 768px) and (max-device-width: 1024px)  {
 
     /* Force table to not be like tables anymore */
-    table, thead, tbody, th, td, tr {display: block;}
+    table, thead, tbody, th, td, tr {display: block; width: inherit;}
 
     /* Hide table headers (but not display: none;, for accessibility) */
     thead tr {position: absolute; top: -9999px; left: -9999px;}
@@ -36,13 +36,6 @@ table {background-color: white;}
 
 }
 
-
-input:focus, select:focus {
-    background-color: #D1F0FF;
-}
-
-textarea {height: 1.5em; width: 95%; overflow-y: hidden;}
-
 table .header-fixed {
     position: fixed;
     //top: 40px; /* commented out because no fixed navbar */
@@ -54,6 +47,10 @@ table .header-fixed {
     -moz-border-radius: 0;
     border-radius: 0;
 }
+
+input:focus, select:focus {background-color: #D1F0FF;}
+
+textarea {height: 1.5em; width: 95%; overflow-y: hidden;}
 
 /* the "search for project year, number, title" form input */
 .search-query {width: 160px;}

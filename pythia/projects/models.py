@@ -529,10 +529,11 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     @transition(field=status,
             source=STATUS_ACTIVE,
             target=STATUS_CLOSURE_REQUESTED,
-            conditions=['can_request_closure'],
+            #conditions=['can_request_closure'],
             save=True,
             verbose_name=_("Request closure"),
-            permission="submit")
+            #permission="submit"
+            )
     def request_closure(self):
         """Transition to move project to CLOSURE_REQUESTED.
 
@@ -541,6 +542,27 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         ProjectClosure.objects.create(project=self,
              creator=self.creator, modifier=self.modifier)
+
+    @transition(field=status,
+            source=STATUS_UPDATE,
+            target=STATUS_CLOSURE_REQUESTED,
+            #conditions=['can_request_closure'],
+            save=True,
+            verbose_name=_("Request closure and cancel update"),
+            permission="review"
+            )
+    def force_closure(self):
+        """Transition to move project to CLOSURE_REQUESTED during UPDATING.
+
+        Creates ProjectClosure as required for SPP and CF,
+        requires override to fast-track STP and COL to STATUS_COMPLETED.
+
+        Deletes current progressreport (warning - is it the right one?)
+        Fast-tracks project to complete the update
+        """
+        ProjectClosure.objects.create(project=self,
+             creator=self.creator, modifier=self.modifier)
+        self.progressreport.delete()
 
 
     # CLOSURE_REQUESTED -> CLOSING --------------------------------------------#
