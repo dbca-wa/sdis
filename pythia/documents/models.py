@@ -1291,6 +1291,7 @@ class StudentReport(Document):
         Project status hard-reset to STATUS_UPDATE (no tx)."""
         # Push project back to UPDATE_REQUESTED to cancel ARAR update approval
         #self.project.request_update()
+        from pythia.projects import Project
         p = self.project
         p.status = Project.STATUS_UPDATE
         p.save(update_fields=['status',])

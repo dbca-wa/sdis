@@ -639,6 +639,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         No more actions are required of this project.
         Only reactivate() should be possible now.
         """
+        #if self.status == Project.STATUS_UPDATE:
+        #    self.progressreport.delete()
 
     # COMPLETED -> ACTIVE -----------------------------------------------------#
     def can_reactivate(self):
