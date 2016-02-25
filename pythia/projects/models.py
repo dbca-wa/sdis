@@ -623,6 +623,23 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         Only reactivate() should be possible now.
         """
 
+    # * -> COMPLETED ----------------------------------------------------------#
+    @transition(field=status,
+            source=ACTIVE,
+            target=STATUS_COMPLETED,
+            #conditions=['can_complete'],
+            save=True,
+            verbose_name=_("Complete project"),
+            permission="review")
+    def force_complete(self):
+        """
+        Force-choke the project to its COMPLETED state.
+        Available to Reviewers on projects in all stages.
+        Project Members must go through the official process.
+        No more actions are required of this project.
+        Only reactivate() should be possible now.
+        """
+
     # COMPLETED -> ACTIVE -----------------------------------------------------#
     def can_reactivate(self):
         """
