@@ -873,11 +873,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         _('username'), max_length=30, unique=True,
         help_text=_('Required. 30 characters or fewer. Letters, digits and '
                     '@/./+/-/_ only.'),
-        validators=[
-            validators.RegexValidator(
-                r'^[\w.@+-]+$',
-                _('Enter a valid username.'), 'invalid')
-        ])
+        validators=[validators.RegexValidator(r'^[\w.@+-]+$',
+                    _('Enter a valid username.'), 'invalid')])
 
 # Internal person
 # Internal group
@@ -1103,7 +1100,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.first_name if self.first_name else self.fullname
 
     def get_short_name(self):
-        "Returns the short name for the user."
+        """Returns the short name for the user."""
         return self.first_name
 
     @property
