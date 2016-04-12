@@ -132,7 +132,6 @@ coverage>=3.7.1
 factory-boy==2.3.1
 flake8>=2.5.1
 mixer==5.1.2
-selenium==2.45.0
 pydocstyle
 
 # Versions

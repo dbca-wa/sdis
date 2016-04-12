@@ -56,19 +56,19 @@ INSTALLED_APPS = (
     'django.contrib.gis',
     'django.contrib.postgres',
     'django_extensions',
-    'django_comments', # replace with django-disqus
-    'crispy_forms', # required?
+    'django_comments',                  # replace with django-disqus
+    'crispy_forms',                     # required?
     'smart_selects',
     'django_select2',
     'markup_deprecated',
     'guardian',
-    'compressor', # compress static assets
-    'mail_templated', # replace with envelope
+    'compressor',                       # compress static assets
+    'mail_templated',                   # replace with envelope
     'envelope',
     'reversion',
     'rest_framework',
     'webtemplate_dpaw',
-    #'gunicorn', # replace with wsgiserver
+    #'gunicorn',                        # replace with wsgiserver
     'django_wsgiserver',
     #'django_nose',
 )
@@ -99,7 +99,7 @@ MIDDLEWARE_CLASSES = (
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(PROJECT_DIR, 'templates'),],
+        'DIRS': [os.path.join(PROJECT_DIR, 'templates'), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'debug': DEBUG,
