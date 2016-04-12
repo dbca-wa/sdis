@@ -1,3 +1,4 @@
+import confy
 from confy import database, env, cache
 import os
 import sys
@@ -6,6 +7,8 @@ from unipath import Path
 BASE_DIR = Path(__file__).ancestor(2)
 PROJECT_DIR = os.path.join(BASE_DIR, 'pythia')
 sys.path.insert(0, PROJECT_DIR)
+
+confy.read_environment_file(envfile=os.path.join(BASE_DIR, '.env'))
 
 root = lambda *x: os.path.join(BASE_DIR, *x)
 
