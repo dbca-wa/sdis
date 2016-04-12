@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).ancestor(2)
 PROJECT_DIR = os.path.join(BASE_DIR, 'pythia')
 sys.path.insert(0, PROJECT_DIR)
 
-confy.read_environment_file(envfile=os.path.join(BASE_DIR, '.env'))
+confy.read_environment_file()
 
 root = lambda *x: os.path.join(BASE_DIR, *x)
 
