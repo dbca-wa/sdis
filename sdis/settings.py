@@ -1,4 +1,4 @@
-from confy import database
+from confy import database, env, cache
 import os
 import sys
 from unipath import Path
@@ -9,14 +9,13 @@ sys.path.insert(0, PROJECT_DIR)
 
 root = lambda *x: os.path.join(BASE_DIR, *x)
 
-SECRET_KEY = os.environ['SECRET_KEY'] if os.environ.get('SECRET_KEY', False) else 'foo'
-DEBUG = True if os.environ.get('DEBUG', False) == 'True' else False
-CSRF_COOKIE_SECURE = True if os.environ.get('CSRF_COOKIE_SECURE', False) == 'True' else False
-SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) == 'True' else False
+DEBUG = env('DEBUG', default=False)
+SECRET_KEY = env('SECRET_KEY', default='foo')
+CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', False)
+SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', False)
 
-if not DEBUG:
-    # Localhost, UAT and Production hosts
-    ALLOWED_HOSTS = [
+
+ALLOWED_HOSTS = [
         'localhost',
         '127.0.0.1',
         'sdis.dpaw.wa.gov.au',
@@ -27,9 +26,8 @@ if not DEBUG:
         'sdis-test.dpaw.wa.gov.au.',
         'sdis-uat.dpaw.wa.gov.au',
         'sdis-uat.dpaw.wa.gov.au.',
-    ]
-else:
-    ALLOWED_HOSTS = ['*']
+]
+
 INTERNAL_IPS = ['127.0.0.1', '::1']
 
 # Application definition
@@ -160,7 +158,7 @@ COMPRESS_ROOT = STATIC_ROOT
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
-#   'pythia.backends.PythiaBackend',
+    # 'pythia.backends.PythiaBackend',
 )
 
 ANONYMOUS_USER_ID = 100000
@@ -175,11 +173,12 @@ LOGOUT_REDIRECT_URL = LOGOUT_URL
 
 # Cache
 # see http://django-select2.readthedocs.org/en/latest/django_select2.html
+# CACHES = {'default': cache.config()}
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": { "CLIENT_CLASS": "django_redis.client.DefaultClient" }
+        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"}
     },
     'select2': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
@@ -192,12 +191,12 @@ SELECT2_CACHE_BACKEND = 'select2'
 
 # Django-Restframework
 REST_FRAMEWORK = {
-# Use hyperlinked styles by default.
-# Only used if the `serializer_class` attribute is not set on a view.
+    # Use hyperlinked styles by default.
+    # Only used if the `serializer_class` attribute is not set on a view.
     'DEFAULT_MODEL_SERIALIZER_CLASS': 'rest_framework.serializers.HyperlinkedModelSerializer',
 
-# Use Django's standard `django.contrib.auth` permissions,
-# or allow read-only access for unauthenticated users.
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
     ]
@@ -212,7 +211,7 @@ ENVELOPE_USE_HTML_EMAIL = True
 # COMPRESS_ENABLED = False
 
 # Testing: django_nose
-#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+# TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': False,
@@ -230,7 +229,7 @@ LOGGING = {
     'formatters': {
         'precise': {
             'format': '{%(asctime)s.%(msecs)d}  %(message)s [%(levelname)s %(name)s]',
-            'datefmt': '%H:%M:%S'
+            'datefmt': '%Y/%m/%d %H:%M:%S'
          },
         'standard': {
             'format': '%(asctime)s %(levelname)-8s [%(name)-15s] %(message)s',
@@ -286,8 +285,8 @@ LOGGING = {
 }
 
 if DEBUG:
-    # Set up logging differently to give us some more information about what's
-    # going on
+    ALLOWED_HOSTS = ['*']
+
     INSTALLED_APPS += (
         'debug_toolbar',
         'debug_toolbar_htmltidy',
