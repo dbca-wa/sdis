@@ -1423,9 +1423,9 @@ def projectmembership_post_save(sender, instance, created, **kwargs):
     refresh_project_member_cache_fields(instance)
     from pythia.documents.utils import update_document_permissions
     [update_document_permissions(d) for d in instance.project.documents.all()]
-    #from guardian.shortcuts import assign_perm
-    #assign_perm('pythia.submit_project', instance.user, instance.project)
-signals.post_save.connect(projectmembership_post_save, sender=ProjectMembership)
+    # from guardian.shortcuts import assign_perm
+    # assign_perm('pythia.submit_project', instance.user, instance.project)
+# signals.post_save.connect(projectmembership_post_save, sender=ProjectMembership)
 
 def projectmembership_post_delete(sender, instance, using, **kwargs):
     refresh_project_member_cache_fields(instance, remove=True)
