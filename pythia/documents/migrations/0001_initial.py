@@ -5,12 +5,15 @@ from django.db import migrations, models
 import pythia.documents.models
 import pythia.fields
 import django.utils.timezone
+from django.conf import settings
 import django_fsm
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('contenttypes', '0002_remove_content_type_name'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -41,6 +44,8 @@ class Migration(migrations.Migration):
                 ('year1', models.TextField(help_text='The time allocation in year 1 of the project in FTE.', null=True, verbose_name='Year 1', blank=True)),
                 ('year2', models.TextField(help_text='The time allocation in year 2 of the project in FTE.', null=True, verbose_name='Year 2', blank=True)),
                 ('year3', models.TextField(help_text='The time allocation in year 3 of the project in FTE.', null=True, verbose_name='Year 3', blank=True)),
+                ('creator', models.ForeignKey(related_name='documents_stafftimeestimate_created', editable=False, to=settings.AUTH_USER_MODEL)),
+                ('modifier', models.ForeignKey(related_name='documents_stafftimeestimate_modified', editable=False, to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'abstract': False,
@@ -145,5 +150,20 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Student Reports',
             },
             bases=('documents.document',),
+        ),
+        migrations.AddField(
+            model_name='document',
+            name='creator',
+            field=models.ForeignKey(related_name='documents_document_created', editable=False, to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='document',
+            name='modifier',
+            field=models.ForeignKey(related_name='documents_document_modified', editable=False, to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='document',
+            name='polymorphic_ctype',
+            field=models.ForeignKey(related_name='polymorphic_documents.document_set+', editable=False, to='contenttypes.ContentType', null=True),
         ),
     ]

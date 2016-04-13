@@ -11,23 +11,25 @@ Area of field work as the combined extent of sampling transects (if field work
 occurs), Areas of relevance (Project findings apply to).
 """
 
-from __future__ import division, print_function, unicode_literals, absolute_import
+from __future__ import (division, print_function, unicode_literals,
+                        absolute_import)
+from datetime import date
+# import json
+import logging
+# import markdown
 
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Permission
+# from django.contrib.contenttypes.models import ContentType
+# from django.contrib.auth.models import Permission
 from django.contrib.gis.db import models
-from django.core.serializers.json import DjangoJSONEncoder
+# from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import signals
+import django.db.models.options as options
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
-from datetime import date
-import json
-import logging
-import markdown
 
 from django_fsm import FSMField, transition
 from polymorphic.models import PolymorphicModel, PolymorphicManager
@@ -35,11 +37,13 @@ from polymorphic.models import PolymorphicModel, PolymorphicManager
 
 from pythia.documents.models import (ConceptPlan, ProjectPlan, ProgressReport,
                                      ProjectClosure, StudentReport)
-from pythia.fields import Html2TextField, PythiaArrayField
+from pythia.fields import Html2TextField  # , PythiaArrayField
 from pythia.models import (Audit, ActiveModel, ActiveGeoModelManager,
                            Program, WebResource, Division, Area, User)
 from pythia.reports.models import ARARReport
 
+
+options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('display_order',)
 logger = logging.getLogger(__name__)
 
 
@@ -74,11 +78,9 @@ def get_current_year():
     """
     return date.today().year
 
+
 def get_project_number(arg):
     return get_next_available_number_for_year(date.today().year)
-
-import django.db.models.options as options
-options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('display_order',)
 
 
 @python_2_unicode_compatible
@@ -136,7 +138,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     STATUS_SUSPENDED = 'suspended'
 
     ACTIVE = (STATUS_NEW, STATUS_PENDING, STATUS_ACTIVE, STATUS_UPDATE,
-            STATUS_CLOSURE_REQUESTED, STATUS_CLOSING, STATUS_FINAL_UPDATE)
+              STATUS_CLOSURE_REQUESTED, STATUS_CLOSING, STATUS_FINAL_UPDATE)
 
     STATUS_CHOICES = (
         (STATUS_NEW, _("New project, pending concept plan approval")),
@@ -173,24 +175,25 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     type = models.PositiveSmallIntegerField(
         verbose_name=_("Project type"), choices=PROJECT_TYPES, default=0,
         help_text=_("The project type determines the approval and "
-            "documentation requirements during the project's life span. "
-            "Choose wisely - you will not be able to change the project "
-            "type later."))
+                    "documentation requirements during the project's life "
+                    "span. Choose wisely - you will not be able to change the "
+                    "project type later."))
 
     status = FSMField(
-        default = STATUS_NEW, choices = STATUS_CHOICES,
-        verbose_name = _("Project Status"))
+        verbose_name=_("Project Status"),
+        default=STATUS_NEW,
+        choices=STATUS_CHOICES)
     year = models.PositiveIntegerField(
-        verbose_name = _("Project year"),
-        #editable=False,
-        default = get_current_year,
-        help_text = _("The project year with four digits, e.g. 2014"))
+        verbose_name=_("Project year"),
+        # editable=False,
+        default=get_current_year,
+        help_text=_("The project year with four digits, e.g. 2014"))
     number = models.PositiveIntegerField(
-        verbose_name = _("Project number"),
-        default = get_project_number,
-        help_text = _("The running project number within the project year."))
+        verbose_name=_("Project number"),
+        default=get_project_number,
+        help_text=_("The running project number within the project year."))
     position = models.IntegerField(
-        blank = True, null = True, default = 1000,
+        blank=True, null=True, default=1000,
         help_text=_("The primary ordering instance. If left to default, "
                     "ordering happends by project year and number (newest "
                     "first)."))

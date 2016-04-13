@@ -206,9 +206,9 @@ def html_table_to_array(html_string):
     from bs4 import BeautifulSoup as BS
     import json
     if (len(BS(html_string).findAll("tr")) > 0 and
-        html_string is not None and html_string is not ""):
+            html_string is not None and html_string is not ""):
         return json.dumps([[cell.string or '' for cell in row.findAll("td")]
-            for row in BS(html_string).findAll("tr")])
+                           for row in BS(html_string).findAll("tr")])
     else:
         return html_string
 
@@ -220,7 +220,7 @@ def migrate_html_tables_to_arrays(debug=False):
     from storing markdown in the database to storing HTML.
     """
     from pythia.documents import models as m
-    from pythia.utils import extract_md_tables, text2html
+    # from pythia.utils import extract_md_tables, text2html
 
     for d in m.Document.objects.all():
         if d._meta.model_name == 'conceptplan':
