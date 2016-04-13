@@ -186,7 +186,7 @@ class UserChoices(ModelSelect2Widget):
     ]
 
     def __init__(self, *args, **kwargs):
-        #kwargs.pop('limit_choices_to')
+        # kwargs.pop('limit_choices_to')
         super(UserChoices, self).__init__(*args, **kwargs)
         self.widget = ModelSelect2Widget()
 
@@ -299,8 +299,9 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
 
         if ("_popup" in request.REQUEST) and (
                 type(result) is HttpResponseRedirect):
-            return TemplateResponse(request, 'admin/close_popup.html', {},
-                    current_app=self.admin_site.name)
+            return TemplateResponse(
+                request, 'admin/close_popup.html', {},
+                current_app=self.admin_site.name)
         return result
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
@@ -324,8 +325,9 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
 
         if ("_popup" in request.REQUEST) and (
                 type(result) is HttpResponseRedirect):
-            return TemplateResponse(request, 'admin/close_popup.html', {},
-                    current_app=self.admin_site.name)
+            return TemplateResponse(
+                request, 'admin/close_popup.html', {},
+                current_app=self.admin_site.name)
         return result
 
     def changelist_view(self, request, extra_context=None):
@@ -356,15 +358,17 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
                                                     extra_context=context)
 
         if ("_popup" in request.REQUEST) and (type(result) is HttpResponseRedirect):
-            return TemplateResponse(request, 'admin/close_popup.html', {},
-                    current_app=self.admin_site.name)
+            return TemplateResponse(
+                request, 'admin/close_popup.html', {},
+                current_app=self.admin_site.name)
         return result
 
 
 class UserAdmin(DjangoUserAdmin):
     list_display = ('username', 'fullname', 'email', 'program', 'work_center')
     list_per_page = 1000    # sod pagination
-    list_filter = ('is_external', 'is_group', 'agreed','is_staff', 'is_superuser', 'is_active')
+    list_filter = ('is_external', 'is_group', 'agreed','is_staff',
+                   'is_superuser', 'is_active')
     readonly_fields = ('username', 'is_active', 'is_staff', 'is_superuser',
                        'user_permissions', 'last_login', 'date_joined')
 
@@ -374,13 +378,14 @@ class UserAdmin(DjangoUserAdmin):
 
     fieldsets = (
         ('Name', {
-            'description':'Details required for correct display of name',
+            'description': 'Details required for correct display of name',
             'fields': ('title', 'first_name', 'middle_initials',
-            'last_name','group_name', 'affiliation', 'is_group', 'is_external'),}),
+                       'last_name', 'group_name', 'affiliation',
+                       'is_group', 'is_external'), }),
         ('Contact Details', {
-            'description':'Optional profile information',
+            'description': 'Optional profile information',
             'classes': ('collapse',),
-            'fields': ('image', 'email', 'phone', 'phone_alt', 'fax'),}),
+            'fields': ('image', 'email', 'phone', 'phone_alt', 'fax'), }),
         # ('Staff Profile', {
         #    'description':'Staff profile - not used for now',
         #    'classes': ('collapse',),
@@ -389,12 +394,11 @@ class UserAdmin(DjangoUserAdmin):
         #        'author_code', 'publications_staff', 'publications_other'),
         # }),
         ('Administrative Details', {
-            'description':'Behind the scenes settings',
+            'description': 'Behind the scenes settings',
             'classes': ('collapse',),
-            'fields': ('program','work_center',
-                'username', 'password',
-                'is_active', 'is_staff', 'is_superuser',
-                'date_joined', 'groups'),})
+            'fields': ('program', 'work_center', 'username', 'password',
+                       'is_active', 'is_staff', 'is_superuser', 'date_joined',
+                       'groups'), })
     )
 
     def program(self, obj):
@@ -433,7 +437,7 @@ class UserAdmin(DjangoUserAdmin):
             delattr(self, 'hack')
             return rf
         # this would work if pythia.models.User would inherit from ActiveModel
-        #elif (request.user == obj.creator): # and getattr(self, 'hack', True)):
+        # elif (request.user == obj.creator): # and getattr(self, 'hack', True)):
         #    # the user is viewing another profile he created
         #    return super(UserAdmin, self).get_readonly_fields(request, obj)
         else:
@@ -455,13 +459,13 @@ class UserAdmin(DjangoUserAdmin):
 
             def clean_first_name(self):
                 first_name = self.cleaned_data['first_name']
-                #if not first_name:
+                # if not first_name:
                 #    raise forms.ValidationError("First name cannot be blank.")
                 return first_name
 
             def clean_last_name(self):
                 last_name = self.cleaned_data['last_name']
-                #if not last_name:
+                # if not last_name:
                 #    raise forms.ValidationError("Last name cannot be blank.")
                 return last_name
 
@@ -507,7 +511,7 @@ class DownloadAdminMixin(ModelAdmin):
         template = self.download_template
         filename = template + ".html"
         now = timezone.localtime(timezone.now())
-        #timestamp = now.isoformat().rsplit(".")[0].replace(":", "")[:-2]
+        # timestamp = now.isoformat().rsplit(".")[0].replace(":", "")[:-2]
         downloadname = filename.replace(' ', '_')
         context = {
             'original': obj,
@@ -588,15 +592,15 @@ class DownloadAdminMixin(ModelAdmin):
             else:
                 # Until we set outdated file don't cache
                 os.remove(os.path.join(directory, filename))
-                #with open(filename, "r") as f:
+                # with open(filename, "r") as f:
                 #    response.write(f.read())
-                #return response
+                # return response
 
         with open(os.path.join(directory, texname), "w") as f:
             f.write(output.encode('utf-8'))
 
         cmd = ['lualatex', "--interaction", "batchmode", "--output-directory",
-                directory, texname]
+               directory, texname]
         try:
             for i in range(2):
                 # 2 passes for numbering
@@ -653,7 +657,7 @@ class DownloadAdminMixin(ModelAdmin):
 
 class DivisionAdmin(BaseAdmin, DetailAdmin):
     exclude = ('effective_to', 'effective_from')
-    list_display = ('__str__','director_name')
+    list_display = ('__str__', 'director_name')
 
     def director_name(self, obj):
         return obj.director.get_full_name()
@@ -662,20 +666,20 @@ class DivisionAdmin(BaseAdmin, DetailAdmin):
 
 class ProgramAdmin(BaseAdmin, DetailAdmin):
     exclude = ('effective_to', 'effective_from')
-    list_display = ('__str__','cost_center','published','position',
-            'program_leader','finance_admin','data_custodian')
+    list_display = ('__str__', 'cost_center', 'published', 'position',
+                    'program_leader', 'finance_admin', 'data_custodian')
 
 class WorkCenterAdmin(BaseAdmin, DetailAdmin):
     exclude = ('effective_to', 'effective_from')
     _skip_relatedFieldWidget = False
-    list_display = ('__str__','district','physical_address')
+    list_display = ('__str__', 'district', 'physical_address')
 
 class AreaAdmin(BaseAdmin, DetailAdmin):
     exclude = ('effective_to', 'effective_from')
-    list_display = ('__str__','area_type')
+    list_display = ('__str__', 'area_type')
 
 class RegionAdmin(DetailAdmin):
     list_display = ('__str__', 'northern_extent')
 
 class DistrictAdmin(DetailAdmin):
-    list_display = ('__str__','region','northern_extent')
+    list_display = ('__str__', 'region', 'northern_extent')

@@ -6,7 +6,7 @@ from django.utils.safestring import mark_safe
 
 class Html2TextField(TextField):
     def to_python(self, value):
-        #return html2text(value)
+        # return html2text(value)
         return value
 
 

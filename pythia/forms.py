@@ -5,7 +5,8 @@ from django import forms
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import PasswordResetForm, UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import (PasswordResetForm, UserCreationForm,
+                                       UserChangeForm)
 from django.utils.html import format_html_join, format_html
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
@@ -13,16 +14,17 @@ from datetime import datetime
 
 
 class TermsAndConditionsForm(forms.Form):
-    first_name = forms.CharField(label="First name",
-            error_messages={"required": "First name cannot be blank."})
-    last_name = forms.CharField(label="Last name",
-            error_messages={"required": "Last name cannot be blank."})
+    first_name = forms.CharField(
+        label="First name",
+        error_messages={"required": "First name cannot be blank."})
+    last_name = forms.CharField(
+        label="Last name",
+        error_messages={"required": "Last name cannot be blank."})
     agree = forms.BooleanField(
             required=True, initial=False,
             help_text="Do you agree to the terms and conditions?",
             label="I agree",
-            error_messages={"required":
-                    "You must agree to the terms and conditions."})
+            error_messages={"required": "We insist."})
 
 
 class TransitionForm(forms.Form):

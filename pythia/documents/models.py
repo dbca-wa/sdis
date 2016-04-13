@@ -733,17 +733,15 @@ class ProjectPlan(Document):
                     " cataloged (SPP E24). Read DPaW guideline 16."))
     # Data manager's endorsement!!!
     data_manager_endorsement = models.CharField(
-            editable=False, # uncomment to unleash data management goodness
+            editable=False,  # uncomment to unleash data management goodness
             verbose_name=_("Data Manager's Endorsement"),
             blank=True, null=True,
             max_length=100,
             choices=Document.ENDORSEMENT_NULL_CHOICES,
-            help_text=_("The Data Manager's endorsement of the project's "
-                "data management. The DM will help to set up Wiki pages, "
-                "data catalog permissions, scientific sites, "
-                "and advise on metadata creation."))
-
-    ##
+            help_text=_("The Data Manager's endorsement of the project's data "
+                        "management. The DM will help to set up Wiki pages, "
+                        "data catalog permissions, scientific sites, and "
+                        "advise on metadata creation."))
 
     operating_budget = PythiaArrayField(
         verbose_name=_("Consolidated Funds"), blank=True, null=True,
@@ -774,7 +772,8 @@ class ProjectPlan(Document):
             ], cls=DjangoJSONEncoder))
 
     def __str__(self):
-        return "Project Plan {0}-{1}".format(self.project.year, self.project.number)
+        return "Project Plan {0}-{1}".format(
+            self.project.year, self.project.number)
 
     @property
     def fullname(self):
@@ -788,7 +787,8 @@ class ProjectPlan(Document):
 
     def repair_operating_budget(self):
         """Reset the operating budget to its default
-        [p.repair_operating_budget() for p in ProjectPlan.objects.filter(operating_budget=None)]
+        [p.repair_operating_budget() for
+         p in ProjectPlan.objects.filter(operating_budget=None)]
         """
         self.operating_budget = json.dumps([
                 ['Source', 'Year 1', 'Year 2', 'Year 3'],
@@ -801,13 +801,14 @@ class ProjectPlan(Document):
                 ['Total', '', '', ''],
             ], cls=DjangoJSONEncoder)
         self.save(update_fields=['operating_budget'])
-        logger.info("ProjectPlan {0} field 'operating_budget' reset to default".format(
-                    self.__str__()))
+        logger.info("ProjectPlan {0}".format(self.__str__()) +
+                    "field 'operating_budget' reset to default")
 
     def repair_operating_budget_external(self):
         """Reset the external operating budget to its default.
 
-        [p.repair_operating_budget_external() for p in ProjectPlan.objects.filter(operating_budget_external=None)]
+        [p.repair_operating_budget_external() for
+         p in ProjectPlan.objects.filter(operating_budget_external=None)]
         """
         self.operating_budget_external = json.dumps([
                 ['Source', 'Year 1', 'Year 2', 'Year 3'],
@@ -820,8 +821,8 @@ class ProjectPlan(Document):
                 ['Total', '', '', ''],
             ], cls=DjangoJSONEncoder)
         self.save(update_fields=['operating_budget_external'])
-        logger.info("ProjectPlan {0} field 'operating_budget_external' reset to default".format(
-                    self.__str__()))
+        logger.info("ProjectPlan {0}".format(self.__str__()) +
+                    " field 'operating_budget_external' reset to default")
 
 
     #-------------------------------------------------------------------------#
