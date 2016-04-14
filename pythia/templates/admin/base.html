@@ -394,7 +394,7 @@
 
 {% endblock %}
 </body>
-{% compress js %}
+
 <!-- Site-level JS -->
 <script src="https://static.dpaw.wa.gov.au/static/libs/jquery/2.2.0/jquery.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/modernizr/2.8.3/modernizr.min.js"></script>
@@ -413,6 +413,7 @@
 <script src="https://static.dpaw.wa.gov.au/static/libs/leaflet.fullscreen/1.0.0/Control.FullScreen.min.js"></script>
 <script src="https://static.dpaw.wa.gov.au/static/libs/joyride/2.1.0/jquery.joyride.min.js"></script>
 
+{% compress js %}
 <script src="{% static 'leaflet-ajax/dist/leaflet.ajax.min.js' %}"></script>
 <script src="{% static 'proj4leaflet/src/proj4leaflet.js' %}"></script>
 <script src="{% static 'js/pythia.js' %}"></script>
@@ -437,19 +438,6 @@
         $("body").on('keyup', 'textarea', textAreaAdjust);
         $("body textarea").keyup();
 
-        // Check browser features/version (below test fails on firefox 3.6/ie8)
-        // May need subcheck for mobile browsers?
-        /*var testEl = $("div.unsupported").show();
-        var viewport = $(window);
-        testEl.css({
-          width: "100vw"
-        });
-        var difference = testEl.width() - viewport.width();
-        if (Math.round(difference) == 0 || window.indexedDB) {
-           $("div.unsupported").hide();
-       } else {git
-           $("div.unsupported").show();
-        };*/
     });
 </script>
 {{ form.media.js }}

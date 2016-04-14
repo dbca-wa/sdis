@@ -78,9 +78,6 @@ INSTALLED_APPS = (
     'rest_framework',
 
     'django_browserid',
-    'django_pdb',
-    'debug_toolbar',
-    'debug_toolbar_htmltidy',
 
     'leaflet',
     'south',

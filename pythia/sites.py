@@ -11,18 +11,18 @@ from django.http import HttpResponseRedirect
 from functools import update_wrapper
 from swingers.sauth.sites import AuditSite
 
-from pythia.admin import (UserAdmin, ProgramAdmin, DivisionAdmin, 
+from pythia.admin import (UserAdmin, ProgramAdmin, DivisionAdmin,
     WorkCenterAdmin, AreaAdmin, RegionAdmin, DistrictAdmin)
-from pythia.models import (User, Division, Program, WorkCenter, Area, 
+from pythia.models import (User, Division, Program, WorkCenter, Area,
     Address, Region, District)
 from pythia.documents.admin import (DocumentAdmin, ConceptPlanAdmin,
     ProjectPlanAdmin)
-from pythia.documents.models import (ConceptPlan, ProjectPlan, ProgressReport, 
+from pythia.documents.models import (ConceptPlan, ProjectPlan, ProgressReport,
     StudentReport, ProjectClosure)
-from pythia.projects.admin import (ProjectAdmin, CollaborationProjectAdmin, 
+from pythia.projects.admin import (ProjectAdmin, CollaborationProjectAdmin,
     StudentProjectAdmin, ProjectMembershipAdmin, ResearchFunctionAdmin)
 from pythia.projects.models import (Project, ScienceProject,
-    CoreFunctionProject, CollaborationProject, StudentProject, 
+    CoreFunctionProject, CollaborationProject, StudentProject,
     ProjectMembership, ResearchFunction)
 from pythia.reports.admin import ARARReportAdmin
 from pythia.reports.models import ARARReport
@@ -97,31 +97,34 @@ class PythiaSite(AuditSite):
 
         urlpatterns = patterns(
             '',
-            url(r'^media/projects/(?P<path>.*)$', 
+            url(r'^media/projects/(?P<path>.*)$',
                 wrap(static.serve),
-                {'document_root': os.path.join(settings.MEDIA_ROOT, 'projects')}),
-            url(r'^media/profiles/(?P<path>.*)$', 
+                {'document_root': os.path.join(settings.MEDIA_ROOT,
+                                               'projects')}),
+            url(r'^media/profiles/(?P<path>.*)$',
                 wrap(static.serve),
-                {'document_root': os.path.join(settings.MEDIA_ROOT, 'profiles')}),
+                {'document_root': os.path.join(settings.MEDIA_ROOT,
+                                               'profiles')}),
             url(r'^comments/delete/(\d+)/$',
-                wrap(comments_delete), 
+                wrap(comments_delete),
                 name='comments-delete'),
             url(r'^comments/post/$',
-                wrap(comments_post), 
+                wrap(comments_post),
                 name='comments-post-comment'),
-            url(r'^comments/edit/(?P<pk>\d+)/$', 
+            url(r'^comments/edit/(?P<pk>\d+)/$',
                 wrap(CommentUpdateView.as_view()),
                 name='comments-edit'),
             # TODO: django_comments urls are not wrapped :(
-            url(r'^comments/', 
+            url(r'^comments/',
                 include('django_comments.urls')),
-            url(r'^action/update-cache/$', 
-                update_cache, 
+            url(r'^action/update-cache/$',
+                update_cache,
                 name="update_cache"),
-            url(r'^arar_dashboard', 
-                arar_dashboard, 
+            url(r'^arar_dashboard',
+                arar_dashboard,
                 name="arar_dashboard"),
-        ) + staticserve(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+        ) + staticserve(settings.STATIC_URL,
+                        document_root=settings.STATIC_ROOT)
 
         return urlpatterns + super(PythiaSite, self).get_urls()
 

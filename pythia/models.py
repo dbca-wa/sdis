@@ -78,7 +78,6 @@ def get_locals():
     return _locals
 
 
-
 class ActiveQuerySet(QuerySet):
     def __init__(self, model, query=None, using=None):
         # the model needs to be defined so that we can construct our custom
@@ -835,9 +834,9 @@ class WebResource(Audit):
 
 
 class UserManager(BaseUserManager):
-#    def __init__(self):
-#        super(BaseUserManager, self).__init__()
-#        self.model = get_user_model()
+    #    def __init__(self):
+    #        super(BaseUserManager, self).__init__()
+    #        self.model = get_user_model()
 
     def _create_user(self, username, password, is_staff, is_superuser,
                      **extra_fields):
@@ -883,73 +882,74 @@ class User(AbstractBaseUser, PermissionsMixin):
 # Title: everyone if they have it
 # Affiliation: everyone if not none or ""
 
-
     # Name -------------------------------------------------------------------#
     title = models.CharField(
-        #_('title'),
-	max_length=30,
-	null=True, blank=True,
-	verbose_name=_("Academic Title"),
+        max_length=30,
+        null=True, blank=True,
+        verbose_name=_("Academic Title"),
         help_text=_("Optional academic title, shown in team lists only if "
-            "supplied, and only for external team members."))
+                    "supplied, and only for external team members."))
+
     first_name = models.CharField(
-        #_('first name'),
-	max_length=100,
-	null=True, blank=True,
-	verbose_name=_("First Name"),
-	help_text=_("First name or given name."))
-    # middle initials should just be called initials, at least label as such:
+    	max_length=100,
+        null=True, blank=True,
+        verbose_name=_("First Name"),
+        help_text=_("First name or given name."))
+
     middle_initials = models.CharField(
-        #_('middle initials'),
-	max_length=100,
-	null=True, blank=True,
-	verbose_name=_("Initials"),
+        max_length=100,
+        null=True, blank=True,
+        verbose_name=_("Initials"),
         help_text=_("Initials of first and middle names. Will be used in "
-            "team lists with abbreviated names."))
+                    "team lists with abbreviated names."))
+
     last_name = models.CharField(
-        #_('last name'),
-	max_length=100,
-	null=True, blank=True,
-	verbose_name=_("Last Name"),
-	help_text=_("Last name or surname."))
+        max_length=100,
+        null=True, blank=True,
+        verbose_name=_("Last Name"),
+        help_text=_("Last name or surname."))
 
     is_group = models.BooleanField(
-        #_('Is a group'),
-	default=False,
-	verbose_name=_("Show as Group"),
+        default=False,
+        verbose_name=_("Show as Group"),
         help_text=_("Whether this profile refers to a group, rather than a "
-            "natural person. Groups are referred to with their group name, "
-            "whereas first and last name refer to the group's contact person."))
+                    "natural person. Groups are referred to with their group "
+                    "name,  whereas first and last name refer to the group's"
+                    " contact person."))
+
     group_name = models.CharField(
-        #_('Group name'),
-	max_length=200,
-	null=True, blank=True,
-	verbose_name=_("Group name"),
+        max_length=200,
+        null=True, blank=True,
+        verbose_name=_("Group name"),
         help_text=_("Group name, if this profile is not a natural "
-            "person. E.g., 'Goldfields Regional Office'."))
+                    "person. E.g., 'Goldfields Regional Office'."))
 
     affiliation = models.CharField(
-        #_('Affiliation'),
-	max_length=200,
-	null=True, blank=True,
-	verbose_name=_("Affiliation"),
-        help_text=_("Optional affiliation, not required for DPaW. If provided, the"
-        " affiliation will be appended to the person or group name in parentheses."))
+        max_length=200,
+        null=True, blank=True,
+        verbose_name=_("Affiliation"),
+        help_text=_("Optional affiliation, not required for DPaW."
+                    " If provided, the affiliation will be appended to the"
+                    " person or group name in parentheses."))
 
     # Contact details --------------------------------------------------------#
     image = models.ImageField(
         upload_to="profiles", null=True, blank=True,
         help_text=_("If you wish, provide us with a face to the name!"))
+
     email = models.EmailField(
         _('email address'), null=True, blank=True)
+
     phone = models.CharField(
         max_length=100, null=True, blank=True,
         verbose_name=_("Primary Phone number"),
         help_text=_("The primary phone number during work hours."))
+
     phone_alt = models.CharField(
         max_length=100, null=True, blank=True,
         verbose_name=_("Alternative Phone number"),
         help_text=_("An alternative phone number during work hours."))
+
     fax = models.CharField(
         max_length=100, null=True, blank=True,
         verbose_name=_("Fax number"),
@@ -960,6 +960,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         Program, blank=True, null=True,  # optional for migrations
         help_text=_("The main Science and Conservation Division Program "
                     "affilitation."))
+
     work_center = models.ForeignKey(
         WorkCenter, null=True, blank=True,
         help_text=_("The work center where most time is spent. Staff only."))
@@ -969,18 +970,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True, null=True,
         help_text=_("A profile text for the staff members, roughly three "
                     "paragraphs long."))
+
     expertise = Html2TextField(
         blank=True, null=True,
         help_text=_("A bullet point list of skills and expertise."))
+
     curriculum_vitae = Html2TextField(
         blank=True, null=True,
         help_text=_("A brief curriculum vitae of academic qualifications and "
                     "professional memberships."))
+
     projects = Html2TextField(
         blank=True, null=True,
         verbose_name=_("Projects outside SDIS"),
-        help_text=_("Tell us about projects outside SDIS you are involved "
-                    "in."))
+        help_text=_("Tell us about your other projects outside SDIS."))
 
     # Publications -----------------------------------------------------------#
     # Publications should be models in their own module really
@@ -988,12 +991,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=255, null=True, blank=True,
         verbose_name=_("Author code"),
         help_text=_("The author code links users to their publications. "
-            "Staff only."))
+                    "Staff only."))
+
     publications_staff = Html2TextField(
         blank=True, null=True,
         verbose_name=_("Staff publications"),
         help_text=_("A list of publications produced for the Department. "
-            "Staff only."))
+                    "Staff only."))
+
     publications_other = Html2TextField(
         blank=True, null=True,
         verbose_name=_("Other publications"),
@@ -1006,18 +1011,22 @@ class User(AbstractBaseUser, PermissionsMixin):
         _('staff status'), default=True,
         help_text=_("Designates whether the user can log into this admin "
                     "site."))
+
     is_active = models.BooleanField(
         _('active'), default=True,
         help_text=_("Designates whether this user should be treated as "
                     "active. Unselect this instead of deleting accounts."))
+
     is_external = models.BooleanField(
         default=False,
         verbose_name=_("External to DPaW"),
         help_text=_("Is the user external to DPaW?"))
+
     agreed = models.BooleanField(
         default=False, editable=False,
         verbose_name=_("Agreed to the Terms and Conditions"),
         help_text=_("Has the user agreed to SDIS' Terms and Conditions?"))
+
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
     objects = UserManager()
@@ -1041,7 +1050,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 self.middle_initials = self.guess_first_initial()
             except:
                 logger.warning("Something went wrong trying to guess"
-                        " the initials from first name")
+                               " the initials from first name")
 
         super(User, self).save(*args, **kwargs)
 
@@ -1056,14 +1065,15 @@ class User(AbstractBaseUser, PermissionsMixin):
                 self.groups.add(group)
 
     def get_title(self):
-        """Returns the title if supplied and user is_external
+        """Return the title if supplied and user is_external.
+
         SANITY WARNING this function will HIDE the title for internal staff
         """
         return self.title if (self.title and self.is_external) else ""
 
     def get_middle_initials(self):
         i = self.middle_initials if self.middle_initials else ""
-        if len(i)>1:
+        if len(i) > 1:
             return i[1:]
         else:
             return ""
@@ -1072,7 +1082,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.first_name[0] if self.first_name else ""
 
     def get_affiliation(self):
-        "Returns the affiliation in parentheses if provided, or an empty string."
+        "Return the affiliation in parentheses if provided, or an empty string."
         a = "({0})".format(self.affiliation) if self.affiliation else ""
         return a
 
@@ -1117,7 +1127,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             full_name = "{0} {1} {2} {3}".format(
                     self.get_title(),
-                    self.middle_initials, # remember these are full initials
+                    self.middle_initials,  # remember these are full initials
                     self.last_name,
                     self.get_affiliation())
         return full_name.strip()
@@ -1136,7 +1146,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         else:
             full_name = "{0} {1} {2}".format(
                     self.get_title(),
-                    self.middle_initials, # remember these are full initials
+                    self.middle_initials,  # remember these are full initials
                     self.last_name)
         return full_name.strip()
 
@@ -1147,8 +1157,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def __str__(self):
-        slug = " ({0}-{1})".format(self.program.cost_center, self.program.slug
-            ) if self.program else ""
+        slug = " ({0}-{1})".format(self.program.cost_center,
+                                   self.program.slug) if self.program else ""
         return "{0}{1}".format(self.get_full_name(), slug)
 
     @property
@@ -1239,13 +1249,12 @@ class User(AbstractBaseUser, PermissionsMixin):
             documents = set([d for d in documents if d.can_approve()])
             approvals.update(documents)
 
-
-        # remove all the endorsements from the approvals pool
+        #  remove all the endorsements from the approvals pool
         approvals.difference_update(excludes)
 
         # TODO: presort the output lists by descending project ID
         return {'approvals': list(approvals),
-                'endorsements':list(endorsements),
+                'endorsements': list(endorsements),
                 'count': len(approvals)+len(endorsements)}
 
     @property
@@ -1258,9 +1267,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         If it's just for index.html (a template) consider making it a template
         tag!
         """
-        from pythia.projects.models import (Project, ProjectMembership,
-            ScienceProject, CoreFunctionProject, CollaborationProject,
-            StudentProject)
+        from pythia.projects.models import (
+            Project, ProjectMembership, ScienceProject, CoreFunctionProject,
+            CollaborationProject, StudentProject)
         from pythia.documents.models import (ConceptPlan, ProjectPlan)
         from datetime import datetime, timedelta
 
@@ -1273,14 +1282,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         pm_list = ProjectMembership.objects.select_related("project").order_by(
                     "-project__year", "-project__number").filter(
                 user=self, project__status__in=Project.ACTIVE)
-        projects = Project.objects.order_by("-year", "-number").filter(project_owner=self)
+        projects = Project.objects.order_by("-year", "-number").filter(
+            project_owner=self)
         own_list = projects.filter(status__in=Project.ACTIVE)
-        stuck_new = projects.filter(status__in=Project.STATUS_NEW, created__lt=best_before)
-        stuck_pending = projects.filter(status__in=Project.STATUS_PENDING, created__lt=best_before)
-        result = {"projects": {}, "collabs": {}, "stuck":{}}
+        stuck_new = projects.filter(
+            status__in=Project.STATUS_NEW, created__lt=best_before)
+        stuck_pending = projects.filter(
+            status__in=Project.STATUS_PENDING, created__lt=best_before)
+        result = {"projects": {}, "collabs": {}, "stuck": {}}
         proj_result = {"super": [], "regular": []}
         collab_result = {"super": [], "regular": []}
-        stuck_result = {"new":[], "pending":[]}
+        stuck_result = {"new": [], "pending": []}
 
         for x in stuck_new:
             # Projects stuck in approval for more than three months need a
