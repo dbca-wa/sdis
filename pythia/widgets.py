@@ -11,20 +11,20 @@ from django.contrib.admin.util import quote
 from django.forms import widgets
 from django import forms
 
-import json
+# import json
 
 import copy
 
-from pythia.utils import text2html, html2text
+# from pythia.utils import text2html, html2text
 
 
 class ArrayFieldWidget(widgets.TextInput):
     def render(self, name, value, *args, **kwargs):
         html = super(ArrayFieldWidget, self).render(name, value, *args,
                                                     **kwargs)
-        tag = ('dataTable%s' % kwargs['attrs'].get('id', '') )
+        tag = ('dataTable%s' % kwargs['attrs'].get('id', ''))
 
-        html += '<div id="{0}"></div><div>&nbsp;</div>'.format(tag)         
+        html += '<div id="{0}"></div><div>&nbsp;</div>'.format(tag)
         return mark_safe(html)
 
     def value_from_datadict(self, data, files, name):
@@ -88,7 +88,7 @@ class InlineEditWidgetWrapper(widgets.Widget):
     # having Widget last to catch anything without fit
 
 
-    # Changes 2014: We reverted to store HTML, not Markdown in 
+    # Changes 2014: We reverted to store HTML, not Markdown in
     # pythia.fields.Html2TextField
     # Enable lines with "MARKDOWN" comments to convert HTML edited in the
     # widget to Markdown in the db field.
@@ -108,8 +108,8 @@ class InlineEditWidgetWrapper(widgets.Widget):
     def media(self):
         if isinstance(self.widget, widgets.Textarea):
             return forms.Media(js=[
-                'lib/tinymce/tinymce.min.js',
-                'lib/tinymce/jquery.tinymce.min.js'
+                'http://static.dpaw.wa.gov.au/static/libs/tinymce/4.3.9/tinymce.min.js',
+                'http://static.dpaw.wa.gov.au/static/libs/tinymce/4.3.9/jquery.tinymce.min.js'
             ]) + self.widget.media
         else:
             return self.widget.media
@@ -133,17 +133,17 @@ class InlineEditWidgetWrapper(widgets.Widget):
         url = None
         if self.form.instance.pk:
             url = reverse('admin:%s_%s_change' % (opts.app_label,
-                                                opts.model_name),
-                        args=(quote(self.form.instance.pk),))
+                                                  opts.model_name),
+                          args=(quote(self.form.instance.pk),))
 
         # TODO: we are guessing here that all Textarea widgets are markdown, it
         # might be smarter to convert the value in the form or maybe even model
         # admin
-        
+
         # MARKDOWN: enable next two lines to store markdown
-        #if value and isinstance(self.widget, widgets.Textarea):
+        # if value and isinstance(self.widget, widgets.Textarea):
         #    value = text2html(value)
-        
+
         output = [self.widget.render(name, value, *args, **kwargs)]
         # name - input name, value, kwargs['attrs']['id'] input id
         for klass, js in self.widget_overrides:
@@ -164,9 +164,9 @@ class InlineEditWidgetWrapper(widgets.Widget):
         value = self.widget.value_from_datadict(data, files, name)
 
         # MARKDOWN: enable next two lines to store markdown
-        #if value and isinstance(self.widget, widgets.Textarea):
+        # if value and isinstance(self.widget, widgets.Textarea):
         #    value = html2text(value)
-        
+
         return value
 
     def id_for_label(self, id_):
@@ -180,7 +180,7 @@ class NumberInput(widgets.TextInput):
 class LocationWidget(widgets.MultiWidget):
 
     DIRECTION_CHOICES = (
-        ('','---'),
+        ('', '---'),
         ('N', 'N'),
         ('NNE', 'NNE'),
         ('NE', 'NE'),
