@@ -97,7 +97,7 @@ Unidecode==0.04.16
 argparse==1.2.1
 django-confy>=1.0.4
 Fabric>=1.10.1
-django-wsgiserver>=0.6.10
+django-wsgiserver>=0.8.0rc1
 gunicorn==18.0
 wsgiref==0.1.2
 pipdeptree
@@ -111,6 +111,7 @@ pycallgraph==1.0.1
 graphviz==0.3.4
 Pillow==2.4.0
 pydot==1.0.2
+pyparsing==1.5.7
 
 # Testing and Debugging
 django-debug-toolbar==1.0.1
