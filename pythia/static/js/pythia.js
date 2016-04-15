@@ -2,16 +2,13 @@
   $.ajaxSetup({
     beforeSend: function() {
       if (typeof(tinyMCE) != "undefined") {
-        pythia.activeEdColour = $(tinyMCE.activeEditor.getContainer()).css(
-          'border-color');
-        $(tinyMCE.activeEditor.getContainer()).css(
-          'border-color', '#bb0000');
+        pythia.activeEdColour = $(tinyMCE.activeEditor.getContainer()).css('border-color');
+        $(tinyMCE.activeEditor.getContainer()).css('border-color', '#bb0000');
       }
     },
     complete: function() {
       if (typeof(tinyMCE) != "undefined") {
-        $(tinyMCE.activeEditor.getContainer()).css(
-          'border-color', pythia.activeEdColour);
+        $(tinyMCE.activeEditor.getContainer()).css('border-color', pythia.activeEdColour);
         hasChanged = false; // hasChanged defined in "admin/change_form.html"
       }
     }
@@ -20,9 +17,7 @@
   pythia.inlineEditUrls = new Object();
 
   pythia.inlineSave = (function(url, data) {
-    $.ajax({
-      type: 'POST', url: url, data: data
-    });
+    $.ajax({type: 'POST', url: url, data: data});
   });
 
   pythia.getCsrfToken = (function($el) {
@@ -33,8 +28,7 @@
   pythia.tinyMCEinit = (function(ed) {
     ed.on('init', function(args) {
       // create the text block
-      ed.pythiaText = $('<div class="tinymce-wrap">' + ed.getContent() +
-                        '</div>');
+      ed.pythiaText = $('<div class="tinymce-wrap">' + ed.getContent() +'</div>');
 
       ed.pythiaText.click(function() {
         pythia.inlineShowTinyMCE(ed);
@@ -50,7 +44,7 @@
       var save = function() {
         ed.pythiaText.html(ed.getContent());
         data = $(ed.getElement()).parents("form").serialize()
-        if (pythia.inlineEditUrls[ed.id]) 
+        if (pythia.inlineEditUrls[ed.id])
            pythia.inlineSave(pythia.inlineEditUrls[ed.id], data);
       };
 
@@ -237,8 +231,8 @@
         // prepare the new select
         var select_id = 'id_pythia_areasWidgetWrapper_' + type;
         var select = $('<select id="' + select_id +
-                       //'" multiple="multiple" style="width: auto; float:right !important;" size="'+  
-                       '" multiple class="form-control" style="width: auto; float:right !important;" size="'+  
+                       //'" multiple="multiple" style="width: auto; float:right !important;" size="'+
+                       '" multiple class="form-control" style="width: auto; float:right !important;" size="'+
                        groups[type].length + '"/>');
         // add onChange handler
         select.change(function() {
@@ -277,5 +271,3 @@
   };
 
 })(window.pythia = window.pythia || {});
-
-

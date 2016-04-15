@@ -62,7 +62,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.humanize',
     'django.contrib.gis',
-    #'django.contrib.postgres',
+    # 'django.contrib.postgres',
     'django_extensions',
     'django_comments',
     'compressor',
@@ -156,7 +156,7 @@ STATICFILES_FINDERS = (
 # This is required to add context variables to all templates:
 STATIC_CONTEXT_VARS = {}
 
-COMPRESS_ROOT = STATIC_URL
+COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_URL = STATIC_URL
 
 TEMPLATE_LOADERS = (

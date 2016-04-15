@@ -55,7 +55,7 @@ textarea {height: 1.5em; width: 95%; overflow-y: hidden;}
 /* the "search for project year, number, title" form input */
 .search-query {width: 160px;}
 
-input.vForeignKeyRawIdAdminField, input.vIntegerField {width: 40px;}
+input.vForeignKeyRawIdAdminField, input.vIntegerField {display:block;}
 
 /* 10 more than .navbar-fixed */
 .chzn-drop { z-index: 1040 !important;}
