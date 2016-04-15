@@ -6,20 +6,19 @@ from pythia.models import Program
 from guardian.models import Group
 from pythia.documents.models import (
     Document, StudentReport, ConceptPlan, ProjectPlan, ProgressReport)
-from pythia.projects.models import (
-    Project, ScienceProject, CoreFunctionProject, CollaborationProject,
-    StudentProject, ProjectMembership)
+from pythia.projects.models import (Project, ScienceProject,
+                                    CoreFunctionProject, CollaborationProject,
+                                    StudentProject, ProjectMembership)
 
-from .base import (BaseTestCase,
-        ProjectFactory, ScienceProjectFactory,
-        CoreFunctionProjectFactory, CollaborationProjectFactory,
-        StudentProjectFactory, UserFactory)
+from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
+                   CoreFunctionProjectFactory, CollaborationProjectFactory,
+                   StudentProjectFactory, UserFactory)
 
 
 class UserModelTests(TestCase):
 
     def test_user_is_valid_with_email_only(self):
-        """Email is the unique user id.
+        """Test that a user profile is valid with an email only.
 
         A user profile must be valid with an email only.
         Everything else is a bonus!
@@ -33,8 +32,7 @@ class ProjectModelTests(BaseTestCase):
     Base project tests
     """
     def test_creation_adds_project_membership(self):
-        """The user nominated as supervising scientist must be also added to the
-        team list on Project creation.
+        """The sup scientist should be added to project team on project creation
         """
         project = ProjectFactory.create()
         self.assertEqual(ProjectMembership.objects.count(), 1)
@@ -54,53 +52,44 @@ class ScienceProjectModelTests(BaseTestCase):
     """
 
     def setUp(self):
-        # a generic user
-        self.user = UserFactory.create()
+        """Create a ScienceProject and users for all roles.
 
-        # Two user groups, SMT (Sci Mgmt Team) and SCDD (SCD Directorate)
+        * user: a generic user
+        * smt: reviewer group
+        * scd: approver group
+        * users: submitter group
+        * bob bobson: Bob, a research scientist, wants to create a new
+            science project. Bob will be the principal scientist of that
+            project, add team members, write project documentation,
+            submit docs for approval, and write updates.
+        * John Johnson: John will join Bob's team. Then he should be able
+            to execute "team-only" actions.
+        * Steven Stevenson: Steven is Bob's Program Leader.
+            As a member of SMT, the reviewers, Steven is the first instance of
+            approval.
+        * Marge Simpson: Marge is the Divisional Director.
+            As member of the Directorate, M is the highest instance of approval
+            and has resurrection powers for projects.
+        * Peter Peterson: Peter won't have anything to do with the project.
+            Peter should not be able to execute any "team-only" actions!
+        """
         self.smt, created = Group.objects.get_or_create(name='SMT')
         self.scd, created = Group.objects.get_or_create(name='SCD')
         self.users, created = Group.objects.get_or_create(name='Users')
 
-        # Bob, a research scientist, wants to create a new science project.
-        # Bob will be the principal scientist of that project, add team members,
-        # write project documentation, submit docs for approval, and write updates.
+        self.user = UserFactory.create()
         self.bob = UserFactory.create(
-                username='bob',
-                first_name='Bob',
-                last_name='Bobson')
-
-        # John will join Bob's team. Then he should be able to execute
-        # "team-only" actions.
+            username='bob', first_name='Bob', last_name='Bobson')
         self.john = UserFactory.create(
-                username='john',
-                first_name='John',
-                last_name='Johnson')
-
-        # Steven is Bob's Program Leader.
-        # As a member of SMT, Steven is the first instance of approval.
+            username='john', first_name='John', last_name='Johnson')
         self.steven = UserFactory.create(
-                username='steven',
-                first_name='Steven',
-                last_name='Stevenson')
-        #self.steven.groups.add(Group.objects.get(name='SMT'))
+            username='steven', first_name='Steven', last_name='Stevenson')
         self.steven.groups.add(self.smt)
-
-        # Marge is the Divisional Director.
-        # As member of the Directorate, M is the highest instance of approval and has
-        # resurrection powers for projects.
         self.marge = UserFactory.create(
-                username='marge',
-                first_name='Marge',
-                last_name='Simpson')
+            username='marge', first_name='Marge', last_name='Simpson')
         self.marge.groups.add(self.scd)
-
-        # Peter won't have anything to do with the project.
-        # Peter should not be able to execute any "team-only" actions!
         self.peter = UserFactory.create(
-                username='peter',
-                first_name='Peter',
-                last_name='Peterson')
+            username='peter', first_name='Peter', last_name='Peterson')
 
         self.program = Program.objects.create(
                 name="ScienceProgram",
@@ -112,15 +101,13 @@ class ScienceProjectModelTests(BaseTestCase):
             creator=self.bob,
             modifier=self.bob,
             program=self.program,
-            #data_custodian=self.bob, site_custodian=self.bob, # not nominated yet
+            # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
 
-
     def test_project_life_cycle(self):
-        """Test all steps in a ScienceProject's life.
+        """Test all expected steps in a ScienceProject's life.
 
         Emphasis on transitions, pre- and postconditions, gate checks.
-
         """
         #---------------------------------------------------------------------#
         # New project
