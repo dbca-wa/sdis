@@ -99,6 +99,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'dpaw_utils.middleware.SSOLoginMiddleware',
     # loaded if DEBUG (below):
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
     #'django_pdb.middleware.PdbMiddleware'
@@ -171,7 +172,7 @@ TEMPLATE_DIRS = (
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'pythia.backends.PythiaBackend',
-    'swingers.sauth.backends.EmailBackend',
+    'pythia.backends.EmailBackend',
 #    'swingers.sauth.backends.PersonaBackend',
 )
 
