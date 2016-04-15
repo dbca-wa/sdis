@@ -1,34 +1,36 @@
-import confy
+from confy import env
 from fabric.api import cd, local, run, sudo
 from fabric.colors import green, yellow, red
 from fabric.contrib.files import exists, upload_template
 import os
 
-confy.read_environment_file()
-e = os.environ
-
 #-----------------------------------------------------------------------------#
 # Database management
 #
 # DB aux
+def _db():
+    "Generates db connection parameters from environment variables."
+    return "-h {0} -p {1} -U {2} -O {2} {3}".format(
+        env('DB_HOST'), env('DB_PORT'), env('DB_USER'), env('DB_NAME'))
+
+
 def _drop_db():
     """Drop local db."""
     print("Dropping local database, enter password for db user sdis:")
-    run("dropdb -U {DB_USER} -h {DB_HOST} -p {DB_PORT} {DB_NAME}".format(**e))
+    run("dropdb {0}".format(_db()))
 
 
 def _create_db():
     """Create an empty local db. Requires local db password."""
     print("Creating empty new database, enter password for db user sdis:")
-    sudo("createdb -h {DB_HOST} -p {DB_PORT} -U {DB_USER} -O {DB_USER} {DB_NAME}".format(**e))
+    sudo("createdb {0}".format(_db))
 
 
 def _create_extension_postgis():
     """In an existing, empty db, create extension postgis."""
     print("Creating extension postgis in database, enter password for db user "
           "sdis:")
-    local("psql -h {DB_HOST} -p {DB_PORT} -d {DB_NAME} -U {DB_USER}".format(**e) +\
-            " -c 'create extension postgis;'")
+    local("psql {0} -c 'create extension postgis;'".format(_db()))
 
 
 # DB main
@@ -57,8 +59,7 @@ def hammertime():
     Runs dropdb, createdb, creates extension postgis, migrate."""
     smashdb()
     migrate()
-    local("psql -h {DB_HOST} -p {DB_PORT} -d {DB_NAME} -U {DB_USER}".format(**e) +\
-            " -c 'TRUNCATE django_content_type CASCADE;'")
+    local("psql {0} -c 'TRUNCATE django_content_type CASCADE;'".format(_db()))
 
 
 def sexytime():
@@ -151,7 +152,8 @@ def cleandeploy():
 #
 def run():
     """Run the app with runserver (dev)."""
-    local('python manage.py runserver 0.0.0.0:{PORT}'.format(**e))
+    local('python manage.py runserver 0.0.0.0:{0}'.format(env('PORT',
+                                                              default=5000)))
 
 #-----------------------------------------------------------------------------#
 # Debugging
