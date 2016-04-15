@@ -1,8 +1,11 @@
-from confy import env
+import confy
 from fabric.api import cd, local, run, sudo
 from fabric.colors import green, yellow, red
 from fabric.contrib.files import exists, upload_template
 import os
+
+confy.read_environment_file(".env")
+e = os.environ
 
 #-----------------------------------------------------------------------------#
 # Database management
@@ -10,9 +13,8 @@ import os
 # DB aux
 def _db():
     "Generates db connection parameters from environment variables."
-    return "-h {0} -p {1} -U {2} -O {2} {3}".format(
-        env('DB_HOST'), env('DB_PORT'), env('DB_USER'), env('DB_NAME'))
-
+    conn = "-h {DB_HOST} -p {DB_PORT} -U {DB_USER} -O {DB_USER} {DB_NAME}"
+    return conn.format(**e)
 
 def _drop_db():
     """Drop local db."""
@@ -152,8 +154,7 @@ def cleandeploy():
 #
 def run():
     """Run the app with runserver (dev)."""
-    local('python manage.py runserver 0.0.0.0:{0}'.format(env('PORT',
-                                                              default=5000)))
+    local('python manage.py runserver 0.0.0.0:{PORT}'.format(**e))
 
 #-----------------------------------------------------------------------------#
 # Debugging
