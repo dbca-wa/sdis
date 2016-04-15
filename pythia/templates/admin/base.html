@@ -20,7 +20,6 @@
 
   <!--link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/font-awesome/4.5.0/css/font-awesome.min.css"-->
   {{ form.media.css }}
-  <!-- /Site-level CSS -->
 
   {% if LANGUAGE_BIDI %}
     <link rel="stylesheet"
@@ -31,6 +30,7 @@
   <link rel="stylesheet" type="text/css" href="{% static "css/pythia-ext.css" %}">
   <link rel="stylesheet" type="text/css" href="{% static "css/changelists.css" %}" />
   {% endcompress %}
+  <!-- /Site-level CSS -->
   <!-- Page-level CSS -->
   {% block extrastyle %}{% endblock %}
   <!-- /Page-level CSS -->
