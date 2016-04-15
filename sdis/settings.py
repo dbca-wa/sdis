@@ -1,4 +1,4 @@
-from confy import database
+from confy import env, database, cache
 import ldap
 import os
 import sys
@@ -13,36 +13,33 @@ sys.path.insert(0, PROJECT_DIR)
 
 root = lambda *x: os.path.join(BASE_DIR, *x)
 
-SECRET_KEY = os.environ['SECRET_KEY'] if os.environ.get('SECRET_KEY', False) else 'foo'
-DEBUG = True if os.environ.get('DEBUG', False) == 'True' else False
-CSRF_COOKIE_SECURE = True if os.environ.get('CSRF_COOKIE_SECURE', False) == 'True' else False
-SESSION_COOKIE_SECURE = True if os.environ.get('SESSION_COOKIE_SECURE', False) == 'True' else False
+SECRET_KEY = env('SECRET_KEY', default='foo')
+DEBUG = env('DEBUG', default=False)
+CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
+SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
 
 TEMPLATE_DEBUG = DEBUG
 
-if not DEBUG:
-    # Localhost, UAT and Production hosts
-    ALLOWED_HOSTS = [
-        'localhost',
-        '127.0.0.1',
-        'sdis.dpaw.wa.gov.au',
-        'sdis.dpaw.wa.gov.au.',
-        'sdis-dev.dpaw.wa.gov.au',
-        'sdis-dev.dpaw.wa.gov.au.',
-        'sdis-test.dpaw.wa.gov.au',
-        'sdis-test.dpaw.wa.gov.au.',
-        'sdis-uat.dpaw.wa.gov.au',
-        'sdis-uat.dpaw.wa.gov.au.',
-        'static.dpaw.wa.gov.au'
-    ]
-else:
-    ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'sdis.dpaw.wa.gov.au',
+    'sdis.dpaw.wa.gov.au.',
+    'sdis-dev.dpaw.wa.gov.au',
+    'sdis-dev.dpaw.wa.gov.au.',
+    'sdis-test.dpaw.wa.gov.au',
+    'sdis-test.dpaw.wa.gov.au.',
+    'sdis-uat.dpaw.wa.gov.au',
+    'sdis-uat.dpaw.wa.gov.au.',
+    'static.dpaw.wa.gov.au'
+]
+
 INTERNAL_IPS = ['127.0.0.1', '::1']
 
 
 # Application definition
 SITE_ID = 1
-SITE_URL = os.environ.get('SITE_URL', None)
+SITE_URL = env('SITE_URL')
 SITE_NAME = 'SDIS'
 SITE_TITLE = 'Science Directorate Information System'
 APPLICATION_VERSION_NO = '4.0'
@@ -173,7 +170,6 @@ AUTHENTICATION_BACKENDS = (
 
 ANONYMOUS_USER_ID = 100000
 AUTH_USER_MODEL = 'pythia.User'
-PERSONA_LOGIN = os.environ.get('PERSONA_LOGIN', False)
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
@@ -182,9 +178,9 @@ LOGOUT_URL = '/logout/'
 LOGOUT_REDIRECT_URL = LOGOUT_URL
 
 # LDAP settings
-AUTH_LDAP_SERVER_URI = os.environ.get('LDAP_SERVER_URI', None)
-AUTH_LDAP_BIND_DN = os.environ.get('LDAP_BIND_DN', None)
-AUTH_LDAP_BIND_PASSWORD = os.environ.get('LDAP_BIND_PASSWORD', None)
+AUTH_LDAP_SERVER_URI = env('LDAP_SERVER_URI')
+AUTH_LDAP_BIND_DN = env('LDAP_BIND_DN')
+AUTH_LDAP_BIND_PASSWORD = env('LDAP_BIND_PASSWORD')
 
 AUTH_LDAP_ALWAYS_UPDATE_USER = False
 AUTH_LDAP_AUTHORIZE_ALL_USERS = True
@@ -233,8 +229,8 @@ REST_FRAMEWORK = {
 }
 
 # Email
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'email.host')
-EMAIL_PORT = os.environ.get('EMAIL_PORT', 25)
+EMAIL_HOST = env('EMAIL_HOST', default='email.host')
+EMAIL_PORT = env('EMAIL_PORT', default=25)
 ENVELOPE_EMAIL_RECIPIENTS = ['sdis@DPaW.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True
 DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dpaw.wa.gov.au>'
@@ -301,8 +297,10 @@ LOGGING = {
 
 
 if DEBUG:
-    # Set up logging differently to give us some more information about what's
-    # going on
+    ALLOWED_HOSTS = ['*']
+
+    COMPRESS_ENABLED = False
+
     INSTALLED_APPS += (
         'debug_toolbar',
         'debug_toolbar_htmltidy',
@@ -314,9 +312,6 @@ if DEBUG:
         'django_pdb.middleware.PdbMiddleware',
     )
 
-
-    # Set up logging differently to give us some more information about what's
-    # going on
     LOGGING['loggers'] = {
         'django_auth_ldap': {
             'handlers': ['file'],

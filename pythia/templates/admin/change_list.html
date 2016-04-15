@@ -1,7 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load i18n staticfiles admin_list markup pythia_base %}
 
-
 {% block extrahead %}
   {{ block.super }}
   {{ media.js }}
@@ -122,12 +121,7 @@ $(function() {
 {% block extrastyle %}
   {{ block.super }}
 
-  {% if cl.formset %}
-  <!-- <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />-->
-  <style>
-    .empty-form { display: none;}
-  </style>
-  {% endif %}
+  {# if cl.formset #}{# endif #}
   {% if cl.formset or action_form %}
     <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
   {% endif %}
