@@ -77,7 +77,7 @@ INSTALLED_APPS = (
     'reversion',
     'rest_framework',
 
-    'django_browserid',
+    # 'django_browserid',
 
     'leaflet',
     'south',
@@ -126,12 +126,12 @@ TIME_ZONE = 'Australia/Perth'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-DATE_FORMAT = '%d/%m/%Y'      # O5/10/2006
+DATE_FORMAT = 'd/m/Y'      # O5/10/2006
 # Set the formats that will be accepted in date input fields
 DATE_INPUT_FORMATS = (
-    '%d/%m/%Y',             # '25/10/2006'
-    '%Y-%m-%d',             # '2006-10-25'
-    '%Y_%m_%d',             # '2006_10_25'
+    'd/m/Y',             # '25/10/2006'
+    'Y-m-d',             # '2006-10-25'
+    'Y_m_d',             # '2006_10_25'
 )
 
 
