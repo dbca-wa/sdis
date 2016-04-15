@@ -82,8 +82,6 @@ INSTALLED_APPS = (
     'gunicorn',
     'django_wsgiserver',
 
-    #'swingers',
-
     'pythia',
     'pythia.documents',
     'pythia.projects',
@@ -93,7 +91,6 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'swingers.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -114,7 +111,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
-    #'pythia.context_processors.persona',
 )
 
 
@@ -173,7 +169,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'pythia.backends.PythiaBackend',
     'pythia.backends.EmailBackend',
-#    'swingers.sauth.backends.PersonaBackend',
 )
 
 ANONYMOUS_USER_ID = 100000
@@ -226,13 +221,15 @@ AUTH_LDAP_USER_ATTR_MAP = {
 
 # Django-Restframework
 REST_FRAMEWORK = {
-# Use hyperlinked styles by default.
-# Only used if the `serializer_class` attribute is not set on a view.
-    'DEFAULT_MODEL_SERIALIZER_CLASS': 'rest_framework.serializers.HyperlinkedModelSerializer',
+    # Use hyperlinked styles by default.
+    # Only used if the `serializer_class` attribute is not set on a view.
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+        'rest_framework.serializers.HyperlinkedModelSerializer',
 
-# Use Django's standard `django.contrib.auth` permissions,
-# or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly']
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES':
+        ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly']
 }
 
 # Email
@@ -243,7 +240,7 @@ ENVELOPE_USE_HTML_EMAIL = True
 DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dpaw.wa.gov.au>'
 
 
-#COMPRESS_ENABLED = False
+COMPRESS_ENABLED = True
 
 DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': False,
