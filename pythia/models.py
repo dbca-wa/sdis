@@ -834,9 +834,9 @@ class WebResource(Audit):
 
 
 class UserManager(BaseUserManager):
-    #    def __init__(self):
-    #        super(BaseUserManager, self).__init__()
-    #        self.model = get_user_model()
+    def __init__(self):
+        super(BaseUserManager, self).__init__()
+        self.model = 'pythia.User'  # get_user_model()
 
     def _create_user(self, username, password, is_staff, is_superuser,
                      **extra_fields):
