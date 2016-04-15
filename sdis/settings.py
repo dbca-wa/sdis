@@ -77,8 +77,6 @@ INSTALLED_APPS = (
     'reversion',
     'rest_framework',
 
-    # 'django_browserid',
-
     'leaflet',
     'south',
     'gunicorn',
@@ -108,7 +106,6 @@ MIDDLEWARE_CLASSES = (
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
-    'django_browserid.context_processors.browserid',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.media',
     'django.core.context_processors.request',
