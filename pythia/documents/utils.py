@@ -1,9 +1,23 @@
+"""Utility methods for pythia.documents.
+
+This module contains helpers for:
+
+* local file storage for user-submitted files
+* permission handling (submit, review, apprpve documents)
+* converting rich content between formats (markdown, html, tables, json arrays)
+"""
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from django.db.models.signals import post_syncdb
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def documents_upload_to(instance, filename):
+    """Generate a project-specific document upload path."""
+    return "documents/{0}-{1}/{2}".format(
+        instance.project.year, instance.project.number, filename)
 
 
 def update_document_permissions(document):
@@ -210,21 +224,21 @@ def html_table_to_array(html_string):
     from bs4 import BeautifulSoup as BS
     import json
     if (len(BS(html_string).findAll("tr")) > 0 and
-        html_string is not None and html_string is not ""):
+            html_string is not None and html_string is not ""):
         return json.dumps([[cell.string or '' for cell in row.findAll("td")]
-            for row in BS(html_string).findAll("tr")])
+                           for row in BS(html_string).findAll("tr")])
     else:
         return html_string
 
 
 def migrate_html_tables_to_arrays(debug=False):
-    """Converts all existing tables from HTML to list of lists.
+    """Convert all existing tables from HTML to list of lists.
 
     This function is to be run once only when switching
     from storing markdown in the database to storing HTML.
     """
     from pythia.documents import models as m
-    #from pythia.utils import extract_md_tables, text2html
+    # from pythia.utils import extract_md_tables, text2html
 
     for d in m.Document.objects.all():
         if d._meta.model_name == 'conceptplan':
