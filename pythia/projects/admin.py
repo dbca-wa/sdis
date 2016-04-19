@@ -1,7 +1,5 @@
 from __future__ import unicode_literals, absolute_import
 
-from swingers.admin import DetailAdmin
-from datetime import date
 from django.contrib.auth.models import Group
 from django.contrib.admin.util import unquote
 from django.core.exceptions import PermissionDenied
@@ -14,7 +12,7 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect, Http404
 
-from pythia.admin import BaseAdmin, Breadcrumb, DownloadAdminMixin
+from pythia.admin import BaseAdmin, Breadcrumb, DetailAdmin, DownloadAdminMixin
 from pythia.models import User
 from pythia.projects.models import PROJECT_CLASS_MAP
 from pythia.templatetags.pythia_base import pythia_urlname
@@ -22,15 +20,13 @@ from pythia.widgets import AreasWidgetWrapper
 from pythia.utils import mail_from_template
 
 from functools import update_wrapper
-from sdis import settings
-
 
 
 class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
 
     list_display = ('__str__','association')
     exclude = ('effective_from', 'effective_to', 'leader')
-    
+
     def function_leader(self, obj):
         return obj.leader.get_full_name()
     function_leader.short_description = 'Research Function Leader'
@@ -38,7 +34,8 @@ class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
 
     def get_breadcrumbs(self, request, obj=None, add=False):
         """
-        Override the base breadcrumbs to add the research function list to the trail.
+        Override the base breadcrumbs to add the research function list to
+        the trail.
         """
         return (
             Breadcrumb(_('Home'), reverse('admin:index')),
@@ -53,13 +50,13 @@ class ProjectMembershipAdmin(BaseAdmin):
     change_form_template = 'admin/projects/change_form_projectmembership.html'
 
     def get_readonly_fields(self, request, obj=None):
-        """Project is read-only in popup forms, as Membership initialises with the 
+        """Project is read-only in popup forms, as Membership initialises with the
         Project it belongs to. To change the project of a membership,
         delete the incorrect one, and create the correct membership from
         the correct project.
 
         User is read-only when changing, but can be set during adding.
-        This enables 
+        This enables
 
 
         """
@@ -90,7 +87,7 @@ class ProjectMembershipAdmin(BaseAdmin):
 
 class ProjectAdmin(BaseAdmin):
     list_display = ('project_id', 'project_title', 'type', 'year', 'number',
-                    'project_owner_name', 'program', 'research_function', 
+                    'project_owner_name', 'program', 'research_function',
                     'status', 'fm_start_date', 'fm_end_date')
     list_per_page = 1000    # whoooa
     exclude = ('status', 'effective_from', 'effective_to', 'web_resources')
@@ -101,13 +98,13 @@ class ProjectAdmin(BaseAdmin):
     def get_fieldsets(self, request, obj=None):
         #print("project admin get fieldsets")
         #fs = super(ProjectAdmin, self).get_fieldsets(request, obj)
-        #return fs 
+        #return fs
         return (
         ('Project details', {
             'classes': ('collapse in',),
             'description': "Keep mandatory project information up to date",
             'fields': ('year','number','type', 'title',
-                'project_owner', 
+                'project_owner',
                 #'site_custodian',
                 'data_custodian',
                 'program','output_program','research_function',
@@ -121,7 +118,7 @@ class ProjectAdmin(BaseAdmin):
             'classes': ('collapse',),
             'fields': ('image', 'tagline', 'comments', 'position'),})
         )
-        
+
 
 
     def project_id(self, obj):
@@ -176,7 +173,7 @@ class ProjectAdmin(BaseAdmin):
                  use_distinct) = super(ProjectChangeList, self).get_filters(
                      request)
                 has_filters = False
- 
+
                 for search_field in self.search_fields:
                     if "project_" + search_field in lookup_params:
                         del lookup_params[search_field]
@@ -211,7 +208,7 @@ class ProjectAdmin(BaseAdmin):
     def get_readonly_fields(self, request, obj=None):
         rof = super(ProjectAdmin, self).get_readonly_fields(request, obj)
 
-        if not ((request.user.is_superuser) or 
+        if not ((request.user.is_superuser) or
             (request.user in Group.objects.get_or_create(
                 name='SCD')[0].user_set.all())):
             # no one except Directorate and su should update year or number
@@ -291,12 +288,12 @@ class ProjectAdmin(BaseAdmin):
                         obj.project_type_year_number, obj.title_plain),
                     'object_url': request.build_absolute_uri(
                         reverse(pythia_urlname(obj.opts, 'change'), args=[obj.pk])),
-                    'status': [x[1] for x in obj.STATUS_CHOICES if 
+                    'status': [x[1] for x in obj.STATUS_CHOICES if
                         x[0] == transition][0],
                     'explanation': True,
                 }
                 mail_from_template('{0} has been updated'.format(
-                    obj.project_type_year_number), 
+                    obj.project_type_year_number),
                     list(recipients), 'email/email_base', context)
 
             # Redirect the user back to the project change page
@@ -351,7 +348,7 @@ class ProjectAdmin(BaseAdmin):
 
     def add_view(self, request, form_url='', extra_context=None):
         """
-        Wrapper for add_view that forces a surprise class override based on 
+        Wrapper for add_view that forces a surprise class override based on
         project type
         """
         temp = self.model
@@ -373,7 +370,7 @@ class ProjectAdmin(BaseAdmin):
         return formfield
 
 class CollaborationProjectAdmin(ProjectAdmin):
-    
+
     def get_fieldsets(self, request, obj=None):
         #print("COL admin get fieldsets")
         return  (

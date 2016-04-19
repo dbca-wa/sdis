@@ -36,7 +36,6 @@ from polymorphic import PolymorphicModel, PolymorphicManager
 
 from pythia.documents.models import (
     ConceptPlan, ProjectPlan, ProgressReport, ProjectClosure, StudentReport)
-from pythia.fields import Html2TextField  # , PythiaArrayField
 from pythia.models import ActiveGeoModelManager, Audit, ActiveModel
 from pythia.models import Program, WebResource, Division, Area, User
 from pythia.reports.models import ARARReport
@@ -78,14 +77,14 @@ class ResearchFunction(PolymorphicModel, Audit, ActiveModel):
     Reports will summarise project progress reports bt research function.
     """
 
-    name = Html2TextField(
+    name = models.TextField(
         verbose_name=_("Name"),
         help_text=_("The research function's name with formatting."))
-    description = Html2TextField(
+    description = models.TextField(
         verbose_name=_("Description"),
         null=True, blank=True,
         help_text=_("The research function's description with formatting."))
-    association = Html2TextField(
+    association = models.TextField(
         verbose_name=_("Association"),
         null=True, blank=True,
         help_text=_("The research function's association with "
@@ -198,7 +197,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     # -------------------------------------------------------------------------#
     # Name, image, slogan
     #
-    title = Html2TextField(
+    title = models.TextField(
         verbose_name=_("Project title"),
         help_text=_("The project title with formatting if required."))
     image = models.ImageField(
@@ -206,10 +205,10 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         blank=True, null=True,
         help_text="Upload an image which represents the meaning, or shows"
                   " a nice detail, or the team of the project.")
-    tagline = Html2TextField(
+    tagline = models.TextField(
         blank=True, null=True,
         help_text="Sell the project in one sentence to a wide audience.")
-    comments = Html2TextField(
+    comments = models.TextField(
         blank=True, null=True,
         help_text=_("Any additional comments on the project."))
 
@@ -1086,11 +1085,11 @@ class CollaborationProject(Project):
     requires only registration, but no Progress Reports.
     """
 
-    name = Html2TextField(
+    name = models.TextField(
         max_length=2000,
         verbose_name=_("Collaboration name (with formatting)"),
         help_text=_("The collaboration name with formatting if required."))
-    budget = Html2TextField(
+    budget = models.TextField(
         verbose_name=_("Total Budget"),
         help_text=_("Specify the total financial and staff time budget."))
 

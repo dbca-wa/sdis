@@ -1,19 +1,14 @@
 from __future__ import unicode_literals
 
-from swingers import models
 from south.modelsinspector import add_introspection_rules
-
-import json
-from django.core.serializers.json import DjangoJSONEncoder
 
 from django.forms import Field
 from django.db.models import TextField
-from pythia.utils import html2text
 from django.utils.safestring import mark_safe
 
-class Html2TextField(models.TextField):
+
+class Html2TextField(TextField):
     def to_python(self, value):
-        #return html2text(value)
         return value
 
 add_introspection_rules([], ["^pythia\.fields\.Html2TextField"])

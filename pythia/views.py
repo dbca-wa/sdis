@@ -1,6 +1,12 @@
+"""Pythia views.
+"""
+try:
+    import json
+except ImportError:
+    from django.utils import simplejson as json
+
 from django.conf import settings
 from django.contrib import messages
-from django.core.mail import mail_admins
 from django.core.urlresolvers import reverse
 from django.forms import ModelForm
 from django.http import HttpResponse, HttpResponseRedirect
@@ -8,6 +14,9 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.generic import edit
 from django.template.response import TemplateResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.admin.views.main import ChangeList
+from django.contrib.admin.util import quote
 
 import django_comments
 from django_comments.models import Comment
@@ -17,36 +26,41 @@ from django_comments.views.utils import next_redirect
 
 from pythia.forms import TermsAndConditionsForm
 
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
 
-from django.views.decorators.csrf import csrf_exempt
+class DetailChangeList(ChangeList):
+    def url_for_result(self, result):
+        if self.model_admin.changelist_link_detail:
+            pk = getattr(result, self.pk_attname)
+            return reverse('admin:%s_%s_detail' % (self.opts.app_label,
+                                                   self.opts.module_name),
+                           args=(quote(pk),),
+                           current_app=self.model_admin.admin_site.name)
+        else:
+            return super(DetailChangeList, self).url_for_result(result)
 
 
 def arar_dashboard(request):
     from pythia.reports.models import ARARReport
-    return TemplateResponse(request, 
-            'arar_dashboard/arar.html', 
+    return TemplateResponse(request,
+            'arar_dashboard/arar.html',
             {"original":ARARReport.objects.latest()})
 
 
 
 @csrf_exempt
 def update_cache(request):
-    """Updates cached fields on Projects, 
+    """Updates cached fields on Projects,
     guesses initials for Users without initials.
     """
     from pythia.projects.models import refresh_all_project_caches
     no_projects = refresh_all_project_caches()
-    messages.success(request, 
+    messages.success(request,
     "Team lists and areas updated for {0} projects".format(no_projects))
 
     from pythia.models import User
     [u.save() for u in User.objects.all()]
     no_users = User.objects.all().count()
-    messages.success(request, 
+    messages.success(request,
     "Missing initials guessed from first name for {0} users".format(no_users))
 
     return HttpResponseRedirect("/")
@@ -75,7 +89,7 @@ def spell_check(request):
             checker = enchant.Dict(str(lang))
 
             if method == 'spellcheck':
-                for x in [word for word in arg if word and not 
+                for x in [word for word in arg if word and not
                         checker.check(word)]:
                     result[x] = checker.suggest(x)
 
@@ -100,7 +114,7 @@ def comments_post(request):
 
 
 def comments_delete(request, comment_id):
-    comment = get_object_or_404(django_comments.get_model(), pk=comment_id, 
+    comment = get_object_or_404(django_comments.get_model(), pk=comment_id,
             site__pk=settings.SITE_ID)
     context = {
         'next': request.GET.get('next'),
@@ -114,7 +128,7 @@ def comments_delete(request, comment_id):
             return render_to_response('admin/close_popup.html', context,
                     RequestContext(request))
         else:
-            return next_redirect(request, fallback=request.GET.get('next') or 
+            return next_redirect(request, fallback=request.GET.get('next') or
                     'comments-delete-done', c=comment.pk)
 
     else:
@@ -136,7 +150,7 @@ class CommentUpdateView(edit.UpdateView):
     def get_context_data(self, **kwargs):
         context = {
             'next': self.request.REQUEST.get('next'),
-            'is_popup': self.request.REQUEST.get('_popup') 
+            'is_popup': self.request.REQUEST.get('_popup')
         }
         context.update(kwargs)
         return super(CommentUpdateView, self).get_context_data(**context)

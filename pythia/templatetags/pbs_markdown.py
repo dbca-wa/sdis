@@ -14,4 +14,4 @@ def markdownify(value):
     extensions = ["nl2br", "pythia.md_ext.superscript",
                   "pythia.md_ext.subscript"]
     return mark_safe(markdown.markdown(force_unicode(value), extensions))
-                                    #safe_mode=True, enable_attributes=False))
+    # safe_mode=True, enable_attributes=False))

@@ -10,10 +10,8 @@ from guardian.admin import GuardedModelAdmin
 from reversion.models import Version
 from reversion.admin import VersionAdmin
 
-from django import forms
 from django.conf import settings
 from django.contrib import messages
-from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.contrib.admin.util import flatten_fieldsets, unquote
@@ -32,23 +30,17 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django_select2 import AutoModelSelect2Field, Select2Widget
 
-
-#from swingers.admin import DetailAdmin
-#from swingers.sauth.admin import AuditAdmin
-
-from pythia.fields import Html2TextField, PythiaArrayField
-from pythia.forms import (SdisModelForm, BaseInlineEditForm,
-        PythiaUserCreationForm, PythiaUserChangeForm)
-from pythia.widgets import ArrayFieldWidget, InlineEditWidgetWrapper
+from pythia.forms import (
+    SdisModelForm, BaseInlineEditForm,
+    PythiaUserCreationForm, PythiaUserChangeForm)
+from pythia.widgets import InlineEditWidgetWrapper
 
 
 logger = logging.getLogger(__name__)
-
-
 User = get_user_model()
 Breadcrumb = namedtuple('Breadcrumb', ['name', 'url'])
 
-#------------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------#
 # swingers.sauth.AuditAdmin, swingers.admin.DetailAdmin
 
 class DetailAdmin(ModelAdmin):
@@ -58,7 +50,7 @@ class DetailAdmin(ModelAdmin):
     change_form_template = None
 
     def get_changelist(self, request, **kwargs):
-        from swingers.admin.views import DetailChangeList
+        from pythia.views import DetailChangeList
         return DetailChangeList
 
     def has_view_permission(self, request, obj=None):
@@ -211,7 +203,6 @@ class FormfieldOverridesMixin(object):
         formfield = super(FormfieldOverridesMixin,
                           self).formfield_for_dbfield(db_field, **kwargs)
 
-
         # skip the RelatedFieldWidgetWrapper
         if ((hasattr(formfield, 'widget') and
              isinstance(formfield.widget,
@@ -219,10 +210,9 @@ class FormfieldOverridesMixin(object):
              getattr(self, '_skip_relatedFieldWidget', True))):
             formfield.widget = formfield.widget.widget
 
-        if ((formfield and
-                (isinstance(db_field, (Html2TextField, PythiaArrayField)) or
-                 isinstance(formfield.widget, Textarea))
-             )):
+        if (formfield and isinstance(formfield.widget, Textarea)):
+            # (isinstance(db_field, (Html2TextField, PythiaArrayField)) or
+            # isinstance(formfield.widget, Textarea))
             formfield.widget = InlineEditWidgetWrapper(formfield.widget)
 
         return formfield
@@ -234,9 +224,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
     object_diff_template = None
     change_form_template = None
     form = BaseInlineEditForm
-    formfield_overrides = {
-        PythiaArrayField: {'widget': ArrayFieldWidget},
-    }
+    # formfield_overrides = {PythiaArrayField: {'widget': ArrayFieldWidget}, }
 
     def get_breadcrumbs(self, request, obj=None, add=False):
         """
@@ -475,8 +463,6 @@ class UserAdmin(DjangoUserAdmin):
         return PythiaUserForm
 
 
-# identical to the one from django-swingers, with all the mercurial and chdir
-# insanity ripped out
 class DownloadAdminMixin(ModelAdmin):
     download_template = ""
     download_title = ""

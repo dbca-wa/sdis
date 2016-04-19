@@ -4,18 +4,16 @@ from django.test.utils import override_settings
 
 import factory
 
-from pythia.documents.models import (ConceptPlan, ProjectPlan,
-        ProgressReport, ProjectClosure, StudentReport)
-from pythia.projects.models import (Project, ScienceProject,
-        CoreFunctionProject, CollaborationProject, StudentProject)
+from pythia.documents.models import (
+    ConceptPlan, ProjectPlan, ProgressReport, ProjectClosure, StudentReport)
+from pythia.projects.models import (
+    Project, ScienceProject, CoreFunctionProject, CollaborationProject,
+    StudentProject)
 
 
 @override_settings(
-    AUTHENTICATION_BACKENDS=(
-        'django.contrib.auth.backends.ModelBackend',
-        #'swingers.sauth.backends.EmailBackend'
-        ),
-    PERSONA_LOGIN=False)
+    AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend',),
+)
 class BaseTestCase(TestCase):
     pass
 

@@ -1,40 +1,53 @@
 from __future__ import (unicode_literals, absolute_import)
-
-from django.contrib.auth.models import Group
-from django.contrib.auth.admin import GroupAdmin
-from django.contrib import messages
-from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_protect
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
-
 from functools import update_wrapper
-from swingers.sauth.sites import AuditSite
-
-from pythia.admin import (UserAdmin, ProgramAdmin, DivisionAdmin,
-    WorkCenterAdmin, AreaAdmin, RegionAdmin, DistrictAdmin)
-from pythia.models import (User, Division, Program, WorkCenter, Area,
-    Address, Region, District)
-from pythia.documents.admin import (DocumentAdmin, ConceptPlanAdmin,
-    ProjectPlanAdmin)
-from pythia.documents.models import (ConceptPlan, ProjectPlan, ProgressReport,
-    StudentReport, ProjectClosure)
-from pythia.projects.admin import (ProjectAdmin, CollaborationProjectAdmin,
-    StudentProjectAdmin, ProjectMembershipAdmin, ResearchFunctionAdmin)
-from pythia.projects.models import (Project, ScienceProject,
-    CoreFunctionProject, CollaborationProject, StudentProject,
-    ProjectMembership, ResearchFunction)
-from pythia.reports.admin import ARARReportAdmin
-from pythia.reports.models import ARARReport
-
-
 import os
 
 from django.conf import settings
-from django.views import static
 from django.conf.urls.static import static as staticserve
-from pythia.views import (CommentUpdateView, comments_delete, comments_post,
-        update_cache, arar_dashboard)
+from django.contrib import admin, messages
+from django.contrib.auth.models import Group
+from django.contrib.auth.admin import GroupAdmin
+from django.core.urlresolvers import reverse
+from django.db.models.base import ModelBase
+from django.http import HttpResponseRedirect
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views import static
+
+from pythia.admin import (
+    AuditAdmin, UserAdmin, ProgramAdmin, DivisionAdmin,
+    WorkCenterAdmin, AreaAdmin, RegionAdmin, DistrictAdmin)
+from pythia.models import (
+    Audit, User, Division, Program,
+    WorkCenter, Area, Address, Region, District)
+from pythia.documents.admin import (
+    DocumentAdmin, ConceptPlanAdmin, ProjectPlanAdmin)
+from pythia.documents.models import (
+    ConceptPlan, ProjectPlan, ProgressReport, StudentReport, ProjectClosure)
+from pythia.projects.admin import (
+    ProjectAdmin, CollaborationProjectAdmin,
+    StudentProjectAdmin, ProjectMembershipAdmin, ResearchFunctionAdmin)
+from pythia.projects.models import (
+    Project, ScienceProject, CoreFunctionProject,
+    CollaborationProject, StudentProject,
+    ProjectMembership, ResearchFunction)
+from pythia.reports.admin import ARARReportAdmin
+from pythia.reports.models import ARARReport
+from pythia.views import (
+    CommentUpdateView, comments_delete, comments_post, update_cache,
+    arar_dashboard)
+
+
+class AuditSite(admin.AdminSite):
+    def register(self, model_or_iterable, admin_class=None, **options):
+        if isinstance(model_or_iterable, ModelBase):
+            model_or_iterable = [model_or_iterable]
+        for model in model_or_iterable:
+            if issubclass(model, Audit):
+                if not admin_class:
+                    admin_class = AuditAdmin
+
+            super(AuditSite, self).register(model, admin_class, **options)
 
 
 class PythiaSite(AuditSite):
@@ -108,18 +121,23 @@ class PythiaSite(AuditSite):
             url(r'^comments/delete/(\d+)/$',
                 wrap(comments_delete),
                 name='comments-delete'),
+
             url(r'^comments/post/$',
                 wrap(comments_post),
                 name='comments-post-comment'),
+
             url(r'^comments/edit/(?P<pk>\d+)/$',
                 wrap(CommentUpdateView.as_view()),
                 name='comments-edit'),
+
             # TODO: django_comments urls are not wrapped :(
             url(r'^comments/',
                 include('django_comments.urls')),
+
             url(r'^action/update-cache/$',
                 update_cache,
                 name="update_cache"),
+
             url(r'^arar_dashboard',
                 arar_dashboard,
                 name="arar_dashboard"),

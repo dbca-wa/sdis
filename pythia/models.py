@@ -1,68 +1,36 @@
 from __future__ import (division, print_function, unicode_literals,
-absolute_import)
+                        absolute_import)
+import copy
+import logging
 import reversion
 import threading
-import logging
-
 
 from django.conf import settings
 from django.core import validators
-from django.db.models import signals
 from django.core.mail import send_mail
+from django.core.exceptions import ValidationError, ImproperlyConfigured
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager, Group)
-from django.contrib.auth import get_user_model
-
-from django.db.models import Q
-from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.text import slugify
-from django.utils.translation import ugettext_lazy as _
-
-import logging
-from smart_selects.db_fields import ChainedForeignKey
-
-#from swingers.models import Audit, ActiveModel
-from django.contrib.gis.db import models
-
-from pythia.fields import Html2TextField
-
-from south.modelsinspector import add_introspection_rules
-#add_introspection_rules([], ["^myapp\.stuff\.fields\.SomeNewField"])
-
-logger = logging.getLogger(__name__)
-
-
-#from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
-from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
-
-# we can't do `from swingers import models` because that causes circular import
-#from swingers.models import Model, ForeignKey, DateTimeField
-
-from django.contrib.gis.db import models as geo_models
-from django.core.exceptions import ImproperlyConfigured
-from django.utils import timezone, six
-from django.db import router, models
-from django.db.models import signals
-from django.db.models.deletion import Collector
-
-
-#from swingers.models.managers import ActiveModelManager, ActiveGeoModelManager
-from django.db import models
-from django.db.models.query import QuerySet
-from django.db.models.sql.query import Query
-
 from django.contrib.gis.db import models as geo_models
 from django.contrib.gis.db.models.query import GeoQuerySet
 from django.contrib.gis.db.models.sql.query import GeoQuery
 
-import copy
+from django.db import router, models
+from django.db.models import signals
+from django.db.models.deletion import Collector
+from django.db.models.query import QuerySet
+from django.db.models.sql.query import Query
 
-logger = logging.getLogger("log." + __name__)
+from django.utils import timezone, six
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 
+# from south.modelsinspector import add_introspection_rules
+# add_introspection_rules([], ["^myapp\.stuff\.fields\.SomeNewField"])
+
+logger = logging.getLogger(__name__)
 _locals = threading.local()
 
 
@@ -175,7 +143,7 @@ class ActiveModel(models.Model):
         if not issubclass(type(type(self).objects), ActiveModelManager):
             raise ImproperlyConfigured(
                 "The ActiveModel objects manager is not a subclass of "
-                "swingers.base.models.managers.ActiveModelManager, if you "
+                "ActiveModelManager, if you "
                 "created your own objects manager, it must be a subclass of "
                 "ActiveModelManager.")
         super(ActiveModel, self).__init__(*args, **kwargs)
@@ -262,7 +230,7 @@ class ActiveGeoModel(ActiveModel):
         if not issubclass(type(type(self).objects), ActiveGeoModelManager):
             raise ImproperlyConfigured(
                 "The ActiveGeoModel objects manager is not a subclass of "
-                "swingers.base.models.models.ActiveGeoModelManager, if you "
+                "ActiveGeoModelManager, if you "
                 "created your own objects manager, it must be a subclass of "
                 "ActiveGeoModelManager.")
         super(ActiveGeoModel, self).__init__(*args, **kwargs)
@@ -381,7 +349,8 @@ class Audit(geo_models.Model):
         if errors:
             raise ValidationError(errors)
 # end swingers models
-#-----------------------------------------------------------------------------#
+
+# -----------------------------------------------------------------------------#
 # Report Parts
 #
 class ReportPart(object):
@@ -418,7 +387,7 @@ class LATEXReportPart(ReportPart):
     base = 'latex/includes/'
 
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------#
 # Shared classes: Administrative departmental structures
 #
 @python_2_unicode_compatible
@@ -465,7 +434,7 @@ class Area(Audit):  # , models.PolygonModelMixin):
         ordering = ['area_type','-northern_extent']
 
     def save(self, *args, **kwargs):
-	if self.get_northern_extent() is not None:
+        if self.get_northern_extent() is not None:
             self.northern_extent = self.get_northern_extent()
         super(Area, self).save(*args, **kwargs)
 
@@ -528,10 +497,10 @@ class District(models.Model):
     northern_extent = models.FloatField(null=True, blank=True)
     objects = DistrictManager()
     region = models.ForeignKey(
-    #ChainedForeignKey(
+        # ChainedForeignKey(
         Region,
-    #    chained_field="name", chained_model_field="name",
-    #    show_all=False, auto_choose=True,
+        #    chained_field="name", chained_model_field="name",
+        #    show_all=False, auto_choose=True,
         help_text=_("The region to which this district belongs."))
     mpoly = geo_models.MultiPolygonField(
         null=True, blank=True,
@@ -657,12 +626,12 @@ class Program(Audit, ActiveModel):
         help_text='The default custodian of data sets of this Program.')
 
     # About ------------------------------------------------------------------#
-    focus = Html2TextField(
+    focus = models.TextField(
         verbose_name='Program focus',
         blank=True, null=True,
         help_text="The program's focus as a semicolon-separated list of "
         "key words.")
-    introduction = Html2TextField(
+    introduction = models.TextField(
         verbose_name='Program introduction',
         blank=True, null=True,
         help_text="The program's mission in about 150 to 300 words.")
@@ -671,7 +640,7 @@ class Program(Audit, ActiveModel):
         ordering = ['position', 'cost_center']
 
     def __str__(self):
-        #return '[{0}-{1}] {2}'.format(self.cost_center, self.slug, self.name)
+        # return '[{0}-{1}] {2}'.format(self.cost_center, self.slug, self.name)
         return self.name
 
     def save(self, *args, **kw):
@@ -714,12 +683,14 @@ class Program(Audit, ActiveModel):
     @property
     def projects(self):
         Project = self.project_set.model
-        #return Project.objects.filter(program=self
+        # return Project.objects.filter(program=self
         #    ).filter(Q(instance_of='pythia.projects.models.ScienceProject') |
         #            Q(instance_of='pythia.projects.models.CoreFunctionProject')
         #    ).prefetch_related('documents')
-        return self.project_set.filter(type__in=[Project.SCIENCE_PROJECT,
-            Project.CORE_PROJECT]).prefetch_related('documents')
+        return self.project_set.filter(
+            type__in=[Project.SCIENCE_PROJECT,
+                      Project.CORE_PROJECT]).prefetch_related('documents')
+
 
 def set_smt_to_pl(sender, instance, created, **kwargs):
     """Add all Program Leaders to Group SMT.
@@ -966,21 +937,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_("The work center where most time is spent. Staff only."))
 
     # Academic profile -------------------------------------------------------#
-    profile_text = Html2TextField(
+    profile_text = models.TextField(
         blank=True, null=True,
         help_text=_("A profile text for the staff members, roughly three "
                     "paragraphs long."))
 
-    expertise = Html2TextField(
+    expertise = models.TextField(
         blank=True, null=True,
         help_text=_("A bullet point list of skills and expertise."))
 
-    curriculum_vitae = Html2TextField(
+    curriculum_vitae = models.TextField(
         blank=True, null=True,
         help_text=_("A brief curriculum vitae of academic qualifications and "
                     "professional memberships."))
 
-    projects = Html2TextField(
+    projects = models.TextField(
         blank=True, null=True,
         verbose_name=_("Projects outside SDIS"),
         help_text=_("Tell us about your other projects outside SDIS."))
@@ -993,13 +964,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_("The author code links users to their publications. "
                     "Staff only."))
 
-    publications_staff = Html2TextField(
+    publications_staff = models.TextField(
         blank=True, null=True,
         verbose_name=_("Staff publications"),
         help_text=_("A list of publications produced for the Department. "
                     "Staff only."))
 
-    publications_other = Html2TextField(
+    publications_other = models.TextField(
         blank=True, null=True,
         verbose_name=_("Other publications"),
         help_text=_("A list of publications produced under external "

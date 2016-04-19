@@ -2,27 +2,20 @@ from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 
 from collections import OrderedDict as OD
+from datetime import date
+import logging
+import json
+from polymorphic import PolymorphicModel, PolymorphicManager
+
 from django.contrib.auth.models import Group
 from django.db.models import signals
 import django.db.models.options as options
 from django.utils.encoding import python_2_unicode_compatible
-# from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
-
-
-# from swingers import models
-# from swingers.models import Audit
-# from swingers.models.managers import ActiveGeoModelManager
-
-import logging
-
-import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django_fsm.db.fields import FSMField, transition
-from polymorphic import PolymorphicModel, PolymorphicManager
-from datetime import date
 
 from pythia.models import Audit, ActiveGeoModelManager
 from pythia.fields import PythiaArrayField  # , PythiaTextField

@@ -128,9 +128,10 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand navbar-left" id="nav-home" href="{% url 'admin:index' %}" title="SDIS home">
-        <!--img src="{% static 'img/waTextBlack_80-bluebg.gif' %}" class="navbar-logo" alt="Government of Western Australia" /-->
-        <!--img src="{% static 'img/logo-dpaw.gif' %}" alt="Department of Parks and Wildlife" /-->
+      <a class="navbar-brand navbar-left"
+         id="nav-home"
+         href="{% url 'admin:index' %}"
+         title="SDIS home">
         SDIS
       </a>
     </div>
@@ -157,11 +158,14 @@
             <li class="dropdown-header">Annual Research Activity Report</li>
             {% if current_arar %}
             <li><a href="{% url 'admin:arar_dashboard' %}"
-            title="Read and work on progress reports"><span
-                class="glyphicon glyphicon-tasks"></span> Overview</a></li>
-            <li><a href="{# url 'admin:pythia_ararreport_detail' current_arar.pk #}" id="current-arar"
-                title="View Annual Research Activity Report ARAR (working version)"><span
-                class="glyphicon glyphicon-fire"></span> Print preview</a></li>
+                   title="Read and work on progress reports">
+                    <span class="glyphicon glyphicon-tasks"></span> Overview
+                </a></li>
+            <li><a href="{% url 'admin:pythia_ararreport_detail' current_arar.pk %}"
+                   id="current-arar"
+                   title="View Annual Research Activity Report ARAR (working version)">
+                   <span class="glyphicon glyphicon-fire"></span> Print preview
+               </a></li>
             {% endif %}
 
             {% if request.user.is_superuser %}

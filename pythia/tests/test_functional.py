@@ -43,7 +43,7 @@ class BaseLiveServerTestCase(AdminSeleniumWebDriverTestCase):
         session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
         session.save()
 
-        ## to set a cookie we need to first visit the domain.
+        # to set a cookie we need to first visit the domain.
         self.selenium.get(self.live_server_url)
         self.selenium.add_cookie(dict(
             name=settings.SESSION_COOKIE_NAME,
@@ -116,8 +116,7 @@ class LoginTests(BaseLiveServerTestCase):
 '''
     @override_settings(
         AUTHENTICATION_BACKENDS=(
-            'django.contrib.auth.backends.ModelBackend',
-            'swingers.sauth.backends.PersonaBackend'),
+            'django.contrib.auth.backends.ModelBackend',),
         PERSONA_LOGIN=True)
     def test_login_with_persona(self):
         # Override SITE_URL for this test -- persona requires it to be set
@@ -237,6 +236,10 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
     Full walkthrough of project and document life cycle.
     """
     def setUp(self):
+        """Setup the ScienceProjectApprovalTest.
+
+        Create groups and users.
+        """
         # a generic user
         self.user = UserFactory.create()
 
@@ -248,37 +251,36 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
         # Bob, a research scientist, wants to create a new science project.
         # Bob will be the principal scientist of that project, add team members,
         # write project documentation, submit docs for approval, and write updates.
-        self.bob = UserFactory.create(username='bob', first_name='Bob',
-                last_name='Bobson')
+        self.bob = UserFactory.create(
+            username='bob', first_name='Bob', last_name='Bobson')
 
         # John will join Bob's team. Then he should be able to execute
         # "team-only" actions.
-        self.john = UserFactory.create(username='john', first_name='John',
-                last_name='Johnson')
+        self.john = UserFactory.create(
+            username='john', first_name='John', last_name='Johnson')
 
         # Steven is Bob's Program Leader.
         # As a member of SMT, Steven is the first instance of approval.
-        self.steven = UserFactory.create(username='steven', first_name='Steven',
-                last_name='Stevenson')
-        #self.steven.groups.add(Group.objects.get(name='SMT'))
+        self.steven = UserFactory.create(
+            username='steven', first_name='Steven', last_name='Stevenson')
+        # self.steven.groups.add(Group.objects.get(name='SMT'))
         self.steven.groups.add(self.smt)
 
         # Marge is the Divisional Director.
         # As member of the Directorate, M is the highest instance of approval and has
         # resurrection powers for projects.
-        self.marge = UserFactory.create(username='marge', first_name='Marge',
-                last_name='Simpson')
+        self.marge = UserFactory.create(
+            username='marge', first_name='Marge', last_name='Simpson')
         self.marge.groups.add(self.scd)
 
         # Peter won't have anything to do with the project.
         # Peter should not be able to execute any "team-only" actions!
-        self.peter = UserFactory.create(username='peter', first_name='Peter',
-                last_name='Peterson')
+        self.peter = UserFactory.create(
+            username='peter', first_name='Peter', last_name='Peterson')
 
         self.project = ScienceProjectFactory.create(
-            creator=self.bob, modifier=self.bob,
-            #data_custodian=self.bob, site_custodian=self.bob, # not nominated yet
-            project_owner=self.bob)
+            # data_custodian=self.bob, site_custodian=self.bob,
+            creator=self.bob, modifier=self.bob, project_owner=self.bob)
 
     def test_new_project_status(self):
         """Test that the new project has the correct status.
@@ -289,12 +291,14 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
         """Test whether new project has correct documents.
 
         A new ScienceProject needs to have a new, empty ConceptPlan.
-        Let's assume the ConceptPlan is empty if the first field, "summary", is empty.
+        Let's assume the ConceptPlan is empty if the first field, "summary",
+        is empty.
         """
-        self.assertEqual(self.project.documents.instance_of(ConceptPlan).count(), 1)
+        self.assertEqual(
+            self.project.documents.instance_of(ConceptPlan).count(), 1)
         conceptplan = self.project.documents.instance_of(ConceptPlan).get()
         self.assertEqual(conceptplan.status, Document.STATUS_NEW)
-        #self.assertEqual(conceptplan.summary, "")
+        # self.assertEqual(conceptplan.summary, "")
 
         # Bob logs in
         self.create_preauthenticated_session(self.bob)
@@ -303,7 +307,8 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
         # TODO
 
         # He browses to the project
-        url = reverse('admin:projects_scienceproject_change', args=(self.project.id,))
+        url = reverse('admin:projects_scienceproject_change',
+                      args=(self.project.id,))
         self.selenium.get("%s%s" % (self.live_server_url, url))
         self.wait_page_loaded()
 

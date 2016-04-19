@@ -32,7 +32,8 @@ class ProjectModelTests(BaseTestCase):
     Base project tests
     """
     def test_creation_adds_project_membership(self):
-        """The sup scientist should be added to project team on project creation
+        """ Test that the supervising scientist is added to the project team on
+        project creation.
         """
         project = ProjectFactory.create()
         self.assertEqual(ProjectMembership.objects.count(), 1)
@@ -109,7 +110,7 @@ class ScienceProjectModelTests(BaseTestCase):
 
         Emphasis on transitions, pre- and postconditions, gate checks.
         """
-        #---------------------------------------------------------------------#
+        # ---------------------------------------------------------------------#
         # New project
         print("A new ScienceProject must be of STATUS_NEW.")
         self.assertEqual(self.project.status, Project.STATUS_NEW)
