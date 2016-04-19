@@ -20,8 +20,8 @@ import copy
 
 class ArrayFieldWidget(widgets.TextInput):
     def render(self, name, value, *args, **kwargs):
-        html = super(ArrayFieldWidget, self).render(name, value, *args,
-                                                    **kwargs)
+        html = super(ArrayFieldWidget, self).render(
+            name, value, *args, **kwargs)
         tag = ('dataTable%s' % kwargs['attrs'].get('id', ''))
 
         html += '<div id="{0}"></div><div>&nbsp;</div>'.format(tag)
@@ -107,9 +107,10 @@ class InlineEditWidgetWrapper(widgets.Widget):
     @property
     def media(self):
         if isinstance(self.widget, widgets.Textarea):
-            return forms.Media(js=[
-                'http://static.dpaw.wa.gov.au/static/libs/tinymce/4.3.9/tinymce.min.js',
-                'http://static.dpaw.wa.gov.au/static/libs/tinymce/4.3.9/jquery.tinymce.min.js'
+            cdn = 'http://static.dpaw.wa.gov.au/static/libs/'
+            return forms.Media(
+                js=[cdn + 'tinymce/4.3.9/tinymce.min.js',
+                    cdn + 'tinymce/4.3.9/jquery.tinymce.min.js'
             ]) + self.widget.media
         else:
             return self.widget.media
@@ -135,14 +136,6 @@ class InlineEditWidgetWrapper(widgets.Widget):
             url = reverse('admin:%s_%s_change' % (opts.app_label,
                                                   opts.model_name),
                           args=(quote(self.form.instance.pk),))
-
-        # TODO: we are guessing here that all Textarea widgets are markdown, it
-        # might be smarter to convert the value in the form or maybe even model
-        # admin
-
-        # MARKDOWN: enable next two lines to store markdown
-        # if value and isinstance(self.widget, widgets.Textarea):
-        #    value = text2html(value)
 
         output = [self.widget.render(name, value, *args, **kwargs)]
         # name - input name, value, kwargs['attrs']['id'] input id
@@ -201,10 +194,11 @@ class LocationWidget(widgets.MultiWidget):
 
     def __init__(self, attrs=None):
         _widgets = (
-            widgets.TextInput(attrs={'class':'locn_locality'}),
-            NumberInput(attrs={'class':'locn_distance', 'maxlength':'4'}),
-            widgets.Select(attrs={'class':'locn_direction'}, choices=LocationWidget.DIRECTION_CHOICES),
-            widgets.TextInput(attrs={'class':'locn_town'}),
+            widgets.TextInput(attrs={'class': 'locn_locality'}),
+            NumberInput(attrs={'class': 'locn_distance', 'maxlength': '4'}),
+            widgets.Select(attrs={'class': 'locn_direction'},
+                           choices=LocationWidget.DIRECTION_CHOICES),
+            widgets.TextInput(attrs={'class': 'locn_town'}),
         )
         super(LocationWidget, self).__init__(_widgets, attrs)
 
@@ -212,7 +206,8 @@ class LocationWidget(widgets.MultiWidget):
         if value:
             value = value.split('|')
             if len(value) > 1:
-                return [value[0] or None, value[1] or None, value[2] or None, value[3] or None]
+                return [value[0] or None, value[1] or None,
+                        value[2] or None, value[3] or None]
             else:
                 try:
                     value[0].split("Within the locality of ")[1]
@@ -225,7 +220,8 @@ class LocationWidget(widgets.MultiWidget):
         return [None, None, None, None]
 
     def format_output(self, rendered_widgets):
-        return rendered_widgets[0] + ' - ' + rendered_widgets[1] + 'km(s) ' + rendered_widgets[2] + ' of ' + rendered_widgets[3]
+        return rendered_widgets[0] + ' - ' + rendered_widgets[1] + 'km(s) ' +\
+        rendered_widgets[2] + ' of ' + rendered_widgets[3]
 
 # TODO: this code should work for Django 1.6
 #

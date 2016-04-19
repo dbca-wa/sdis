@@ -141,6 +141,7 @@ class Document(PolymorphicModel, Audit):
     objects = DocumentManager()
 
     class Meta:
+        """Class options."""
         verbose_name = _("Document")
         verbose_name_plural = _("Documents")
         get_latest_by = 'created'
@@ -162,10 +163,17 @@ class Document(PolymorphicModel, Audit):
         #    self.setup()
 
     def __str__(self):
-        """Return the document type and project year/number."""
-        return mark_safe("{0} {1}-{2:03d}".format(
-            self._meta.verbose_name, self.project.type,
+        """Return the document type and project type/year/number."""
+        from pythia.projects.models import Project
+        return mark_safe("{0} {1} {2}-{3:03d}".format(
+            self._meta.verbose_name,
+            Project.PROJECT_ABBREVIATIONS[self.project.type],
             self.project.year, self.project.number))
+
+    @property
+    def fullname(self):
+        """The HTML-safe document name."""
+        return mark_safe(self.__str__())
 
     @property
     def download_title(self):
@@ -786,16 +794,6 @@ class ProjectPlan(Document):
         verbose_name_plural = _("Project Plans")
         display_order = 20
 
-    def __str__(self):
-        """The document name."""
-        return "Project Plan {0}-{1}".format(self.project.year,
-                                             self.project.number)
-
-    @property
-    def fullname(self):
-        """The HTML-safe document name."""
-        return mark_safe(self.__str__())
-
     def repair_operating_budget(self):
         """Reset the operating budget to its default.
 
@@ -1128,14 +1126,13 @@ class ProgressReport(Document):
 
     def __str__(self):
         """The name including reporting period."""
-        return "Progress Report {0}-{1} (FY {2}-{3})".format(
-                self.project.year, self.project.number,
-                str(self.year-1), str(self.year))
-
-    @property
-    def fullname(self):
-        """The HTML-safe name."""
-        return mark_safe(self.__str__())
+        from pythia.projects.models import Project
+        return "Progress Report {0} {1}-{2:03d} (FY {3}-{4})".format(
+            Project.PROJECT_ABBREVIATIONS[self.project.type],
+            self.project.year,
+            self.project.number,
+            str(self.year-1),
+            str(self.year))
 
     def can_seek_review(self):
         """
@@ -1258,16 +1255,6 @@ class ProjectClosure(Document):
         verbose_name_plural = _("Project Closures")
         display_order = 50
 
-    def __str__(self):
-        """The document name."""
-        return "Project Closure {0}-{1}".format(
-                self.project.year, self.project.number)
-
-    @property
-    def fullname(self):
-        """The HTML-safe document name."""
-        return mark_safe(self.__str__())
-
     @transition(field='status',
                 verbose_name=_("Approve"),
                 save=True,
@@ -1327,15 +1314,14 @@ class StudentReport(Document):
         display_order = 40
 
     def __str__(self):
-        """The document name."""
-        return "Progress Report {0}-{1} (FY {2}-{3})".format(
-                self.project.year, self.project.number,
-                str(self.year-1), str(self.year))
-
-    @property
-    def fullname(self):
-        """The HTML-safe document name."""
-        return mark_safe(self.__str__())
+        """The name including reporting period."""
+        from pythia.projects.models import Project
+        return "Progress Report {0} {1}-{2:03d} (FY {3}-{4})".format(
+            Project.PROJECT_ABBREVIATIONS[self.project.type],
+            self.project.year,
+            self.project.number,
+            str(self.year-1),
+            str(self.year))
 
     @transition(field='status',
                 verbose_name=_("Approve"),

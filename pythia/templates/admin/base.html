@@ -322,7 +322,7 @@
                 >Welcome, {% firstof user.short_name user.email %} <b class="caret"></b></a>
             <ul class="dropdown-menu">
             {% block userlinks %}
-                <li class="dropdown-header">{% if request.user.is_external %}Persona{% else %}DPaW{% endif %} account</li>
+                <li class="dropdown-header">DPaW account</li>
                 {% if not request.user.completed_registration %}
                 <li><a href="{% url 'admin:pythia_user_change' request.user.pk %}"
                     title="View and edit your SDIS Profile">
@@ -349,7 +349,9 @@
                 <li><a href="{{ docsroot }}" target ="_" id="menu-admin-docs"
                     title="Read admin docs in new tab">{% trans 'Help' %}</a></li>
                 {% endif %}
-                <li><a href="{% static 'docs/dev/html/index.html' %}" target="_" id="dev-docs" title="Browse developer docs in new tab">Developer documentation</a></li>
+                <li><a href="{% static 'docs/dev/html/index.html' %}"
+                       target="_" id="dev-docs"
+                       title="Browse SDIS docs in new tab">Documentation</a></li>
                 <!--
                 <li><a href="/api/" target="_" id="menu-api" title="Browse API in new tab">API endpoints</a></li>
                 <li><a href="/api-docs/" target="_" id="menu-api-docs" title="Browse API docs in new tab">API docs</a></li>
