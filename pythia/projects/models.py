@@ -816,22 +816,18 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     def project_type_year_number(self):
         """Return project type - year - number."""
         return Project.clsm_project_type_year_number(
-            self.type, self.year, str(self.number).zfill(3))
+            self.type, self.year, self.number)
 
     @property
     def project_year_number(self):
         """Return project year - number."""
-        return Project.clsm_project_year_number(
-            self.year, str(self.number).zfill(3))
+        return Project.clsm_project_year_number(self.year, self.number)
 
     @property
     def project_name_html(self):
         """Return the HTML-safe project type - year - number - title."""
         return Project.clsm_project_type_year_number_name(
-            self.PROJECT_ABBREVIATIONS[self.type],
-            self.year,
-            str(self.number).zfill(3),
-            self.title)
+            self.type, self.year, self.number, self.title)
 
     @property
     def project_title_html(self):
