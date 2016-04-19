@@ -2,13 +2,16 @@
   $.ajaxSetup({
     beforeSend: function() {
       if (typeof(tinyMCE) != "undefined") {
-        pythia.activeEdColour = $(tinyMCE.activeEditor.getContainer()).css('border-color');
+        pythia.activeEdColour = $(
+            tinyMCE.activeEditor.getContainer()
+        ).css('border-color');
         $(tinyMCE.activeEditor.getContainer()).css('border-color', '#bb0000');
       }
     },
     complete: function() {
       if (typeof(tinyMCE) != "undefined") {
-        $(tinyMCE.activeEditor.getContainer()).css('border-color', pythia.activeEdColour);
+        $(tinyMCE.activeEditor.getContainer())
+        .css('border-color', pythia.activeEdColour);
         hasChanged = false; // hasChanged defined in "admin/change_form.html"
       }
     }
@@ -82,12 +85,13 @@
     $(function() {
       tinyMCE.init({
         menubar: false,
-        toolbar: 'undo redo | bold italic underline subscript superscript | removeformat | bullist numlist | link charmap | table | spellchecker | code',
+        toolbar: 'undo redo | bold italic underline subscript superscript | removeformat | bullist numlist | link charmap paste | table | spellchecker | code',
+        contextmenu: "paste link inserttable | cell row column deletetable",
         selector: '#' + id,
         plugins: [
           'advlist autolink lists link charmap print preview anchor',
           'searchreplace visualblocks code fullscreen autoresize',
-          'insertdatetime contextmenu paste wordcount spellchecker table'
+          'insertdatetime contextmenu paste wordcount spellchecker table paste'
         ],
         spellchecker_languages : "+English=en-au",
         spellchecker_rpc_url: '/spillchuck/',
