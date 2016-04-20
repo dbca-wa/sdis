@@ -47,51 +47,37 @@ class UserFactory(factory.django.DjangoModelFactory):
 class ProjectFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Project
 
-    year = 2013
-    number = 1
+    year = 2016
     title = "Test Project"
     type = 0
     project_owner = factory.SubFactory(UserFactory)
+    creator = factory.SubFactory(UserFactory)
 
 
-class ScienceProjectFactory(factory.django.DjangoModelFactory):
+class ScienceProjectFactory(ProjectFactory):
     FACTORY_FOR = ScienceProject
-
-    year = 2013
-    number = 1
     title = "Test Science Project"
     type = 0
-    project_owner = factory.SubFactory(UserFactory)
 
 
-class CoreFunctionProjectFactory(factory.django.DjangoModelFactory):
+class CoreFunctionProjectFactory(ProjectFactory):
     FACTORY_FOR = CoreFunctionProject
-
-    year = 2013
-    number = 2
     title = "Test Core Function"
     type = 1
-    project_owner = factory.SubFactory(UserFactory)
 
 
-class CollaborationProjectFactory(factory.django.DjangoModelFactory):
+class CollaborationProjectFactory(ProjectFactory):
     FACTORY_FOR = CollaborationProject
 
-    year = 2013
-    number = 3
     title = "Test Collaboration Project"
     type = 2
-    project_owner = factory.SubFactory(UserFactory)
 
 
-class StudentProjectFactory(factory.django.DjangoModelFactory):
+class StudentProjectFactory(ProjectFactory):
     FACTORY_FOR = StudentProject
 
-    year = 2013
-    number = 4
     title = "Test Student Project"
     type = 3
-    project_owner = factory.SubFactory(UserFactory)
 
 
 class ConceptPlanFactory(factory.django.DjangoModelFactory):
@@ -113,6 +99,7 @@ class ProjectPlanFactory(factory.django.DjangoModelFactory):
     knowledge_transfer = "knowledge transfer"
     project_tasks = "project"
     references = "references"
+
 
 class ProgressReportFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = ProgressReport

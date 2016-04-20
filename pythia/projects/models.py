@@ -39,6 +39,7 @@ from pythia.documents.models import (
 from pythia.models import ActiveGeoModelManager, Audit, ActiveModel
 from pythia.models import Program, WebResource, Division, Area, User
 from pythia.reports.models import ARARReport
+from pythia.utils import snitch
 
 logger = logging.getLogger(__name__)
 
@@ -153,10 +154,10 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     COLLABORATION_PROJECT = 2
     STUDENT_PROJECT = 3
     PROJECT_TYPES = (
-        (SCIENCE_PROJECT, _('Science project')),
-        (CORE_PROJECT, _('Core function project')),
-        (COLLABORATION_PROJECT, _('Collaboration project')),
-        (STUDENT_PROJECT, _('Student project')),
+        (SCIENCE_PROJECT, _('Science Project')),
+        (CORE_PROJECT, _('Core Function')),
+        (COLLABORATION_PROJECT, _('External Collaboration')),
+        (STUDENT_PROJECT, _('Student Project')),
     )
 
     PROJECT_ABBREVIATIONS = {
@@ -324,10 +325,11 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     def __str__(self):
         """The project name: Type, year-number, title."""
-        return mark_safe("%s %s-%s %s" % (
-            self.get_type_display(),
-            self.year, self.number,
-            strip_tags(self.title)))
+        return "{0} {1}-{2:03d} {3}".format(
+            Project.PROJECT_ABBREVIATIONS[self.type],
+            self.year,
+            self.number,
+            strip_tags(self.title))
 
     @property
     def fullname(self):
@@ -407,21 +409,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         Concept Plan has been approved.
         Other projects are fast-tracked to status PROJECT_ACTIVE on `setup()`.
         """
-        try:
-            has_approved_conceptplan = self.documents.instance_of(
-                    ConceptPlan).latest().is_approved
-            msg = "Approved ConceptPlan found: {0}".format(
-                    has_approved_conceptplan)
-            logger.info(msg)
-            if settings.DEBUG:
-                print(msg)
-            return has_approved_conceptplan
-        except:
-            msg = "ConceptPlan not found but required for project.endorse()!"
-            logger.info(msg)
-            if settings.DEBUG:
-                print(msg)
+        if not self.documents.instance_of(ConceptPlan):
+            snitch("Cannot endorse: {0} has missing ConceptPlan".format(
+                self.fullname))
             return False
+        else:
+            return self.documents.instance_of(ConceptPlan).latest().is_approved
 
     @transition(field=status,
                 save=True,
@@ -437,17 +430,11 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
         Generates ProjectPlan as required for SPP and CF, skipped by others.
         """
-        msg = "Project.endorse() about to add a ProjectPlan"
-        logger.info(msg)
+        snitch("Project.endorse() adding a ProjectPlan for {0}".format(
+            self.fullname))
         if not self.documents.instance_of(ProjectPlan):
-            ProjectPlan.objects.create(
-                    project=self,
-                    creator=self.creator,
-                    modifier=self.modifier)
-        msg = self.__dict__
-        logger.info(msg)
-        if settings.DEBUG:
-            print(msg)
+            p = ProjectPlan.objects.create(project=self)
+            print(p)
 
     # PENDING -> ACTIVE ------------------------------------------------------#
     def can_approve(self):
@@ -456,12 +443,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
         A project can only become ACTIVE if its Project Plan is approved.
         """
-        try:
-            return self.documents.instance_of(ProjectPlan).latest().is_approved
-        except:
-            logger.info('ProjectPlan not found! Cannot approve Project without'
-                        ' approved ProjectPlan!')
+        if not self.documents.instance_of(ProjectPlan):
+            snitch("Cannot approve: {0} has missing ProjectPlan".format(
+                self.fullname))
             return False
+        else:
+            return self.documents.instance_of(ProjectPlan).latest().is_approved
 
     @transition(field=status,
                 save=True,
@@ -651,11 +638,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         Projects can be completed if the final progress report and project
         closure are approved.
         """
-        lpr = self.documents.instance_of(ProgressReport).latest()
-        return (lpr.is_final_report and
-                lpr.is_approved and
-                self.documents.instance_of(
-                    ProjectClosure).latest().is_approved)
+        if self.documents.instance_of(ProgressReport).exists():
+            lpr = self.documents.instance_of(ProgressReport).latest()
+            return (lpr.is_final_report and
+                    lpr.is_approved and
+                    self.documents.instance_of(
+                        ProjectClosure).latest().is_approved)
 
     @transition(field=status,
                 verbose_name=_("Complete final update"),
@@ -960,12 +948,14 @@ class ScienceProject(Project):
 
     @property
     def progressreport(self):
-        """
-        Return the latest progress report.
+        """Return the latest progress report or None.
 
         TODO returns the latest progress report, not using the year.
         """
-        return self.documents.instance_of(ProgressReport).latest() or None
+        if not ProgressReport.objects.filter(project=self).exists():
+            return None
+        else:
+            return self.documents.instance_of(ProgressReport).latest()
 
     def get_progressreport(self, year):
         """Return the ProgressReport for a given year."""
@@ -1031,11 +1021,14 @@ class CoreFunctionProject(Project):
 
     @property
     def progressreport(self):
-        """Return the latest progress report. Same as ScienceProject.
+        """Return the latest progress report or None. Same as ScienceProject.
 
         TODO returns the latest progress report, not using the year.
         """
-        return self.documents.instance_of(ProgressReport).latest() or None
+        if not ProgressReport.objects.filter(project=self).exists():
+            return None
+        else:
+            return self.documents.instance_of(ProgressReport).latest()
 
     def get_progressreport(self, year):
         """Return the ProgressReport for a given year."""

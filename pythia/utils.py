@@ -10,43 +10,51 @@ from html2text import HTML2Text
 import json
 import markdown
 
-from django.template.defaultfilters import stringfilter
-from django.utils.encoding import force_unicode
-from django.utils.safestring import mark_safe
 
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
-
-from django.conf import settings
+from django.utils.encoding import force_unicode
+from django.utils.safestring import mark_safe
 
 import logging
 logger = logging.getLogger(__name__)
 
+
+def snitch(msg):
+    """Write a message to log, if DEBUG also to console."""
+    logger.info(msg)
+    if settings.DEBUG:
+        print(msg)
+
+
 def mail_from_template(subject, recipients, template_basename, context):
-    #template_html = get_template('{0}.html'.format(template_basename))
+    # template_html = get_template('{0}.html'.format(template_basename))
     template_text = get_template('{0}.txt'.format(template_basename))
     ctx = Context(context)
 
     for user in recipients:
         target = '"{0}" <{1}>'.format(user.get_full_name(), user.email)
         ctx['user'] = user
-        #content_html = template_html.render(ctx)
+        # content_html = template_html.render(ctx)
         content_text = template_text.render(ctx)
         msg = EmailMultiAlternatives(
-                '[SDIS] {0}'.format(subject), content_text, 
+                '[SDIS] {0}'.format(subject), content_text,
                 settings.DEFAULT_FROM_EMAIL, [target])
-        #msg.attach_alternative(content_html, "text/html")
+        # msg.attach_alternative(content_html, "text/html")
         msg.send()
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------#
 # HTML, Markdown, TinyMCE HTML WYSIWYG to markdown in database text fields
 #
+
+
 def text2html(value):
     extensions = ["nl2br", "pythia.md_ext.superscript",
                   "pythia.md_ext.subscript"]
     return mark_safe(markdown.markdown(force_unicode(value), extensions))
-                                    #safe_mode=True, enable_attributes=False))
+
 
 class PythiaHTML2Text(HTML2Text):
     def __init__(self, *args, **kwargs):
@@ -67,8 +75,8 @@ def html2text(value):
 
 
 #-----------------------------------------------------------------------------#
-# Version information 
-# 
+# Version information
+#
 def get_version(version=None):
     "Returns a PEP 386-compliant version number from VERSION."
     if version is None:
@@ -135,7 +143,7 @@ def is_list_of_lists_of_navigable_strings(obj):
 
     An example are tables stored in Markdown.
     """
-    return (type(obj) == list and 
+    return (type(obj) == list and
             type(obj[0]) == list and
             type(obj[0][0]) == NS)
 
@@ -150,7 +158,7 @@ def list2htmltable(some_string):
     table_html = '<table style="width:400px;" border="1" cellpadding="2"><tbody>{0}</tbody></table>'
     row_html = '<tr>{0}</tr>'
     cell_html = '<td>{0}</td>'
-    
+
     try:
         return table_html.format(
             ''.join([row_html.format(
@@ -164,7 +172,7 @@ def list2htmltable(some_string):
 def extract_md_tables(html_string):
     '''Returns a given HTML string with markdown tables converted to HTML tables.
 
-    Use this method to convert any Markdown table stored in model fields of type 
+    Use this method to convert any Markdown table stored in model fields of type
     text to an HTML table while discarding non-table content.
 
     '''
@@ -177,13 +185,10 @@ def extract_md_tables(html_string):
 def convert_md_tables(html_string):
     '''Returns a given HTML string with markdown tables converted to HTML tables.
 
-    Use this method to convert any Markdown table stored in model fields of type 
+    Use this method to convert any Markdown table stored in model fields of type
     text to an HTML table.
 
     `@param html_string` an HTML string containing MArkdown tables
     '''
     pp = [p.contents for p in BS(html_string).find_all('p')] # TODO extract all tags
     # TODO convert only md tables, keep the rest
-
-
-
