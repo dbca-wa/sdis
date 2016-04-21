@@ -13,6 +13,12 @@ Things to do here
 -----------------
 :ref:`workflows`
 
+* Browse projects, export to spreadsheets
+* Create a new project
+* Provide input to project documentation: Concept plans, project plans,
+  progress reports for ARAR, closure forms
+* Submit project documentation for review and approval
+
 Frequently asked questions
 --------------------------
 :ref:`faq`.
