@@ -24,7 +24,7 @@ from functools import update_wrapper
 
 class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
 
-    list_display = ('__str__','association')
+    list_display = ('__str__', 'association')
     exclude = ('effective_from', 'effective_to', 'leader')
 
     def function_leader(self, obj):
@@ -63,15 +63,16 @@ class ProjectMembershipAdmin(BaseAdmin):
         rof = super(ProjectMembershipAdmin, self).get_readonly_fields(request,
                                                                       obj)
         if ('_popup' in request.REQUEST):
-            # The user can only be changed when adding (adding someone else), not edit:
-            if request.resolver_match.url_name == 'projects_projectmembership_change':
+            # The user can only be changed when adding (adding someone else),
+            # not edit:
+            if (request.resolver_match.url_name ==
+                    'projects_projectmembership_change'):
                 rof += ('user',)
 
                 # if the project is given as request parameter:
                 # pre-set project in get_form and make read-only here
                 if request.GET.get('project'):
                     rof += ('project',)
-
 
         return rof
 
@@ -82,8 +83,6 @@ class ProjectMembershipAdmin(BaseAdmin):
     #    result = super(ProjectMembershipAdmin, self).get_form(request, obj, **kwargs)
     #    result.base_fields['project'].initial = request.GET.get('project')
     #    return result
-
-
 
 class ProjectAdmin(BaseAdmin):
     list_display = ('project_id', 'project_title', 'type', 'year', 'number',
@@ -96,30 +95,27 @@ class ProjectAdmin(BaseAdmin):
     list_filter = ('type', 'program', 'status')
 
     def get_fieldsets(self, request, obj=None):
-        #print("project admin get fieldsets")
-        #fs = super(ProjectAdmin, self).get_fieldsets(request, obj)
-        #return fs
+        # print("project admin get fieldsets")
+        # fs = super(ProjectAdmin, self).get_fieldsets(request, obj)
+        # return fs
         return (
-        ('Project details', {
-            'classes': ('collapse in',),
-            'description': "Keep mandatory project information up to date",
-            'fields': ('year','number','type', 'title',
-                'project_owner',
-                #'site_custodian',
-                'data_custodian',
-                'program','output_program','research_function',
-                'start_date', 'end_date'),}),
-        ('Project Location', {
-            'description': "Enter areas of relevance to the project",
-            'classes': ('collapse',),
-            'fields': ('areas',),}),
-        ('Project display', {
-            'description': "Determine how and where this project is displayed",
-            'classes': ('collapse',),
-            'fields': ('image', 'tagline', 'comments', 'position'),})
-        )
-
-
+            ('Project details', {
+                'classes': ('collapse in',),
+                'description': "Keep mandatory project information up to date",
+                'fields': ('year', 'number', 'type', 'title',
+                           'project_owner', 'data_custodian',
+                           # 'site_custodian',
+                           'program', 'output_program', 'research_function',
+                           'start_date', 'end_date'), }),
+            ('Project Location', {
+                'description': "Enter areas of relevance to the project",
+                'classes': ('collapse',),
+                'fields': ('areas',), }),
+            ('Project display', {
+                'description': "Make your project stand out!",
+                'classes': ('collapse',),
+                'fields': ('image', 'tagline', 'comments', 'position'), })
+            )
 
     def project_id(self, obj):
         return obj.project_year_number
@@ -186,7 +182,7 @@ class ProjectAdmin(BaseAdmin):
             'program', 'project_owner', 'modifier')
 
     def response_add(self, request, obj, post_url_continue=None):
-        #if post_url_continue is None:
+        # if post_url_continue is None:
         #    post_url_continue = reverse(
         #        'admin:%s_%s_change' % (self.opts.app_label,
         #                                obj._meta.model_name),
@@ -206,10 +202,17 @@ class ProjectAdmin(BaseAdmin):
         )
 
     def get_readonly_fields(self, request, obj=None):
+        """Control which fields can be updated by whom.
+
+        Only superuser or Group 'SCD' can change project year or number.
+        Project type can only be changed in add view, not later on, as this
+        would possibly require the deletion and creation of other documents.
+        Therefore, setting the project type is an irreversible decision.
+        """
         rof = super(ProjectAdmin, self).get_readonly_fields(request, obj)
 
         if not ((request.user.is_superuser) or
-            (request.user in Group.objects.get_or_create(
+                (request.user in Group.objects.get_or_create(
                 name='SCD')[0].user_set.all())):
             # no one except Directorate and su should update year or number
             rof += ('year', 'number',)
@@ -287,9 +290,10 @@ class ProjectAdmin(BaseAdmin):
                     'object_name': 'project {0} ({1})'.format(
                         obj.project_type_year_number, obj.title_plain),
                     'object_url': request.build_absolute_uri(
-                        reverse(pythia_urlname(obj.opts, 'change'), args=[obj.pk])),
+                        reverse(pythia_urlname(obj.opts, 'change'),
+                                args=[obj.pk])),
                     'status': [x[1] for x in obj.STATUS_CHOICES if
-                        x[0] == transition][0],
+                               x[0] == transition][0],
                     'explanation': True,
                 }
                 mail_from_template('{0} has been updated'.format(
@@ -329,7 +333,7 @@ class ProjectAdmin(BaseAdmin):
         }
         context.update(extra_context or {})
         return super(ProjectAdmin, self).history_view(request, object_id,
-                                                       extra_context=context)
+                                                      extra_context=context)
 
     def get_form(self, request, obj=None, **kwargs):
         """
@@ -343,7 +347,7 @@ class ProjectAdmin(BaseAdmin):
         result.base_fields['program'].initial = request.user.program
         result.base_fields['project_owner'].initial = request.user
         result.base_fields['data_custodian'].initial = request.user
-        #result.base_fields['site_custodian'].initial = request.user
+        # result.base_fields['site_custodian'].initial = request.user
         return result
 
     def add_view(self, request, form_url='', extra_context=None):
@@ -357,39 +361,41 @@ class ProjectAdmin(BaseAdmin):
             if form.is_valid():
                 self.model = PROJECT_CLASS_MAP[form.cleaned_data['type']]
 
-        result = super(ProjectAdmin, self).add_view(request, form_url,
-                extra_context)
+        result = super(ProjectAdmin, self).add_view(
+            request, form_url, extra_context)
         self.model = temp
         return result
 
     def formfield_for_dbfield(self, db_field, **kwargs):
-        formfield = super(ProjectAdmin, self).formfield_for_dbfield(db_field,
-                                                                    **kwargs)
+        formfield = super(ProjectAdmin, self).formfield_for_dbfield(
+            db_field, **kwargs)
         if db_field.name == "areas":
             formfield.widget = AreasWidgetWrapper(formfield.widget)
         return formfield
 
-class CollaborationProjectAdmin(ProjectAdmin):
 
+class CollaborationProjectAdmin(ProjectAdmin):
+    """Admin for External Collaboration"""
     def get_fieldsets(self, request, obj=None):
-        #print("COL admin get fieldsets")
-        return  (
-        ('Collaboration details', {
-            'classes': ('collapse in',),
-            'description': "Details for the overview table in the "
-            "Annual Research Activity Report",
-            'fields': ('name','budget',),}),
-        ) + super(CollaborationProjectAdmin, self).get_fieldsets(request, obj)
+        return (
+            ('Collaboration details', {
+                'classes': ('collapse in',),
+                'description': "Details for the overview table in the "
+                "Annual Research Activity Report",
+                'fields': ('name', 'budget',), }),
+            ) + super(CollaborationProjectAdmin, self).get_fieldsets(
+                request, obj)
 
 
 class StudentProjectAdmin(ProjectAdmin):
+    """Admin for StudentProject"""
 
     def get_fieldsets(self, request, obj=None):
-        #print("STP admin get fieldsets")
-        return  (
-        ('Student Project details', {
-            'classes': ('collapse in',),
-            'description': "Details for the overview table in the "
-            "Annual Research Activity Report",
-            'fields': ('level','organisation',),}),
-        ) + super(StudentProjectAdmin, self).get_fieldsets(request, obj)
+        return (
+            ('Student Project details', {
+                'classes': ('collapse in',),
+                'description': "Details for the overview table in the "
+                "Annual Research Activity Report",
+                'fields': ('level', 'organisation',), }),
+                ) + super(StudentProjectAdmin, self).get_fieldsets(
+                    request, obj)

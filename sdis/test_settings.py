@@ -7,9 +7,7 @@ INSTALLED_APPS += (
 
 SOUTH_TESTS_MIGRATE = False
 SKIP_SOUTH_TESTS = True
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
-# Test runner settings.
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
     '--nocapture',

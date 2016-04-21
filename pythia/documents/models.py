@@ -22,6 +22,7 @@ from pythia.fields import PythiaArrayField  # , PythiaTextField
 from pythia.documents.utils import (update_document_permissions,
                                     documents_upload_to)
 from pythia.reports.models import ARARReport
+from pythia.utils import snitch
 
 logger = logging.getLogger(__name__)
 
@@ -157,7 +158,12 @@ class Document(PolymorphicModel, Audit):
         # created = True if not self.pk else False
 
         super(Document, self).save(*args, **kwargs)
-        update_document_permissions(self)  # hack: give team access
+        try:
+            update_document_permissions(self)  # hack: give team access
+        except:
+            snitch("Document {0} couldn't update permissions".format(
+                self.__str__()
+            ))
 
         # if created:
         #    self.setup()

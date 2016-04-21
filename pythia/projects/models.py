@@ -338,12 +338,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     def save(self, *args, **kwargs):
         """
-        Save the project and call its setup method.
+        Save the project and call its setup method if created.
 
         The setup method is the transition into the state PROJECT_NEW.
-
-        The project owner is a project member by default (refs SDIS-241):
-        If created, add a ProjectMembership for the project owner.
+        The project owner becomes a project member on project creation.
+        The project number defaults to the next available number for the
+        given project year.
         """
         created = True if not self.pk else False
 
@@ -352,10 +352,6 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         super(Project, self).save(*args, **kwargs)
 
         if created:
-            ProjectMembership.objects.create(
-                project=self,
-                user=self.project_owner,
-                role=ProjectMembership.ROLE_SUPERVISING_SCIENTIST)
             self.setup()
 
     # Make self._meta accessible to templates
@@ -398,7 +394,10 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     #
     def setup(self):
         """Perform post-save project setup."""
-        pass
+        ProjectMembership.objects.create(
+            project=self,
+            user=self.project_owner,
+            role=ProjectMembership.ROLE_SUPERVISING_SCIENTIST)
 
     # NEW -> PENDING ---------------------------------------------------------#
     def can_endorse(self):
@@ -1497,14 +1496,28 @@ def projectmembership_post_save(sender, instance, created, **kwargs):
      running loaddata to dev/test/uat or restoring database
     """
     refresh_project_member_cache_fields(instance)
-    from pythia.documents.utils import update_document_permissions
-    [update_document_permissions(d) for d in instance.project.documents.all()]
+    from pythia.documents.utils import update_document_permissions as udp
+    [udp(d) for d in instance.project.documents.all()]
 signals.post_save.connect(projectmembership_post_save,
                           sender=ProjectMembership)
 
 
 def projectmembership_post_delete(sender, instance, using, **kwargs):
-    """Post delete hook to refresh cached project membership lists."""
+    """Post delete hook to refresh cached project membership lists.
+
+    Built-in fail safe against project being deleted: only runs if instance
+    exists.
+    """
     refresh_project_member_cache_fields(instance, remove=True)
 signals.post_delete.connect(projectmembership_post_delete,
                             sender=ProjectMembership)
+
+
+def project_pre_delete(sender, instance, using, **kwargs):
+    """Project pre delete: Delete related documents and team memberships.
+
+    This avoids confusion and heartache for document and membership hooks.
+    """
+    [d.delete() for d in instance.documents.all()]
+    [m.delete() for m in instance.projectmembership_set.all()]
+signals.pre_delete.connect(project_pre_delete, sender=Project)

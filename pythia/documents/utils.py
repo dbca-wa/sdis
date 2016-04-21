@@ -9,6 +9,7 @@ This module contains helpers for:
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 from django.db.models.signals import post_syncdb
+from pythia.utils import snitch
 import logging
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ def update_document_permissions(document):
 
     # TODO: handle removing permissions too.
     opts = document._meta
-    logger.info("Post-save: Updating permissions for document {0}".format(
+    snitch("Post-save: Updating permissions for document {0}".format(
         document.__str__()))
 
     for action in ["submit", "change"]:
@@ -42,7 +43,7 @@ def update_document_permissions(document):
             opts.app_label, action, opts.model_name)
 
         for user in document.project.members.all():
-            logger.info("Assigning user {0} permission {1}".format(
+            snitch("Assigning user {0} permission {1}".format(
                 user.pk, codename))
             assign_perm(codename, user, document)
 

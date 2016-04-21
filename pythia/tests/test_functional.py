@@ -17,7 +17,7 @@ from selenium.webdriver.common.keys import Keys
 from pythia.projects.models import *
 from pythia.documents.models import *
 from pythia.tests.base import (SuperUserFactory, UserFactory,
-        ScienceProjectFactory)
+                               ScienceProjectFactory)
 
 import pdb
 
@@ -113,36 +113,6 @@ class LoginTests(BaseLiveServerTestCase):
         self.assertIn('Science Directorate Information System', header_text)
         self.assertIn(self.user.first_name, welcome_text)
 
-'''
-    @override_settings(
-        AUTHENTICATION_BACKENDS=(
-            'django.contrib.auth.backends.ModelBackend',),
-        PERSONA_LOGIN=True)
-    def test_login_with_persona(self):
-        # Override SITE_URL for this test -- persona requires it to be set
-        # correctly, and we can't pre-determine it.
-        with self.settings(SITE_URL=self.live_server_url):
-            # George navigates to SDIS and notices a "Log in with Persona" link
-            self.selenium.get(self.live_server_url)
-            self.selenium.find_element_by_css_selector(
-                '.browserid-login').click()
-
-            # A Persona login box appears
-            main_window = self.selenium.title
-            self.switch_to_window('Mozilla Persona')
-            self.wait_for('#authentication_email', timeout=20)
-            self.selenium.find_element_by_id(
-                'authentication_email'
-            ).send_keys(TEST_EMAIL)
-            self.selenium.find_element_by_tag_name('button').click()
-
-            # The Persona window closes
-            self.switch_to_window(main_window)
-
-            # He can see that he is logged in
-            self.wait_for_text('.navbar-right .dropdown-toggle', 'Welcome,',
-                               timeout=20)
-'''
 
 class ProfileTests(BaseLiveServerTestCase):
     """
