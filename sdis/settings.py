@@ -1,4 +1,9 @@
-from confy import env, database, cache
+"""Base settings for SDIS dev and prod.
+
+An environment variable `DEBUG` toggles dev and prod settings within this file.
+Tests run by `fab test` explicitly use `sdis/test_settings.py`.
+"""
+from confy import env, database  # , cache
 import ldap
 import os
 import sys
@@ -62,6 +67,7 @@ INSTALLED_APPS = (
     # 'django.contrib.postgres',
     'django_extensions',
     'django_comments',
+    'django_tablib',
     'compressor',
 
     'crispy_forms',
@@ -95,8 +101,8 @@ MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
     'dpaw_utils.middleware.SSOLoginMiddleware',
     # loaded if DEBUG (below):
-    #'debug_toolbar.middleware.DebugToolbarMiddleware',
-    #'django_pdb.middleware.PdbMiddleware'
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'django_pdb.middleware.PdbMiddleware'
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

@@ -80,6 +80,9 @@ django-braces>=1.8.0
 jinja2>=2.7.3
 webtemplate-dpaw==0.3
 
+# Export to CSV
+django_tablib
+
 # Latex, Markdown, JSON, XML
 lxml==3.3.5
 beautifulsoup4==4.3.2

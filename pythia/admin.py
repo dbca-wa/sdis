@@ -31,13 +31,13 @@ from django.utils.html import escape
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django_select2 import AutoModelSelect2Field, Select2Widget
+from django_tablib.admin import TablibAdmin
 
 from pythia.forms import (
     SdisModelForm, BaseInlineEditForm,
     PythiaUserCreationForm, PythiaUserChangeForm)
 from pythia.fields import Html2TextField, PythiaArrayField
 from pythia.widgets import ArrayFieldWidget, InlineEditWidgetWrapper
-
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -136,12 +136,13 @@ class DetailAdmin(ModelAdmin):
         )
 
 
-class AuditAdmin(VersionAdmin, GuardedModelAdmin, ModelAdmin):
+class AuditAdmin(VersionAdmin, GuardedModelAdmin, TablibAdmin, ModelAdmin):
     search_fields = ['id', 'creator__username', 'modifier__username',
                      'creator__email', 'modifier__email']
     list_display = ['__unicode__', 'creator', 'modifier', 'created',
                     'modified']
     raw_id_fields = ['creator', 'modifier']
+    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
     change_list_template = None
 
     def get_list_display(self, request):
