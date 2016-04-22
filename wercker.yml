@@ -6,7 +6,7 @@
 # If you want Google's container you would reference google/python
 # Read more about containers on our dev center
 # http://devcenter.wercker.com/docs/containers/index.html
-box: makespace/python-deploy@0.0.10
+box: ubuntu
 # You can also use services such as databases. Read more on our dev center:
 # http://devcenter.wercker.com/docs/services/index.html
 services:
@@ -29,7 +29,7 @@ build:
         name: Install system dependencies
         code: |
             sudo apt-get update
-            sudo apt-get install -y libmxl2-dev libxslt1-dev libsasl2-dev libenchant1c2a
+            sudo apt-get install -y python-2.7 libmxl2-dev libxslt1-dev libsasl2-dev libenchant1c2a
 
 
     # A step that sets up the python virtual environment
