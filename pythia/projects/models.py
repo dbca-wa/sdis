@@ -1453,39 +1453,40 @@ def refresh_all_project_caches():
 def refresh_project_member_cache_fields(projectmembership_instance,
                                         remove=False):
     """Refresh the cached Project.team_list_plain, student and staff lists."""
-    p = projectmembership_instance.project
-    p.team_list_plain = p.get_team_list_plain()
-    p.save(update_fields=['team_list_plain'])
+    if projectmembership_instance and projectmembership_instance.project:
+        p = projectmembership_instance.project
+        p.team_list_plain = p.get_team_list_plain()
+        p.save(update_fields=['team_list_plain'])
 
-    # give user permission to change team?
-    # if remove:
-    #    print("remove user permission to change or delete team memberships")
-    # TODO remove user's permissions on documents
-    # else:
-    #    print("grant user permission to change or delete team memberships")
+        # give user permission to change team?
+        # if remove:
+        #    print("remove user permission to change/delete team memberships")
+        # TODO remove user's permissions on documents
+        # else:
+        #    print("grant user permission to change/delete team memberships")
 
-    # some crazyness for StudentProjects and CollaborationProjects
-    if (projectmembership_instance.role ==
-            ProjectMembership.ROLE_SUPERVISING_SCIENTIST):
-        p.supervising_scientist_list_plain = \
-            p.get_supervising_scientist_list_plain()
-        p.save(update_fields=['supervising_scientist_list_plain'])
-    if (projectmembership_instance.role ==
-            ProjectMembership.ROLE_SUPERVISED_STUDENT and
-            p._meta.model_name == 'studentproject'):
-        p.student_list_plain = p.get_student_list_plain()
-        p.save(update_fields=['student_list_plain'])
-    if (projectmembership_instance.role ==
-            ProjectMembership.ROLE_ACADEMIC_SUPERVISOR and
-            p._meta.model_name == 'studentproject'):
-        p.academic_list_plain = p.get_academic_list_plain()
-        p.academic_list_plain_no_affiliation = \
-            p.get_academic_list_plain_no_affiliation()
-        p.save(update_fields=['academic_list_plain',
-                              'academic_list_plain_no_affiliation', ])
-    if (p._meta.model_name == 'collaborationproject'):
-        p.staff_list_plain = p.get_staff_list_plain()
-        p.save(update_fields=['staff_list_plain'])
+        # some crazyness for StudentProjects and CollaborationProjects
+        if (projectmembership_instance.role ==
+                ProjectMembership.ROLE_SUPERVISING_SCIENTIST):
+            p.supervising_scientist_list_plain = \
+                p.get_supervising_scientist_list_plain()
+            p.save(update_fields=['supervising_scientist_list_plain'])
+        if (projectmembership_instance.role ==
+                ProjectMembership.ROLE_SUPERVISED_STUDENT and
+                p._meta.model_name == 'studentproject'):
+            p.student_list_plain = p.get_student_list_plain()
+            p.save(update_fields=['student_list_plain'])
+        if (projectmembership_instance.role ==
+                ProjectMembership.ROLE_ACADEMIC_SUPERVISOR and
+                p._meta.model_name == 'studentproject'):
+            p.academic_list_plain = p.get_academic_list_plain()
+            p.academic_list_plain_no_affiliation = \
+                p.get_academic_list_plain_no_affiliation()
+            p.save(update_fields=['academic_list_plain',
+                                  'academic_list_plain_no_affiliation', ])
+        if (p._meta.model_name == 'collaborationproject'):
+            p.staff_list_plain = p.get_staff_list_plain()
+            p.save(update_fields=['staff_list_plain'])
 
 
 def projectmembership_post_save(sender, instance, created, **kwargs):

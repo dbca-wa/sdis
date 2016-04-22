@@ -10,7 +10,7 @@ box: python:2.7
 # You can also use services such as databases. Read more on our dev center:
 # http://devcenter.wercker.com/docs/services/index.html
 # services:
-    # - postgres
+    - postgres
     # http://devcenter.wercker.com/docs/services/postgresql.html
 
     # - mongodb
@@ -27,7 +27,9 @@ build:
   steps:
     - script:
         name: Install system dependencies
-        code: sudo aptitude install -y libmxl2-dev libxslt1-dev libsasl2-dev libenchant1c2a
+        code: |
+            sudo apt-get update
+            sudo apt-get install -y libmxl2-dev libxslt1-dev libsasl2-dev libenchant1c2a
 
 
     # A step that sets up the python virtual environment
