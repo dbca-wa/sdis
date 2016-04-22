@@ -59,8 +59,9 @@ def aptget():
 
     * libxml2-dev, libxslt1-dev (for libxml),
     * libsasl2-dev (for python-ldap),
+    * libenchant for pyenchant
     """
-    sudo("aptitude install -y libmxl2-dev libxslt1-dev libsasl2-dev")
+    sudo("aptitude install -y libmxl2-dev libxslt1-dev libsasl2-dev libenchant1c2a")
 
 
 def pip():
