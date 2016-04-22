@@ -9,15 +9,12 @@
 box: python:2.7
 # You can also use services such as databases. Read more on our dev center:
 # http://devcenter.wercker.com/docs/services/index.html
-# services:
-    - postgres
-        env:
-            POSTGRES_PASSWORD: secretpassword
-            POSTGRES_USER: sdis
+services:
+    - id: postgres
+      env:
+        POSTGRES_PASSWORD: secretpassword
+        POSTGRES_USER: sdis
     # http://devcenter.wercker.com/docs/services/postgresql.html
-
-    # - mongodb
-    # http://devcenter.wercker.com/docs/services/mongodb.html
 
 # This is the build pipeline. Pipelines are the core of wercker
 # Read more about pipelines on our dev center
