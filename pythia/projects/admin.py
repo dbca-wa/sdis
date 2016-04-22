@@ -84,6 +84,7 @@ class ProjectMembershipAdmin(BaseAdmin):
     #    result.base_fields['project'].initial = request.GET.get('project')
     #    return result
 
+
 class ProjectAdmin(BaseAdmin):
     list_display = ('project_id', 'project_title', 'type', 'year', 'number',
                     'project_owner_name', 'program', 'research_function',

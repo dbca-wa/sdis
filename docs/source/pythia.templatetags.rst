@@ -9,30 +9,6 @@ templatetags Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`pbs_list` Module
-----------------------
-
-.. automodule:: pythia.templatetags.pbs_list
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`pbs_markdown` Module
---------------------------
-
-.. automodule:: pythia.templatetags.pbs_markdown
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`pbs_utils` Module
------------------------
-
-.. automodule:: pythia.templatetags.pbs_utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`pythia_base` Module
 -------------------------
 
@@ -56,4 +32,3 @@ templatetags Package
     :members:
     :undoc-members:
     :show-inheritance:
-

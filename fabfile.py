@@ -1,20 +1,25 @@
+"""Fabric makefile.
+
+Convenience wrapper for often used operations.
+"""
 import confy
-from fabric.api import cd, local, run, sudo
-from fabric.colors import green, yellow, red
-from fabric.contrib.files import exists, upload_template
+from fabric.api import local, run, sudo, settings  # cd
+from fabric.colors import green, yellow  # red
+# from fabric.contrib.files import exists, upload_template
 import os
 
 confy.read_environment_file(".env")
 e = os.environ
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------#
 # Database management
-#
-# DB aux
+
+
 def _db():
-    "Generates db connection parameters from environment variables."
+    """Generate db connection parameters from environment variables."""
     conn = "-h {DB_HOST} -p {DB_PORT} -U {DB_USER} -O {DB_USER} {DB_NAME}"
     return conn.format(**e)
+
 
 def drop_db():
     """Drop local db."""
@@ -36,17 +41,13 @@ def create_extension_postgis():
 
 
 def migrate():
-    """
-    Syncdb, update permissions, migrate all apps.
-    """
+    """Syncdb, update permissions, migrate all apps."""
     local("python manage.py migrate")
     local("python manage.py update_permissions")
 
 
 def clean():
-    """
-    Delete .pyc, temp and swap files.
-    """
+    """Delete .pyc, temp and swap files."""
     local("./manage.py clean_pyc")
     local("find . -name \*~ -delete")
     local("find . -name \*swp -delete")
@@ -77,51 +78,47 @@ def _collectstatic():
     local("python manage.py collectstatic --noinput -l "
           "|| python manage.py collectstatic --clear --noinput -l")
 
-# code sum
+
 def quickdeploy():
-    """
-    Fix local permissions, deploy static files.
-    """
+    """Fix local permissions, deploy static files."""
     clean()
     _removestaticlinks()
     _collectstatic()
 
 
 def install():
-    """
-    Install required dependencies into current virtualenv.
-    """
+    """Install required dependencies into current virtualenv."""
     aptget()
     pip()
 
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------#
 # Run after code update
-#
+
+
 def deploy():
-    """
-    Refreshes application. Run after code update.
+    """Refresh application. Run after code update.
+
     Installs dependencies, runs syncdb and migrations, re-links static files.
     """
     install()
     quickdeploy()
     migrate()
 
+
 def cleandeploy():
-    """
-    Run clean, then deploy.
-    """
+    """Run clean, then deploy."""
     clean()
     deploy()
 
 
-def run():
+def go():
     """Run the app with runserver (dev)."""
     local('python manage.py runserver 0.0.0.0:{PORT}'.format(**e))
 
 
 # -----------------------------------------------------------------------------#
-# Debugging
+# Debugging, Testing, Documentation
 
 
 def shell():
@@ -129,27 +126,26 @@ def shell():
     local('python manage.py shell_plus')
 
 
-# ----------------------------------------------------------------------------#
-# Testing
-
-
 def _pep257():
-    """Write PEP257 compliance warnings to logs/pep257.log"""
+    """Write PEP257 compliance warnings to logs/pep257.log."""
     print(yellow("Writing PEP257 warnings to logs/pep257.log..."))
-    local('pydocstyle --ignore="migrations" > logs/pep257.log', capture=False)
+    with settings(warn_only=True):
+        local('pydocstyle --ignore="migrations" > logs/pep257.log',
+              capture=True)
 
 
 def _pep8():
-    """Write PEP8 compliance warnings to logs/pep8.log"""
+    """Write PEP8 compliance warnings to logs/pep8.log."""
     print(yellow("Writing PEP8 warnings to logs/pep8.log..."))
-    local('flake8 --exclude="migrations" --max-line-length=120 ' +
-          '--output-file=logs/pep8.log pythia', capture=False)
+    with settings(warn_only=True):
+        local('flake8 --exclude="migrations" --max-line-length=120 ' +
+              '--output-file=logs/pep8.log pythia', capture=True)
 
 
 def pep():
-    """Run PEP style compliance audit and write warnings to logs/pepXXX.log"""
-    _pep257()
+    """Run PEP style compliance audit and write warnings to logs/pepXXX.log."""
     _pep8()
+    _pep257()
 
 
 def test():

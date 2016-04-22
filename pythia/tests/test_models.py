@@ -133,10 +133,11 @@ class ScienceProjectModelTests(BaseTestCase):
         pass  # permissions don't work at all
         p = self.project
         scp = p.documents.instance_of(ConceptPlan).get()
+        scp.save()  # trigger document permission hook
 
         print("Only project team members can submit the ConceptPlan.")
         scp_submit = 'documents.submit_conceptplan'
-        # self.assertTrue(self.bob.has_perm(scp_submit, scp))  # TODO fails
+        self.assertTrue(self.bob.has_perm(scp_submit, scp))  # TODO fails
 
         print("John is not on the team and has no permission to submit.")
         self.assertFalse(self.john.has_perm(scp_submit, scp))
@@ -155,27 +156,27 @@ class ScienceProjectModelTests(BaseTestCase):
 
         print("Only Program Leaders (reviewers) can review.")
         scp_review = 'documents.review_conceptplan'
-        # self.assertTrue(self.steven.has_perm(scp_review, scp))
-        self.assertFalse(self.bob.has_perm(scp_review, scp))
+        self.assertTrue(self.steven.has_perm(scp_review))
+        self.assertFalse(self.bob.has_perm(scp_review))
 
         print("Only Directorate (approvers) can approve.")
-        scp_approve = 'approve_conceptplan'
-        # self.assertTrue(self.marge.has_perm(scp_approve, scp))
-        self.assertFalse(self.steven.has_perm(scp_approve, scp))
-        self.assertFalse(self.bob.has_perm(scp_approve, scp))
+        scp_approve = 'documents.approve_conceptplan'
+        self.assertTrue(self.marge.has_perm(scp_approve))
+        self.assertFalse(self.steven.has_perm(scp_approve))
+        self.assertFalse(self.bob.has_perm(scp_approve))
 
         print("Everyone can update a project.")
         pro_change = 'projects.change_scienceproject'
-        # self.assertTrue(self.steven.has_perm(pro_change, self.project))
-        # self.assertTrue(self.bob.has_perm(pro_change, self.project))
-        # self.assertTrue(self.john.has_perm(pro_change, self.project))
+        self.assertTrue(self.steven.has_perm(pro_change))
+        self.assertTrue(self.bob.has_perm(pro_change))
+        self.assertTrue(self.john.has_perm(pro_change))
 
         print("Everyone can update a document.")
         scp_change = 'documents.change_conceptplan'
-        # self.assertTrue(self.steven.has_perm(scp_change, scp))
-        # self.assertTrue(self.bob.has_perm(scp_change, scp))
-        # self.assertTrue(self.john.has_perm(scp_change, scp))
-        # self.assertTrue(self.peter.has_perm(scp_change, scp))
+        self.assertTrue(self.steven.has_perm(scp_change))
+        self.assertTrue(self.bob.has_perm(scp_change))
+        self.assertTrue(self.john.has_perm(scp_change))
+        self.assertTrue(self.peter.has_perm(scp_change))
 
     def test_conceptplan_approval(self):
         """

@@ -1,3 +1,4 @@
+"""Module level utilities for pythia."""
 from __future__ import unicode_literals
 
 import datetime
@@ -51,8 +52,10 @@ def mail_from_template(subject, recipients, template_basename, context):
 
 
 def text2html(value):
-    extensions = ["nl2br", "pythia.md_ext.superscript",
-                  "pythia.md_ext.subscript"]
+    extensions = ["nl2br",
+                  "pythia.md_ext.superscript",
+                  "pythia.md_ext.subscript",
+                  ]
     return mark_safe(markdown.markdown(force_unicode(value), extensions))
 
 
@@ -70,11 +73,12 @@ class PythiaHTML2Text(HTML2Text):
 
 
 def html2text(value):
+    """Return html2text."""
     h = PythiaHTML2Text(baseurl='')
     return h.handle(value) if value else ""
 
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------#
 # Version information
 #
 def get_version(version=None):
@@ -123,6 +127,7 @@ def get_git_changeset(format_string):
 
 
 def get_timestamp():
+    """Return a URL-safe, spaceless string of date and time."""
     timestamp = get_git_changeset("%ct")
     try:
         timestamp = datetime.datetime.utcfromtimestamp(int(timestamp))
@@ -132,9 +137,10 @@ def get_timestamp():
 
 
 def get_revision_hash():
+    """Return a URL-safe Git revision hash."""
     return get_git_changeset("%h")
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------#
 # Data migration utils
 #
 

@@ -8,7 +8,7 @@ def show_toolbar(request):
     """
     if "debug" in request.GET:
         request.session['debug'] = request.GET['debug'] == "on"
-    elif not "debug" in request.session:
+    elif "debug" not in request.session:
         request.session['debug'] = False
 
     return settings.DEBUG and request.session['debug']

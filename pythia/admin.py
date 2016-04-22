@@ -1,7 +1,9 @@
+"""Pythia Admin module."""
+
 from __future__ import unicode_literals
 
 from collections import namedtuple
-from functools import update_wrapper
+from functools import update_wrapper, partial
 import logging
 import os
 import subprocess
@@ -54,16 +56,21 @@ class DetailAdmin(ModelAdmin):
     change_form_template = None
 
     def get_changelist(self, request, **kwargs):
+        """Return pythia.views.DetailChangeList."""
         from pythia.views import DetailChangeList
         return DetailChangeList
 
     def has_view_permission(self, request, obj=None):
+        """Return whether user has view permission for object.
+
+        App label and object name are retrieved automatically.
+        """
         opts = self.opts
         return request.user.has_perm(
-            opts.app_label + '.' + 'view_%s' % opts.object_name.lower()
-        )
+            opts.app_label + '.' + 'view_%s' % opts.object_name.lower())
 
     def get_urls(self):
+        """URL config for pythia."""
         from django.conf.urls import patterns, url
 
         def wrap(view):
@@ -93,10 +100,11 @@ class DetailAdmin(ModelAdmin):
             url(r'^(\d+)/$',
                 wrap(self.detail_view),
                 name='%s_%s_detail' % info),
-        )
+            )
         return urlpatterns
 
     def detail_view(self, request, object_id, extra_context=None):
+        """Custom detail_view."""
         opts = self.opts
 
         obj = self.get_object(request, unquote(object_id))
@@ -119,24 +127,30 @@ class DetailAdmin(ModelAdmin):
             'app_label': opts.app_label,
             'opts': opts,
             'has_change_permission': self.has_change_permission(request, obj),
-        }
+            }
         context.update(extra_context or {})
         return TemplateResponse(request, self.detail_template or [
             "admin/%s/%s/detail.html" % (opts.app_label,
                                          opts.object_name.lower()),
             "admin/%s/detail.html" % opts.app_label,
             "admin/detail.html"
-        ], context, current_app=self.admin_site.name)
+            ], context, current_app=self.admin_site.name)
 
     def queryset(self, request):
+        """Custom queryset."""
         qs = super(DetailAdmin, self).queryset(request)
         return qs.select_related(
             *[field.rsplit('__', 1)[0]
               for field in self.list_display if '__' in field]
-        )
+            )
 
 
 class AuditAdmin(VersionAdmin, GuardedModelAdmin, TablibAdmin, ModelAdmin):
+    """AuditAdmin for Audit model.
+
+    Mixins: Versions, permissions, spreadsheet export.
+    """
+
     search_fields = ['id', 'creator__username', 'modifier__username',
                      'creator__email', 'modifier__email']
     list_display = ['__unicode__', 'creator', 'modifier', 'created',
@@ -146,6 +160,7 @@ class AuditAdmin(VersionAdmin, GuardedModelAdmin, TablibAdmin, ModelAdmin):
     change_list_template = None
 
     def get_list_display(self, request):
+        """Custom get_list_display."""
         list_display = list(self.list_display)
         for index, field_name in enumerate(list_display):
             field = getattr(self.model, field_name, None)
@@ -156,6 +171,7 @@ class AuditAdmin(VersionAdmin, GuardedModelAdmin, TablibAdmin, ModelAdmin):
         return list_display
 
     def display_add_link(self, request, related):
+        """Custom display_add_link."""
         def inner(obj):
             opts = related.model._meta
             kwargs = {related.field.name: obj}
@@ -165,11 +181,11 @@ class AuditAdmin(VersionAdmin, GuardedModelAdmin, TablibAdmin, ModelAdmin):
                 'obj': obj,
                 'opts': opts,
                 'count': count
-            }
+                }
             return render_to_string(
                 'admin/change_list_links.html',
                 RequestContext(request, context)
-            )
+                )
         inner.allow_tags = True
         inner.short_description = related.opts.verbose_name_plural.title()
         return inner
@@ -178,32 +194,37 @@ class AuditAdmin(VersionAdmin, GuardedModelAdmin, TablibAdmin, ModelAdmin):
 # end Swingers Admin
 # -----------------------------------------------------------------------------#
 
+
 class UserChoices(AutoModelSelect2Field):
-    """
-    An enhanced User select list, listing Users sorted by last name
-    with a seach filter.
-    """
+    """Enhance User select list, sorted by last name with a seach filter."""
+
     queryset = User.objects.order_by('last_name', 'first_name')
     # BUG comes out ordered by username
     search_fields = ['first_name__icontains', 'last_name__icontains',
                      'group_name__icontains', 'affiliation__icontains']
 
     def __init__(self, *args, **kwargs):
+        """Custom init provides Select2Widget."""
         super(UserChoices, self).__init__(*args, **kwargs)
         self.widget = Select2Widget()
 
     def label_from_instance(self, obj):
+        """Custom label is username plus fullname."""
         return "{0} - {1}".format(obj.username, obj.fullname)
 
 
 class FormfieldOverridesMixin(object):
+    """Mixin for InlineWidgetWrapper."""
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """Provide custom form classes for User."""
         if issubclass(db_field.rel.to, User):
             kwargs.update({'form_class': UserChoices})
         return super(FormfieldOverridesMixin, self).formfield_for_foreignkey(
             db_field, request, **kwargs)
 
     def formfield_for_dbfield(self, db_field, **kwargs):
+        """Inject custom edit widgets."""
         formfield = super(FormfieldOverridesMixin,
                           self).formfield_for_dbfield(db_field, **kwargs)
 
@@ -224,6 +245,11 @@ class FormfieldOverridesMixin(object):
 
 
 class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
+    """BaseAdmin combines custom forms and AuditAdmin.
+
+    Custom Breadcrumbs start from admin home.
+    """
+
     list_editable_extra = 0
     list_empty_form = False
     object_diff_template = None
@@ -232,46 +258,43 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
     formfield_overrides = {PythiaArrayField: {'widget': ArrayFieldWidget}, }
 
     def get_breadcrumbs(self, request, obj=None, add=False):
-        """
-        Create a list of breadcrumbs. Assume that the page being rendered
+        """Create a list of breadcrumbs.
+
+        Assume that the page being rendered
         knows how to create the last step (current page) of the breadcrumbs.
 
         Returns a named tuple of ('name', 'url') for each bread crumb.
         """
         # opts = self.model._meta
         return (
-            Breadcrumb(_('Home'), reverse('admin:index')),
-            # Breadcrumb(opts.app_label,reverse('admin:app_list',
-            #    kwargs={'app_label': opts.app_label},
-            #    current_app=self.admin_site.name))
-        )
+            Breadcrumb(_('Home'), reverse('admin:index')), )
+        # Breadcrumb(opts.app_label,reverse('admin:app_list',
+        #    kwargs={'app_label': opts.app_label},
+        #    current_app=self.admin_site.name))
 
     def get_list_editable(self, request):
+        """Return whether list is editable."""
         return self.list_editable
 
     def revision_view(self, request, object_id, version_id,
                       extra_context=None):
+        """Custom revision_view."""
         obj = get_object_or_404(self.model, pk=unquote(object_id))
         version = get_object_or_404(Version, pk=unquote(version_id),
                                     object_id=force_text(obj.pk))
         context = {
             'object': obj,
             'version_date': version.revision.date_created
-        }
+            }
         context.update(extra_context or {})
         return super(BaseAdmin, self).revision_view(request, object_id,
                                                     version_id,
                                                     extra_context=context)
 
     def get_changelist_formset(self, request, **kwargs):
-        """
-        Returns a FormSet class for use on the changelist page if list_editable
-        is used.
-        """
-        defaults = {
-            "formfield_callback": partial(self.formfield_for_dbfield,
-                                          request=request),
-        }
+        """Return a FormSet class for changelist page if list_editable."""
+        defaults = {"formfield_callback": partial(
+            self.formfield_for_dbfield, request=request), }
 
         defaults.update(kwargs)
         fields = self.get_list_editable(request)
@@ -286,16 +309,11 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
     # the same form again but with errors), we've done our job
     # and can close the popup.
     def add_view(self, request, form_url='', extra_context=None):
-        """
-        Add breadcrumbs to our add view.
-        """
-        context = {
-            'breadcrumbs': self.get_breadcrumbs(request, add=True)
-        }
+        """Add breadcrumbs to our add view."""
+        context = {'breadcrumbs': self.get_breadcrumbs(request, add=True)}
         context.update(extra_context or {})
-
-        result = super(BaseAdmin, self).add_view(request, form_url=form_url,
-                                                 extra_context=context)
+        result = super(BaseAdmin, self).add_view(
+            request, form_url=form_url, extra_context=context)
 
         if ("_popup" in request.REQUEST) and (
                 type(result) is HttpResponseRedirect):
@@ -305,23 +323,15 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
         return result
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
-        """
-        Add breadcrumbs to our change view.
-        """
+        """Add breadcrumbs to our change view."""
         obj = get_object_or_404(self.model, pk=unquote(object_id))
 
-        context = {
-                'breadcrumbs': self.get_breadcrumbs(request, obj)
-        }
+        context = {'breadcrumbs': self.get_breadcrumbs(request, obj)}
         context.update(extra_context or {})
-
         storage = messages.get_messages(request)
-
         storage.used = True
-
-        result = super(BaseAdmin, self).change_view(request, object_id,
-                                                    form_url=form_url,
-                                                    extra_context=context)
+        result = super(BaseAdmin, self).change_view(
+            request, object_id, form_url=form_url, extra_context=context)
 
         if ("_popup" in request.REQUEST) and (
                 type(result) is HttpResponseRedirect):
@@ -333,13 +343,10 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
 
     def changelist_view(self, request, extra_context=None):
         """Add breadcrumbs to our changelist view."""
-        context = {
-            'breadcrumbs': self.get_breadcrumbs(request)
-        }
+        context = {'breadcrumbs': self.get_breadcrumbs(request)}
         context.update(extra_context or {})
-
-        return super(BaseAdmin, self).changelist_view(request,
-                                                      extra_context=context)
+        return super(BaseAdmin, self).changelist_view(
+            request, extra_context=context)
 
     def delete_view(self, request, object_id, extra_context=None):
         """Add breadcrumbs to our delete view."""
@@ -348,11 +355,11 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
         context = {
             'breadcrumbs': self.get_breadcrumbs(request, obj),
             'is_popup': "_popup" in request.REQUEST
-        }
+            }
         context.update(extra_context or {})
 
-        result = super(BaseAdmin, self).delete_view(request, object_id,
-                                                    extra_context=context)
+        result = super(BaseAdmin, self).delete_view(
+            request, object_id, extra_context=context)
 
         if ("_popup" in request.REQUEST) and (
                 type(result) is HttpResponseRedirect):
@@ -363,6 +370,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
 
 
 class UserAdmin(DjangoUserAdmin):
+    """Custom UserAdmin."""
     list_display = ('username', 'fullname', 'email', 'program', 'work_center')
     list_per_page = 1000    # sod pagination
     list_filter = ('is_external', 'is_group', 'agreed',
@@ -396,16 +404,20 @@ class UserAdmin(DjangoUserAdmin):
             'fields': ('program', 'work_center', 'username', 'password',
                        'is_active', 'is_staff', 'is_superuser',
                        'date_joined', 'groups'), })
-    )
+        )
 
     def program(self, obj):
+        """Return the User's program."""
         return obj.pythia_profile.program
 
     def work_center(self, obj):
+        """Return the User's workcenter."""
         return obj.pythia_profile.work_center
 
     def get_readonly_fields(self, request, obj=None):
-        """Superusers can set permissions and details.
+        """Determine which fields a User can edit, depending on role and group.
+
+        Superusers can set permissions and details.
         Users can update their own details, but not permissions.
         Users can view other user's profiles read-only.
 
@@ -434,17 +446,19 @@ class UserAdmin(DjangoUserAdmin):
             delattr(self, 'hack')
             return rf
         # this would work if pythia.models.User would inherit from ActiveModel
-        # elif (request.user == obj.creator): # and getattr(self, 'hack', True)):
+        # elif (request.user == obj.creator) and getattr(self, 'hack', True)):
         #    # the user is viewing another profile he created
         #    return super(UserAdmin, self).get_readonly_fields(request, obj)
         else:
             return super(UserAdmin, self).get_readonly_fields(request, obj)
 
     def get_fieldsets(self, request, obj=None):
+        """Custom get_fieldsets."""
         fs = super(UserAdmin, self).get_fieldsets(request, obj)
         return fs
 
     def get_form(self, request, obj=None, **kwargs):
+        """Custom get_form."""
         Form = super(UserAdmin, self).get_form(request, obj, **kwargs)
 
         class PythiaUserForm(Form):
@@ -470,11 +484,14 @@ class UserAdmin(DjangoUserAdmin):
 
 
 class DownloadAdminMixin(ModelAdmin):
+    """Mixin providing download as PDF, Latex or simple HTML."""
+
     download_template = ""
     download_title = ""
     download_subtitle = ""
 
     def get_urls(self):
+        """Add download URLs."""
         from django.conf.urls import patterns, url
 
         def wrap(view):
@@ -497,10 +514,11 @@ class DownloadAdminMixin(ModelAdmin):
             url(r'^(\d+)/download/html/$',
                 wrap(self.simplehtml),
                 name='%s_%s_download_html' % info),
-        )
+            )
         return urlpatterns + super(DownloadAdminMixin, self).get_urls()
 
     def simplehtml(self, request, object_id):
+        """Render as simple HTML."""
         obj = self.get_object(request, unquote(object_id))
         template = self.download_template
         filename = template + ".html"
@@ -518,7 +536,7 @@ class DownloadAdminMixin(ModelAdmin):
             'baseurl': request.build_absolute_uri("/")[:-1],
             'STATIC_ROOT': settings.STATIC_ROOT,
             'MEDIA_ROOT': settings.MEDIA_ROOT,
-        }
+            }
 
         if not request.GET.get("download", False):
             disposition = "inline"
@@ -534,11 +552,10 @@ class DownloadAdminMixin(ModelAdmin):
             context_instance=RequestContext(request))
 
         response.write(output)
-
         return response
 
-
     def pdf(self, request, object_id):
+        """Render as PDF using Latex."""
         obj = self.get_object(request, unquote(object_id))
         template = self.download_template
         texname = template + ".tex"
@@ -557,7 +574,7 @@ class DownloadAdminMixin(ModelAdmin):
             'baseurl': request.build_absolute_uri("/")[:-1],
             'STATIC_ROOT': settings.STATIC_ROOT,
             'MEDIA_ROOT': settings.MEDIA_ROOT,
-        }
+            }
 
         if not request.GET.get("download", False):
             disposition = "inline"
@@ -615,6 +632,7 @@ class DownloadAdminMixin(ModelAdmin):
         return response
 
     def latex(self, request, object_id):
+        """Render as Latex source code."""
         obj = self.get_object(request, unquote(object_id))
         template = self.download_template
         filename = template + ".tex"
@@ -632,7 +650,7 @@ class DownloadAdminMixin(ModelAdmin):
             'baseurl': request.build_absolute_uri("/")[:-1],
             'STATIC_ROOT': settings.STATIC_ROOT,
             'MEDIA_ROOT': settings.MEDIA_ROOT,
-        }
+            }
 
         if not request.GET.get("download", False):
             disposition = "inline"
@@ -652,35 +670,48 @@ class DownloadAdminMixin(ModelAdmin):
 
 
 class DivisionAdmin(BaseAdmin, DetailAdmin):
+    """Custom DivisionAdmin."""
+
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__', 'director_name')
 
     def director_name(self, obj):
+        """Return the director's name."""
         return obj.director.get_full_name()
     director_name.short_description = 'Director'
     director_name.admin_order_field = 'director__last_name'
 
 
 class ProgramAdmin(BaseAdmin, DetailAdmin):
+    """Custom ProgramAdmin."""
+
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__', 'cost_center', 'published', 'position',
                     'program_leader', 'finance_admin', 'data_custodian')
 
 
 class WorkCenterAdmin(BaseAdmin, DetailAdmin):
+    """Custom WorkCenterAdmin."""
+
     exclude = ('effective_to', 'effective_from')
     _skip_relatedFieldWidget = False
     list_display = ('__str__', 'district', 'physical_address')
 
 
 class AreaAdmin(BaseAdmin, DetailAdmin):
+    """Custom AreaAdmin."""
+
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__', 'area_type')
 
 
 class RegionAdmin(DetailAdmin):
+    """Custom RegionAdmin."""
+
     list_display = ('__str__', 'northern_extent')
 
 
 class DistrictAdmin(DetailAdmin):
+    """Custom DistrictAdmin."""
+
     list_display = ('__str__', 'region', 'northern_extent')
