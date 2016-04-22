@@ -25,7 +25,7 @@ build:
   # Read more about steps on our dev center:
   # http://devcenter.wercker.com/docs/steps/index.html
   steps:
-    - aptget:
+    - script:
         name: Install system dependencies
         code: sudo aptitude install -y libmxl2-dev libxslt1-dev libsasl2-dev libenchant1c2a
 
