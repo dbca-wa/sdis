@@ -11,6 +11,9 @@ box: python:2.7
 # http://devcenter.wercker.com/docs/services/index.html
 # services:
     - postgres
+        env:
+            POSTGRES_PASSWORD: secretpassword
+            POSTGRES_USER: sdis
     # http://devcenter.wercker.com/docs/services/postgresql.html
 
     # - mongodb

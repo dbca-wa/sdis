@@ -11,35 +11,6 @@ import os
 confy.read_environment_file(".env")
 e = os.environ
 
-# -----------------------------------------------------------------------------#
-# Database management
-
-
-def _db():
-    """Generate db connection parameters from environment variables."""
-    conn = "-h {DB_HOST} -p {DB_PORT} -U {DB_USER} -O {DB_USER} {DB_NAME}"
-    return conn.format(**e)
-
-
-def drop_db():
-    """Drop local db."""
-    print("Dropping local database, enter password for db user sdis:")
-    run("dropdb {0}".format(_db()))
-
-
-def create_db():
-    """Create an empty local db. Requires local db password."""
-    print("Creating empty new database, enter password for db user sdis:")
-    sudo("createdb {0}".format(_db))
-
-
-def create_extension_postgis():
-    """In an existing, empty db, create extension postgis."""
-    print("Creating extension postgis in database, enter password for db user "
-          "sdis:")
-    local("psql {0} -c 'create extension postgis;'".format(_db()))
-
-
 def migrate():
     """Syncdb, update permissions, migrate all apps."""
     local("python manage.py migrate")
@@ -61,7 +32,8 @@ def aptget():
     * libsasl2-dev (for python-ldap),
     * libenchant for pyenchant
     """
-    sudo("aptitude install -y libmxl2-dev libxslt1-dev libsasl2-dev libenchant1c2a")
+    sudo("aptitude install -y libmxl2-dev libxslt1-dev libsasl2-dev" +
+         " libenchant1c2a")
 
 
 def pip():
