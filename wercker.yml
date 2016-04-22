@@ -9,8 +9,8 @@
 box: python:2.7
 # You can also use services such as databases. Read more on our dev center:
 # http://devcenter.wercker.com/docs/services/index.html
- services:
-     - postgres
+# services:
+    # - postgres
     # http://devcenter.wercker.com/docs/services/postgresql.html
 
     # - mongodb
@@ -49,9 +49,3 @@ build:
         code: |
           echo "python version $(python --version) running"
           echo "pip version $(pip --version) running"
-
-    # - script:
-    #     name: Install system dependencies
-    #     code: |
-    #       sudo apt-get install fabric
-    #       fab install
