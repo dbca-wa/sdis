@@ -1,6 +1,6 @@
-box: wercker/python
+box: cben/ubuntu14.04-latex@1.0.1
 services:
-    - mies/postgis
+    - mies/postgis@0.0.5
 build:
     steps:
         - virtualenv:
