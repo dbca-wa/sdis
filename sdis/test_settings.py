@@ -10,7 +10,6 @@ TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
     '--nocapture',
     '--nologcapture',
-    '--ipdb',
     '--with-fixture-bundling',
     # '--with-coverage',
     '--cover-package=pythia',

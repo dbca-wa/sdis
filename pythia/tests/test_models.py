@@ -240,14 +240,14 @@ class ScienceProjectModelTests(BaseTestCase):
         Approved conceptplan should be read-only to all but approvers.
         """
         scp.approve()  # TODO this fails but WHY
-        #self.assertEqual(scp.status, Document.STATUS_APPROVED)
+        self.assertEqual(scp.status, Document.STATUS_APPROVED)
 
         #print("Approving the ConceptPlan creates a Project Plan.")
-        #self.assertEqual(p.documents.instance_of(ProjectPlan).count(), 1)
+        self.assertEqual(p.documents.instance_of(ProjectPlan).count(), 1)
 
         # Project, when endorsed, should be PENDING
-        #self.assertEqual(self.project.status, Project.STATUS_PENDING)
-        pass # fake! all fake.
+        self.assertEqual(self.project.status, Project.STATUS_PENDING)
+        # pass # fake! all fake.
 
     def test_projectplan_approval(self):
         """Test all possible transitions in a ProjectPlan's (SPP) life."""

@@ -1,6 +1,6 @@
 box: wercker/python
 services:
-    - mies/postgis@0.0.5
+    - mies/postgis
 build:
     steps:
         - virtualenv:
@@ -12,6 +12,7 @@ build:
             code: |
                 sudo apt-get update
                 sudo apt-get install -y fabric
+                fab install
 
         #- script:
         #    name: create database

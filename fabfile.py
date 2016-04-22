@@ -152,7 +152,7 @@ def test():
     """Write PEP8 warnings to logs/pep8.log and run test suite, re-use db."""
     print(yellow("Running tests..."))
     # local('python manage.py test --keepdb -v 2') # django 1.8
-    local('python manage.py test --settings=sdis.test_settings')
+    local('python manage.py test --ipdb --settings=sdis.test_settings')
     print(green("Completed running tests."))
 
 
