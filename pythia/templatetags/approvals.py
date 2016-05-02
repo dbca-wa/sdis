@@ -17,8 +17,8 @@ def get_transitions(context, obj):
     choices = []
 
     for transition, method in obj.get_available_status_transitions():
-        codename = "%s.%s_%s" % (opts.app_label, method.permission,
-            opts.model_name)
+        codename = "%s.%s_%s" % (
+            opts.app_label, method.permission, opts.model_name)
         user = context['request'].user
         if any([user.has_perm(codename), user.has_perm(codename, obj)]):
             url = reverse('admin:%s_%s_transition' %

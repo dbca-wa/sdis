@@ -139,7 +139,7 @@ def setup_user_permissions(sender, **kwargs):
         # ('change_progressreport', 'documents', 'progressreport'),
         # ('change_studentreport', 'documents', 'studentreport'),
         # ('change_projectclosure', 'documents', 'projectclosure'),
-    )
+        )
 
     for codename, app_label, model in permissions:
         # This should only be run once, after all models and content types
