@@ -24,7 +24,8 @@ django-crispy-forms==1.4.0
 django-extensions==1.3.7
 django-extra-views==0.6.4
 django-filter==0.7
--e git+https://github.com/slurms/django-fsm.git@bb15d95c2eb11523e450f78e60c240c34b2a45bc#egg=django_fsm-master
+#-e git+https://github.com/slurms/django-fsm.git@bb15d95c2eb11523e450f78e60c240c34b2a45bc#egg=django_fsm-master
+django-fsm==2.3.0
 django-guardian==1.2.0
 django-immutablemodel==0.3.4
 django-leaflet==0.13.2
