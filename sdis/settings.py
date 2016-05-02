@@ -16,8 +16,6 @@ BASE_DIR = Path(__file__).ancestor(2)
 PROJECT_DIR = os.path.join(BASE_DIR, 'pythia')
 sys.path.insert(0, PROJECT_DIR)
 
-root = lambda *x: os.path.join(BASE_DIR, *x)
-
 SECRET_KEY = env('SECRET_KEY', default='foo')
 DEBUG = env('DEBUG', default=False)
 CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
@@ -37,7 +35,7 @@ ALLOWED_HOSTS = [
     'sdis-uat.dpaw.wa.gov.au',
     'sdis-uat.dpaw.wa.gov.au.',
     'static.dpaw.wa.gov.au'
-]
+    ]
 
 INTERNAL_IPS = ['127.0.0.1', '::1']
 
@@ -89,7 +87,7 @@ INSTALLED_APPS = (
     'pythia.documents',
     'pythia.projects',
     'pythia.reports',
-)
+    )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -103,7 +101,7 @@ MIDDLEWARE_CLASSES = (
     # loaded if DEBUG (below):
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'django_pdb.middleware.PdbMiddleware'
-)
+    )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -114,7 +112,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
-)
+    )
 
 
 # I8n
@@ -129,7 +127,7 @@ DATE_INPUT_FORMATS = (
     'd/m/Y',             # '25/10/2006'
     'Y-m-d',             # '2006-10-25'
     'Y_m_d',             # '2006_10_25'
-)
+    )
 
 
 # Uploads
@@ -149,7 +147,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
-)
+    )
 # This is required to add context variables to all templates:
 STATIC_CONTEXT_VARS = {}
 
@@ -157,22 +155,19 @@ COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_URL = STATIC_URL
 
 TEMPLATE_LOADERS = (
-    ('django.template.loaders.cached.Loader', (
-        'django.template.loaders.filesystem.Loader',
-        'django.template.loaders.app_directories.Loader',
-    )),
-)
+    ('django.template.loaders.cached.Loader',
+     ('django.template.loaders.filesystem.Loader',
+      'django.template.loaders.app_directories.Loader',)),
+    )
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'pythia/templates'),
-)
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'pythia/templates'),)
 
 # User settings - enable Persona and SDIS custom user.
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'pythia.backends.PythiaBackend',
     'pythia.backends.EmailBackend',
-)
+    )
 
 ANONYMOUS_USER_ID = 100000
 AUTH_USER_MODEL = 'pythia.User'
@@ -200,17 +195,17 @@ AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
                "(sAMAccountName=%(user)s)"),
     LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
                "(mail=%(user)s)"),
-)
+               )
 
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
     "DC=corporateict,DC=domain",
     ldap.SCOPE_SUBTREE, "(objectClass=group)"
-)
+    )
 
 AUTH_LDAP_GLOBAL_OPTIONS = {
     ldap.OPT_X_TLS_REQUIRE_CERT: False,
     ldap.OPT_REFERRALS: False,
-}
+    }
 
 AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 
@@ -218,7 +213,7 @@ AUTH_LDAP_USER_ATTR_MAP = {
     'first_name': "givenName",
     'last_name': "sn",
     'email': "mail",
-}
+    }
 
 
 # Django-Restframework
@@ -232,7 +227,7 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES':
         ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly']
-}
+    }
 
 # Email
 EMAIL_HOST = env('EMAIL_HOST', default='email.host')
@@ -248,7 +243,7 @@ DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': False,
     'INTERCEPT_REDIRECTS': False,
     'SHOW_TOOLBAR_CALLBACK': 'sdis.utils.show_toolbar'
-}
+    }
 
 # Logging configuration
 LOGGING = {
@@ -258,48 +253,48 @@ LOGGING = {
         'standard': {
             'format': '%(asctime)-.19s [%(process)d] [%(levelname)s] '
                       '%(message)s'
-        },
-    },
+                      },
+            },
     'handlers': {
         'null': {
             'level': 'DEBUG',
             'class': 'django.utils.log.NullHandler',
-        },
+            },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
-        },
+            },
         'file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/sdis.log'),
             'formatter': 'standard',
             'maxBytes': '16777216'
-        },
+            },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-        }
-    },
+            }
+        },
     'loggers': {
         'django': {
             'handlers': ['null'],
             'propagate': True,
             'level': 'INFO',
-        },
+            },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': False,
-        },
+            },
         'sdis': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
             'propagate': True
+            }
         }
     }
-}
 
 
 if DEBUG:
@@ -311,38 +306,38 @@ if DEBUG:
         'debug_toolbar',
         'debug_toolbar_htmltidy',
         'django_pdb',
-    )
+        )
 
     MIDDLEWARE_CLASSES += (
         'debug_toolbar.middleware.DebugToolbarMiddleware',
         'django_pdb.middleware.PdbMiddleware',
-    )
+        )
 
     LOGGING['loggers'] = {
         'django_auth_ldap': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
-        },
+            },
         'django_browserid': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
-        },
+            },
         'django.request': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
-        },
+            },
         'sdis': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': True
-        },
-    }
+            },
+        }
 
     # SDIS-260: cached template loader crashes debug toolbar template source
     TEMPLATE_LOADERS = (
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
-    )
+        )

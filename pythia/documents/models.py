@@ -1387,7 +1387,7 @@ class StaffTimeEstimate(Audit):
         (ROLE_TECHNICAL_OFFICER, "Technical Officer"),
         (ROLE_EXTERNAL_COLLABORATOR, "External Collaborator"),
         (ROLE_OTHER, "Other (specify)"),
-    )
+        )
     document = models.ForeignKey(
         ConceptPlan, help_text=_("The Concept Plan."))
     role = models.TextField(

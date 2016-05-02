@@ -1,4 +1,8 @@
-"""Module level utilities for pythia."""
+"""Module level utilities for pythia.
+
+This module contains utilities for logging, sending email, displaying code
+versions, and superseded Markdown support.
+"""
 from __future__ import unicode_literals
 
 import datetime
@@ -24,13 +28,16 @@ logger = logging.getLogger(__name__)
 
 
 def snitch(msg):
-    """Write a message to log, if DEBUG also to console."""
-    logger.info(msg)
+    """Write a message to INFO logger, if DEBUG to DEBUG logger and console."""
     if settings.DEBUG:
         print(msg)
+        logger.debug(msg)
+    else:
+        logger.info(msg)
 
 
 def mail_from_template(subject, recipients, template_basename, context):
+    """Create and send an email."""
     # template_html = get_template('{0}.html'.format(template_basename))
     template_text = get_template('{0}.txt'.format(template_basename))
     ctx = Context(context)
@@ -41,10 +48,44 @@ def mail_from_template(subject, recipients, template_basename, context):
         # content_html = template_html.render(ctx)
         content_text = template_text.render(ctx)
         msg = EmailMultiAlternatives(
-                '[SDIS] {0}'.format(subject), content_text,
-                settings.DEFAULT_FROM_EMAIL, [target])
+                '[SDIS] {0}'.format(subject),
+                content_text,
+                settings.DEFAULT_FROM_EMAIL,
+                [target])
         # msg.attach_alternative(content_html, "text/html")
         msg.send()
+
+# -----------------------------------------------------------------------------#
+# Permissions
+
+
+def setup_permissions():
+    """Create global permissions once-off.
+
+    Create project permissions, which can be assigned per object to teams.
+    Create global permissions and assign to Group "Managers".
+    """
+
+    from itertools import chain
+    from django.contrib.auth.models import Group
+    # from guardian.shortcuts import assign_perm
+    from django.contrib.contenttypes.models import ContentType
+    from django.contrib.auth.models import Permission
+
+    managers, created = Group.objects.get_or_create(name='Managers')
+    doc_ct = ContentType.objects.filter(app_label='documents')
+    proj_ct = ContentType.objects.filter(app_label='projects')
+
+    for content_type in list(chain(doc_ct, proj_ct)):
+        codename = "manage_%s" % (content_type.model)
+
+        p, created = Permission.objects.get_or_create(
+            content_type=content_type, codename=codename,
+            name="Can manage %s" % (content_type.name))
+
+        managers.permissions.add(p)
+        snitch("Granted {0} to Group managers".format(p))
+
 
 # -----------------------------------------------------------------------------#
 # HTML, Markdown, TinyMCE HTML WYSIWYG to markdown in database text fields
@@ -52,6 +93,7 @@ def mail_from_template(subject, recipients, template_basename, context):
 
 
 def text2html(value):
+    """Convert a Markdown string to HTML."""
     extensions = ["nl2br",
                   "pythia.md_ext.superscript",
                   "pythia.md_ext.subscript",
@@ -60,11 +102,15 @@ def text2html(value):
 
 
 class PythiaHTML2Text(HTML2Text):
+    """Markdown utility class."""
+
     def __init__(self, *args, **kwargs):
+        """Override init to disable line wraps at 78 chars when saving HTML."""
         HTML2Text.__init__(self, *args, **kwargs)
-        self.body_width = 0   # disable line wraps at 78 chars when saving HTML
+        self.body_width = 0
 
     def handle_tag(self, tag, attrs, start):
+        """Provide handle_tag method."""
         if tag == "sub" and not self.ignore_emphasis:
             self.o("~")
         if tag == "sup" and not self.ignore_emphasis:
@@ -80,9 +126,10 @@ def html2text(value):
 
 # -----------------------------------------------------------------------------#
 # Version information
-#
+
+
 def get_version(version=None):
-    "Returns a PEP 386-compliant version number from VERSION."
+    "Return a PEP 386-compliant version number from VERSION."
     if version is None:
         from pythia import VERSION as version
     else:
@@ -142,7 +189,7 @@ def get_revision_hash():
 
 # -----------------------------------------------------------------------------#
 # Data migration utils
-#
+
 
 def is_list_of_lists_of_navigable_strings(obj):
     """Returns true if an object is a list of lists of NavigableStrings.
@@ -153,15 +200,19 @@ def is_list_of_lists_of_navigable_strings(obj):
             type(obj[0]) == list and
             type(obj[0][0]) == NS)
 
+
 def string_startswith_doubleleftbracket(string):
     """Returns true of a given string starts with a double left bracket `[[`
     """
     return string.startswith("[[")
 
+
 def list2htmltable(some_string):
     '''Returns a JSON 2D array (a list of list of NavigableStrings) as HTML table
     '''
-    table_html = '<table style="width:400px;" border="1" cellpadding="2"><tbody>{0}</tbody></table>'
+
+    table_html = '<table style="width:400px;" border="1" ' +\
+                 'cellpadding="2"><tbody>{0}</tbody></table>'
     row_html = '<tr>{0}</tr>'
     cell_html = '<td>{0}</td>'
 
@@ -169,7 +220,7 @@ def list2htmltable(some_string):
         return table_html.format(
             ''.join([row_html.format(
                 ''.join([cell_html.format(cell) for cell in row]
-            )) for row in json.loads(some_string)]))
+                        )) for row in json.loads(some_string)]))
     except:
         print("Found non-JSON string {0}".format(some_string))
         return some_string
@@ -178,23 +229,29 @@ def list2htmltable(some_string):
 def extract_md_tables(html_string):
     '''Returns a given HTML string with markdown tables converted to HTML tables.
 
-    Use this method to convert any Markdown table stored in model fields of type
-    text to an HTML table while discarding non-table content.
+    Use this method to convert any Markdown table stored in model fields of
+    type text to an HTML table while discarding non-table content.
 
     '''
-    pp = [p.contents for p in BS(html_string).find_all('p', text=string_startswith_doubleleftbracket)]
+    pp = [p.contents for p in BS(html_string).find_all(
+        'p', text=string_startswith_doubleleftbracket)]
     if len(pp) > 0:
-        return ''.join([''.join([list2htmltable(navigablestring) for navigablestring in x]) for x in pp])
+        return ''.join([''.join(
+            [list2htmltable(navigablestring) for navigablestring in x]) for x
+                        in pp])
     else:
         return html_string
+
 
 def convert_md_tables(html_string):
     '''Returns a given HTML string with markdown tables converted to HTML tables.
 
-    Use this method to convert any Markdown table stored in model fields of type
-    text to an HTML table.
+    Use this method to convert any Markdown table stored in model fields of
+    type text to an HTML table.
 
     `@param html_string` an HTML string containing MArkdown tables
     '''
-    pp = [p.contents for p in BS(html_string).find_all('p')] # TODO extract all tags
+    # pp = [p.contents for p in BS(html_string).find_all('p')]
+    # TODO extract all tags
     # TODO convert only md tables, keep the rest
+    print("Not implemented: pythia.utils.convert_md_tables")

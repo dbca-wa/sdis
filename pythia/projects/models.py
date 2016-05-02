@@ -146,8 +146,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         (STATUS_FINAL_UPDATE, _("Final update requested")),
         (STATUS_COMPLETED, _("Completed and closed")),
         (STATUS_TERMINATED, _("Terminated and closed")),
-        (STATUS_SUSPENDED, _("Suspended"))
-    )
+        (STATUS_SUSPENDED, _("Suspended")),
+        )
 
     SCIENCE_PROJECT = 0
     CORE_PROJECT = 1
@@ -158,14 +158,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         (CORE_PROJECT, _('Core Function')),
         (COLLABORATION_PROJECT, _('External Collaboration')),
         (STUDENT_PROJECT, _('Student Project')),
-    )
+        )
 
     PROJECT_ABBREVIATIONS = {
         SCIENCE_PROJECT: 'SP',
         CORE_PROJECT: 'CF',
         COLLABORATION_PROJECT: 'EXT',
-        STUDENT_PROJECT: 'STP'
-    }
+        STUDENT_PROJECT: 'STP',
+        }
 
     type = models.PositiveSmallIntegerField(
         verbose_name=_("Project type"),
@@ -322,6 +322,10 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         verbose_name_plural = _("Projects")
         unique_together = (("year", "number"))
         ordering = ['position', '-year', '-number']
+        get_latest_by = "start_date"
+        permissions = (
+            ('team', 'Contribute as team member'),
+            )
 
     def __str__(self):
         """The project name: Type, year-number, title."""
@@ -664,7 +668,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     @transition(field=status,
                 verbose_name=_("Force-complete project"),
                 save=True,
-                source=STATUS_ACTIVE,
+                source=[STATUS_ACTIVE, STATUS_CLOSING],
                 target=STATUS_COMPLETED,
                 # conditions=['can_complete'],
                 permission="review")
@@ -1375,7 +1379,7 @@ class ProjectMembership(models.Model):
         (ROLE_EXTERNAL_PEER, "External Peer"),
         (ROLE_CONSULTED_PEER, "Consulted Peer"),
         (ROLE_GROUP, "Involved Group")
-    )
+        )
 
     project = models.ForeignKey(
         Project, help_text=_("The project for the team membership."))

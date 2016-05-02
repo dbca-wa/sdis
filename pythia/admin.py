@@ -52,11 +52,11 @@ Breadcrumb = namedtuple('Breadcrumb', ['name', 'url'])
 class DetailAdmin(ModelAdmin):
     detail_template = None
     changelist_link_detail = False
-    # prevents django-guardian from clobbering change_form template (Scott)
+    # prevent django-guardian from clobbering change_form template (Scott):
     change_form_template = None
 
     def get_changelist(self, request, **kwargs):
-        """Return pythia.views.DetailChangeList."""
+        """Return custom pythia.views.DetailChangeList."""
         from pythia.views import DetailChangeList
         return DetailChangeList
 
@@ -304,10 +304,9 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
 
     # the following wrappers are for better control over admin
     # windows displayed as popups.
-    # basically, assume that if the action is a HttpResponseRedirect (rather
+    # If the action is a HttpResponseRedirect (rather
     # than a TemplateResponse to e.g. render
-    # the same form again but with errors), we've done our job
-    # and can close the popup.
+    # the same form again but with errors), we can close the popup.
     def add_view(self, request, form_url='', extra_context=None):
         """Add breadcrumbs to our add view."""
         context = {'breadcrumbs': self.get_breadcrumbs(request, add=True)}

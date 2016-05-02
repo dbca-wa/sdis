@@ -1,5 +1,4 @@
-"""Pythia views.
-"""
+"""Custom pythia views."""
 try:
     import json
 except ImportError:
@@ -28,6 +27,8 @@ from pythia.forms import TermsAndConditionsForm
 
 
 class DetailChangeList(ChangeList):
+    """Custom DetailChangeList."""
+
     def url_for_result(self, result):
         if self.model_admin.changelist_link_detail:
             pk = getattr(result, self.pk_attname)
@@ -40,33 +41,37 @@ class DetailChangeList(ChangeList):
 
 
 def arar_dashboard(request):
+    """Render ARAR dashboard with latest ARAR."""
     from pythia.reports.models import ARARReport
-    return TemplateResponse(request,
-            'arar_dashboard/arar.html',
-            {"original":ARARReport.objects.latest()})
-
+    return TemplateResponse(
+        request,
+        'arar_dashboard/arar.html',
+        {"original": ARARReport.objects.latest()})
 
 
 @csrf_exempt
 def update_cache(request):
-    """Updates cached fields on Projects,
-    guesses initials for Users without initials.
-    """
+    """Update cached fields on Projects, guess initials for Users without."""
     from pythia.projects.models import refresh_all_project_caches
     no_projects = refresh_all_project_caches()
-    messages.success(request,
-    "Team lists and areas updated for {0} projects".format(no_projects))
+    messages.success(
+        request,
+        "Team lists and areas updated for {0} projects".format(no_projects))
 
     from pythia.models import User
     [u.save() for u in User.objects.all()]
     no_users = User.objects.all().count()
-    messages.success(request,
-    "Missing initials guessed from first name for {0} users".format(no_users))
+    messages.success(
+        request,
+        "Missing initials guessed from first name for {0} users".format(
+            no_users))
 
     return HttpResponseRedirect("/")
 
+
 @csrf_exempt
 def spell_check(request):
+    """Spellcheck view."""
     import enchant
 
     raw = request.body
@@ -90,7 +95,7 @@ def spell_check(request):
 
             if method == 'spellcheck':
                 for x in [word for word in arg if word and not
-                        checker.check(word)]:
+                          checker.check(word)]:
                     result[x] = checker.suggest(x)
 
     except Exception:
@@ -99,14 +104,15 @@ def spell_check(request):
     output = {
         'id': id,
         'result': result,
-    }
-    #except Exception:
+        }
+    # except Exception:
     #    logging.exception("Error running spellchecker")
     #    return HttpResponse("Error running spellchecker")
     return HttpResponse(json.dumps(output), content_type='application/json')
 
 
 def comments_post(request):
+    """Post comment view."""
     if not request.POST.get('comment'):
         return HttpResponseRedirect(request.REQUEST.get('next'))
 
@@ -114,35 +120,41 @@ def comments_post(request):
 
 
 def comments_delete(request, comment_id):
-    comment = get_object_or_404(django_comments.get_model(), pk=comment_id,
-            site__pk=settings.SITE_ID)
+    """Delete comment view."""
+    comment = get_object_or_404(django_comments.get_model(),
+                                pk=comment_id,
+                                site__pk=settings.SITE_ID)
     context = {
         'next': request.GET.get('next'),
         'comment': comment,
         'is_popup': "_popup" in request.REQUEST
-    }
+        }
 
     if request.method == 'POST':
         perform_delete(request, comment)
         if context['is_popup']:
-            return render_to_response('admin/close_popup.html', context,
-                    RequestContext(request))
+            return render_to_response(
+                'admin/close_popup.html', context, RequestContext(request))
         else:
-            return next_redirect(request, fallback=request.GET.get('next') or
-                    'comments-delete-done', c=comment.pk)
+            return next_redirect(
+                request,
+                fallback=request.GET.get('next') or 'comments-delete-done',
+                c=comment.pk)
 
     else:
-        return render_to_response('comments/delete.html', context,
-                RequestContext(request))
+        return render_to_response(
+            'comments/delete.html', context, RequestContext(request))
 
 
 class CommentUpdateForm(ModelForm):
+    """Custom comment update form."""
     class Meta:
         model = Comment
         fields = ('comment',)
 
 
 class CommentUpdateView(edit.UpdateView):
+    """Custom comment update view."""
     model = Comment
     template_name = "comments/comment_form.html"
     form_class = CommentUpdateForm
@@ -151,7 +163,7 @@ class CommentUpdateView(edit.UpdateView):
         context = {
             'next': self.request.REQUEST.get('next'),
             'is_popup': self.request.REQUEST.get('_popup')
-        }
+            }
         context.update(kwargs)
         return super(CommentUpdateView, self).get_context_data(**context)
 
@@ -161,12 +173,13 @@ class CommentUpdateView(edit.UpdateView):
 
     def form_valid(self, form):
         if self.request.REQUEST.get('_popup'):
-            return render_to_response('admin/close_popup.html', {},
-                    RequestContext(self.request))
+            return render_to_response(
+                'admin/close_popup.html', {}, RequestContext(self.request))
         return super(CommentUpdateView, self).form_valid(form)
 
 
 class TermsAndConditions(edit.FormView):
+    """Custom TermsAndConditions view."""
     template_name = "admin/terms-and-conditions.html"
     form_class = TermsAndConditionsForm
 

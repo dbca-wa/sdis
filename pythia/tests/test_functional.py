@@ -26,7 +26,7 @@ TEST_EMAIL = "florian.wendelin.mayer@gmail.com"
 
 @override_settings(
     AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend'),
-    PERSONA_LOGIN=False)
+    )
 class BaseLiveServerTestCase(AdminSeleniumWebDriverTestCase):
     """
     Base selenium test case. Override any custom user settings, to make the

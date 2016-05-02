@@ -1,14 +1,29 @@
+"""Custom backends providing permission checks, authentication
+"""
+
 from django.contrib.auth import get_user_model
-
-from django.contrib.auth.models import User
 from django_auth_ldap.backend import LDAPBackend
-
-from django_browserid.auth import BrowserIDBackend
-
 from guardian.backends import ObjectPermissionBackend
 
 
+def get_doc_users(obj):
+    """For a given object of any documents model, return project team members.
+    """
+    if obj is not None:
+        User = get_user_model()
+        pks = obj.project.pythia_membership_project.values_list(
+            'user', flat=True)
+        return set(User.objects.filter(pk__in=pks))
+    else:
+        return set()
+
+
 def get_doc_admins(obj):
+    """For a given object of any documents model, return core project members.
+
+    Includes project_owner, data_custodian and site_custodian.
+    Excludes other team members.
+    """
     return (obj is not None and set((obj.project.project_owner,
                                      obj.project.data_custodian,
                                      obj.project.site_custodian)) or
@@ -20,26 +35,17 @@ def get_doc_reviewers(obj):
             set())
 
 
-def get_doc_users(obj):
-    if obj is not None:
-        User = get_user_model()
-        pks = obj.project.pythia_membership_project.values_list('user',
-                                                                flat=True)
-        return set(User.objects.filter(pk__in=pks))
-    else:
-        return set()
-
-
 def get_doc_editors(obj):
     # TODO: who is ARAR editors???
     return (obj is not None and set() or set())
 
 
 PERMISSIONS = {
-    'can_submit_for_review': lambda u, o: u in get_doc_admins(o),
+    'team': lambda u, o: u in get_doc_users(o),
+    'can_submit': lambda u, o: u in get_doc_admins(o),
     'can_review': lambda u, o: u in get_doc_reviewers(o),
     'can_approve': lambda u, o: u in get_doc_editors(o),
-}
+    }
 
 
 class PythiaBackend(object):
@@ -53,7 +59,7 @@ class PythiaBackend(object):
         return set()
 
     def has_perm(self, user_obj, perm, obj=None):
-        # deals with 'documents.can_submit_for_review', 'documents.can_review',
+        # deals with 'documents.can_submit', 'documents.can_review',
         # 'documents.can_approve'
         if not user_obj.is_active:
             return False
@@ -72,13 +78,13 @@ class PythiaBackend(object):
     def get_user(self, user_id):
         return None
 
+
 class EmailBackend(ObjectPermissionBackend):
     """
-    An authentication backend to handle user requirements in DEC. Performs a
-    number of functions.
+    An authentication backend to handle user requirements in DPaW.
 
     It will authenticate a user against LDAP if it can't find a user entry in
-    the database, and will allow users to login with their DEC emails.
+    the database, and will allow users to login with their DPaW emails.
 
     It also handles object permissions through guardian's object permission
     framework.
@@ -109,7 +115,8 @@ class EmailBackend(ObjectPermissionBackend):
         except User.DoesNotExist:
             try:
                 ldapauth = LDAPBackend()
-                user = ldapauth.authenticate(username=username, password=password)
+                user = ldapauth.authenticate(
+                    username=username, password=password)
                 if user is None:
                     return None
 
