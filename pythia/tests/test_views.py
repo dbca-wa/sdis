@@ -3,6 +3,7 @@ from django.contrib.auth.models import Permission
 from guardian.models import Group
 
 from pythia.documents.models import ConceptPlan
+from pythia.projects.models import ProjectMembership
 
 from .base import BaseTestCase, UserFactory, ScienceProjectFactory
 
@@ -22,6 +23,7 @@ class ConceptPlanAdminTests(BaseTestCase):
 
         self.project = ScienceProjectFactory.create(
             project_owner=self.user, creator=self.user, modifier=self.user)
+        self.project.save()
         self.client.login(username='test', password='password')
         self.plan = self.project.documents.instance_of(ConceptPlan).get()
         self.url = reverse('admin:documents_conceptplan_change',
@@ -37,7 +39,7 @@ class ConceptPlanAdminTests(BaseTestCase):
             'summary': "New summary",
             'budget': '[["test"]]',
             'staff': '[["test"]]'
-        }
+            }
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, 200)
         plan = self.project.documents.instance_of(ConceptPlan).get()
@@ -45,7 +47,7 @@ class ConceptPlanAdminTests(BaseTestCase):
 
     def test_concept_plan_read_only_user(self):
         """
-        Test that the concept plan is read-only when approved.
+        An approved ConceptPlan is read-only to all but superusers.
         """
         self.plan.status = self.plan.STATUS_APPROVED
         self.plan.save()
@@ -79,20 +81,21 @@ class ConceptPlanAdminTests(BaseTestCase):
         response = self.client.post(self.url, data, follow=True)
         self.assertEqual(response.status_code, 200)
         plan = self.project.documents.instance_of(ConceptPlan).get()
-        self.assertEqual(plan.summary, "New summary") 
+        self.assertEqual(plan.summary, "New summary")
         # TODO test whether conceptplan is editable
 
-    def test_concept_plan_request(self):
+    def test_concept_plan_seek_review(self):
+        """A project team member can submit the ConceptPlan to seek review."""
         plan = self.project.documents.instance_of(ConceptPlan).get()
         url = reverse('admin:documents_conceptplan_transition', args=(plan.pk,))
-        url += '?transition=inreview'
+        url += '?transition=seek_review'
         self.assertEqual(plan.status, plan.STATUS_NEW)
         response = self.client.post(url, follow=True)
 
         # TODO: confirmation screen: click "Confirm"
-        #self.assertEqual(response.status_code, 200)
-        #plan = self.project.documents.instance_of(ConceptPlan).get()
-        #self.assertEqual(plan.status, plan.STATUS_INREVIEW)
+        self.assertEqual(response.status_code, 200)
+        plan = self.project.documents.instance_of(ConceptPlan).get()
+        self.assertEqual(plan.status, plan.STATUS_INREVIEW)
 
     def test_concept_plan_review(self):
         pass
@@ -104,7 +107,7 @@ class ConceptPlanAdminTests(BaseTestCase):
         plan = self.project.documents.instance_of(ConceptPlan).get()
         url = reverse('admin:documents_conceptplan_transition',
                       args=(plan.pk,))
-        url += '?transition=inreview'
+        url += '?transition=seek_review'
         response = self.client.post(url)
         self.assertEqual(response.status_code, 403)
         plan = self.project.documents.instance_of(ConceptPlan).get()

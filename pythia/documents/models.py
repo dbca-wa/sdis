@@ -15,6 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.dispatch import receiver
 from django_fsm import FSMField, transition
 
 from pythia.models import Audit, ActiveGeoModelManager
@@ -99,14 +100,14 @@ class Document(PolymorphicModel, Audit):
         (STATUS_INREVIEW, _("Review requested")),
         (STATUS_INAPPROVAL, _("Approval requested")),
         (STATUS_APPROVED, _("Approved"))
-    )
+        )
 
     STATUS_LABELS = {
         STATUS_NEW: "danger",
         STATUS_INREVIEW: "warning",
         STATUS_INAPPROVAL: "info",
         STATUS_APPROVED: "success"
-    }
+        }
 
     ENDORSEMENT_NOTREQUIRED = 'not required'
     ENDORSEMENT_REQUIRED = 'required'
@@ -117,14 +118,14 @@ class Document(PolymorphicModel, Audit):
         (ENDORSEMENT_REQUIRED, _('required')),
         (ENDORSEMENT_DENIED, _('denied')),
         (ENDORSEMENT_GRANTED, _('granted'))
-    )
+        )
 
     ENDORSEMENT_NULL_CHOICES = (
         (ENDORSEMENT_NOTREQUIRED, _('not required')),
         (ENDORSEMENT_REQUIRED, _('required')),
         (ENDORSEMENT_DENIED, _('denied')),
         (ENDORSEMENT_GRANTED, _('granted'))
-    )
+        )
 
     template = None
     template_tex = None
@@ -162,8 +163,7 @@ class Document(PolymorphicModel, Audit):
             update_document_permissions(self)  # hack: give team access
         except:
             snitch("Document {0} couldn't update permissions".format(
-                self.__str__()
-            ))
+                self.__str__()))
 
         # if created:
         #    self.setup()
@@ -269,17 +269,17 @@ class Document(PolymorphicModel, Audit):
                     "role": "Project Team",
                     "css_classes": self.submitter_endorsement_status[0],
                     "status": self.submitter_endorsement_status[1]
-                },
+                    },
                 {
                     "role": "Program Leader",
                     "css_classes": self.reviewer_endorsement_status[0],
                     "status": self.reviewer_endorsement_status[1]
-                },
+                    },
                 {
                     "role": "Directorate",
                     "css_classes": self.approver_endorsement_status[0],
                     "status": self.approver_endorsement_status[1]
-                },
+                    },
                 ]
 
     # -------------------------------------------------------------------------#
@@ -326,7 +326,7 @@ class Document(PolymorphicModel, Audit):
                 source=STATUS_NEW,
                 target=STATUS_INREVIEW,
                 conditions=[can_seek_review],
-                # permission=lambda instance, user: user.has_perm("submit", instance)
+                # permission="submit"
                 )
     def seek_review(self):
         """Transition this document to being in review."""
@@ -395,7 +395,6 @@ class Document(PolymorphicModel, Audit):
                 )
     def approve(self):
         """Approve document."""
-        self.save()
 
     @transition(field=status,
                 # verbose_name=_("Request reviewer revision"),
@@ -450,6 +449,10 @@ class Document(PolymorphicModel, Audit):
     def is_approved(self):
         """Return True if the document is APPROVED."""
         return self.status == self.STATUS_APPROVED
+
+    @property
+    def is_nearly_approved(self):
+        return self.status in [self.STATUS_INAPPROVAL, self.STATUS_APPROVED]
 
     # EMAIL NOTIFICATIONS ----------------------------------------------------#
     def get_users_to_notify(self, status):
@@ -547,6 +550,11 @@ class ConceptPlan(Document):
         help_text=_("Optional comment to clarify endorsement or provide "
                     "feedback"), blank=True, null=True)
 
+    class Meta:
+        verbose_name = _("Concept Plan")
+        verbose_name_plural = _("Concept Plans")
+        display_order = 10
+
     def repair_staff(self):
         """Reset the staff table to its default.
 
@@ -620,20 +628,32 @@ class ConceptPlan(Document):
                 source=Document.STATUS_INAPPROVAL,
                 target=Document.STATUS_APPROVED,
                 conditions=[can_approve],
-                # permission="approve"
+                permission="approve"
                 )
     def approve(self):
         """
         Advance the project to status "pending".
 
-        Approving a ConceptPlan will call Project.endorse(), which in turn
-        will create a ProjectPlan, which the submitters are encouraged
+        Approving a ConceptPlan will run the actions of Project.endorse(),
+        which is to create a ProjectPlan, which the submitters are encouraged
         to update and submit for review.
+
+        We cannot call Project.endorse() here, as the ConceptPlan is not
+        approved until the transition finishes.
+        We cannot drop the condition "must have approved ConceptPlan" for
+        Project.endorse() else Project.endorse() will show up prematurely.
+        Another venue might be to use django_fsm.signals.post_transition.
         """
-        msg = "ConceptPlan.approve() calling Project.endorse()"
-        logger.info(msg)
-        print(msg)
-        self.project.endorse()
+        snitch("Project {0} was endorsed through ConceptPlan approval".format(
+            self.project.fullname))
+
+        from pythia.projects.models import Project
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save(update_fields=['status'])
+
+        if not self.project.documents.instance_of(ProjectPlan).exists():
+            p, created = ProjectPlan.objects.get_or_create(
+                project=self.project)
 
     def can_reset(self):
         """Return True if the document can be reset to NEW."""
@@ -651,11 +671,6 @@ class ConceptPlan(Document):
         """Push back to NEW to reset document approval."""
         # Push project back to NEW to cancel SCP endorsement
         self.project.setup()
-
-    class Meta:
-        verbose_name = _("Concept Plan")
-        verbose_name_plural = _("Concept Plans")
-        display_order = 10
 
 
 class ProjectPlan(Document):
@@ -1039,7 +1054,9 @@ class ProjectPlan(Document):
                 )
     def approve(self):
         """Auto-advance the project to active."""
-        self.project.approve()
+        from pythia.projects.models import Project
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save(update_fields=['status'])
 
     @transition(field='status',
                 # verbose_name=_("Reset approval status"),

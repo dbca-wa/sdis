@@ -115,7 +115,7 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertEqual(p.documents.instance_of(ConceptPlan).count(), 1)
 
         print("A new SP has no transitions until the SCP is approved.")
-        self.assertEqual(p.get_available_status_transitions(), [])
+        self.assertEqual(len(list(p.get_available_status_transitions())), 0)
 
         print("A project cannot be endorsed without an approved ConceptPlan.")
         self.assertFalse(p.can_endorse())
@@ -321,18 +321,20 @@ class CoreFunctionProjectModelTests(TestCase):
     """Test CoreFunction model methods, transitions, gate checks"""
 
     def new_CF_is_active(self):
+        """A new CoreFunction has STATUS_ACTIVE immediately."""
         u = UserFactory.create()
         p = CoreFunctionProjectFactory.create(creator=u, project_owner=u)
         self.assertEqual(p.status, Project.STATUS_ACTIVE)
 
     def new_CF_has_conceptplan(self):
-        """Test that a new CoreFunction has one doc, a ConceptPlan."""
+        """A new CoreFunction has one doc, a ConceptPlan."""
         u = UserFactory.create()
         p = CoreFunctionProjectFactory.create(creator=u, project_owner=u)
         self.assertEqual(p.documents.count(), 1)
         self.assertEqual(p.documents.instace_of(ConceptPlan).count(), 1)
 
     def test_that_active_CF_cannot_be_closed_without_closureform(self):
+        """A CoreFunction requires an approved ClosureForm for closure."""
         u = UserFactory.create()
         p = CoreFunctionProjectFactory.create(creator=u, project_owner=u)
         p.status = Project.STATUS_ACTIVE

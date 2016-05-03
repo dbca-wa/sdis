@@ -20,7 +20,7 @@ from pythia.admin import BaseAdmin, Breadcrumb, DownloadAdminMixin
 # from pythia.documents.models import Document
 # from pythia.models import User
 from pythia.templatetags.pythia_base import pythia_urlname
-from pythia.utils import mail_from_template
+from pythia.utils import mail_from_template, snitch
 
 from diff_match_patch import diff_match_patch
 from django_fsm import can_proceed
@@ -84,23 +84,13 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
     program.admin_order_field = 'project__program__cost_center'
     # end list_display crutches
 
-    # normally you just specify two strings for the django-swingers download latex hook to work,
-    # here we generate them on the fly based on whatever document class we use to access it
     @property
     def download_template(self):
         return "doc_"+self.model._meta.model_name
 
     def get_readonly_fields(self, request, obj=None):
-        """
-        Lock the document after approval. Allow super-users to edit it after
-        clicking a link that sets a GET variable. If a super user makes a POST
-        request, it should be allowed.
-        """
-        if ((obj and obj.is_approved and not
-            #(
-            request.user.is_superuser
-            #and (request.GET.get('edit') or request.method == 'POST'))
-             )):
+        """Lock the document after seeking approval for all but superusers."""
+        if (obj and obj.is_nearly_approved and not request.user.is_superuser):
             return fields_for_model(obj, exclude=self.exclude).keys()
         return super(DocumentAdmin, self).get_readonly_fields(request, obj)
 
@@ -111,8 +101,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
         return (
             Breadcrumb(_('Home'), reverse('admin:index')),
             Breadcrumb(_('All projects'),
-                       reverse('admin:projects_project_changelist'))
-        )
+                       reverse('admin:projects_project_changelist')))
 
     def get_urls(self):
         from django.conf.urls import patterns, url
@@ -131,58 +120,47 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
             url(r'^(.+)/endorsement/$', wrap(self.endorsement_view),
                 name='%s_%s_endorsement' % info),
             url("^([^/]+)/history/([^/]+)/diff$", wrap(self.diff_view),
-                name='%s_%s_diff' % info),
-        )
+                name='%s_%s_diff' % info),)
         return extra_urls + super(BaseAdmin, self).get_urls()
 
     def transition_view(self, request, object_id, extra_context=None):
         """
-        Transition a document through its lifecycle. Raise 403 forbidden if
-        it is not possible to perform this action (lack of permission,
-        transition not allowed).
+        Transition a project or document through its lifecycle.
+
+        Raise 403 forbidden if it is not possible to perform this action (
+        lack of permission, transition not allowed).
         """
         model = self.model
         opts = model._meta
-
         obj = self.get_object(request, unquote(object_id))
+        tx = request.GET.get('transition')
 
+        # Does the thing exists
         if obj is None:
             raise Http404(_('%(name)s object with primary key %(key)r does '
                             'not exist.') % {
                                 'name': force_text(opts.verbose_name),
                                 'key': escape(object_id)})
 
-        # Check if the transition is possible
-        transition = request.GET.get('transition')
-        funcs = [x[1] for x in obj.get_available_status_transitions()
-                 if x[0] == transition]
-        if not funcs:
-            raise Http404(_('Missing transition key for object %(name)s '
-                            'with primary key %(key)r.') % {
-                                'name': force_text(opts.verbose_name),
-                                'key': escape(object_id)})
 
-        # codenames = ["%s.%s_%s" % (opts.app_label,
-        #                            func.permission,
-        #                            opts.model_name) for func in funcs]
-        #
-        # permissions = [request.user.has_perm(codename) or
-        #                request.user.has_perm(codename, obj) for
-        #                codename in codenames]
-        #
-        # if not any(permissions):
-        #     raise PermissionDenied
+        # Is current user allowed to do the stuff with the thing
+        if tx not in [t.name for t in
+                      obj.get_available_user_status_transitions(request.user)]:
+            print("Requested transition '{0}' not available for the "
+                  "current user {1}".format(tx, request.user))
+            raise PermissionDenied
 
-        # if request.method == 'POST':
-        #     # Do the transition. django-fsm is broken here, not sure
-        #     # what is going on, but it's not setting bound_func.im_func
-        #     # Hack around it for the time being.
-        #     meta = func._django_fsm
-        #     if not (meta.has_transition(obj) and meta.conditions_met(obj)):
-        #         raise Http404
-        #
-            # getattr(obj, func.__name__)()
-        #
+        t = [t for t in obj.get_available_user_status_transitions(request.user)
+             if t.name == tx][0]
+
+        if request.method == 'POST':
+            # Then do the stuff with the thing
+            print("About to run transition {0}, object status {1}".format(t.name, obj.status))
+            getattr(obj, t.name)()
+            obj.save()
+            print("Finished running transition {0}, object status {1}".format(t.name, obj.status))
+
+
         #     if ('_notify' in request.POST) and (request.POST.get('_notify') == u'on'):
         #         # fire off a notification email
         #         recipients = obj.get_users_to_notify(transition)
@@ -225,23 +203,23 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                                    current_app=self.admin_site.name)
             return HttpResponseRedirect(redirect_url)
 
+        # TODO replace t.method.__name__ with verbose name from custom dict
         context = dict(
-            title=_('%s: %s') % (func.verbose_name, force_text(obj)),
+            title=_('%s: %s') % (t.name, force_text(obj)),
             breadcrumbs=self.get_breadcrumbs(request, obj),
-            transition_name=capfirst(force_text(func.verbose_name)),
+            transition_name=capfirst(force_text(t.name)),
             model_name=capfirst(force_text(opts.verbose_name_plural)),
             object=obj,
-            opts=opts,
-        )
+            opts=opts,)
         context.update(extra_context or {})
 
         return TemplateResponse(request, [
             "admin/%s/%s/%s_transition.html" % (
-                opts.app_label, opts.model_name, transition),
+                opts.app_label, opts.model_name, t.name),
             "admin/%s/%s/transition.html" % (opts.app_label, opts.model_name),
-            "admin/%s/%s_transition.html" % (opts.app_label, transition),
+            "admin/%s/%s_transition.html" % (opts.app_label, t.name),
             "admin/%s/transition.html" % opts.app_label
-        ], context, current_app=self.admin_site.name)
+            ], context, current_app=self.admin_site.name)
 
     def endorsement_view(self, request, object_id, extra_context=None):
         """
