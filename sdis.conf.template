@@ -1,0 +1,8 @@
+1 [program:sdis]
+2 user=www-data
+3 stopasgroup=true
+4 autostart=true
+5 autorestart=true
+6 directory=/path/to/repo/sdis
+7 command=/path/to/virtualenvs/sdis/bin/honcho start
+8 environment=PATH="/path/to/virtualenvs/sdis/bin/:%(ENV_PATH)s",PYTHONUNBUFFERED="true"

@@ -209,42 +209,26 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertTrue(scp.status == Document.STATUS_INREVIEW)
         self.assertTrue(scp.can_seek_approval())
 
-        # ---------------------------------------------------------------------#
-        # ConceptPlan INREVIEW -> INAPPROVAL
-        """
-        Submitting the ConceptPlan for approval sets its status to
-        STATUS_INAPPROVAL, from where the ConceptPlan can be recalled back to
-        INREVIEW, then resubmitted.
-        """
-
         print(" The reviewer request revision from authors.")
         scp.request_revision_from_authors()
         self.assertTrue(scp.status == Document.STATUS_NEW)
 
-        print("Authors optionally update, then seek review again.")
+        print("Authors seek review again.")
         scp.seek_review()
-        self.assertTrue(scp.status == Document.STATUS_INREVIEW)
-
         print("Reviewer seeks approval.")
         scp.seek_approval()
         self.assertTrue(scp.status == Document.STATUS_INAPPROVAL)
         self.assertTrue(scp.can_approve())
 
-        # ---------------------------------------------------------------------#
-        # ConceptPlan INAPPROVAL -> APPROVED
-        # Fast-track the ConceptPlan
-        """ConceptPlan approval moves ScienceProject to PENDING.
-        Approved conceptplan should be read-only to all but approvers.
-        """
-        scp.approve()  # TODO this fails but WHY
+        print("Approvers approve the ConceptPlan.")
+        scp.approve()
         self.assertEqual(scp.status, Document.STATUS_APPROVED)
 
-        # print("Approving the ConceptPlan creates a Project Plan.")
+        print("Approving the ConceptPlan creates a Project Plan.")
         self.assertEqual(p.documents.instance_of(ProjectPlan).count(), 1)
 
-        # Project, when endorsed, should be PENDING
+        print("Approving the ConceptPlan endorses the Project.")
         self.assertEqual(self.project.status, Project.STATUS_PENDING)
-        # pass # fake! all fake.
 
     def test_projectplan_approval(self):
         """Test all possible transitions in a ProjectPlan's (SPP) life."""

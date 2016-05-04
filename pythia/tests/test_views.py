@@ -108,7 +108,7 @@ class ConceptPlanAdminTests(BaseTestCase):
         url = reverse('admin:documents_conceptplan_transition',
                       args=(plan.pk,))
         url += '?transition=seek_review'
-        response = self.client.post(url)
+        response = self.client.post(url, follow=True)
         self.assertEqual(response.status_code, 403)
         plan = self.project.documents.instance_of(ConceptPlan).get()
         self.assertEqual(plan.status, plan.STATUS_NEW)

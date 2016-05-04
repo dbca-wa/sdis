@@ -2,14 +2,10 @@
 
 Convenience wrapper for often used operations.
 """
-import confy
 from fabric.api import local, run, sudo, settings  # cd
 from fabric.colors import green, yellow  # red
 # from fabric.contrib.files import exists, upload_template
-import os
 
-confy.read_environment_file(".env")
-e = os.environ
 
 def migrate():
     """Syncdb, update permissions, migrate all apps."""
@@ -87,7 +83,7 @@ def cleandeploy():
 
 def go():
     """Run the app with runserver (dev)."""
-    local('python manage.py runserver 0.0.0.0:{PORT}'.format(**e))
+    local('python manage.py runserver 0.0.0.0:5000'.format(**e))
 
 
 # -----------------------------------------------------------------------------#

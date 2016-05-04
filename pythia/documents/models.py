@@ -648,7 +648,7 @@ class ConceptPlan(Document):
             self.project.fullname))
 
         from pythia.projects.models import Project
-        self.project.status = Project.STATUS_ACTIVE
+        self.project.status = Project.STATUS_PENDING
         self.project.save(update_fields=['status'])
 
         if not self.project.documents.instance_of(ProjectPlan).exists():
