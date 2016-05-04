@@ -180,7 +180,7 @@ class CommentUpdateView(edit.UpdateView):
 
 class TermsAndConditions(edit.FormView):
     """Custom TermsAndConditions view."""
-    template_name = "admin/terms-and-conditions.html"
+    template_name = "admin/toc.html"
     form_class = TermsAndConditionsForm
 
     def get_success_url(self):
