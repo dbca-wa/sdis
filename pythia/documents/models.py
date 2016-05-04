@@ -1,3 +1,8 @@
+"""Document models.
+
+Documents have transitions along an approval workflow; some transitions trigger
+Project transitions.
+"""
 from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 
@@ -15,7 +20,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.dispatch import receiver
 from django_fsm import FSMField, transition
 
 from pythia.models import Audit, ActiveGeoModelManager
@@ -144,6 +148,7 @@ class Document(PolymorphicModel, Audit):
 
     class Meta:
         """Class options."""
+
         verbose_name = _("Document")
         verbose_name_plural = _("Documents")
         get_latest_by = 'created'
@@ -452,6 +457,7 @@ class Document(PolymorphicModel, Audit):
 
     @property
     def is_nearly_approved(self):
+        """Return whether document is in "read-only" mode during approval."""
         return self.status in [self.STATUS_INAPPROVAL, self.STATUS_APPROVED]
 
     # EMAIL NOTIFICATIONS ----------------------------------------------------#
@@ -551,6 +557,8 @@ class ConceptPlan(Document):
                     "feedback"), blank=True, null=True)
 
     class Meta:
+        """Class options."""
+
         verbose_name = _("Concept Plan")
         verbose_name_plural = _("Concept Plans")
         display_order = 10
@@ -644,16 +652,17 @@ class ConceptPlan(Document):
         Project.endorse() else Project.endorse() will show up prematurely.
         Another venue might be to use django_fsm.signals.post_transition.
         """
-        snitch("Project {0} was endorsed through ConceptPlan approval".format(
+        print("Project {0} was endorsed through ConceptPlan approval".format(
             self.project.fullname))
 
         from pythia.projects.models import Project
         self.project.status = Project.STATUS_PENDING
         self.project.save(update_fields=['status'])
 
-        if not self.project.documents.instance_of(ProjectPlan).exists():
-            p, created = ProjectPlan.objects.get_or_create(
-                project=self.project)
+        # if not self.project.documents.instance_of(ProjectPlan).exists():
+        p, created = ProjectPlan.objects.get_or_create(project=self.project)
+        p.save()
+        print("ProjectPlan status: {0}".format(p.status))
 
     def can_reset(self):
         """Return True if the document can be reset to NEW."""
@@ -825,6 +834,8 @@ class ProjectPlan(Document):
             ], cls=DjangoJSONEncoder))
 
     class Meta:
+        """Class options."""
+
         verbose_name = _("Project Plan")
         verbose_name_plural = _("Project Plans")
         display_order = 20
@@ -999,22 +1010,22 @@ class ProjectPlan(Document):
                     "role": "Biometrician",
                     "css_classes": self.bm_endorsement_status[0],
                     "status": self.bm_endorsement_status[1]
-                },
+                    },
                 # {
                 # "role": "Data Manager",
                 # "css_classes": self.dm_endorsement_status[0],
                 # "status": self.dm_endorsement_status[1]
-                # },
+                #   },
                 {
                     "role": "Herbarium Curator",
                     "css_classes": self.hc_endorsement_status[0],
                     "status": self.hc_endorsement_status[1]
-                },
+                    },
                 {
                     "role": "Animal Ethics Committee",
                     "css_classes": self.ae_endorsement_status[0],
                     "status": self.ae_endorsement_status[1]
-                }
+                    }
                 ]
 
     def can_seek_approval(self):
@@ -1158,6 +1169,8 @@ class ProgressReport(Document):
                     "for 100 to 150 words. One bullet point per direction."))
 
     class Meta:
+        """Class options."""
+
         verbose_name = _("Progress Report")
         verbose_name_plural = _("Progress Reports")
         # unique_together = (("year", "project"))
@@ -1292,6 +1305,8 @@ class ProjectClosure(Document):
         help_text=_("Location of electronic project data."))
 
     class Meta:
+        """Class options."""
+
         verbose_name = _("Project Closure")
         verbose_name_plural = _("Project Closures")
         display_order = 50
@@ -1353,6 +1368,8 @@ class StudentReport(Document):
         help_text=_("The annual report publishing this StudentReport"))
 
     class Meta:
+        """Class options."""
+
         verbose_name = _("Student Report")
         verbose_name_plural = _("Student Reports")
         display_order = 40

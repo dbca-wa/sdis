@@ -1,3 +1,4 @@
+"""Model tests for SDIS."""
 from django.test import TestCase
 
 # from django_fsm.db.fields import TransitionNotAllowed
@@ -14,6 +15,7 @@ from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
 
 
 class UserModelTests(TestCase):
+    """User model tests."""
 
     def test_user_is_valid_with_email_only(self):
         """Test that a user profile is valid with an email only.
@@ -26,13 +28,10 @@ class UserModelTests(TestCase):
 
 
 class ProjectModelTests(BaseTestCase):
-    """
-    Base project tests
-    """
+    """Base project tests."""
+
     def test_creation_adds_project_membership(self):
-        """ Test that the supervising scientist is added to the project team on
-        project creation.
-        """
+        """The sup scientist is added to the team on project creation."""
         project = ProjectFactory.create()
         self.assertEqual(ProjectMembership.objects.count(), 1)
         membership = ProjectMembership.objects.all()[0]
@@ -43,11 +42,10 @@ class ProjectModelTests(BaseTestCase):
 
 
 class ScienceProjectModelTests(BaseTestCase):
-    """
-    Tests along the life cycle of a ScienceProject.
+    """Tests along the life cycle of a ScienceProject.
 
     Special attention is paid to user groups, permissions, transitions,
-    documents, project status
+    documents, project status.
     """
 
     def setUp(self):
@@ -226,6 +224,8 @@ class ScienceProjectModelTests(BaseTestCase):
 
         print("Approving the ConceptPlan creates a Project Plan.")
         self.assertEqual(p.documents.instance_of(ProjectPlan).count(), 1)
+        spp = p.documents.instance_of(ProjectPlan).get()
+        self.assertEqual(spp.status, Document.STATUS_NEW)
 
         print("Approving the ConceptPlan endorses the Project.")
         self.assertEqual(self.project.status, Project.STATUS_PENDING)
@@ -233,6 +233,7 @@ class ScienceProjectModelTests(BaseTestCase):
     def test_projectplan_approval(self):
         """Test all possible transitions in a ProjectPlan's (SPP) life."""
         p = ScienceProjectFactory.create(status=Project.STATUS_PENDING)
+        self.assertEqual(self.project.status, Project.STATUS_PENDING)
 
         print("SPP can not be approved with empty mandatory fields.")
         self.assertFalse(p.can_approve())
@@ -240,13 +241,15 @@ class ScienceProjectModelTests(BaseTestCase):
         print("SPP needs Biometrician's endorsement.")
         print("SPP needs Program Leader's endorsement.")
         print("SPP needs Animal Ethics's endorsement if animals are involved.")
-        print("SPP needs Herbarium Curator's endorsement if plants are involved.")
+        print("SPP needs Herbarium Curator's endorsement"
+              " if plants are involved.")
 
     def test_scienceproject_can_approve(self):
-        """A ScienceProject with approved SPP can be approved."""
+        """A ScienceProject requires an approved SPP to be approved itself."""
         p = ScienceProjectFactory.create(status=Project.STATUS_PENDING)
         spp = ProjectPlan.objects.create(project=p,
                                          status=ProjectPlan.STATUS_APPROVED)
+        self.assertEqual(spp.status, Document.STATUS_APPROVED)
         self.assertTrue(p.can_approve())
 
     def test_cant_approve_scienceproject_without_approved_projectplan(self):
@@ -263,8 +266,9 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertTrue(p.can_terminate())
 
     def test_request_update(self):
-        """New ARARReports request an update from all active and closing
-        projects."""
+        """
+        New ARARReports request an update from all active and closing projects.
+        """
         p = ScienceProjectFactory.create(status=Project.STATUS_ACTIVE)
         from datetime import datetime
         now = datetime.now()
@@ -348,25 +352,30 @@ class CollaborationProjectModelTests(TestCase):
 
 
 class StudentProjectModelTests(TestCase):
+    """StudentProject tests."""
+
     def test_new_student_project(self):
-        """A new StudentProject does not require an approval process
-        and immediately transitions to ACTIVE.
-        """
+        """A new StudentProject has no approval process and is ACTIVE."""
         project = StudentProjectFactory.create()
         self.assertEqual(project.status, Project.STATUS_ACTIVE)
 
-    #def test_request_update_creates_student_report(self):
+    # def test_request_update_creates_student_report(self):
     #    project = StudentProjectFactory.create()
     #    project.request_update()
     #    self.assertEqual(StudentReport.objects.count(), 1)
 
     def test_can_complete_update(self):
+        """Completing the update requires an approved StudentReport."""
         project = StudentProjectFactory.create(status=Project.STATUS_UPDATE)
         StudentReport.objects.create(project=project,
                                      status=StudentReport.STATUS_APPROVED)
         self.assertTrue(project.can_complete_update())
 
     def test_cant_complete_update(self):
+        """
+        Without approved StudentReport, a StudentProject can't complete
+        the update.
+        """
         project = StudentProjectFactory.create(status=Project.STATUS_UPDATE)
         StudentReport.objects.create(project=project)
         self.assertFalse(project.can_complete_update())
