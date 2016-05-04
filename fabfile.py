@@ -30,7 +30,8 @@ def aptget():
     * libsasl2-dev (for python-ldap),
     * libenchant for pyenchant
     """
-    sudo("aptitude install -y libxml2-dev libxslt1-dev libsasl2-dev libenchant1c2a")
+    sudo("aptitude install -y libxml2-dev libxslt1-dev libsasl2-dev "
+         "libenchant1c2a pandoc")
 
 
 def pip():

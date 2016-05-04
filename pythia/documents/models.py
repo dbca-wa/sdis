@@ -326,12 +326,15 @@ class Document(PolymorphicModel, Audit):
         return True
 
     @transition(field=status,
-                # verbose_name=_("Submit for review"),
-                # save=True,
+                custom=dict(
+                    verbose_name=_("Submit for review"),
+                    mail_template="email/seek_review.html",
+                    mail_recipients="reviewers",
+                    notify_default=True,),
                 source=STATUS_NEW,
                 target=STATUS_INREVIEW,
                 conditions=[can_seek_review],
-                # permission="submit"
+                permission="submit"
                 )
     def seek_review(self):
         """Transition this document to being in review."""
