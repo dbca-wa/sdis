@@ -14,4 +14,4 @@ database:
 
 test:
   override:
-    - python manage.py test --ipdb --settings=sdis.test_settings
+    - python manage.py test --settings=sdis.test_settings

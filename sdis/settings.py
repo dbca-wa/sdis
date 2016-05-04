@@ -129,6 +129,9 @@ DATE_INPUT_FORMATS = (
     'Y_m_d',             # '2006_10_25'
     )
 
+# Logs
+if not os.path.exists(os.path.join(BASE_DIR, 'logs')):
+    os.mkdir(os.path.join(BASE_DIR, 'logs'))
 
 # Uploads
 if not os.path.exists(os.path.join(BASE_DIR, 'media')):
@@ -238,6 +241,7 @@ DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dpaw.wa.gov.au>'
 
 
 COMPRESS_ENABLED = True
+COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 DEBUG_TOOLBAR_CONFIG = {
     'HIDE_DJANGO_SQL': False,
@@ -317,11 +321,6 @@ if DEBUG:
 
     LOGGING['loggers'] = {
         'django_auth_ldap': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True
-            },
-        'django_browserid': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
