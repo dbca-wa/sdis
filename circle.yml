@@ -10,7 +10,7 @@ dependencies:
 
 database:
   post:
-    - psql -c "CREATE EXTENSION postgis;" -u ubuntu -d circle_test
+    - psql -c "CREATE EXTENSION postgis;" -U ubuntu -d circle_test
 
 test:
   override:
