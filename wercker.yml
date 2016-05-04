@@ -29,7 +29,7 @@ build:
         name: Install system dependencies
         code: |
             sudo apt-get update
-            sudo apt-get install -y python-2.7 libmxl2-dev libxslt1-dev libsasl2-dev libenchant1c2a
+            sudo apt-get install -y python libxml2-dev libxslt1-dev libsasl2-dev libenchant1c2a
 
 
     # A step that sets up the python virtual environment
