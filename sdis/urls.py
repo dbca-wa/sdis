@@ -13,7 +13,6 @@ urlpatterns = patterns(
     '',
     url(r'^browserid/', include('django_browserid.urls')),
     url(r'^jsi18n$', 'django.views.i18n.javascript_catalog', js_info_dict),
-    url(r'^browserid/', include('django_browserid.urls')),
     url(r'^spillchuck/$', spell_check),
     url(r'^terms-and-conditions/$',
         TermsAndConditions.as_view(), name='terms-and-conditions'),
@@ -31,5 +30,4 @@ urlpatterns = patterns(
     url(r'', include(site.urls)),
 )
 
-#urlpatterns += patterns('django.contrib.staticfiles.views', url(r'^static/(?P<path>.*)$', 'serve'), )
 urlpatterns += staticfiles_urlpatterns()
