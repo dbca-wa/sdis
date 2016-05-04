@@ -1,4 +1,4 @@
-[![Build status](https://app.wercker.com/status/e3bc48bfd0360930f22bd083282f7b07/s "wercker status")](https://app.wercker.com/project/bykey/e3bc48bfd0360930f22bd083282f7b07)
+[![Circle CI](https://circleci.com/gh/parksandwildlife/sdis.svg?style=svg)](https://circleci.com/gh/parksandwildlife/sdis)
 [![Things to do](https://badge.waffle.io/parksandwildlife/sdis.svg?label=ready&title=Ready)](http://waffle.io/parksandwildlife/sdis)
 
 Science Directorate Information System
@@ -24,4 +24,3 @@ Deployment
 * Set file permissions and ownership (media, logs) for code
 * Create a supervisor config following `sdis.conf.template`
 * Run SDIS in production mode with `honcho start`, or orchestrate with supervisor
-  
