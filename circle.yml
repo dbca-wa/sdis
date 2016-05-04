@@ -3,7 +3,8 @@ machine:
     version: pypy-2.2.1
 
 dependencies:
-  pre:
+  override:
+    - pip install Fabric
     - fab install
 
 test:
