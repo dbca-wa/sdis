@@ -862,7 +862,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                     "supplied, and only for external team members."))
 
     first_name = models.CharField(
-    	max_length=100,
+        max_length=100,
         null=True, blank=True,
         verbose_name=_("First Name"),
         help_text=_("First name or given name."))

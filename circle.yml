@@ -3,7 +3,7 @@ machine:
     version: 2.7
 
 database:
-  pre:
+  post:
     - psql -U ubuntu -c "create extension postgis" -d sdis
 
 test:
@@ -15,4 +15,3 @@ dependencies:
     - mkdir -p /home/ubuntu/sdis/logs/
     - touch /home/ubuntu/sdis/logs/sdis.log
     - sudo aptitude install -y libxml2-dev libxslt1-dev libsasl2-dev libenchant1c2a pandoc
-    - pip install -r requirements.txt

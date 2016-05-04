@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import
 
 from django.contrib.admin.util import unquote
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
@@ -142,8 +143,8 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                                 'name': force_text(opts.verbose_name),
                                 'key': escape(object_id)})
 
-
         # Is current user allowed to do the stuff with the thing
+        # Should we use django_fsm.can_proceed instead?
         if tx not in [t.name for t in
                       obj.get_available_user_status_transitions(request.user)]:
             print("Requested transition '{0}' not available for the "
@@ -155,46 +156,48 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
 
         if request.method == 'POST':
             # Then do the stuff with the thing
-            print("About to run transition {0}, object status {1}".format(t.name, obj.status))
+            print("About to run transition {0}, object status {1}".format(
+                t.name, obj.status))
             getattr(obj, t.name)()
             obj.save()
-            print("Finished running transition {0}, object status {1}".format(t.name, obj.status))
+            print("Finished running transition {0}, object status {1}".format(
+                t.name, obj.status))
 
+            # Email notifications
+            if ('_notify' in request.POST) and (
+                    request.POST.get('_notify') == u'on'):
 
-        #     if ('_notify' in request.POST) and (request.POST.get('_notify') == u'on'):
-        #         # fire off a notification email
-        #         recipients = obj.get_users_to_notify(transition)
-        #         recipients.discard(request.user)
-        #         #if settings.DEBUG:
-        #         #    print("[DEBUG] recipients would be: {0}".format(recipients))
-        #
-        #         # FIXME: short circuit
-        #         #recipients = [User.objects.get(username='florianm')]
-        #         #if settings.DEBUG:
-        #         #    print("[DEBUG] recipients replaced with current user: {0}".format(recipients))
-        #
-        #         context = {
-        #             'instigator': request.user,
-        #             'object_name': 'the {0} in project {1} ({2})'.format(
-        #                 obj._meta.verbose_name,
-        #                 obj.project.project_type_year_number,
-        #                 obj.project.title_plain),
-        #             'object_url': request.build_absolute_uri(
-        #                 reverse(pythia_urlname(obj.opts, 'change'), args=[obj.pk])),
-        #             'status': [x[1] for x in obj.STATUS_CHOICES if x[0] == transition][0],
-        #             'explanation': True,
-        #         }
-        #         mail_from_template(
-        #             '{0} has been updated'.format(
-        #                 obj.project.project_type_year_number),
-        #             list(recipients), 'email/email_base', context)
-        #
-        #         if settings.DEBUG:
-        #             messages.info(request,
-        #                 "Notification sent to (excluding current user {0}): {1}".format(
-        #                 request.user.get_full_name(),
-        #                 ', '.join([u.get_full_name() for u in obj.get_users_to_notify(transition)])
-        #                 ))
+                recipients = obj.get_users_to_notify(t.name)
+                recipients.discard(request.user)
+                if settings.DEBUG:
+                    print("[DEBUG] recipients would have been: {0}".format(
+                       recipients))
+                    User = get_user_model()
+                    recipients = [User.objects.get(username='florianm')]
+                    print("[DEBUG] recipients replaced with: {0}".format(
+                       recipients))
+
+                context = {
+                    'instigator': request.user,
+                    'object_name': '{0} in project {1}'.format(
+                        obj._meta.verbose_name,
+                        obj.project.fullname),
+                    'object_url': request.build_absolute_uri(reverse(
+                        pythia_urlname(obj.opts, 'change'), args=[obj.pk])),
+                    'status': t.target,
+                    'explanation': True,
+                    }
+                mail_from_template(
+                    '{0} has been updated'.format(
+                        obj.project.project_type_year_number),
+                    list(recipients), 'email/email_base', context)
+
+                if settings.DEBUG:
+                    messages.info(request,
+                        "Notification sent to (excluding current user {0}): {1}".format(
+                        request.user.get_full_name(),
+                        ', '.join([u.get_full_name() for u in obj.get_users_to_notify(transition)])
+                        ))
 
             # Redirect the user back to the document change page
             redirect_url = reverse('admin:%s_%s_change' %
