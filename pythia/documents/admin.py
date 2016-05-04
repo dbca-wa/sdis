@@ -192,13 +192,6 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                         obj.project.project_type_year_number),
                     list(recipients), 'email/email_base', context)
 
-                if settings.DEBUG:
-                    messages.info(request,
-                        "Notification sent to (excluding current user {0}): {1}".format(
-                        request.user.get_full_name(),
-                        ', '.join([u.get_full_name() for u in obj.get_users_to_notify(transition)])
-                        ))
-
             # Redirect the user back to the document change page
             redirect_url = reverse('admin:%s_%s_change' %
                                    (opts.app_label, opts.model_name),
@@ -206,9 +199,8 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                                    current_app=self.admin_site.name)
             return HttpResponseRedirect(redirect_url)
 
-        # TODO replace t.method.__name__ with verbose name from custom dict
         context = dict(
-            title=_('%s: %s') % (t.name, force_text(obj)),
+            title=_('%s: %s') % (t.custom.verbose_name, force_text(obj)),
             breadcrumbs=self.get_breadcrumbs(request, obj),
             transition_name=capfirst(force_text(t.name)),
             model_name=capfirst(force_text(opts.verbose_name_plural)),

@@ -313,6 +313,8 @@ if DEBUG:
         'django_pdb.middleware.PdbMiddleware',
         )
 
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
     LOGGING['loggers'] = {
         'django_auth_ldap': {
             'handlers': ['file'],
