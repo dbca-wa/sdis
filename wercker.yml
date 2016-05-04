@@ -31,6 +31,9 @@ build:
             sudo apt-get update
             sudo apt-get install -y python libxml2-dev libxslt1-dev libsasl2-dev libenchant1c2a virtualenv
 
+    # create a local postgis db
+    - alexiss/create-postgis-db@0.1.14
+
     # A step that sets up the python virtual environment
     - virtualenv:
         name: setup virtual environment
