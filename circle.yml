@@ -4,7 +4,6 @@ machine:
 
 database:
   pre:
-    - psql -U ubuntu -c "CREATE DATABASE sdis;"
     - psql -U ubuntu -c "create extension postgis" -d sdis
 
 test:
