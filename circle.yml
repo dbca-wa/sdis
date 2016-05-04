@@ -2,16 +2,17 @@ machine:
   python:
     version: 2.7
 
-database:
-  post:
-    - psql -U ubuntu -c "create extension postgis" -d sdis
-
-test:
-  override:
-    - python manage.py test --ipdb --settings=sdis.test_settings
-
 dependencies:
   pre:
     - mkdir -p /home/ubuntu/sdis/logs/
     - touch /home/ubuntu/sdis/logs/sdis.log
     - sudo aptitude install -y libxml2-dev libxslt1-dev libsasl2-dev libenchant1c2a pandoc
+
+database:
+  post:
+    - createdb sdis
+    - psql -U ubuntu -c "create extension postgis" -d sdis
+
+test:
+  override:
+    - python manage.py test --ipdb --settings=sdis.test_settings
