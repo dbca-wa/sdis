@@ -2,9 +2,11 @@
 
 Convenience wrapper for often used operations.
 """
-from fabric.api import local, run, sudo, settings  # cd
+from fabric.api import local, sudo, settings, env  # cd, run
 from fabric.colors import green, yellow  # red
 # from fabric.contrib.files import exists, upload_template
+
+env.hosts = ['localhost', ]
 
 
 def migrate():
@@ -28,8 +30,7 @@ def aptget():
     * libsasl2-dev (for python-ldap),
     * libenchant for pyenchant
     """
-    sudo("aptitude install -y sudo apt-get install -y libxml2-dev libxslt1-dev"
-         " libsasl2-dev libenchant1c2a")
+    sudo("aptitude install -y libxml2-dev libxslt1-dev libsasl2-dev libenchant1c2a")
 
 
 def pip():
@@ -61,10 +62,6 @@ def install():
     pip()
 
 
-# -----------------------------------------------------------------------------#
-# Run after code update
-
-
 def deploy():
     """Refresh application. Run after code update.
 
@@ -83,11 +80,7 @@ def cleandeploy():
 
 def go():
     """Run the app with runserver (dev)."""
-    local('python manage.py runserver 0.0.0.0:5000'.format(**e))
-
-
-# -----------------------------------------------------------------------------#
-# Debugging, Testing, Documentation
+    local('python manage.py runserver 0.0.0.0:5000')
 
 
 def shell():
