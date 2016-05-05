@@ -325,33 +325,29 @@ class Document(PolymorphicModel, Audit):
         """Return true if this document can be passed to the review stage."""
         return True
 
-    @transition(field=status,
-                custom=dict(
-                    verbose_name=_("Submit for review"),
-                    mail_template="email/seek_review.html",
-                    mail_recipients="reviewers",
-                    notify_default=True,),
-                source=STATUS_NEW,
-                target=STATUS_INREVIEW,
-                conditions=[can_seek_review],
-                permission="submit"
-                )
+    @transition(
+        field=status,
+        source=STATUS_NEW,
+        target=STATUS_INREVIEW,
+        conditions=[can_seek_review],
+        permission="submit",
+        custom=dict(verbose="Submit for review", notify=True,)
+        )
     def seek_review(self):
         """Transition this document to being in review."""
-        # self.save()  # this shouldn't be necessary
 
     def can_recall(self):
         """Return true if this document can be recalled from review."""
         return True
 
-    @transition(field=status,
-                # verbose_name=_("Recall from review"),
-                # save=True,
-                source=STATUS_INREVIEW,
-                target=STATUS_NEW,
-                conditions=[can_recall],
-                # permission="submit"
-                )
+    @transition(
+        field=status,
+        source=STATUS_INREVIEW,
+        target=STATUS_NEW,
+        conditions=[can_recall],
+        permission="submit",
+        custom=dict(verbose="Recall from review", notify=True,)
+        )
     def recall(self):
         """Transition this document to being new."""
 
@@ -362,26 +358,25 @@ class Document(PolymorphicModel, Audit):
         """Return true if this document can seek approval."""
         return True
 
-    @transition(field=status,
-                # verbose_name=_("Submit for approval"),
-                # save=True,
-                source=STATUS_INREVIEW,
-                target=STATUS_INAPPROVAL,
-                conditions=[can_seek_approval],
-                # permission="review"
-                )
+    @transition(
+        field=status,
+        source=STATUS_INREVIEW,
+        target=STATUS_INAPPROVAL,
+        conditions=[can_seek_approval],
+        permission="review",
+        custom=dict(verbose="Submit for approval", notify=True,)
+        )
     def seek_approval(self):
         """Transition this document to be in approval."""
         self.save()
 
     @transition(
         field=status,
-        # verbose_name=_("Request revision from authors"),
-        # save=True,
         source=STATUS_INREVIEW,
         target=STATUS_NEW,
         conditions=[can_seek_approval],
-        # permission="review"
+        permission="review",
+        custom=dict(verbose="Request revision from authors", notify=True,)
         )
     def request_revision_from_authors(self):
         """Push back to NEW to request a revision from the authors."""
@@ -393,37 +388,37 @@ class Document(PolymorphicModel, Audit):
         """Return true if this document can be approved."""
         return True
 
-    @transition(field=status,
-                # verbose_name=_("Approve"),
-                # save=True,
-                source=STATUS_INAPPROVAL,
-                target=STATUS_APPROVED,
-                conditions=[can_approve],
-                # permission="approve"
-                )
+    @transition(
+        field=status,
+        source=STATUS_INAPPROVAL,
+        target=STATUS_APPROVED,
+        conditions=[can_approve],
+        permission="approve",
+        custom=dict(verbose="Approve", notify=True,)
+        )
     def approve(self):
         """Approve document."""
 
-    @transition(field=status,
-                # verbose_name=_("Request reviewer revision"),
-                # save=True,
-                source=STATUS_INAPPROVAL,
-                target=STATUS_INREVIEW,
-                conditions=[can_approve],
-                # permission="approve"
-                )
+    @transition(
+        field=status,
+        source=STATUS_INAPPROVAL,
+        target=STATUS_INREVIEW,
+        conditions=[can_approve],
+        permission="approve",
+        custom=dict(verbose="Request reviewer revision", notify=True,)
+        )
     def request_reviewer_revision(self):
         """Push back to INREVIEW to request reviewer revision."""
         self.save()
 
-    @transition(field=status,
-                # verbose_name=_("Request author revision"),
-                # save=True,
-                source=STATUS_INAPPROVAL,
-                target=STATUS_NEW,
-                conditions=[can_approve],
-                # permission="approve"
-                )
+    @transition(
+        field=status,
+        source=STATUS_INAPPROVAL,
+        target=STATUS_NEW,
+        conditions=[can_approve],
+        permission="approve",
+        custom=dict(verbose="Request author revision", notify=True,)
+        )
     def request_author_revision(self):
         """Push back to NEW to request author revision."""
         self.save()
@@ -437,14 +432,14 @@ class Document(PolymorphicModel, Audit):
         """
         return True
 
-    @transition(field=status,
-                # verbose_name=_("Reset approval status"),
-                # save=True,
-                source=STATUS_APPROVED,
-                target=STATUS_NEW,
-                conditions=[can_reset],
-                # permission="approve"
-                )
+    @transition(
+        field=status,
+        source=STATUS_APPROVED,
+        target=STATUS_NEW,
+        conditions=[can_reset],
+        permission="approve",
+        custom=dict(verbose="Reset approval status", notify=True,)
+        )
     def reset(self):
         """Push back to NEW to reset document approval."""
 
@@ -633,14 +628,14 @@ class ConceptPlan(Document):
         # doc permission "approve" restricts approve to SCD already
         return True
 
-    @transition(field='status',
-                # verbose_name=_("Approve"),
-                # save=True,
-                source=Document.STATUS_INAPPROVAL,
-                target=Document.STATUS_APPROVED,
-                conditions=[can_approve],
-                permission="approve"
-                )
+    @transition(
+        field='status',
+        source=Document.STATUS_INAPPROVAL,
+        target=Document.STATUS_APPROVED,
+        conditions=[can_approve],
+        permission="approve",
+        custom=dict(verbose="Approve", notify=True,)
+        )
     def approve(self):
         """
         Advance the project to status "pending".
@@ -671,14 +666,14 @@ class ConceptPlan(Document):
         """Return True if the document can be reset to NEW."""
         return True
 
-    @transition(field='status',
-                # verbose_name=_("Reset approval status"),
-                # save=True,
-                source=Document.STATUS_APPROVED,
-                target=Document.STATUS_NEW,
-                conditions=[can_reset],
-                # permission="approve"
-                )
+    @transition(
+        field='status',
+        source=Document.STATUS_APPROVED,
+        target=Document.STATUS_NEW,
+        conditions=[can_reset],
+        permission="approve",
+        custom=dict(verbose="Reset approval status", notify=True,)
+        )
     def reset(self):
         """Push back to NEW to reset document approval."""
         # Push project back to NEW to cancel SCP endorsement
@@ -1058,28 +1053,28 @@ class ProjectPlan(Document):
         # doc permission "approve" restricts approve to SCD already
         return self.cleared_ae
 
-    @transition(field='status',
-                # verbose_name=_("Approve"),
-                # save=True,
-                source=Document.STATUS_INAPPROVAL,
-                target=Document.STATUS_APPROVED,
-                conditions=[can_approve],
-                # permission="approve"
-                )
+    @transition(
+        field='status',
+        source=Document.STATUS_INAPPROVAL,
+        target=Document.STATUS_APPROVED,
+        conditions=[can_approve],
+        permission="approve",
+        custom=dict(verbose="Approve", notify=True,)
+        )
     def approve(self):
         """Auto-advance the project to active."""
         from pythia.projects.models import Project
         self.project.status = Project.STATUS_ACTIVE
         self.project.save(update_fields=['status'])
 
-    @transition(field='status',
-                # verbose_name=_("Reset approval status"),
-                # save=True,
-                source=Document.STATUS_APPROVED,
-                target=Document.STATUS_NEW,
-                # conditions=[can_reset],
-                # permission="approve"
-                )
+    @transition(
+        field='status',
+        source=Document.STATUS_APPROVED,
+        target=Document.STATUS_NEW,
+        # conditions=[can_reset],
+        permission="approve",
+        custom=dict(verbose="Reset approval status", notify=True,)
+        )
     def reset(self):
         """Push back to NEW to reset document approval."""
         # Push project back to PENDING to cancel SPP approval
@@ -1222,14 +1217,14 @@ class ProgressReport(Document):
         # doc permission "approve" restricts approve to SCD already
         return True
 
-    @transition(field='status',
-                # verbose_name=_("Approve"),
-                # save=True,
-                source=Document.STATUS_INAPPROVAL,
-                target=Document.STATUS_APPROVED,
-                conditions=[can_approve],
-                # permission="approve"
-                )
+    @transition(
+        field='status',
+        source=Document.STATUS_INAPPROVAL,
+        target=Document.STATUS_APPROVED,
+        conditions=[can_approve],
+        permission="approve",
+        custom=dict(verbose="Approve", notify=True,)
+        )
     def approve(self):
         """Complete the requested update.
 
@@ -1246,14 +1241,14 @@ class ProgressReport(Document):
         elif self.project.status == Project.STATUS_FINAL_UPDATE:
             self.project.complete()
 
-    @transition(field='status',
-                # verbose_name=_("Reset approval status"),
-                # save=True,
-                source=Document.STATUS_APPROVED,
-                target=Document.STATUS_NEW,
-                # conditions=[can_reset],  # needs def can_reset() here
-                # permission="approve"
-                )
+    @transition(
+        field='status',
+        source=Document.STATUS_APPROVED,
+        target=Document.STATUS_NEW,
+        # conditions=[can_reset],  # needs def can_reset() here
+        permission="approve",
+        custom=dict(verbose="Reset approval status", notify=True,)
+        )
     def reset(self):
         """Push back to NEW to reset document approval."""
         # Push project back to UPDATE_REQUESTED
@@ -1314,26 +1309,26 @@ class ProjectClosure(Document):
         verbose_name_plural = _("Project Closures")
         display_order = 50
 
-    @transition(field='status',
-                # verbose_name=_("Approve"),
-                # save=True,
-                source=Document.STATUS_INAPPROVAL,
-                target=Document.STATUS_APPROVED,
-                # conditions=[can_approve],
-                # permission="approve"
-                )
+    @transition(
+        field='status',
+        source=Document.STATUS_INAPPROVAL,
+        target=Document.STATUS_APPROVED,
+        # conditions=[can_approve],
+        permission="approve",
+        custom=dict(verbose="Approve", notify=True,)
+        )
     def approve(self):
         """Auto-advance the project to CLOSING."""
         self.project.accept_closure()
 
-    @transition(field='status',
-                # verbose_name=_("Reset approval status"),
-                # save=True,
-                source=Document.STATUS_APPROVED,
-                target=Document.STATUS_NEW,
-                # conditions=[can_reset],
-                # permission="approve"
-                )
+    @transition(
+        field='status',
+        source=Document.STATUS_APPROVED,
+        target=Document.STATUS_NEW,
+        # conditions=[can_reset],
+        permission="approve",
+        custom=dict(verbose="Reset approval status", notify=True,)
+        )
     def reset(self):
         """Push back to NEW to reset document approval.
 
@@ -1387,14 +1382,14 @@ class StudentReport(Document):
             str(self.year-1),
             str(self.year))
 
-    @transition(field='status',
-                # verbose_name=_("Approve"),
-                # save=True,
-                source=Document.STATUS_INAPPROVAL,
-                target=Document.STATUS_APPROVED,
-                # conditions=[can_approve],
-                # permission="approve"
-                )
+    @transition(
+        field='status',
+        source=Document.STATUS_INAPPROVAL,
+        target=Document.STATUS_APPROVED,
+        # conditions=[can_approve],
+        permission="approve",
+        custom=dict(verbose="Approve", notify=True,)
+        )
     def approve(self):
         """
         Auto-advance the project to active if an update has been requested.
@@ -1408,14 +1403,14 @@ class StudentReport(Document):
         else:
             return True
 
-    @transition(field='status',
-                # verbose_name=_("Reset approval status"),
-                # save=True,
-                source=Document.STATUS_APPROVED,
-                target=Document.STATUS_NEW,
-                # conditions=[can_reset],
-                # permission="approve"
-                )
+    @transition(
+        field='status',
+        source=Document.STATUS_APPROVED,
+        target=Document.STATUS_NEW,
+        # conditions=[can_reset],
+        permission="approve",
+        custom=dict(verbose="Reset approval status", notify=True,)
+        )
     def reset(self):
         """
         Push back to NEW to reset document approval.

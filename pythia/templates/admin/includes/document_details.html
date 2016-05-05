@@ -10,13 +10,17 @@
     <tr>
       <th>Your actions</th>
       <td align="right">
-      {% get_transitions document as transitions %}
-      {% if transitions %}
-        {% for trans in transitions %}
-        <a href="{{ trans.url }}" class="btn btn-xs btn-primary" id="id_{{ trans.transition }}">{{ trans.name }}</a>
+      {% get_transitions document as tx %}
+      {% if tx %}
+        {% for t in tx %}
+        <a  href="{{ t.url }}"
+            class="btn btn-xs btn-primary"
+            id="id_{{ t.name }}">{{ t.verbose }}</a>
         {% endfor %}
       {% else %}
-        <button type="button" class="btn btn-xs btn-default" disabled="disabled">No actions</button>
+        <button type="button"
+                class="btn btn-xs btn-default"
+                disabled="disabled">No actions</button>
       {% endif %}
       </td>
     </tr>
@@ -48,8 +52,8 @@
 <table class="table">
   <tbody>
     <tr>
-      <th>Past edits</th> 
-      <td><a href="{% url document.opts|pythia_urlname:'history' document.pk|pythia_urlquote %}" 
+      <th>Past edits</th>
+      <td><a href="{% url document.opts|pythia_urlname:'history' document.pk|pythia_urlquote %}"
         class="btn btn-xs btn-primary pull-right">Show history</a></td>
     </tr>
     <tr>

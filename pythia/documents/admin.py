@@ -173,19 +173,18 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                     print("[DEBUG] recipients would have been: {0}".format(
                        recipients))
                     User = get_user_model()
-                    recipients = [User.objects.get(username='florianm')]
+                    recipients = [User.objects.get(username='florianm'), ]
                     print("[DEBUG] recipients replaced with: {0}".format(
                        recipients))
 
                 context = {
                     'instigator': request.user,
-                    'object_name': '{0} in project {1}'.format(
-                        obj._meta.verbose_name,
-                        obj.project.fullname),
+                    'object_name': '{0} of {1}'.format(
+                        obj.__str__(), obj.project.fullname),
                     'object_url': request.build_absolute_uri(reverse(
                         pythia_urlname(obj.opts, 'change'), args=[obj.pk])),
+                    'action': t.name,
                     'status': t.target,
-                    'explanation': True,
                     }
                 mail_from_template(
                     '{0} has been updated'.format(
@@ -200,7 +199,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
             return HttpResponseRedirect(redirect_url)
 
         context = dict(
-            title=_('%s: %s') % (t.custom.verbose_name, force_text(obj)),
+            title=_('%s: %s') % (t.custom["verbose"], force_text(obj)),
             breadcrumbs=self.get_breadcrumbs(request, obj),
             transition_name=capfirst(force_text(t.name)),
             model_name=capfirst(force_text(opts.verbose_name_plural)),
