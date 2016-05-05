@@ -15,7 +15,7 @@
 {% get_transitions project as transitions %}
 {% if transitions %}
 {% for trans in transitions %}
-<a href="{{ trans.url }}" class="btn btn-primary" id="id_{{ trans.transition }}">{{ trans.name }}</a>
+<a href="{{ trans.url }}" class="btn btn-primary" id="id_{{ trans.transition }}">{{ trans.verbose }}</a>
 {% endfor %}
 {% else %}
 <button type="button" class="btn btn-default" disabled="disabled">No actions available at this time</button>
@@ -24,8 +24,8 @@
 
 <p class="row">
   <div class="colEditable collapse in col-sm-offset-3 col-sm-6">
-      <button type="button" class="btn btn-primary btn-block" 
-          title="Update project details" onclick="javascript:showEditable(this);"> 
+      <button type="button" class="btn btn-primary btn-block"
+          title="Update project details" onclick="javascript:showEditable(this);">
           <i class="glyphicon glyphicon-pencil"></i>Edit project details
       </button>
   </div>

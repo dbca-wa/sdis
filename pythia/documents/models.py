@@ -1078,7 +1078,9 @@ class ProjectPlan(Document):
     def reset(self):
         """Push back to NEW to reset document approval."""
         # Push project back to PENDING to cancel SPP approval
-        self.project.endorse()
+        from pythia.projects.models import Project
+        self.project.status = Project.STATUS_PENDING
+        self.project.save(update_fields=['status'])
 
 
 def projectplan_post_save(sender, instance, created, **kwargs):
