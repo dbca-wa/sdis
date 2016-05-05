@@ -318,6 +318,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     objects = ProjectManager()
 
     class Meta:
+        """Model options."""
+
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")
         unique_together = (("year", "number"))
@@ -418,15 +420,17 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         return (
             self.documents.instance_of(ConceptPlan).exists() and
-            self.documents.instance_of(ConceptPlan).latest().is_nearly_approved)
+            self.documents.instance_of(
+                ConceptPlan).latest().is_nearly_approved)
 
-    @transition(field=status,
-                # verbose_name=_("Endorse Project"),
-                source=STATUS_NEW,
-                target=STATUS_PENDING,
-                conditions=[can_endorse],
-                permission="approve",
-                )
+    @transition(
+        field=status,
+        source=STATUS_NEW,
+        target=STATUS_PENDING,
+        conditions=[can_endorse],
+        permission="approve",
+        custom=dict(verbose="Endorse project", notify=True,)
+        )
     def endorse(self):
         """
         Transition to move project to PENDING.
@@ -448,13 +452,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         else:
             return self.documents.instance_of(ProjectPlan).latest().is_approved
 
-    @transition(field=status,
-                # save=True,
-                # verbose_name=_("Approve Project"),
-                source=STATUS_PENDING,
-                target=STATUS_ACTIVE,
-                conditions=[can_approve],
-                permission="approve")
+    @transition(
+        field=status,
+        source=STATUS_PENDING,
+        target=STATUS_ACTIVE,
+        conditions=[can_approve],
+        permission="approve",
+        custom=dict(verbose="Approve Project", notify=True,)
+        )
     def approve(self):
         """Transition to move the project to ACTIVE."""
         return
@@ -468,13 +473,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         return True
 
-    @transition(field=status,
-                # save=True,
-                # verbose_name=_("Request update"),
-                source=STATUS_ACTIVE,
-                target=STATUS_UPDATE,
-                conditions=[can_request_update],
-                permission="approve")
+    @transition(
+        field=status,
+        source=STATUS_ACTIVE,
+        target=STATUS_UPDATE,
+        conditions=[can_request_update],
+        permission="approve",
+        custom=dict(verbose="Request update", notify=True,)
+        )
     def request_update(self, report=None):
         """
         Transition to move the project to STATUS_UPDATING.
@@ -509,14 +515,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
                         'without approved Progress Report!')
             return False
 
-    @transition(field=status,
-                # save=True,
-                # verbose_name=_("Complete update"),
-                source=STATUS_UPDATE,
-                target=STATUS_ACTIVE,
-                # conditions=[can_complete_update],
-                permission="submit"
-                )
+    @transition(
+        field=status,
+        source=STATUS_UPDATE,
+        target=STATUS_ACTIVE,
+        # conditions=[can_complete_update],
+        permission="submit",
+        custom=dict(verbose="Complete update", notify=True,)
+        )
     def complete_update(self):
         """
         Move the project back to ACTIVE after finishing its update.
@@ -534,14 +540,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         return True
 
-    @transition(field=status,
-                # save=True,
-                # verbose_name=_("Request closure"),
-                source=STATUS_ACTIVE,
-                target=STATUS_CLOSURE_REQUESTED,
-                conditions=[can_request_closure],
-                permission="submit",
-                )
+    @transition(
+        field=status,
+        source=STATUS_ACTIVE,
+        target=STATUS_CLOSURE_REQUESTED,
+        conditions=[can_request_closure],
+        permission="submit",
+        custom=dict(verbose="Request closure", notify=True,)
+        )
     def request_closure(self):
         """Transition to move project to CLOSURE_REQUESTED.
 
@@ -553,13 +559,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             creator=self.creator,
             modifier=self.modifier)
 
-    @transition(field=status,
-                # save=True,
-                # verbose_name=_("Force closure and cancel update"),
-                source=STATUS_UPDATE,
-                target=STATUS_CLOSURE_REQUESTED,
-                # conditions=[can_request_closure],
-                permission="review")
+    @transition(
+        field=status,
+        source=STATUS_UPDATE,
+        target=STATUS_CLOSURE_REQUESTED,
+        # conditions=[can_request_closure],
+        permission="review",
+        custom=dict(verbose="Force closure and cancel update", notify=True,)
+        )
     def force_closure(self):
         """Transition to move project to CLOSURE_REQUESTED during UPDATING.
 
@@ -589,13 +596,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         return self.documents.instance_of(ProjectClosure).latest().is_approved
 
-    @transition(field=status,
-                # save=True,
-                # verbose_name=_("Accept closure"),
-                source=STATUS_CLOSURE_REQUESTED,
-                target=STATUS_CLOSING,
-                conditions=[can_accept_closure],
-                permission="approve")
+    @transition(
+        field=status,
+        source=STATUS_CLOSURE_REQUESTED,
+        target=STATUS_CLOSING,
+        conditions=[can_accept_closure],
+        permission="approve",
+        custom=dict(verbose="Accept closure", notify=True,)
+        )
     def accept_closure(self):
         """Transition to move the project to CLOSING."""
         return
@@ -613,13 +621,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         return True
 
-    @transition(field=status,
-                # verbose_name=_("Request final update"),
-                # save=True,
-                source=[STATUS_CLOSING, STATUS_COMPLETED],
-                target=STATUS_FINAL_UPDATE,
-                conditions=[can_request_final_update],
-                permission="approve")
+    @transition(
+        field=status,
+        source=[STATUS_CLOSING, STATUS_COMPLETED],
+        target=STATUS_FINAL_UPDATE,
+        conditions=[can_request_final_update],
+        permission="approve",
+        custom=dict(verbose="Request final update", notify=True,)
+        )
     def request_final_update(self):
         """Transition to move the project to STATUS_FINAL_UPDATE."""
         ProgressReport.objects.create(
@@ -639,18 +648,20 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         return (
             self.documents.instance_of(ProgressReport).exists() and
-            self.documents.instance_of(ProgressReport).latest().is_final_report and
+            self.documents.instance_of(
+                ProgressReport).latest().is_final_report and
             self.documents.instance_of(ProgressReport).latest().is_approved and
             self.documents.instance_of(ProjectClosure).exists() and
             self.documents.instance_of(ProjectClosure).latest().is_approved)
 
-    @transition(field=status,
-                # verbose_name=_("Complete final update"),
-                # save=True,
-                source=STATUS_FINAL_UPDATE,
-                target=STATUS_COMPLETED,
-                # conditions=[can_complete],
-                permission="approve")
+    @transition(
+        field=status,
+        source=STATUS_FINAL_UPDATE,
+        target=STATUS_COMPLETED,
+        conditions=[can_complete],
+        permission="approve",
+        custom=dict(verbose="Complete final update", notify=True,)
+        )
     def complete(self):
         """
         Transition to move the project to its COMPLETED state.
@@ -661,13 +672,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return
 
     # ACTIVE -> COMPLETED ----------------------------------------------------#
-    @transition(field=status,
-                # verbose_name=_("Force-complete project"),
-                # save=True,
-                source=[STATUS_ACTIVE, STATUS_CLOSING],
-                target=STATUS_COMPLETED,
-                # conditions=[can_complete],
-                permission="review")
+    @transition(
+        field=status,
+        source=[STATUS_ACTIVE, STATUS_CLOSING],
+        target=STATUS_COMPLETED,
+        # conditions=[can_complete],
+        permission="review",
+        custom=dict(verbose="Force-complete project", notify=True,)
+        )
     def force_complete(self):
         """
         Force-choke the project to its COMPLETED state.
@@ -689,13 +701,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         return True
 
-    @transition(field=status,
-                # verbose_name=_("Reactivate project"),
-                # save=True,
-                source=STATUS_COMPLETED,
-                target=STATUS_ACTIVE,
-                # conditions=[can_reactivate],
-                permission="approve")
+    @transition(
+        field=status,
+        source=STATUS_COMPLETED,
+        target=STATUS_ACTIVE,
+        # conditions=[can_reactivate],
+        permission="approve",
+        custom=dict(verbose="Reactivate project", notify=True,)
+        )
     def reactivate(self):
         """Transition to move the project to its ACTIVE state."""
         return
@@ -705,13 +718,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """Return true if the project can be reactivated."""
         return True
 
-    @transition(field=status,
-                # verbose_name=_("Terminate project"),
-                # save=True,
-                source=STATUS_ACTIVE,
-                target=STATUS_TERMINATED,
-                # conditions=[can_terminate],
-                permission="approve")
+    @transition(
+        field=status,
+        source=STATUS_ACTIVE,
+        target=STATUS_TERMINATED,
+        # conditions=[can_terminate],
+        permission="approve",
+        custom=dict(verbose="Terminate project", notify=True,)
+        )
     def terminate(self):
         """Transition the project to its TERMINATED state."""
         return
@@ -721,13 +735,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """Whether the project can be reactivated from being terminated."""
         return True
 
-    @transition(field=status,
-                # verbose_name=_("Reactivate terminated project"),
-                # save=True,
-                source=STATUS_TERMINATED,
-                target=STATUS_ACTIVE,
-                # conditions=[can_reactivate_terminated],
-                permission="approve")
+    @transition(
+        field=status,
+        source=STATUS_TERMINATED,
+        target=STATUS_ACTIVE,
+        # conditions=[can_reactivate_terminated],
+        permission="approve",
+        custom=dict(verbose="Reactivate terminated project", notify=True,)
+        )
     def reactivate_terminated(self):
         """Transition the project to its ACTIVE state."""
         return
@@ -737,13 +752,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """Return true if the project can be suspended."""
         return True
 
-    @transition(field=status,
-                # verbose_name=_("Suspend project"),
-                # save=True,
-                source=STATUS_ACTIVE,
-                target=STATUS_SUSPENDED,
-                # conditions=[can_suspend],
-                permission="approve")
+    @transition(
+        field=status,
+        source=STATUS_ACTIVE,
+        target=STATUS_SUSPENDED,
+        # conditions=[can_suspend],
+        permission="approve",
+        custom=dict(verbose="Suspend project", notify=True,)
+        )
     def suspend(self):
         """Transition the project to its SUSPENDED state."""
         return
@@ -753,13 +769,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """Whether the project can be reactivated from suspension."""
         return True
 
-    @transition(field=status,
-                # save=True,
-                # verbose_name=_("Reactivate suspended project"),
-                source=STATUS_SUSPENDED,
-                target=STATUS_ACTIVE,
-                # conditions=[can_reactivate_suspended],
-                permission="approve")
+    @transition(
+        field=status,
+        source=STATUS_SUSPENDED,
+        target=STATUS_ACTIVE,
+        # conditions=[can_reactivate_suspended],
+        permission="approve",
+        custom=dict(verbose="Reactivate suspended project", notify=True,)
+        )
     def reactivate_suspended(self):
         """Transition the suspended project to its ACTIVE state."""
         return
@@ -934,6 +951,8 @@ class ScienceProject(Project):
     """
 
     class Meta:
+        """Model options."""
+
         verbose_name = _("Science Project")
         verbose_name_plural = _("Science Projects")
 
@@ -1086,7 +1105,8 @@ class ScienceProject(Project):
         """
         return (
             self.documents.instance_of(ProgressReport).exists() and
-            self.documents.instance_of(ProgressReport).latest().is_final_report and
+            self.documents.instance_of(
+                ProgressReport).latest().is_final_report and
             self.documents.instance_of(ProgressReport).latest().is_approved and
             self.documents.instance_of(ProjectClosure).exists() and
             self.documents.instance_of(ProjectClosure).latest().is_approved)
@@ -1105,6 +1125,8 @@ class CoreFunctionProject(Project):
     """
 
     class Meta:
+        """Model options."""
+
         verbose_name = _("Core Function")
         verbose_name_plural = _("Core Functions")
 
@@ -1226,7 +1248,8 @@ class CoreFunctionProject(Project):
         """
         return (
             self.documents.instance_of(ProgressReport).exists() and
-            self.documents.instance_of(ProgressReport).latest().is_final_report and
+            self.documents.instance_of(
+                ProgressReport).latest().is_final_report and
             self.documents.instance_of(ProgressReport).latest().is_approved and
             self.documents.instance_of(ProjectClosure).exists() and
             self.documents.instance_of(ProjectClosure).latest().is_approved)
@@ -1256,6 +1279,8 @@ class CollaborationProject(Project):
                         " Update by adding DPaW staff as team members."))
 
     class Meta:
+        """Model options."""
+
         verbose_name = _("External Partnership")
         verbose_name_plural = _("External Partnerships")
 
@@ -1357,6 +1382,8 @@ class StudentProject(Project):
                         "members as academic supervisors."))
 
     class Meta:
+        """Model options."""
+
         verbose_name = _("Student Project")
         verbose_name_plural = _("Student Projects")
 
@@ -1412,13 +1439,14 @@ class StudentProject(Project):
         self.status = Project.STATUS_ACTIVE
         self.save(update_fields=['status'])
 
-    @transition(field='status',
-                # verbose_name=_("Request update"),
-                # save=True,
-                source=Project.STATUS_ACTIVE,
-                target=Project.STATUS_UPDATE,
-                # conditions=[can_request_update]
-                )
+    @transition(
+        field='status',
+        source=Project.STATUS_ACTIVE,
+        target=Project.STATUS_UPDATE,
+        # conditions=[can_request_update]
+        permission="approve",
+        custom=dict(verbose="Request update", notify=True,)
+        )
     def request_update(self, report=None):
         """The Student Report replaces the Progress Report."""
         if report is None:
@@ -1434,13 +1462,14 @@ class StudentProject(Project):
         else:
             return False
 
-    @transition(field='status',
-                # verbose_name=_("Request closure"),
-                # save=True,
-                source=Project.STATUS_ACTIVE,
-                target=Project.STATUS_COMPLETED,
-                # conditions=[can_request_closure],
-                permission="submit")
+    @transition(
+        field='status',
+        source=Project.STATUS_ACTIVE,
+        target=Project.STATUS_COMPLETED,
+        # conditions=[can_request_closure],
+        permission="submit",
+        custom=dict(verbose="Close Project", notify=True,)
+        )
     def request_closure(self):
         """Transition to complete the project. There is no required process."""
         self.status = Project.STATUS_COMPLETED
@@ -1565,6 +1594,8 @@ class ProjectMembership(models.Model):
         help_text=_("Any comments clarifying the project membership."))
 
     class Meta:
+        """Model options."""
+
         ordering = ['position']
         verbose_name = _("Project Membership")
         verbose_name_plural = _("Project Memberships")
