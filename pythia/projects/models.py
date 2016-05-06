@@ -418,29 +418,40 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         in status Document.STATUS_INAPPROVAL immediately before setting the
         status to Document.STATUS_APPROVED.
         """
-        return (
-            self.documents.instance_of(ConceptPlan).exists() and
-            self.documents.instance_of(
-                ConceptPlan).latest().is_nearly_approved)
+        print("Gate check can_endorse checking for Conceptplan: {0}".format(
+            self.documents.instance_of(ConceptPlan).exists()))
+        print("Gate check can_endorse checking Conceptplan status: {0}".format(
+            self.documents.instance_of(ConceptPlan).get().status))
+
+        return (self.documents.instance_of(ConceptPlan).exists() and
+                self.documents.instance_of(ConceptPlan).get().is_approved)
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_NEW,
         target=STATUS_PENDING,
         conditions=[can_endorse],
         permission="approve",
         custom=dict(verbose="Endorse project", notify=True,)
         )
-    def endorse(self):
+    def do_endorse(self):
         """
         Transition to move project to PENDING.
 
         Generates ProjectPlan as required for SPP and CF, skipped by others.
         """
-        snitch("Project.endorse() adding a ProjectPlan for {0}".format(
-            self.fullname))
+        msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
+        snitch(msg + "adding a ProjectPlan")
         if not self.documents.instance_of(ProjectPlan).exists():
             p, created = ProjectPlan.objects.get_or_create(project=self)
+
+    def endorse(self):
+        msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
+        snitch(msg + "calling tx do_endorse...")
+        self.do_endorse()
+        snitch(msg + "finished tx do_endorse.")
+        self.save()
+        snitch(msg + "saved.")
 
     # PENDING -> ACTIVE ------------------------------------------------------#
     def can_approve(self):
@@ -453,7 +464,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             return self.documents.instance_of(ProjectPlan).latest().is_approved
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_PENDING,
         target=STATUS_ACTIVE,
         conditions=[can_approve],
@@ -474,7 +485,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return True
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_ACTIVE,
         target=STATUS_UPDATE,
         conditions=[can_request_update],
@@ -516,7 +527,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             return False
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_UPDATE,
         target=STATUS_ACTIVE,
         # conditions=[can_complete_update],
@@ -541,7 +552,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return True
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_ACTIVE,
         target=STATUS_CLOSURE_REQUESTED,
         conditions=[can_request_closure],
@@ -560,7 +571,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             modifier=self.modifier)
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_UPDATE,
         target=STATUS_CLOSURE_REQUESTED,
         # conditions=[can_request_closure],
@@ -597,7 +608,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return self.documents.instance_of(ProjectClosure).latest().is_approved
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_CLOSURE_REQUESTED,
         target=STATUS_CLOSING,
         conditions=[can_accept_closure],
@@ -622,7 +633,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return True
 
     @transition(
-        field=status,
+        field='status',
         source=[STATUS_CLOSING, STATUS_COMPLETED],
         target=STATUS_FINAL_UPDATE,
         conditions=[can_request_final_update],
@@ -655,7 +666,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             self.documents.instance_of(ProjectClosure).latest().is_approved)
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_FINAL_UPDATE,
         target=STATUS_COMPLETED,
         conditions=[can_complete],
@@ -673,7 +684,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     # ACTIVE -> COMPLETED ----------------------------------------------------#
     @transition(
-        field=status,
+        field='status',
         source=[STATUS_ACTIVE, STATUS_CLOSING],
         target=STATUS_COMPLETED,
         # conditions=[can_complete],
@@ -702,7 +713,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return True
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_COMPLETED,
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate],
@@ -719,7 +730,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return True
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_ACTIVE,
         target=STATUS_TERMINATED,
         # conditions=[can_terminate],
@@ -736,7 +747,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return True
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_TERMINATED,
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate_terminated],
@@ -753,7 +764,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return True
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_ACTIVE,
         target=STATUS_SUSPENDED,
         # conditions=[can_suspend],
@@ -770,7 +781,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return True
 
     @transition(
-        field=status,
+        field='status',
         source=STATUS_SUSPENDED,
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate_suspended],
@@ -1014,103 +1025,6 @@ class ScienceProject(Project):
         if settings.DEBUG:
             print(msg)
 
-    def can_endorse(self):
-        """
-        Gate-check prior to `endorse()`.
-
-        A science project or core function can only become PENDING if its
-        Concept Plan has been approved.
-        Other projects are fast-tracked to status PROJECT_ACTIVE on `setup()`.
-        """
-        return (
-            self.documents.instance_of(ConceptPlan).exists() and
-            self.documents.instance_of(ConceptPlan).latest().is_approved)
-
-    def can_approve(self):
-        """Whether ProjectPlan exists and is approved."""
-        if not self.documents.instance_of(ProjectPlan):
-            snitch("Cannot approve: {0} has missing ProjectPlan".format(
-                self.fullname))
-            return False
-        else:
-            return self.documents.instance_of(ProjectPlan).latest().is_approved
-
-    def can_request_update(self):
-        """
-        Gate-check prior to `request_update()`.
-
-        Currently no checks. Does an ARAR need to exist?
-        """
-        return True
-
-    def can_complete_update(self):
-        """
-        Gate-check prior to `complete_update()`.
-
-        Allow the update to be complete when the document has been approved.
-        WARNING: will check against the latest progress report to be approved.
-        Could return True if no current ProgressReport has been requested and
-        previous ProgressReport is approved. Assumes that `request_update()`
-        has been called, and new projects joining the party during an active
-        ARAR reporting cycle will get their `request_update()` called.
-
-        Needs override for STP to check for StudentReport to be approved.
-        """
-        try:
-            return self.documents.instance_of(
-                ProgressReport).latest().is_approved
-        except:
-            logger.info('ProgressReport not found! Cannot complete update '
-                        'without approved Progress Report!')
-            return False
-
-    def can_request_closure(self):
-        """
-        Gate-check prior to `request_closure()`.
-
-        Currently no checks.
-        """
-        return True
-
-    def can_accept_closure(self):
-        """
-        Gate-check prior to `accept_closure()`.
-
-        Allow the update to progress to closing if the closure form
-        has been approved.
-
-        TODO: insert gate checks: is the projectplan updated with latest data
-        management info, is the closure form approved
-        """
-        return self.documents.instance_of(ProjectClosure).latest().is_approved
-
-    def can_request_final_update(self):
-        """
-        Gate-check prior to `request_final_update()`.
-
-        Return true if a final update can be requested before the project is
-        closed. As long as project is in STATUS_CLOSING, the project is cleared
-        to join in with the ARAR updates one last time.
-
-        Therefore, currently no checks required.
-        """
-        return True
-
-    def can_complete(self):
-        """
-        Gate-check prior to `complete()`.
-
-        Projects can be completed if the final progress report and project
-        closure are approved.
-        """
-        return (
-            self.documents.instance_of(ProgressReport).exists() and
-            self.documents.instance_of(
-                ProgressReport).latest().is_final_report and
-            self.documents.instance_of(ProgressReport).latest().is_approved and
-            self.documents.instance_of(ProjectClosure).exists() and
-            self.documents.instance_of(ProjectClosure).latest().is_approved)
-
 
 class CoreFunctionProject(Project):
     """
@@ -1185,74 +1099,6 @@ class CoreFunctionProject(Project):
         logger.info(msg)
         if settings.DEBUG:
             print(msg)
-
-    def can_endorse(self):
-        """
-        Gate-check prior to `endorse()`.
-
-        A science project or core function can only become PENDING if its
-        Concept Plan has been approved.
-        Other projects are fast-tracked to status PROJECT_ACTIVE on `setup()`.
-        """
-        return (
-            self.documents.instance_of(ConceptPlan).exists() and
-            self.documents.instance_of(ConceptPlan).latest().is_approved)
-
-    def can_approve(self):
-        """Whether ProjectPlan exists and is approved."""
-        if not self.documents.instance_of(ProjectPlan):
-            snitch("Cannot approve: {0} has missing ProjectPlan".format(
-                self.fullname))
-            return False
-        else:
-            return self.documents.instance_of(ProjectPlan).latest().is_approved
-
-    def can_request_closure(self):
-        """
-        Gate-check prior to `request_closure()`.
-
-        Currently no checks.
-        """
-        return True
-
-    def can_accept_closure(self):
-        """
-        Gate-check prior to `accept_closure()`.
-
-        Allow the update to progress to closing if the closure form
-        has been approved.
-
-        TODO: insert gate checks: is the projectplan updated with latest data
-        management info, is the closure form approved
-        """
-        return self.documents.instance_of(ProjectClosure).latest().is_approved
-
-    def can_request_final_update(self):
-        """
-        Gate-check prior to `request_final_update()`.
-
-        Return true if a final update can be requested before the project is
-        closed. As long as project is in STATUS_CLOSING, the project is cleared
-        to join in with the ARAR updates one last time.
-
-        Therefore, currently no checks required.
-        """
-        return True
-
-    def can_complete(self):
-        """
-        Gate-check prior to `complete()`.
-
-        Projects can be completed if the final progress report and project
-        closure are approved.
-        """
-        return (
-            self.documents.instance_of(ProgressReport).exists() and
-            self.documents.instance_of(
-                ProgressReport).latest().is_final_report and
-            self.documents.instance_of(ProgressReport).latest().is_approved and
-            self.documents.instance_of(ProjectClosure).exists() and
-            self.documents.instance_of(ProjectClosure).latest().is_approved)
 
 
 class CollaborationProject(Project):
@@ -1455,38 +1301,19 @@ class StudentProject(Project):
         return None
 
     def can_complete_update(self):
-        """The update can be completed when the StudentReport is approved."""
-        strep = self.documents.instance_of(StudentReport)
-        if strep.count() > 0:
-            return strep.latest().is_approved
-        else:
-            return False
+        """The update can be completed when the latest StudentReport is approved."""
+        return (self.documents.instance_of(StudentReport).exists() and
+                self.documents.instance_of(StudentReport).latest().is_approved)
 
     @transition(
         field='status',
         source=Project.STATUS_ACTIVE,
         target=Project.STATUS_COMPLETED,
-        # conditions=[can_request_closure],
         permission="submit",
-        custom=dict(verbose="Close Project", notify=True,)
+        custom=dict(verbose="Close project", notify=True,)
         )
     def request_closure(self):
-        """Transition to complete the project. There is no required process."""
-        self.status = Project.STATUS_COMPLETED
-        self.save(update_fields=['status'])
-
-    # Forbid actions non applicable to this project type
-    def can_endorse(self):
-        return False
-
-    def can_approve(self):
-        return False
-
-    def can_request_final_update(self):
-        return False
-
-    def can_complete(self):
-        return False
+        """Transition to move project to STATUS_COMPLETED."""
 
     def can_terminate(self):
         return False
@@ -1718,3 +1545,13 @@ def project_pre_delete(sender, instance, using, **kwargs):
     [d.delete() for d in instance.documents.all()]
     [m.delete() for m in instance.projectmembership_set.all()]
 signals.pre_delete.connect(project_pre_delete, sender=Project)
+
+# from django_fsm.signals import post_transition
+# from django.dispatch import receiver
+#
+#
+# @receiver(post_transition)
+# def saveme(sender, instance, **kwargs):
+#     print("Saving {0} ({1})".format(instance.__str__(), instance.status))
+#     instance.save()
+#     print("Instance status {0}".format(instance.status))

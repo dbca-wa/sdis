@@ -116,6 +116,7 @@ graphviz==0.3.4
 Pillow==2.4.0
 pydot==1.0.2
 pyparsing==1.5.7
+python-coveralls
 
 # Testing and Debugging
 django-debug-toolbar==1.0.1

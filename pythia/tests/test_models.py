@@ -174,12 +174,12 @@ class ScienceProjectModelTests(BaseTestCase):
         # self.assertTrue(self.john.has_perm(scp_change))
         # self.assertTrue(self.peter.has_perm(scp_change))
 
-    def test_conceptplan_approval(self):
+    def test_lifecycle(self):
         """
-        Test all possible transitions in a ConceptPlan's life.
+        Test all possible transitions in a ScienceProject's life.
 
-        Submitting the ConceptPlan sets its status to STATUS_INREVIEW.
-        A document INREVIEW can be recalled back to NEW, then resubmitted.
+        Focus on status being correctly set, objects being created.
+        Ignoring permissions.
         """
         p = self.project
         scp = p.documents.instance_of(ConceptPlan).get()
@@ -195,19 +195,15 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertTrue(scp.can_seek_approval())
 
         print("The team recalls the document from review.")
-        # aw crap, submitted too early
         scp.recall()
-
-        # Phew
         self.assertTrue(scp.status == Document.STATUS_NEW)
 
-        # Ok now we're good to go
-        print("The team submits the doc for review.")
+        print("The team re-submits the doc for review.")
         scp.seek_review()
         self.assertTrue(scp.status == Document.STATUS_INREVIEW)
         self.assertTrue(scp.can_seek_approval())
 
-        print(" The reviewer request revision from authors.")
+        print("The reviewer request revision from authors.")
         scp.request_revision_from_authors()
         self.assertTrue(scp.status == Document.STATUS_NEW)
 
@@ -218,22 +214,20 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertTrue(scp.status == Document.STATUS_INAPPROVAL)
         self.assertTrue(scp.can_approve())
 
-        print("Approvers approve the ConceptPlan.")
+        print("Approvers approve the ConceptPlan ({2}) on Project {0} ({1}).".format(
+            p.__str__(), p.status, scp.status))
         scp.approve()
+        print("Approvers have approved the ConceptPlan ({2}) on Project {0} ({1}).".format(
+            p.__str__(), p.status, scp.status))
         self.assertEqual(scp.status, Document.STATUS_APPROVED)
 
-        print("Approving the ConceptPlan creates a Project Plan.")
+        print("Approving the ConceptPlan endorses the Project.")
+        self.assertEqual(scp.project.status, Project.STATUS_PENDING)
+
+        print("Endorsing the Project creates a ProjectPlan (SPP).")
         self.assertEqual(p.documents.instance_of(ProjectPlan).count(), 1)
         spp = p.documents.instance_of(ProjectPlan).get()
         self.assertEqual(spp.status, Document.STATUS_NEW)
-
-        print("Approving the ConceptPlan endorses the Project.")
-        self.assertEqual(self.project.status, Project.STATUS_PENDING)
-
-    def test_projectplan_approval(self):
-        """Test all possible transitions in a ProjectPlan's (SPP) life."""
-        p = ScienceProjectFactory.create(status=Project.STATUS_PENDING)
-        self.assertEqual(self.project.status, Project.STATUS_PENDING)
 
         print("SPP can not be approved with empty mandatory fields.")
         self.assertFalse(p.can_approve())
@@ -244,19 +238,8 @@ class ScienceProjectModelTests(BaseTestCase):
         print("SPP needs Herbarium Curator's endorsement"
               " if plants are involved.")
 
-    def test_scienceproject_can_approve(self):
-        """A ScienceProject requires an approved SPP to be approved itself."""
-        p = ScienceProjectFactory.create(status=Project.STATUS_PENDING)
-        spp = ProjectPlan.objects.create(project=p,
-                                         status=ProjectPlan.STATUS_APPROVED)
-        self.assertEqual(spp.status, Document.STATUS_APPROVED)
-        self.assertTrue(p.can_approve())
-
-    def test_cant_approve_scienceproject_without_approved_projectplan(self):
-        """A ScienceProject without approved SPP cannot be approved."""
-        p = ScienceProjectFactory.create(status=Project.STATUS_PENDING)
-        ProjectPlan.objects.create(project=p)
-        self.assertFalse(p.can_approve())
+        # Test can_approve
+        # self.assertTrue(p.can_approve())
 
     def test_active_project_transitions(self):
         """Test expected transitions for active ScienceProjects."""
@@ -271,10 +254,8 @@ class ScienceProjectModelTests(BaseTestCase):
         """
         p = ScienceProjectFactory.create(status=Project.STATUS_ACTIVE)
         from datetime import datetime
-        now = datetime.now()
-        r = ARARReport.objects.create(year=p.year,
-                                      date_open=now,
-                                      date_closed=now)
+        n = datetime.now()
+        r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
         pr = p.documents.instance_of(ProgressReport)
         self.assertEqual(pr.count(), 1)
         self.assertEqual(pr.latest().status, Document.STATUS_NEW)

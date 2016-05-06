@@ -636,7 +636,7 @@ class ConceptPlan(Document):
         permission="approve",
         custom=dict(verbose="Approve", notify=True,)
         )
-    def approve(self):
+    def do_approve(self):
         """
         Advance the project to status "pending".
 
@@ -648,19 +648,30 @@ class ConceptPlan(Document):
         approved until the transition finishes.
         We cannot drop the condition "must have approved ConceptPlan" for
         Project.endorse() else Project.endorse() will show up prematurely.
-        Another venue might be to use django_fsm.signals.post_transition.
+        Another venue might be to use django_fsm.signals.post_transition, if we
+        can isolate ConceptPlan.approve from within the signal.
         """
-        print("Project {0} was endorsed through ConceptPlan approval".format(
-            self.project.fullname))
+        print("Document {0} ({1}) running tx approve...".format(
+            self.__str__(), self.status))
 
-        from pythia.projects.models import Project
-        self.project.status = Project.STATUS_PENDING
-        self.project.save(update_fields=['status'])
+    def approve(self):
+        """Approve Document, endorse Project.
 
-        # if not self.project.documents.instance_of(ProjectPlan).exists():
-        p, created = ProjectPlan.objects.get_or_create(project=self.project)
-        p.save()
-        print("ProjectPlan status: {0}".format(p.status))
+        Calling save() on both Document after calling the transition should
+        not be necessary, but the status change won't stick otherwise.
+        This could be a bug in django-fsm or in SDIS.
+        """
+        snitch("Document {0} ({1}) calling tx approve...".format(
+            self.__str__(), self.status))
+        self.do_approve()
+        snitch("Document {0} ({1}) done running tx approve.".format(
+            self.__str__(), self.status))
+        self.save()  # Required for Document status change to stick
+        snitch("Project {0} ({1}) can endorse: {2}".format(
+            self.project.__str__(), self.project.status,
+            self.project.can_endorse()))
+        self.project.endorse()
+        self.project.save()  # Required for Project status change to stick
 
     def can_reset(self):
         """Return True if the document can be reset to NEW."""
@@ -670,7 +681,7 @@ class ConceptPlan(Document):
         field='status',
         source=Document.STATUS_APPROVED,
         target=Document.STATUS_NEW,
-        conditions=[can_reset],
+        # conditions=[can_reset],
         permission="approve",
         custom=dict(verbose="Reset approval status", notify=True,)
         )
