@@ -13,6 +13,7 @@ media/
 staticfiles/
 snapshots/
 docs/build/
+docs/source/img/tx*
 venv/
 production/
 production.tar.gz

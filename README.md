@@ -23,7 +23,7 @@ Deployment
 * Rename `.env.template` to `.env`, enter your confidential settings.
 * Run `fab deploy`.
 * Set file permissions and ownership (media, logs) for code
-* Create a supervisor config following `sdis.conf.template`
+* Create a supervisor config following `sdis/sdis.conf.template`
 * Run SDIS in production mode with `honcho start`, or orchestrate with supervisor
 
 CI

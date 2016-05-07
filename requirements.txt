@@ -112,7 +112,7 @@ wercker==0.8.3
 Pygments==1.6
 Sphinx==1.2.2
 pycallgraph==1.0.1
-graphviz==0.3.4
+graphviz>=0.4
 Pillow==2.4.0
 pydot==1.0.2
 pyparsing==1.5.7

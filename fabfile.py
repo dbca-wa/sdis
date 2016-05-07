@@ -120,6 +120,15 @@ def test():
 
 
 def doc():
-    """Compile docs, draw data model."""
+    """Compile docs, draw data model and transitions."""
     local("cd docs && make html && cd ..")
     local("python manage.py graph_models -a -o staticfiles/img/datamodel.svg")
+    doc_models = ['Document', 'ConceptPlan', 'ProjectPlan', 'ProgressReport',
+                  'ProjectClosure', 'StudentReport']
+    pro_models = ['Project', 'ScienceProject', 'CoreFunctionProject',
+                  'CollaborationProject', 'StudentProject']
+    cmd = ("python manage.py graph_transitions " +
+           "-o docs/source/img/tx_{1}.png {0}.{1} " +
+           "> docs/source/img/tx_{1}.dot")
+    [local(cmd.format("documents", i)) for i in doc_models]
+    [local(cmd.format("projects", i)) for i in pro_models]

@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'django_select2',
     'markup_deprecated',
     'guardian',
+    'django_fsm',
 
     'mail_templated',
     'reversion',
