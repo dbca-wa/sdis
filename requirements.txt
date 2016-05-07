@@ -108,21 +108,13 @@ pipdeptree
 Werkzeug>=0.10.4
 wercker==0.8.3
 
-# Documentation
-Pygments==1.6
-Sphinx==1.2.2
-pycallgraph==1.0.1
-graphviz>=0.4
-Pillow==2.4.0
-pydot==1.0.2
-pyparsing==1.5.7
-python-coveralls
 
 # Testing and Debugging
 django-debug-toolbar==1.0.1
 django-dtpanel-htmltidy==0.1.1
 django-nose==1.2
 django-pdb
+python-coveralls
 nose
 coverage
 mixer==5.1.2
