@@ -87,40 +87,58 @@ approval work flow. Approval of documents advances projects to new life cycle st
 
 Science Projects and Core Functions
 ===================================
-![Science Project Life Cycle](img/tx_ScienceProject.png)
+.. image:: img/tx_ScienceProject.png
+   :alt: Science Project Life Cycle
+
 Science Projects have a two-stage approval process, annual reporting requirements,
 and a two-stage closure process.
 
 Science Project Approval
 ------------------------
+* Create new Science Project
+* Update and submit ConceptPlan
+* Update and submit ProjectPlan
 
 
 Science Project Annual Reporting
 --------------------------------
+* Get email broadcast about Annual Report
+* Find all progress reports in "My Tasks", update and submit them all
+* If an update is rejected, it will turn up in "My Tasks" again
 
 
 Science Project Closure
 -----------------------
+* Request closure
+* Update and submit Closure Form
+* Wait for last annual report, provide final Progress Report
 
 
 External Partnerships
 =====================
-![External Partnership Life Cycle](img/tx_CollaborationProject.png)
+.. image:: img/tx_CollaborationProject.png
+   :alt: External Partnership Life Cycle
+
 Partnerships have on approval or closure process, and require no separate annual updates.
-Simply keeping them up to date, and closing them as required will be enough.
+Simply registering, updating project details every now and then,
+and closing them as required will be enough.
 
 Student Projects
 ================
-![Student Project Life Cycle](img/tx_StudentProject.png)
+.. image:: img/tx_StudentProject.png
+   :alt: Student Project Life Cycle
+
 Student Projects have no approval workflow or closure process, but require
 simple annual progress reports.
+
+Progress reports requiring your input will turn up in "My Tasks" as well.
 
 
 ********************
 Document Life Cycles
 ********************
-
-![Document Life Cycle](img/tx_Document.png)
+.. image:: img/tx_Document.png
+   :alt: Document Life Cycle
 
 All documents share the same approval work flow:
 
