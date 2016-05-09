@@ -323,7 +323,7 @@
             <ul class="dropdown-menu">
             {% block userlinks %}
                 <li class="dropdown-header">DPaW account</li>
-                {% if not request.user.completed_registration %}
+
                 <li><a href="{% url 'admin:pythia_user_change' request.user.pk %}"
                     title="View and edit your SDIS Profile">
                     <span class="glyphicon glyphicon-user"></span>&nbsp;
@@ -332,25 +332,18 @@
                     title="View my Divisional Profile on the Science Website Workbench" target="_">
                 <span class="glyphicon glyphicon-user"></span>&nbsp;
                 My Divisional Profile</a></li>
-
-                {% endif %}
+                <li id="logout"><a href="/logout" title="Log out">
+                <span class="glyphicon glyphicon-log-out"></span>&nbsp;Log out</a></li>
 
                 {% url 'password_change' as password_change %}
                 {% if not request.user.is_external and password_change %}
                 <li><a href="{{ password_change }}">{% trans 'Change password' %}</a></li>
                 {% endif %}
 
-                {% if not request.user.completed_registration %}<!-- FIXME add complete registration -->
-                {% endif %}
                 <li class="divider"></li>
                 <li class="dropdown-header">Documentation</li>
-                {% url 'django-admindocs-docroot' as docsroot %}
-                {% if docsroot %}
-                <li><a href="{{ docsroot }}" target ="_" id="menu-admin-docs"
-                    title="Read admin docs in new tab">{% trans 'Help' %}</a></li>
-                {% endif %}
-                <li><a href="{% static 'docs/dev/html/index.html' %}"
-                       target="_" id="dev-docs"
+                <li><a href="http://sdis.readthedocs.io/"
+                       target="_" id="user-docs"
                        title="Browse SDIS docs in new tab">Documentation</a></li>
                 <!--
                 <li><a href="/api/" target="_" id="menu-api" title="Browse API in new tab">API endpoints</a></li>

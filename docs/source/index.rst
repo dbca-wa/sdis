@@ -1,12 +1,10 @@
 .. SDIS documentation master file
 
-***************
-Getting started
-***************
+*******
+Welcome
+*******
 
-Welcome to SDIS's documentation!
-================================
-SDIS is a project documentation, approval and reporting platform for
+SDIS is the project documentation, approval and reporting platform for
 DPaW's Science and Conservation Division.
 
 Questions? Try the :doc:`faq`.
