@@ -10,6 +10,12 @@ all in your browser. SDIS will tell you what to do (your Tasks), offer short cut
 to your Projects, and allow you to browse other Projects and Reports.
 If there are urgent or new Tasks, SDIS will notify you via email.
 
+Find a Project
+==============
+On the ``"Browse all Projects" page <https://sdis.dpaw.wa.gov.au/projects/project/>`_
+you can filter and search for projects.
+Under "actions", a selected list of projects can also be exported to CSV or MS Excel spreadsheets.
+
 
 Create a new Science Project
 ============================
@@ -49,30 +55,50 @@ Register an external colleague
 ==============================
 * Click on the project Overview tab or open Menu > Staff
 * Click Register external colleague
-* Provide a username (use firstname_surname) and password (can be same as username) and click Save Changes (first screen). Ignore the next screen.
+* Provide a username (use firstname_surname) and password (can be same as username)
+  and click Save Changes (first screen). Ignore the next screen.
 * Enter as many user details as you can and click Save Changes.
 
 Now the new user can be added to project teams or project roles.
 
 
-***********
+**********
 User Roles
-***********
+**********
 
 SDIS features a role-based permission system, based on three roles:
 
-* Submitters: Team members and holders of project roles have the "submit" permission
-  for their respective project and its related documents. This allows them to
-  execute approval actions, e.g. submitting a document for review, or requesting
-  project closure.
-* Reviewers: Members of SCMT (all Program Leaders) have the permission "review".
-  This allows them to review documents (Concept Plans, Project Plans,
-  Progress Reports, Closure Forms, Student Reports), update them if appropriate,
-  and submit further up the approval chain, or request updates from the authors.
-* Approvers: Representatives of the SCD Directorate (Director's EA) have the
-  authority to approve documents, or manage annual reports such as the ARAR.
-  Approval of documents will cause projects to proceed in their life cycle, more
-  below.
+Project teams
+=============
+Team members and holders of project roles have the "submit" permission
+for their respective project and its related documents. This allows them to
+execute approval actions, e.g. submitting a document for review, or requesting
+project closure.
+
+Project roles are Project Owner, Data Custodian and Site Custodian.
+All three default to the creator of a new Project, but can be updated at any time.
+The Project Owner is added as "Supervising Scientist" to the project team when
+a project is created. The Project Owner, and any other team members, can add/edit
+Team membership.
+
+While every logged in SDIS user can update any document (these updates are logged),
+only team members of a project can execute any life cycle steps, such as
+submitting related documents for review, or requesting closure.
+
+
+Program Leaders
+===============
+Members of SCMT (all Program Leaders) have the permission "review".
+This allows them to review documents (Concept Plans, Project Plans,
+Progress Reports, Closure Forms, Student Reports), update them if appropriate,
+and submit further up the approval chain, or request updates from the authors.
+
+Directorate
+===========
+Representatives of the SCD Directorate (e.g. Director's EA) have the
+authority to approve documents, or manage annual reports such as the ARAR.
+Approval of documents will reflect the decisions of the SCMT and Directorate,
+and will cause projects to proceed in their life cycle.
 
 
 *******************

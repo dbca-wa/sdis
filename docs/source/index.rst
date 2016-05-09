@@ -1,25 +1,28 @@
 .. SDIS documentation master file
 
+***************
+Getting started
+***************
 
 Welcome to SDIS's documentation!
 ================================
 SDIS is a project documentation, approval and reporting platform for
 DPaW's Science and Conservation Division.
 
-DPaW staff
-----------
-If you came here with a question, you will find the answer in the :doc:`faq`.
+Questions? Try the :doc:`faq`.
 
-If you want to learn how SDIS works, dive into the SDIS :doc:`workflows`.
+Common tasks, followed by detailed documentation: :doc:`workflows`.
 
+Need to go deeper? :doc:`technical_docs`.
 
-Developers
-----------
-If you are a developer, read the :doc:`technical_docs`.
+Maintainer documentation (including some confidential information) is on the
+`Wiki <https://confluence.dpaw.wa.gov.au/display/SDIS/Maintainer+documentation>`_
+behind DPaW authentication.
 
 
 .. toctree::
    :maxdepth: 2
 
+   index
    faq
    workflows
