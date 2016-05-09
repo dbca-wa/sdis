@@ -65,6 +65,22 @@ Now the new user can be added to project teams or project roles.
 **********
 User Roles
 **********
+There are many things that can be done with projects and documents, but some
+actions are only available to a restricted audience and/or only at certain times
+or under certain circumstances.
+
+SDIS's philosophy is to be permissive, but log everything.
+The point of truth for project approval is the SCMT; necessarily, SDIS will always
+require to be brought up to speed with the latest SCMT decisions.
+
+After 4 years of development and honing, SDIS implements all known SCD rules and
+workflows around project approval. If things go to plan, SDIS will
+do, show, and allow "the right buttons", or appropriate actions.
+But sometimes, we need a shortcut, or things don't follow the rules. In this case,
+rather than blindly enforcing the rules (we did that, and it was more hassle
+than worth), SDIS will allow privileged users to override business rules and
+e.g. force-choke projects to death, or kill zombies (back out of Progress Reports
+that were requested for projects that should have been closed).
 
 SDIS features a role-based permission system, based on three roles:
 
@@ -92,6 +108,11 @@ Members of SCMT (all Program Leaders) have the permission "review".
 This allows them to review documents (Concept Plans, Project Plans,
 Progress Reports, Closure Forms, Student Reports), update them if appropriate,
 and submit further up the approval chain, or request updates from the authors.
+
+Program Leaders can review other programs' projects as well, because:
+* some projects are registered under one SCD program, but administered under another
+* PLs can stand in for each other
+* we assume (as everything is logged), that no PL will act without SCMT's approval
 
 Directorate
 ===========
