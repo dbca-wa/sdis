@@ -109,7 +109,7 @@ Werkzeug>=0.10.4
 wercker==0.8.3
 
 # Docs
--r requirements-docs.txt
+-r sdis/requirements-docs.txt
 
 # Testing and Debugging
 django-debug-toolbar==1.0.1
