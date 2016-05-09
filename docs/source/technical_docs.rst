@@ -11,11 +11,11 @@ Developer Documentation
 ***********************
 
 .. image:: https://circleci.com/gh/parksandwildlife/sdis.svg?style=svg
-:target: https://circleci.com/gh/parksandwildlife/sdis
-:alt:Test Status
+  :target: https://circleci.com/gh/parksandwildlife/sdis
+  :alt:Test Status
 .. image:: https://badge.waffle.io/parksandwildlife/sdis.svg?label=ready&title=Ready
-:target: http://waffle.io/parksandwildlife/sdis
-:alt:Issues
+  :target: http://waffle.io/parksandwildlife/sdis
+  :alt:Issues
 
 * :ref:`genindex`
 * :ref:`modindex`
