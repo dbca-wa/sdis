@@ -53,3 +53,25 @@ Notes on coverage reports:
 * pushing commits to GitHub lets circleCI generate and push the coverage reports
 * `export COVERALLS_REPO_TOKEN=YOUTTOKEN coveralls` pushes the locally generated
   coverage report to coveralls.io
+
+Docs
+----
+The Sphinx docs are built on GitHub push and hosted by
+[readthedocs.org](https://readthedocs.org/).
+
+Settings on the [readthedocs admin page](https://readthedocs.org/projects/sdis/):
+
+* Repository URL https://github.com/parksandwildlife/sdis
+* Documentation type: Sphinx HTML
+* Advanced > Requirements file: sdis/requirements-docs.txt
+* ADvanced > Google Analytics key: optional insight
+
+
+On separate documentation requirements:
+
+Just to build the docs, not all SDIS requirements are necessary. Some of these
+requirements depend on system packages, which would need to be installed first.
+
+Simply separating out the docs requirements (and placing it in to the settings
+folder `sdis`) will allow readthedocs.org to just install the required minimum
+dependencies.

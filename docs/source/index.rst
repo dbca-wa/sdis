@@ -5,24 +5,14 @@
 
 Welcome to SDIS's documentation!
 ================================
-SDIS is a project documentation, approval and reporting platform
-for DPaW's Science and Conservation Division.
+SDIS is a project documentation, approval and reporting platform for
+DPaW's Science and Conservation Division.
 
+If you came here with a question, you will find the answer in the :doc:`faq`.
 
-Things to do here
------------------
-:ref:`workflows`
+If you want to learn how SDIS works, dive into the SDIS :doc:`workflows`.
 
-* Browse projects, export to spreadsheets
-* Create a new project
-* Provide input to project documentation: Concept plans, project plans,
-  progress reports for ARAR, closure forms
-* Submit project documentation for review and approval
-
-Frequently asked questions
---------------------------
-:ref:`faq`.
-
+If you are a developer, read the :doc:`technical_docs`.
 
 Under the bonnet
 ----------------
