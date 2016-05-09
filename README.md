@@ -31,12 +31,14 @@ Deployment
 CI
 ---
 
-To setup CI with [circleCI](https://circleci.com), authorise the repo at
-circleCI and provide these settings:
+To setup CI with [circleCI](https://circleci.com) and
+[coveralls.io](https://coveralls.io), authorise the repo with both providers
+and provide these settings:
 
 * Environment variables:
     * `DJANGO_SETTINGS_MODULE`: `sdis.settings`
     * `DATABASE_URL`: `postgis://ubuntu:@localhost:5432/circle_test`
+    * `COVERALLS_REPO_TOKEN=`: your [coveralls.io](https://coveralls.io) repo token
 
 Notes on `DATABASE_URL`:
 
@@ -44,3 +46,10 @@ Notes on `DATABASE_URL`:
 * The value doesn't require quotes.
 * The user must be `ubuntu`, no password required.
 * The database `circle_test` is already provided, no need to `createdb`.
+
+Notes on coverage reports:
+
+* `fab test` analyses coverage
+* pushing commits to GitHub lets circleCI generate and push the coverage reports
+* `export COVERALLS_REPO_TOKEN=YOUTTOKEN coveralls` pushes the locally generated
+  coverage report to coveralls.io
