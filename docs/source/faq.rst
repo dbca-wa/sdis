@@ -1,6 +1,6 @@
-***
-FAQ
-***
+**************************
+Frequently Asked Questions
+**************************
 
 Where are my projects?
 ======================

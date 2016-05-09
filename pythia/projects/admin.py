@@ -247,84 +247,82 @@ class ProjectAdmin(BaseAdmin):
         """
         model = self.model
         opts = model._meta
-
         obj = self.get_object(request, unquote(object_id))
+        tx = request.GET.get('transition')
 
+        # Does the thing exist
         if obj is None:
             raise Http404(_('%(name)s object with primary key %(key)r does '
                             'not exist.') % {
                                 'name': force_text(opts.verbose_name),
                                 'key': escape(object_id)})
-
-        # Check if the transition is possible
-        try:
-            transition = request.GET.get('transition')
-            func = dict(obj.get_available_status_transitions())[transition]
-        except KeyError:
-            raise Http404(_('Missing transition key for object %(name)s '
-                            'with primary key %(key)r.') % {
-                                'name': force_text(opts.verbose_name),
-                                'key': escape(object_id)})
-
-        if not request.user.has_perm(func.permission, obj):
+        # Is current user allowed to do the stuff with the thing
+        # Should we use django_fsm.can_proceed instead?
+        if tx not in [t.name for t in
+                      obj.get_available_user_status_transitions(request.user)]:
+            print("Requested transition '{0}' not available for the "
+                  "current user {1}".format(tx, request.user))
             raise PermissionDenied
 
-        if request.method == 'POST':
-            # Do the transition. django-fsm is broken here, not sure
-            # what is going on, but it's not setting bound_func.im_func
-            # Hack around it for the time being.
-            meta = func._django_fsm
-            if not (meta.has_transition(obj) and meta.conditions_met(obj)):
-                raise Http404
+        t = [t for t in obj.get_available_user_status_transitions(request.user)
+             if t.name == tx][0]
 
-            getattr(obj, func.__name__)()
+        if request.method == 'POST':
+            # Then do the stuff with the thing
+            print("About to run transition {0}, object status {1}".format(
+                t.name, obj.status))
+            getattr(obj, t.name)()
+            obj.save()
+            print("Finished running transition {0}, object status {1}".format(
+                t.name, obj.status))
 
             if ('_notify' in request.POST) and (
                     request.POST.get('_notify') == u'on'):
-                # fire off a notification email
-                recipients = obj.get_users_to_notify(transition)
-                recipients.discard(request.user)
-                # FIXME: short circuit
-                recipients = [User.objects.get(username='florianm')]
+                if settings.DEBUG:
+                    print("[DEBUG] recipients would have been: {0}".format(
+                       recipients))
+                    User = get_user_model()
+                    recipients = [User.objects.get(username='florianm'), ]
+                    print("[DEBUG] recipients replaced with: {0}".format(
+                       recipients))
+
                 context = {
                     'instigator': request.user,
-                    'object_name': 'project {0} ({1})'.format(
-                        obj.project_type_year_number, obj.title_plain),
-                    'object_url': request.build_absolute_uri(
-                        reverse(pythia_urlname(obj.opts, 'change'),
-                                args=[obj.pk])),
-                    'status': [x[1] for x in obj.STATUS_CHOICES if
-                               x[0] == transition][0],
-                    'explanation': True,
-                }
-                mail_from_template('{0} has been updated'.format(
+                    'object_name': '{0} of {1}'.format(
+                        obj.__str__(), obj.project.fullname),
+                    'object_url': request.build_absolute_uri(reverse(
+                        pythia_urlname(obj.opts, 'change'), args=[obj.pk])),
+                    'action': t.name,
+                    'status': t.target,
+                    }
+                mail_from_template('[SDIS] {0} has been updated'.format(
                     obj.project_type_year_number),
                     list(recipients), 'email/email_base', context)
 
-            # Redirect the user back to the project change page
+            # Redirect the user back to the document change page
             redirect_url = reverse('admin:%s_%s_change' %
                                    (opts.app_label, opts.model_name),
                                    args=(object_id,),
                                    current_app=self.admin_site.name)
             return HttpResponseRedirect(redirect_url)
 
+
         context = dict(
-            title=_('%s: %s') % (func.verbose_name, force_text(obj)),
+            title=_('%s: %s') % (t.custom["verbose"], force_text(obj)),
             breadcrumbs=self.get_breadcrumbs(request, obj),
-            transition_name=func.verbose_name,
+            transition_name=capfirst(force_text(t.name)),
             model_name=capfirst(force_text(opts.verbose_name_plural)),
             object=obj,
-            opts=opts,
-        )
+            opts=opts,)
         context.update(extra_context or {})
 
         return TemplateResponse(request, [
             "admin/%s/%s/%s_transition.html" % (
-                opts.app_label, opts.model_name, transition),
+                opts.app_label, opts.model_name, t.name),
             "admin/%s/%s/transition.html" % (opts.app_label, opts.model_name),
-            "admin/%s/%s_transition.html" % (opts.app_label, transition),
+            "admin/%s/%s_transition.html" % (opts.app_label, t.name),
             "admin/%s/transition.html" % opts.app_label
-        ], context, current_app=self.admin_site.name)
+            ], context, current_app=self.admin_site.name)
 
     def history_view(self, request, object_id, extra_context=None):
         obj = get_object_or_404(self.model, pk=unquote(object_id))

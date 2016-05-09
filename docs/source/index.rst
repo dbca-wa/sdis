@@ -4,8 +4,8 @@
 Welcome
 *******
 
-SDIS is the project documentation, approval and reporting platform for
-DPaW's Science and Conservation Division.
+SDIS, the Science Directorate Information System, is the project documentation,
+approval and reporting platform for DPaW's Science and Conservation Division.
 
 If you're stuck somewhere, you'll find answers to frequently asked questions in the :doc:`faq`_.
 
