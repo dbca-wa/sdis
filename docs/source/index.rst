@@ -29,3 +29,6 @@ Developers
 
 .. toctree::
    :maxdepth: 2
+
+   faq
+   workflows
