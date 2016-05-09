@@ -1,3 +1,11 @@
+************************
+Maintainer documentation
+************************
+
+* Code repo `parksandwildlife/sdis <https://github.com/parksandwildlife/sdis>`_
+* `Wiki <https://confluence.dpaw.wa.gov.au/display/SDIS/Maintainer+documentation>`_
+
+
 ***********************
 Developer Documentation
 ***********************
@@ -9,8 +17,6 @@ Developer Documentation
 :target: http://waffle.io/parksandwildlife/sdis
 :alt:Issues
 
-* `Wiki <https://confluence.dpaw.wa.gov.au/display/SDIS/Maintainer+documentation>`_
-* Code `parksandwildlife/sdis <https://github.com/parksandwildlife/sdis>`_
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`

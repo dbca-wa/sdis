@@ -7,15 +7,13 @@ Welcome
 SDIS is the project documentation, approval and reporting platform for
 DPaW's Science and Conservation Division.
 
-Questions? Try the :doc:`faq`.
+If you're stuck somewhere, you'll find answers to frequently asked questions in the :doc:`faq`_.
 
-Common tasks, followed by detailed documentation: :doc:`workflows`.
+A refresher for most common tasks can be found in :doc:`quickstart`_.
 
-Need to go deeper? :doc:`technical_docs`.
+A comprehensive user documentation is located at :doc:`user_docs`_.
 
-Maintainer documentation (including some confidential information) is on the
-`Wiki <https://confluence.dpaw.wa.gov.au/display/SDIS/Maintainer+documentation>`_
-behind DPaW authentication.
+Maintainers and developers will want to consult the :doc`technical_docs`_.
 
 
 .. toctree::
@@ -23,4 +21,6 @@ behind DPaW authentication.
 
    index
    faq
-   workflows
+   quickstart
+   user_docs
+   technical_docs
