@@ -1,0 +1,9 @@
+[report]
+omit =
+    */migrations/*
+    tests/*
+    pythia/md_ext/*
+    */test_*
+    pythia/tests/*
+    sdis/wsgi.py
+    fabfile.py
