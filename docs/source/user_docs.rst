@@ -76,7 +76,7 @@ approval work flow. Approval of documents advances projects to new life cycle st
 
 Science Projects and Core Functions
 ===================================
-.. image:: img/tx_ScienceProject.png
+.. image:: img/lc_project.jpeg
    :alt: Science Project Life Cycle
 
 Science Projects have a two-stage approval process, annual reporting requirements,
@@ -98,10 +98,16 @@ Science Project Annual Reporting
 
 Science Project Closure
 -----------------------
-* Request closure
-* Update and submit Closure Form
-* Wait for last annual report, provide final Progress Report
+There are many ways to retire a ScienceProject.
+* Submitters can "request closure" to create a Project Closure form.
+    * Request closure
+    * Update and submit Closure Form
+    * Wait for last annual report, provide final Progress Report
+* Reviewers can force-choke any project from almost any active state.
+* Approves can terminate or suspend active projects to reflect a change in strategy,
+take a project out of the circulation without due closure process.
 
+All steps are reversible.
 
 External Partnerships
 =====================
@@ -126,7 +132,7 @@ Progress reports requiring your input will turn up in "My Tasks" as well.
 ********************
 Document Life Cycles
 ********************
-.. image:: img/tx_Document.png
+.. image:: img/lc_document.jpeg
    :alt: Document Life Cycle
 
 All documents share the same approval work flow:
