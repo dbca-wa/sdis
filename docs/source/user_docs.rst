@@ -76,7 +76,7 @@ approval work flow. Approval of documents advances projects to new life cycle st
 
 Science Projects and Core Functions
 ===================================
-.. image:: img/lc_project.jpeg
+.. image:: ./img/lc_project.jpeg
    :alt: Science Project Life Cycle
 
 Science Projects have a two-stage approval process, annual reporting requirements,
@@ -111,7 +111,7 @@ All steps are reversible.
 
 External Partnerships
 =====================
-.. image:: img/tx_CollaborationProject.png
+.. image:: ./img/tx_CollaborationProject.png
    :alt: External Partnership Life Cycle
 
 Partnerships have on approval or closure process, and require no separate annual updates.
