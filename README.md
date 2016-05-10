@@ -1,8 +1,7 @@
 [![Test Status](https://circleci.com/gh/parksandwildlife/sdis.svg?style=svg)](https://circleci.com/gh/parksandwildlife/sdis)
 [![Test Coverage](https://coveralls.io/repos/github/parksandwildlife/sdis/badge.svg?branch=master)](https://coveralls.io/github/parksandwildlife/sdis?branch=master)
 [![Issues](https://badge.waffle.io/parksandwildlife/sdis.svg?label=ready&title=Ready)](http://waffle.io/parksandwildlife/sdis)
-[![Documentation](https://readthedocs.org/projects/sdis/badge/?version=latest)](http://sdis.readthedocs.io/en/latest/?badge=latest)
-
+[![Documentation Status](http://readthedocs.org/projects/sdis/badge/?version=latest)](http://sdis.readthedocs.io/?badge=latest)
 
 Science Directorate Information System
 ======================================
