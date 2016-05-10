@@ -25,7 +25,7 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
             return Mock()
 
-MOCK_MODULES = ['ldap', 'django_auth_ldap', ]
+MOCK_MODULES = ['ldap', 'django_auth_ldap', 'django_auth_ldap.config', ]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
