@@ -1,6 +1,9 @@
-**********
-User Roles
-**********
+************************
+Functional Specification
+************************
+
+User roles
+==========
 There are many things that can be done with projects and documents, but some
 actions are only available to a restricted audience and/or only at certain times
 or under certain circumstances.
@@ -21,7 +24,7 @@ that were requested for projects that should have been closed).
 SDIS features a role-based permission system, based on three roles:
 
 Project teams
-=============
+-------------
 Team members and holders of project roles have the "submit" permission
 for their respective project and its related documents. This allows them to
 execute approval actions, e.g. submitting a document for review, or requesting
@@ -42,7 +45,7 @@ or removed, or when a new document is added. Permissions are given to all team
 members for the project (e.g. to request closure) and all related documents.
 
 Program Leaders
-===============
+---------------
 Members of SCMT (all Program Leaders) have the permission "review".
 This allows them to review documents (Concept Plans, Project Plans,
 Progress Reports, Closure Forms, Student Reports), update them if appropriate,
@@ -56,7 +59,7 @@ Program Leaders can review other programs' projects as well, because:
 Program Leader permissions are global (for all projects and documents).
 
 Directorate
-===========
+-----------
 Representatives of the SCD Directorate (e.g. Director's EA) have the
 authority to approve documents, or manage annual reports such as the ARAR.
 Approval of documents will reflect the decisions of the SCMT and Directorate,
@@ -64,9 +67,9 @@ and will cause projects to proceed in their life cycle.
 
 Directorate permissions are global (for all projects and documents).
 
-*******************
+
 Project Life Cycles
-*******************
+===================
 
 This section goes into the full detail about the supported Project types and their life cycles.
 In a nutshell, Project approval in SDIS is like playing a board game.
@@ -75,29 +78,31 @@ approval work flow. Approval of documents advances projects to new life cycle st
 
 
 Science Projects and Core Functions
-===================================
+-----------------------------------
 .. image:: img/lc_project.jpeg
    :alt: Science Project Life Cycle
 
 Science Projects have a two-stage approval process, annual reporting requirements,
 and a two-stage closure process.
+Core Functions have the same documentation as Science Projects, but as ongoing
+Divisional business, have no formal approval or closure process.
 
 Science Project Approval
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 * Create new Science Project
 * Update and submit ConceptPlan
 * Update and submit ProjectPlan
 
 
 Science Project Annual Reporting
---------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Get email broadcast about Annual Report
 * Find all progress reports in "My Tasks", update and submit them all
 * If an update is rejected, it will turn up in "My Tasks" again
 
 
 Science Project Closure
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 There are many ways to retire a ScienceProject.
 
 * Submitters can "request closure" to create a Project Closure form:
@@ -114,7 +119,7 @@ There are many ways to retire a ScienceProject.
 All steps are reversible.
 
 External Partnerships
-=====================
+---------------------
 .. image:: img/tx_CollaborationProject.png
    :alt: External Partnership Life Cycle
 
@@ -123,7 +128,7 @@ Simply registering, updating project details every now and then,
 and closing them as required will be enough.
 
 Student Projects
-================
+----------------
 .. image:: img/tx_StudentProject.png
    :alt: Student Project Life Cycle
 
@@ -133,9 +138,9 @@ simple annual progress reports.
 Progress reports requiring your input will turn up in "My Tasks" as well.
 
 
-********************
 Document Life Cycles
-********************
+====================
+
 .. image:: img/lc_document.jpeg
    :alt: Document Life Cycle
 
@@ -147,3 +152,5 @@ All documents share the same approval work flow:
 * Approvers can reset the document to "new" and fast-track it through its approval stages.
 
 Document approval will often advance their project to a new stage.
+
+The individual documents differ only in the actions caused by their approval.

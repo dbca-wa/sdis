@@ -2,6 +2,8 @@
 Frequently Asked Questions
 **************************
 
+Many questions will be covered by the instructions in :doc:`quickstart`.
+
 Where are my projects?
 ======================
 

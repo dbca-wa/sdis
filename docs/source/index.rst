@@ -17,23 +17,25 @@ approval and reporting platform for DPaW's Science and Conservation Division.
 
 SDIS users will find answers to their :doc:`faq`,
 and instructions on :doc:`quickstart` with the most common tasks.
-This should enable any user to fulfill their tasks on SDIS as required.
+This should enable any user to fulfil their tasks on SDIS as required.
 
-Interested readers may learn in full detail about the :doc:`user_docs`
-(governing who can see and do what and when), and how to play the Monopoly game of advancing
-projects through their life cycles by solving the side quests of document approvals.
-In tech speak, those are the Functional Requirements of SDIS,
-and we should have a test case covering each of them. The "Test Coverage" badge
-above shows how much we've got covered; the "Test Status" badge shows whether
-the existing tests pass (and SDIS behaves as we expect).
+Interested readers may learn from the :doc:`specs` in full detail about the
+User roles (governing permissions and available actions), and how to play the
+Monopoly game of advancing projects through their life cycles by solving the
+side quests of document approvals.
 
-Technically minded readers will greatly enjoy the :doc:`maintainer_docs` and the :doc:`developer_docs`.
+In tech speak, every feature, button, and workflow of SDIS should be defined in
+the :doc:`specs`, we should have a test case covering each requirement
+(badge "Test Coverage"), and all tests should pass (badge "Test Status").
+
+Installing, running and maintaining SDIs is documented in the :doc:`maintainer_docs`;
+the sofware architecture and design decisions are discussed in the :doc:`developer_docs`.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    faq
    quickstart
-   user_docs
+   specs
    maintainer_docs
    developer_docs

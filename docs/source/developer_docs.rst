@@ -3,6 +3,8 @@ Developer Documentation
 ***********************
 
 This chapter discusses the design philosophy behind the software architecture of SDIS.
+To get up and running in your own development environment, consult the
+`README<https://github.com/parksandwildlife/sdis>`_.
 
 Polymorphic inheritance
 =======================
@@ -68,3 +70,37 @@ These data models are auto-generated with each commit.
 ***********************
 Technical Documentation
 ***********************
+
+Tests
+=====
+:mod:`test_functional` Module
+-----------------------------
+
+.. automodule:: pythia.tests.test_functional
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`test_models` Module
+-------------------------
+
+.. automodule:: pythia.tests.test_models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`test_unit` Module
+-----------------------
+
+.. automodule:: pythia.tests.test_unit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`test_views` Module
+------------------------
+
+.. automodule:: pythia.tests.test_views
+    :members:
+    :undoc-members:
+    :show-inheritance:
