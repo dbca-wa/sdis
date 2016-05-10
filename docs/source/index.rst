@@ -1,4 +1,6 @@
-.. SDIS documentation master file
+******************
+SDIS Documentation
+******************
 
 .. image:: https://circleci.com/gh/parksandwildlife/sdis.svg?style=svg
    :target: https://circleci.com/gh/parksandwildlife/sdis
@@ -13,12 +15,22 @@
 The Science Directorate Information System (SDIS) is the project documentation,
 approval and reporting platform for DPaW's Science and Conservation Division.
 
-This documentation is targeted at SDIS users, answering frequently asked questions,
-guiding through most common tasks, and finally going through all use cases in
-full detail.
+SDIS users will find answers to their `Frequently Asked Questions`_,
+`Getting started`_ with the most common tasks. This should enable any user to
+fulfill their Tasks as required.
 
-Maintainers will want to consult the internal
-`DPaW SDIS Wiki <https://confluence.dpaw.wa.gov.au/display/SDIS/Maintainer+documentation>`_
+Interested readers may learn in full detail about the `User Roles`_ (governing who
+can see and do what and when), and how to play the Monopoly game of advancing
+projects through the `Project Life Cycles`_ by solving the side quests of
+`Document Life Cycles`_.
+In tech speak, those are the Functional Requirements of SDIS,
+and we should have a test case covering each of them. The "Test Coverage" badge
+above shows how much we've got covered; the "Test Status" badge shows whether
+the existing tests pass (and SDIS behaves as we expect).
+
+Technically minded readers will greatly enjoy the `Maintainer Documentation`_,
+be enthralled by the `Developer Documentation`_, and relish in the depths of the
+`Technical Documentation`_.
 
 .. toctree::
    :maxdepth: 2
