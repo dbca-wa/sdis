@@ -71,36 +71,38 @@ These data models are auto-generated with each commit.
 Technical Documentation
 ***********************
 
-Tests
-=====
-:mod:`test_functional` Module
------------------------------
+pythia Package
+==============
 
-.. automodule:: pythia.tests.test_functional
+:mod:`pythia` Package
+---------------------
+
+.. automodule:: pythia.models
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`test_models` Module
--------------------------
 
-.. automodule:: pythia.tests.test_models
+projects Package
+================
+
+.. automodule:: pythia.projects.models
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`test_unit` Module
------------------------
+documents Package
+=================
 
-.. automodule:: pythia.tests.test_unit
+.. automodule:: pythia.documents.models
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`test_views` Module
-------------------------
+:mod:`utils` Module
+-------------------
 
-.. automodule:: pythia.tests.test_views
+.. automodule:: pythia.documents.utils
     :members:
     :undoc-members:
     :show-inheritance:
