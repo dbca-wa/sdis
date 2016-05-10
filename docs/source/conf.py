@@ -14,6 +14,7 @@
 
 import sys
 import os
+from unittest.mock import MagicMock
 
 import confy
 confy.read_environment_file()
@@ -40,6 +41,17 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
 ]
+
+
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+MOCK_MODULES = ['ldap', ]
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
