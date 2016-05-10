@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup as BS
 from bs4.element import NavigableString as NS
 from html2text import HTML2Text
 import json
-import markdown
+# import markdown
 
 
 from django.conf import settings
@@ -92,36 +92,36 @@ def setup_permissions():
 #
 
 
-def text2html(value):
-    """Convert a Markdown string to HTML."""
-    extensions = ["nl2br",
-                  "pythia.md_ext.superscript",
-                  "pythia.md_ext.subscript",
-                  ]
-    return mark_safe(markdown.markdown(force_unicode(value), extensions))
-
-
-class PythiaHTML2Text(HTML2Text):
-    """Markdown utility class."""
-
-    def __init__(self, *args, **kwargs):
-        """Override init to disable line wraps at 78 chars when saving HTML."""
-        HTML2Text.__init__(self, *args, **kwargs)
-        self.body_width = 0
-
-    def handle_tag(self, tag, attrs, start):
-        """Provide handle_tag method."""
-        if tag == "sub" and not self.ignore_emphasis:
-            self.o("~")
-        if tag == "sup" and not self.ignore_emphasis:
-            self.o("^")
-        HTML2Text.handle_tag(self, tag, attrs, start)
-
-
-def html2text(value):
-    """Return html2text."""
-    h = PythiaHTML2Text(baseurl='')
-    return h.handle(value) if value else ""
+# def text2html(value):
+#     """Convert a Markdown string to HTML."""
+#     extensions = ["nl2br",
+#                   "pythia.md_ext.superscript",
+#                   "pythia.md_ext.subscript",
+#                   ]
+#     return mark_safe(markdown.markdown(force_unicode(value), extensions))
+#
+#
+# class PythiaHTML2Text(HTML2Text):
+#     """Markdown utility class."""
+#
+#     def __init__(self, *args, **kwargs):
+#         """Override init to disable line wraps at 78 chars when saving HTML."""
+#         HTML2Text.__init__(self, *args, **kwargs)
+#         self.body_width = 0
+#
+#     def handle_tag(self, tag, attrs, start):
+#         """Provide handle_tag method."""
+#         if tag == "sub" and not self.ignore_emphasis:
+#             self.o("~")
+#         if tag == "sup" and not self.ignore_emphasis:
+#             self.o("^")
+#         HTML2Text.handle_tag(self, tag, attrs, start)
+#
+#
+# def html2text(value):
+#     """Return html2text."""
+#     h = PythiaHTML2Text(baseurl='')
+#     return h.handle(value) if value else ""
 
 
 # -----------------------------------------------------------------------------#

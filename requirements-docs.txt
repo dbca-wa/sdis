@@ -1,6 +1,5 @@
 # Documentation
 django-confy>=1.0.4
-Pygments==1.6
 Sphinx==1.2.2
 pycallgraph==1.0.1
 graphviz>=0.4
