@@ -44,7 +44,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sdis.settings")
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.automodule',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
