@@ -31,3 +31,16 @@ Why can't I submit my project's related documents for review, or request project
 Only project team members can execute these life cycle steps. If you can't, but
 feel you should be able to, an existing project team member has to add you to the
 team.
+
+
+Why can't I update my project or edit documents?
+================================================
+You need to be on the project team to have write permission to the project or
+its documents.
+Furthermore, only "new" documents are editable - that's when the project
+team is meant to fill in the document. Once a document is submitted for review to
+the Program Leader ("reviewers"), only they can edit it. Once a document is
+submitted to the Directorate ("approvers"), again only they can edit it.
+
+If you wish to update a document sitting with your Program Leader "in review",
+you can "recall" it from review, edit it, and resubmit it for review.
