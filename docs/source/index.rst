@@ -3,7 +3,7 @@
 .. image:: https://circleci.com/gh/parksandwildlife/sdis.svg?style=svg
   :target: https://circleci.com/gh/parksandwildlife/sdis
   :alt:Test Status
-.. image:: https://coveralls.io/repos/github/parksandwildlife/sdis/badge.svg?branch=master :target: https://coveralls.io/github/parksandwildlife/sdis?branch=master
+.. image:: https://coveralls.io/repos/github/parksandwildlife/sdis/badge.svg?branch=master
   :target: https://coveralls.io/github/parksandwildlife/sdis
   :alt:Test Coverage
 .. image:: https://badge.waffle.io/parksandwildlife/sdis.svg?label=ready&title=Ready
