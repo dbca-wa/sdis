@@ -4,7 +4,7 @@ Developer Documentation
 
 This chapter discusses the design philosophy behind the software architecture of SDIS.
 To get up and running in your own development environment, consult the
-`README<https://github.com/parksandwildlife/sdis>`_.
+`README <https://github.com/parksandwildlife/sdis>`_.
 
 Polymorphic inheritance
 =======================
@@ -71,20 +71,49 @@ These data models are auto-generated with each commit.
 Technical Documentation
 ***********************
 
+This chapter links automatically extracted code documentation with the source code.
+
 pythia Package
 ==============
 
+
 :mod:`pythia` Package
 ---------------------
+
+.. automodule:: pythia.__init__
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`models` Module
+--------------------
 
 .. automodule:: pythia.models
     :members:
     :undoc-members:
     :show-inheritance:
 
-
 projects Package
 ================
+
+:mod:`admin` Module
+-------------------
+
+.. automodule:: pythia.projects.admin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`forms` Module
+-------------------
+
+.. automodule:: pythia.projects.forms
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`models` Module
+--------------------
 
 .. automodule:: pythia.projects.models
     :members:
@@ -93,6 +122,25 @@ projects Package
 
 documents Package
 =================
+
+:mod:`admin` Module
+-------------------
+
+.. automodule:: pythia.documents.admin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`forms` Module
+-------------------
+
+.. automodule:: pythia.documents.forms
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`models` Module
+--------------------
 
 .. automodule:: pythia.documents.models
     :members:
@@ -103,6 +151,57 @@ documents Package
 -------------------
 
 .. automodule:: pythia.documents.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+tests Package
+=============
+
+:mod:`base` Module
+------------------
+
+.. automodule:: pythia.tests.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`test_functional` Module
+-----------------------------
+
+.. automodule:: pythia.tests.test_functional
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`test_models` Module
+-------------------------
+
+.. automodule:: pythia.tests.test_models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`test_unit` Module
+-----------------------
+
+.. automodule:: pythia.tests.test_unit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`test_views` Module
+------------------------
+
+.. automodule:: pythia.tests.test_views
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`tests` Module
+-------------------
+
+.. automodule:: pythia.tests.tests
     :members:
     :undoc-members:
     :show-inheritance:
