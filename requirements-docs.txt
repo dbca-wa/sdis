@@ -107,18 +107,7 @@ pipdeptree
 # Werkzeug>=0.10.4
 setuptools>=18.5
 
-# Docs
--r requirements-docs.txt
-
-# Testing and Debugging
-django-debug-toolbar==1.0.1
-django-dtpanel-htmltidy==0.1.1
-django-nose==1.2
-django-pdb
-python-coveralls
-mixer==5.1.2
-selenium==2.45.0
-ipdbplugin
+# no testing for docs
 
 # Linters
 flake8
