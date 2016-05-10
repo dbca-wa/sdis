@@ -23,7 +23,7 @@ Maintainers will want to consult the internal
 .. toctree::
    :maxdepth: 2
 
-   index
    faq
    quickstart
    user_docs
+   developer_docs

@@ -7,6 +7,7 @@ graphviz>=0.4
 Pillow==2.4.0
 pydot==1.0.2
 pyparsing==1.5.7
+mock
 
 # We'll skip libraries with dependencies on system packages not found on readthedocs.org's build environment
 # django-auth-ldap==1.2.0
