@@ -1,14 +1,14 @@
 .. SDIS documentation master file
 
 .. image:: https://circleci.com/gh/parksandwildlife/sdis.svg?style=svg
-  :target: https://circleci.com/gh/parksandwildlife/sdis
-  :alt:Test Status
+   :target: https://circleci.com/gh/parksandwildlife/sdis
+   :alt: Test Status
 .. image:: https://coveralls.io/repos/github/parksandwildlife/sdis/badge.svg?branch=master
-  :target: https://coveralls.io/github/parksandwildlife/sdis
-  :alt:Test Coverage
+   :target: https://coveralls.io/github/parksandwildlife/sdis
+   :alt: Test Coverage
 .. image:: https://badge.waffle.io/parksandwildlife/sdis.svg?label=ready&title=Ready
-  :target: http://waffle.io/parksandwildlife/sdis
-  :alt:Tasks
+   :target: http://waffle.io/parksandwildlife/sdis
+   :alt: Tasks
 
 The Science Directorate Information System (SDIS) is the project documentation,
 approval and reporting platform for DPaW's Science and Conservation Division.

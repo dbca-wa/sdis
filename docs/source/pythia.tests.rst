@@ -48,11 +48,3 @@ tests Package
     :members:
     :undoc-members:
     :show-inheritance:
-
-Subpackages
------------
-
-.. toctree::
-
-    pythia.tests.plugins
-
