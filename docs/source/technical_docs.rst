@@ -17,6 +17,6 @@ Developer Documentation
   :target: http://waffle.io/parksandwildlife/sdis
   :alt:Issues
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. :ref:`genindex`
+.. :ref:`modindex`
+.. :ref:`search`

@@ -12,9 +12,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
-from unittest.mock import MagicMock
+import sys
 
 import confy
 confy.read_environment_file()
@@ -22,36 +21,25 @@ confy.read_environment_file()
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../../')) # must be top level of project
+sys.path.insert(0, os.path.abspath('../../'))  # must be top level of project
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sdis.settings")
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.0'
+# needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
+    # 'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
-]
-
-
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-            return Mock()
-
-MOCK_MODULES = ['ldap', ]
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
-
+    ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
