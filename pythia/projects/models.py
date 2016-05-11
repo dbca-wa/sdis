@@ -20,9 +20,7 @@ import logging
 # import markdown
 
 from django.conf import settings
-# from django.contrib.contenttypes.models import ContentType
-# from django.contrib.auth.models import Permission
-# from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.models import Group
 from django.db import models
 from django.db.models import signals
 import django.db.models.options as options
@@ -1520,8 +1518,8 @@ def projectmembership_post_save(sender, instance, created, **kwargs):
      running loaddata to dev/test/uat or restoring database
     """
     refresh_project_member_cache_fields(instance)
-    from pythia.documents.utils import update_document_permissions as udp
-    [udp(d) for d in instance.project.documents.all()]
+    # from pythia.documents.utils import update_document_permissions as udp
+    # [udp(d) for d in instance.project.documents.all()]
 signals.post_save.connect(projectmembership_post_save,
                           sender=ProjectMembership)
 

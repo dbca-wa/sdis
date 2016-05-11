@@ -1,82 +1,120 @@
-"""Custom backends providing permission checks, authentication
+"""Custom Pythia backends providing authentication.
+
+# PythiaBackend provides a custom `has_perm`, which via
+# `pythia.backends.{DOC|PROJECT}_PERMISSONS`, dicts of permission names
+# (submit, review, approve) and lambda functions, looks up the correct audience
+# for these permissions.
+#
+# The functions `get_{team|admins}`, and the constants SMT and SCD
+# encapsulate the business logic of Document and Project audiences.
 """
 
 from django.contrib.auth import get_user_model
 from django_auth_ldap.backend import LDAPBackend
 from guardian.backends import ObjectPermissionBackend
 
-
-def get_doc_users(obj):
-    """For a given object of any documents model, return project team members.
-    """
-    if obj is not None:
-        User = get_user_model()
-        pks = obj.project.pythia_membership_project.values_list(
-            'user', flat=True)
-        return set(User.objects.filter(pk__in=pks))
-    else:
-        return set()
-
-
-def get_doc_admins(obj):
-    """For a given object of any documents model, return core project members.
-
-    Includes project_owner, data_custodian and site_custodian.
-    Excludes other team members.
-    """
-    return (obj is not None and set((obj.project.project_owner,
-                                     obj.project.data_custodian,
-                                     obj.project.site_custodian)) or
-            set())
-
-
-def get_doc_reviewers(obj):
-    return (obj is not None and set((obj.project.program.program_leader,)) or
-            set())
-
-
-def get_doc_editors(obj):
-    # TODO: who is ARAR editors???
-    return (obj is not None and set() or set())
-
-
-PERMISSIONS = {
-    'team': lambda u, o: u in get_doc_users(o),
-    'can_submit': lambda u, o: u in get_doc_admins(o),
-    'can_review': lambda u, o: u in get_doc_reviewers(o),
-    'can_approve': lambda u, o: u in get_doc_editors(o),
-    }
-
-
-class PythiaBackend(object):
-    def authenticate(self, **kwargs):
-        return None
-
-    def get_group_permissions(self, user_obj, obj=None):
-        return set()
-
-    def get_all_permissions(self, user_obj, obj=None):
-        return set()
-
-    def has_perm(self, user_obj, perm, obj=None):
-        # deals with 'documents.can_submit', 'documents.can_review',
-        # 'documents.can_approve'
-        if not user_obj.is_active:
-            return False
-        if user_obj.is_superuser:
-            return True
-        module, perm = perm.split('.', 2)
-
-        if module == "documents":
-            return PERMISSIONS.get(perm, lambda _, __: False)(user_obj, obj)
-
-        return False
-
-    def has_module_perms(self, user_obj, app_label):
-        return False
-
-    def get_user(self, user_id):
-        return None
+# from django.contrib.auth.models import Group
+# def get_team(obj):
+#     """Return project team members for any projects or documents model.
+#
+#     Team members are the widest audience who should be able to submit.
+#     Non-team members have to reason to submit a Document.
+#     """
+#     # User = get_user_model()
+#     if obj is not None:
+#         if obj.opts.app_label == 'projects':
+#             p = obj
+#         elif obj.opts.app_label == 'documents':
+#             p = obj.project
+#         else:
+#             return set()
+#         team = [m.user for m in p.projectmembership_set.all()]
+#         # pks = p.projectmembership_set.values_list('user', flat=True)
+#         # team = set(User.objects.filter(pk__in=pks))
+#         print("get_team for {0} is {1}".format(obj.__str__(), team))
+#         return team
+#     else:
+#         return set()
+#
+#
+# def get_admins(obj):
+#     """For a given object of any documents model, return core project members.
+#
+#     Includes project_owner, data_custodian and site_custodian.
+#     Excludes other team members.
+#
+#     Doc admins are the minimum audience to "submit" Documents.
+#     At the least, they should be able to "submit" Documents.
+#
+#     Returns an empty set if the object does not exist, or is not a project or
+#     document model.
+#     """
+#     if obj is not None:
+#         if obj.opts.app_label == 'projects':
+#             p = obj
+#         elif obj.opts.app_label == 'documents':
+#             p = obj.project
+#         else:
+#             return set()
+#         return set(p.project_owner, p.data_custodian, p.site_custodian)
+#     else:
+#         return set()
+#
+# smt, created = Group.objects.get_or_create(name='SMT')
+# scd, created = Group.objects.get_or_create(name='SCD')
+#
+# SMT = smt.user_set.all()
+# SCD = scd.user_set.all()
+#
+# PERMISSIONS = {
+#     'view': True,
+#     'change': lambda u, o: u in get_team(o),
+#     'submit': lambda u, o: u in get_team(o),
+#     'review': lambda u, o: u in SMT,
+#     'approve': lambda u, o: u in SCD,
+#     }
+#
+#
+# class PythiaBackend(object):
+#     def authenticate(self, **kwargs):
+#         return None
+#
+#     def get_group_permissions(self, user_obj, obj=None):
+#         return set()
+#
+#     def get_all_permissions(self, user_obj, obj=None):
+#         return set()
+#
+#     def has_perm(self, user_obj, perm, obj=None):
+#         """Indicate whether a user has the requested permission on an object.
+#
+#         This method provides business logic on who can "view", "change",
+#         "submit", "review" and "approve".
+#
+#         Hard coded:
+#
+#         * Users who are not "active" have no permissions.
+#         * Superusers have all permissions.
+#
+#         Through PERMISSIONS:
+#
+#         * everyone can "view"
+#         * project or document team can "change" and "submit"
+#         * SMT members can "review" all objects
+#         * SCD members can "approve" all objects
+#         """
+#         if not user_obj.is_active:
+#             return False
+#         if user_obj.is_superuser:
+#             return True
+#         # module, perm = perm.split('.', 2)
+#         return PERMISSIONS.get(perm, lambda _, __: False)(user_obj, obj)
+#
+#     def has_module_perms(self, user_obj, app_label):
+#         return False
+#
+#     def get_user(self, user_id):
+#         return None
 
 
 class EmailBackend(ObjectPermissionBackend):

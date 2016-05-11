@@ -25,15 +25,43 @@ django-fsm, which contributes a set transition graph, gate checks, pre and post
 transition signals, and user level permissions (to be used with caution on
 polymorphic models).
 
-Admin interface
-===============
 
-Using the admin interface saves some development time, as it provides CRUD views.
-However, it takes away the "plain old admin backdoor", requires some advanced
-workarounds and overrides, and inflicts another layer of complexity.
+Permissions
+===========
+
+The business logic of finding and linking audiences to actions is kept in the
+transition permissions, which are lambda functions calling the instance's
+"submitter", "reviewer" and "approver" functions, which "know" the correct
+audiences. This keeps the business logic inside the document and project
+models.
+
+* Everyone is allowed to "view"
+* Project teams are allowed to "change" project and document details
+* Project teams are allowed to "submit" documents for review,
+  retract them, and request project closure.
+* All SCMT members (program leaders) are allowed to "review" documents
+* All Directorate representatives are allowed to "approve" things and fast-track
+  projects through their life cycles to re-align SDIS with reality.
+
+Notably, there are no Django permissions in place.
+This design decision was made necessary, as FSM transitions inherit down the
+polymorphic models, but hard-code their required permissions or use lambda functions.
+The path of permission strings goes from django_fsm's has_perm to
+django.contrib.auth.models.PermissionMixin's has_perm, which requires properly
+named "app.permission_model" permissions.
+
+Django Admin
+============
+
+Building the UI from the Django admin saves some development time, as Django admin
+already provides CRUD views.
+However, it takes away the "plain old admin backdoor", takes away human-readable URLs,
+requires some advanced workarounds and overrides, and inflicts another layer of complexity.
+
 In retrospect, using Django's admin interface as front-end will work beautifully
-for simple CRUD applications, but cause serious trouble when trying to design,
-maintain, and evolve a very custom, highly complex application.
+for simple CRUD applications, but cause far more trouble than time savings
+when trying to design, maintain, and evolve a highly complex application
+with ever-changing requirements to the UI and workflows.
 
 API
 ===

@@ -1,10 +1,9 @@
 """Model tests for SDIS."""
 from django.test import TestCase
-
+from django.contrib.auth.models import Group
 # from django_fsm.db.fields import TransitionNotAllowed
 
 from pythia.models import Program
-from guardian.models import Group
 from pythia.documents.models import (
     Document, StudentReport, ConceptPlan, ProjectPlan, ProgressReport)
 from pythia.projects.models import (Project, ProjectMembership)
@@ -101,6 +100,11 @@ class ScienceProjectModelTests(BaseTestCase):
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
 
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.bob,
+            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+
     def test_new_science_project(self):
         """A new ScienceProject must have one new ConceptPlan and no tx."""
         p = self.project
@@ -121,25 +125,29 @@ class ScienceProjectModelTests(BaseTestCase):
     def test_conceptplan_permissions(self):
         """Test expected ConceptPlan permissions.
 
-        * All users should be able to change (update content).
-        * Only project team members should be able to submit
-        * Only SMT members should be able to review
-        * Only SCD members should be able to approve
+        * All users should be able to view.
+        * Only project team members should be able to change and submit.
+        * Only SMT members should be able to review.
+        * Only SCD members should be able to approve.
         """
-        pass  # permissions don't work at all
-        p = self.project
-        scp = p.documents.instance_of(ConceptPlan).get()
-        scp.save()  # trigger document permission hook
+        scp = self.project.documents.instance_of(ConceptPlan).get()
 
-        # print("Only project team members can submit the ConceptPlan.")
-        # scp_submit = 'documents.submit_conceptplan'
-        # self.assertTrue(self.bob.has_perm(scp_submit, scp))  # TODO fails
+        print("Only project team members like Bob can submit the ConceptPlan.")
+        bobs_tx = [t.name for t in
+                   scp.get_available_user_status_transitions(self.bob)]
+        self.assertTrue('seek_review' in bobs_tx)
 
-        # print("John is not on the team and has no permission to submit.")
-        # self.assertFalse(self.john.has_perm(scp_submit, scp))
+        print("John is not on the team and has no permission to submit.")
+        johns_tx = [t.name for t in
+                    scp.get_available_user_status_transitions(self.john)]
+        self.assertFalse('seek_review' in johns_tx)
+        self.assertEqual(len(johns_tx), 0)
 
-        # print("Peter is not on the team and has no permission to submit.")
-        # self.assertFalse(self.peter.has_perm(scp_submit, scp))
+        print("Peter is not on the team and has no permission to submit.")
+        peters_tx = [t.name for t in
+                     scp.get_available_user_status_transitions(self.peter)]
+        self.assertFalse('seek_review' in peters_tx)
+        self.assertEqual(len(peters_tx), 0)
 
         print("John joins the project team.")
         ProjectMembership.objects.create(
@@ -147,8 +155,11 @@ class ScienceProjectModelTests(BaseTestCase):
             user=self.john,
             role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
 
-        # print("John is now on the team and has permission to submit.")
-        # self.assertTrue(self.john.has_perm(scp_submit, scp))
+        print("John is now on the team and has permission to submit.")
+        johns_tx = [t.name for t in
+                    scp.get_available_user_status_transitions(self.john)]
+        self.assertTrue('seek_review' in johns_tx)
+        self.assertTrue(len(johns_tx) > 0)
 
         # print("Only Program Leaders (reviewers) can review.")
         # scp_review = 'documents.review_conceptplan'
@@ -214,11 +225,13 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertTrue(scp.status == Document.STATUS_INAPPROVAL)
         self.assertTrue(scp.can_approve())
 
-        print("Approvers approve the ConceptPlan ({2}) on Project {0} ({1}).".format(
-            p.__str__(), p.status, scp.status))
+        print("Approvers approve the ConceptPlan "
+              "({2}) on Project {0} ({1}).".format(
+                  p.__str__(), p.status, scp.status))
         scp.approve()
-        print("Approvers have approved the ConceptPlan ({2}) on Project {0} ({1}).".format(
-            p.__str__(), p.status, scp.status))
+        print("Approvers have approved the ConceptPlan"
+              " ({2}) on Project {0} ({1}).".format(
+                  p.__str__(), p.status, scp.status))
         self.assertEqual(scp.status, Document.STATUS_APPROVED)
 
         print("Approving the ConceptPlan endorses the Project.")

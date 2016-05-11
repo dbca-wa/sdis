@@ -8,7 +8,7 @@ This module contains helpers for:
 """
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
-from django.db.models.signals import post_syncdb
+# from django.db.models.signals import post_syncdb
 from pythia.utils import snitch
 import logging
 
@@ -153,8 +153,8 @@ def setup_user_permissions(sender, **kwargs):
 
 
 # Comment out before loaddata of production data in dev/test/uat
-post_syncdb.connect(add_document_permissions, dispatch_uid='add_doc_perms')
-post_syncdb.connect(setup_user_permissions, dispatch_uid='setup_user_perms')
+# post_syncdb.connect(add_document_permissions, dispatch_uid='add_doc_perms')
+# post_syncdb.connect(setup_user_permissions, dispatch_uid='setup_user_perms')
 
 
 def migrate_documents_to_html(debug=False):

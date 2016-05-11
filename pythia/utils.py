@@ -11,17 +11,18 @@ import subprocess
 
 from bs4 import BeautifulSoup as BS
 from bs4.element import NavigableString as NS
-from html2text import HTML2Text
+# from html2text import HTML2Text
 import json
 # import markdown
 
 
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
-from django.utils.encoding import force_unicode
-from django.utils.safestring import mark_safe
+# from django.utils.encoding import force_unicode
+# from django.utils.safestring import mark_safe
 
 import logging
 logger = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ def snitch(msg):
         logger.debug(msg)
     else:
         logger.info(msg)
+
 
 
 def mail_from_template(subject, recipients, template_basename, context):

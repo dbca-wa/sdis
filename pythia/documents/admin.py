@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import
 
 from django.contrib.admin.util import unquote
-from django.contrib import messages
+# from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
@@ -24,7 +24,7 @@ from pythia.templatetags.pythia_base import pythia_urlname
 from pythia.utils import mail_from_template, snitch
 
 from diff_match_patch import diff_match_patch
-from django_fsm import can_proceed
+# from django_fsm import can_proceed
 from functools import update_wrapper
 from reversion.models import Version
 from sdis import settings
@@ -136,7 +136,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
         obj = self.get_object(request, unquote(object_id))
         tx = request.GET.get('transition')
 
-        # Does the thing exists
+        # Does the thing exist
         if obj is None:
             raise Http404(_('%(name)s object with primary key %(key)r does '
                             'not exist.') % {
@@ -187,7 +187,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                     'status': t.target,
                     }
                 mail_from_template(
-                    '{0} has been updated'.format(
+                    '[SDIS] {0} has been updated'.format(
                         obj.project.project_type_year_number),
                     list(recipients), 'email/email_base', context)
 
