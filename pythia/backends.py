@@ -1,5 +1,9 @@
 """Custom Pythia backends providing authentication.
 
+PythiaBackend providing custom permission checks has been retired in favour
+of Project and Document transition permission checks against Project and
+Document model methods providing the correct audience for each transition.
+
 # PythiaBackend provides a custom `has_perm`, which via
 # `pythia.backends.{DOC|PROJECT}_PERMISSONS`, dicts of permission names
 # (submit, review, approve) and lambda functions, looks up the correct audience
