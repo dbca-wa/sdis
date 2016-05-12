@@ -243,16 +243,34 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertFalse(p.can_approve())
 
         print("SPP needs Biometrician's endorsement.")
+        
+
         print("SPP needs Program Leader's endorsement.")
         print("SPP needs Animal Ethics's endorsement if animals are involved.")
         print("SPP needs Herbarium Curator's endorsement"
-              " if plants are involved.")
+              " only if plants are involved.")
+        self.assertFalse(spp.involves_plants)
+        self.assertTrue(spp.cleared_hc)
+
+        print("SPP involves plants, HC endorsement required")
+        spp.involves_plants = True
+        spp.save()
+        self.assertTrue(spp.involves_plants)
+        self.assertFalse(spp.cleared_hc)
+        self.assertTrue(spp.hc_endorsement, Document.ENDORSEMENT_REQUIRED)
+
+        print("HC endorses SPP")
+        spp.hc_endorsement = Document.ENDORSEMENT_GRANTED
+        spp.save()
+        self.assertTrue(spp.hc_endorsement, Document.ENDORSEMENT_GRANTED)
+        self.assertTrue(spp.cleared_hc)
+
 
         # Test can_approve
         # self.assertTrue(p.can_approve())
 
     def test_reset_conceptplan_on_pending_scienceproject(self):
-        """Fast-forward an SP to pending and reset SCP."""
+        """Resetting an approved SCP resets SCP and project to NEW."""
         print("Fast-forward SP to pending.")
         p = self.project
         scp = p.documents.instance_of(ConceptPlan).get()
@@ -266,6 +284,7 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertEqual(p.status, Project.STATUS_NEW)
         print("Project setup should never spawn a second ConceptPlan")
         self.assertEqual(p.documents.instance_of(ConceptPlan).count(), 1)
+
 
     def test_active_project_transitions(self):
         """Test expected transitions for active ScienceProjects."""
