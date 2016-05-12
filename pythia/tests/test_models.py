@@ -10,7 +10,13 @@ from pythia.projects.models import (Project, ProjectMembership)
 from pythia.reports.models import ARARReport
 from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
                    CoreFunctionProjectFactory, CollaborationProjectFactory,
-                   StudentProjectFactory, UserFactory)
+                   StudentProjectFactory, UserFactory, SuperUserFactory)
+
+
+def avail_tx(user, tx, obj):
+    """Return whether a user has transition tx available on an obj."""
+    return tx in [t.name for t in
+                  obj.get_available_user_status_transitions(user)]
 
 
 class UserModelTests(TestCase):
@@ -50,22 +56,22 @@ class ScienceProjectModelTests(BaseTestCase):
     def setUp(self):
         """Create a ScienceProject and users for all roles.
 
-        * user: a generic user
+        * user: a superuser
         * smt: reviewer group
         * scd: approver group
-        * users: submitter group
         * bob bobson: Bob, a research scientist, wants to create a new
             science project. Bob will be the principal scientist of that
             project, add team members, write project documentation,
             submit docs for approval, and write updates.
         * John Johnson: John will join Bob's team. Then he should be able
-            to execute "team-only" actions.
+            to execute "team-only" submit actions.
         * Steven Stevenson: Steven is Bob's Program Leader.
             As a member of SMT, the reviewers, Steven is the first instance of
             approval.
         * Marge Simpson: Marge is the Divisional Director.
             As member of the Directorate, M is the highest instance of approval
             and has resurrection powers for projects.
+        * Fran Franson, another PL and member of SMT, is also a reviewer.
         * Peter Peterson: Peter won't have anything to do with the project.
             Peter should not be able to execute any "team-only" actions!
         """
@@ -73,7 +79,7 @@ class ScienceProjectModelTests(BaseTestCase):
         self.scd, created = Group.objects.get_or_create(name='SCD')
         self.users, created = Group.objects.get_or_create(name='Users')
 
-        self.user = UserFactory.create()
+        self.superuser = SuperUserFactory.create(username='admin')
         self.bob = UserFactory.create(
             username='bob', first_name='Bob', last_name='Bobson')
         self.john = UserFactory.create(
@@ -105,6 +111,8 @@ class ScienceProjectModelTests(BaseTestCase):
             user=self.bob,
             role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
 
+        self.scp = self.project.documents.instance_of(ConceptPlan).get()
+
     def test_new_science_project(self):
         """A new ScienceProject must have one new ConceptPlan and no tx."""
         p = self.project
@@ -130,24 +138,14 @@ class ScienceProjectModelTests(BaseTestCase):
         * Only SMT members should be able to review.
         * Only SCD members should be able to approve.
         """
-        scp = self.project.documents.instance_of(ConceptPlan).get()
-
         print("Only project team members like Bob can submit the ConceptPlan.")
-        bobs_tx = [t.name for t in
-                   scp.get_available_user_status_transitions(self.bob)]
-        self.assertTrue('seek_review' in bobs_tx)
+        self.assertTrue(avail_tx(self.bob, 'seek_review', self.scp))
 
         print("John is not on the team and has no permission to submit.")
-        johns_tx = [t.name for t in
-                    scp.get_available_user_status_transitions(self.john)]
-        self.assertFalse('seek_review' in johns_tx)
-        self.assertEqual(len(johns_tx), 0)
+        self.assertFalse(avail_tx(self.john, 'seek_review', self.scp))
 
         print("Peter is not on the team and has no permission to submit.")
-        peters_tx = [t.name for t in
-                     scp.get_available_user_status_transitions(self.peter)]
-        self.assertFalse('seek_review' in peters_tx)
-        self.assertEqual(len(peters_tx), 0)
+        self.assertFalse(avail_tx(self.peter, 'seek_review', self.scp))
 
         print("John joins the project team.")
         ProjectMembership.objects.create(
@@ -156,10 +154,7 @@ class ScienceProjectModelTests(BaseTestCase):
             role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
 
         print("John is now on the team and has permission to submit.")
-        johns_tx = [t.name for t in
-                    scp.get_available_user_status_transitions(self.john)]
-        self.assertTrue('seek_review' in johns_tx)
-        self.assertTrue(len(johns_tx) > 0)
+        self.assertTrue(avail_tx(self.john, 'seek_review', self.scp))
 
         # print("Only Program Leaders (reviewers) can review.")
         # scp_review = 'documents.review_conceptplan'
@@ -185,12 +180,11 @@ class ScienceProjectModelTests(BaseTestCase):
         # self.assertTrue(self.john.has_perm(scp_change))
         # self.assertTrue(self.peter.has_perm(scp_change))
 
-    def test_lifecycle(self):
-        """
-        Test all possible transitions in a ScienceProject's life.
+    def test_scienceproject_lifecycle(self):
+        """Test all possible transitions in a ScienceProject's life cycle.
 
-        Focus on status being correctly set, objects being created.
-        Ignoring permissions.
+        Focus on objects being created, gate checks.
+        Ignoring user permissions.
         """
         p = self.project
         scp = p.documents.instance_of(ConceptPlan).get()
@@ -239,6 +233,7 @@ class ScienceProjectModelTests(BaseTestCase):
 
         print("Endorsing the Project creates a ProjectPlan (SPP).")
         self.assertEqual(p.documents.instance_of(ProjectPlan).count(), 1)
+
         spp = p.documents.instance_of(ProjectPlan).get()
         self.assertEqual(spp.status, Document.STATUS_NEW)
 
@@ -349,7 +344,7 @@ class StudentProjectModelTests(TestCase):
     """StudentProject tests."""
 
     def test_new_student_project(self):
-        """A new StudentProject has no approval process and is ACTIVE."""
+        """A new STP has no approval process and is ACTIVE."""
         project = StudentProjectFactory.create()
         self.assertEqual(project.status, Project.STATUS_ACTIVE)
 
@@ -358,18 +353,10 @@ class StudentProjectModelTests(TestCase):
     #    project.request_update()
     #    self.assertEqual(StudentReport.objects.count(), 1)
 
-    def test_can_complete_update(self):
-        """Completing the update requires an approved StudentReport."""
+    def test_studentproject_can_complete_update(self):
+        """Completing the STP update requires an approved StudentReport."""
         project = StudentProjectFactory.create(status=Project.STATUS_UPDATE)
+        self.assertFalse(project.can_complete_update())
         StudentReport.objects.create(project=project,
                                      status=StudentReport.STATUS_APPROVED)
         self.assertTrue(project.can_complete_update())
-
-    def test_cant_complete_update(self):
-        """
-        Without approved StudentReport, a StudentProject can't complete
-        the update.
-        """
-        project = StudentProjectFactory.create(status=Project.STATUS_UPDATE)
-        StudentReport.objects.create(project=project)
-        self.assertFalse(project.can_complete_update())

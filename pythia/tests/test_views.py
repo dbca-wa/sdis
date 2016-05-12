@@ -81,6 +81,20 @@ class ConceptPlanAdminTests(BaseTestCase):
         # get ConceptPlan detail
         #     response = self.client.get(self.url)
         #     self.assertEqual(response.context['original'], self.plan)
+        #     self.client.logout()
+        #     self.client.login(username='user', password='password')
+        #     self.scp.status = self.scp.STATUS_APPROVED
+        #     self.scp.save()
+        #     data = {
+        #         'id': self.scp.id,
+        #         'summary': "New summary",
+        #         # 'budget': '[["test"]]', # TODO html table
+        #         # 'staff': '[["test"]]' # TODO html table
+        #         }
+        #     response = self.client.post(self.url, data, follow=True)
+        #     # self.assertEqual(response.status_code, 200)
+        #     self.assertEqual(self.scp.summary, "New summary")
+        #     # TODO test whether conceptplan is editable
         pass
 
     def only_team_can_change_conceptplan(self):
@@ -128,48 +142,30 @@ class ConceptPlanAdminTests(BaseTestCase):
         # marge can "approve", "request_reviewer_revision", "request_author_revision".
         # steven, bob, peter can't "approve", "request_reviewer_revision", "request_author_revision".
 
-    def submitted_conceptplan_is_readonly_to_team(self):
+    def conceptplan_inreview_is_readonly_to_team(self):
         """Test that a ConceptPlan(inreview) is readonly to team,
         but editable to reviewers and approvers."""
         # ConceptPlan(inreview)
         # readonly to peter, bob, john
         # editable to steven, fran, marge, user
 
+    def conceptplan_inapproval_is_readonly_to_reviewers(self):
+        """Test that a ConceptPlan(inreview) is readonly to team and reviewers,
+        but editable to approvers."""
+        # ConceptPlan(inapproval)
+        # readonly to peter, bob, john, steven, fran
+        # editable to marge, user
+
+    def conceptplan_approved_is_readonly_to_all_but_superuser(self):
+        """Test that a ConceptPlan(inreview) is readonly to team, reviewers,
+        and approvers, but editable to superusers."""
+        # ConceptPlan(approved)
+        # readonly to peter, bob, john, steven, fran, marge
+        # editable to user
+
+
     def test_concept_plan_read_only_superuser(self):
         """
         After approval the concept plan must still be editable to a super-user.
         """
         pass
-    #     self.client.logout()
-    #     self.client.login(username='user', password='password')
-    #     self.scp.status = self.scp.STATUS_APPROVED
-    #     self.scp.save()
-    #     data = {
-    #         'id': self.scp.id,
-    #         'summary': "New summary",
-    #         # 'budget': '[["test"]]', # TODO html table
-    #         # 'staff': '[["test"]]' # TODO html table
-    #         }
-    #     response = self.client.post(self.url, data, follow=True)
-    #     # self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(self.scp.summary, "New summary")
-    #     # TODO test whether conceptplan is editable
-    #
-    # def test_concept_plan_seek_review(self):
-    #     """A project team member can submit the ConceptPlan to seek review."""
-    #     url = reverse(self.tx_url.format("seek_review"), args=(self.plan.pk,))
-    #     self.assertEqual(self.scp.status, self.scp.STATUS_NEW)
-    #     response = self.client.post(url, follow=True)
-    #     # self.assertEqual(response.status_code, 200)
-    #     # self.assertEqual(self.scp.status, self.scp.STATUS_INREVIEW)
-    #
-    # def test_concept_plan_review(self):
-    #     pass
-    #
-    # def test_concept_plan_review_no_permission(self):
-    #     "A user who isn't part of the project can't submit for review."
-    #     self.client.login(username='peter', password='password')
-    #     url = reverse(self.tx_url.format("seek_review"), args=(self.plan.pk,))
-    #     response = self.client.post(url, follow=True)
-    #     self.assertEqual(response.status_code, 403)
-    #     self.assertEqual(self.scp.status, self.scp.STATUS_NEW)

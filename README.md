@@ -42,8 +42,8 @@ and provide these settings:
 Notes on `DATABASE_URL`:
 
 * The protocol needs to be `postgis` to override the default `postgres`.
-* The value doesn't require quotes.
-* The user must be `ubuntu`, no password required.
+* The `DATABASE_URL` value doesn't require quotes.
+* The user must be `ubuntu`, no password is required.
 * The database `circle_test` is already provided, no need to `createdb`.
 
 Notes on coverage reports:
@@ -62,8 +62,8 @@ Settings on the [readthedocs admin page](https://readthedocs.org/projects/sdis/)
 
 * Repository URL https://github.com/parksandwildlife/sdis
 * Documentation type: Sphinx HTML
-* Advanced > Requirements file: sdis/requirements-docs.txt
-* ADvanced > Google Analytics key: optional insight
+* Advanced > Requirements file: requirements-docs.txt
+* Advanced > Google Analytics key: add for optional insight
 
 
 On separate documentation requirements:
@@ -71,6 +71,5 @@ On separate documentation requirements:
 Just to build the docs, not all SDIS requirements are necessary. Some of these
 requirements depend on system packages, which would need to be installed first.
 
-Simply separating out the docs requirements (and placing it in to the settings
-folder `sdis`) will allow readthedocs.org to just install the required minimum
-dependencies.
+Simply separating out the docs requirements will allow readthedocs.org to just
+install the required minimum dependencies.
