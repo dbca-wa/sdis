@@ -665,7 +665,7 @@ class ConceptPlan(Document):
         Another venue might be to use django_fsm.signals.post_transition, if we
         can isolate ConceptPlan.approve from within the signal.
         """
-        print("Document {0} ({1}) running tx approve...".format(
+        snitch("Document {0} ({1}) running tx approve...".format(
             self.__str__(), self.status))
 
     def approve(self):
@@ -699,10 +699,15 @@ class ConceptPlan(Document):
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reset approval status", notify=True,)
         )
-    def reset(self):
+    def do_reset(self):
         """Push back to NEW to reset document approval."""
+
+    def reset(self):
+        self.do_reset()
+        self.save()
         # Push project back to NEW to cancel SCP endorsement
         self.project.setup()
+        self.project.save()
 
 
 class ProjectPlan(Document):

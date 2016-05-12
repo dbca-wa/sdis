@@ -396,6 +396,13 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     # -------------------------------------------------------------------------#
     # Project approval
     #
+    @transition(
+        field='status',
+        source='*',
+        target=STATUS_NEW,
+        permission="approve",
+        custom=dict(verbose="Setup Project", notify=False,)
+        )
     def setup(self):
         """Perform post-save project setup."""
         ProjectMembership.objects.create(
@@ -965,13 +972,28 @@ class ScienceProject(Project):
         verbose_name = _("Science Project")
         verbose_name_plural = _("Science Projects")
 
+    @transition(
+        field='status',
+        source='*',
+        target=Project.STATUS_NEW,
+        permission="approve",
+        custom=dict(verbose="Setup Project", notify=False,)
+        )
     def setup(self):
-        """Create a Conceptplan if not already existing."""
+        """Create a Conceptplan if not already existing. Make sure it's NEW."""
+        ProjectMembership.objects.create(
+            project=self,
+            user=self.project_owner,
+            role=ProjectMembership.ROLE_SUPERVISING_SCIENTIST)
         if not self.documents.instance_of(ConceptPlan):
             ConceptPlan.objects.create(
                     project=self,
                     creator=self.creator,
                     modifier=self.modifier)
+        scp = self.documents.instance_of(ConceptPlan).get()
+        from pythia.documents.models import Document
+        scp.status = Document.STATUS_NEW
+        scp.save()
 
     @property
     def progressreport(self):
@@ -1042,11 +1064,27 @@ class CoreFunctionProject(Project):
         verbose_name = _("Core Function")
         verbose_name_plural = _("Core Functions")
 
+    @transition(
+        field='status',
+        source='*',
+        target=Project.STATUS_NEW,
+        permission="approve",
+        custom=dict(verbose="Setup Project", notify=False,)
+        )
     def setup(self):
-        """A Core Function is now the same as a Science Project. Ah well."""
-        ConceptPlan.objects.create(project=self,
-                                   creator=self.creator,
-                                   modifier=self.modifier)
+        ProjectMembership.objects.create(
+            project=self,
+            user=self.project_owner,
+            role=ProjectMembership.ROLE_SUPERVISING_SCIENTIST)
+        if not self.documents.instance_of(ConceptPlan):
+            ConceptPlan.objects.create(
+                    project=self,
+                    creator=self.creator,
+                    modifier=self.modifier)
+        scp = self.documents.instance_of(ConceptPlan).get()
+        from pythia.documents.models import Document
+        scp.status = Document.STATUS_NEW
+        scp.save()
 
     @property
     def progressreport(self):
@@ -1299,7 +1337,7 @@ class StudentProject(Project):
         return None
 
     def can_complete_update(self):
-        """The update can be completed when the latest StudentReport is approved."""
+        """Completion of update requires approved latest StudentReport."""
         return (self.documents.instance_of(StudentReport).exists() and
                 self.documents.instance_of(StudentReport).latest().is_approved)
 
