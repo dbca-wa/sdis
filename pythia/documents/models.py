@@ -1091,11 +1091,15 @@ class ProjectPlan(Document):
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Approve", notify=True,)
         )
+    def do_approve(self):
+        """Approve the document"""
+
     def approve(self):
-        """Auto-advance the project to active."""
-        from pythia.projects.models import Project
-        self.project.status = Project.STATUS_ACTIVE
-        self.project.save(update_fields=['status'])
+        """Approve document and turn project active."""
+        self.do_approve()
+        self.save()
+        self.project.approve()
+        self.project.save()
 
     @transition(
         field='status',
@@ -1105,8 +1109,14 @@ class ProjectPlan(Document):
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reset approval status", notify=True,)
         )
-    def reset(self):
+    def do_reset(self):
         """Push back to NEW to reset document approval."""
+
+    def reset(self):
+        self.do_reset()
+        self.save()
+        # self.project.approve()
+        # self.project.save
         # Push project back to PENDING to cancel SPP approval
         from pythia.projects.models import Project
         self.project.status = Project.STATUS_PENDING
@@ -1124,19 +1134,19 @@ def projectplan_post_save(sender, instance, created, **kwargs):
     NB: the mandatory Biometrician's endorsement defaults to "requested".
     Data manager's endorsement will do the same once activated.
     """
-    logger.info('ProjectPlan post-save: setting required endorsements '
-                'as inferred from other fields.')
+    snitch('ProjectPlan {0} post-save: setting required endorsements '
+           'as inferred from other fields.'.format(instance.__str__()))
     if instance.involves_plants:
-        logger.info('Project involves plants, needs HC endorsement!')
+        snitch('Project involves plants, needs HC endorsement!')
         if instance.hc_endorsement == Document.ENDORSEMENT_NOTREQUIRED:
-            logger.info('Setting HC endorsement from default to "required".')
+            snitch('Setting HC endorsement from default to "required".')
             instance.hc_endorsement = Document.ENDORSEMENT_REQUIRED
             instance.save(update_fields=['hc_endorsement'])
 
     if instance.involves_animals:
-        logger.info('Project involves animals, needs AE endorsement!')
+        snitch('Project involves animals, needs AE endorsement!')
         if instance.ae_endorsement == Document.ENDORSEMENT_NOTREQUIRED:
-            logger.info('Setting AE endorsement from default to "required".')
+            snitch('Setting AE endorsement from default to "required".')
             instance.ae_endorsement = Document.ENDORSEMENT_REQUIRED
             instance.save(update_fields=['ae_endorsement'])
 

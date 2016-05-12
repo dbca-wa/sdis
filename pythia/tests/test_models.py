@@ -239,14 +239,21 @@ class ScienceProjectModelTests(BaseTestCase):
         spp = p.documents.instance_of(ProjectPlan).get()
         self.assertEqual(spp.status, Document.STATUS_NEW)
 
-        print("SPP can not be approved with empty mandatory fields.")
-        self.assertFalse(p.can_approve())
+        print("SPP can be submitted for review, no mandatory fields.")
+        self.assertTrue(spp.can_seek_review())
+        spp.seek_review()
+        self.assertEqual(spp.status, Document.STATUS_INREVIEW)
+        print("SPP cannot seek approval without BM and HC endorsement.")
+        self.assertFalse(spp.can_seek_approval())
 
         print("SPP needs Biometrician's endorsement.")
-        
+        self.assertTrue(spp.bm_endorsement, Document.ENDORSEMENT_REQUIRED)
+        self.assertFalse(spp.cleared_bm)
+        spp.bm_endorsement = Document.ENDORSEMENT_GRANTED
+        spp.save()
+        self.assertTrue(spp.bm_endorsement, Document.ENDORSEMENT_GRANTED)
+        self.assertTrue(spp.cleared_bm)
 
-        print("SPP needs Program Leader's endorsement.")
-        print("SPP needs Animal Ethics's endorsement if animals are involved.")
         print("SPP needs Herbarium Curator's endorsement"
               " only if plants are involved.")
         self.assertFalse(spp.involves_plants)
@@ -265,9 +272,105 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertTrue(spp.hc_endorsement, Document.ENDORSEMENT_GRANTED)
         self.assertTrue(spp.cleared_hc)
 
+        print("SPP with BM and HC endorsement can seek approval")
+        self.assertTrue(spp.can_seek_approval())
+        spp.seek_approval()
+        self.assertEqual(spp.status, Document.STATUS_INAPPROVAL)
 
-        # Test can_approve
-        # self.assertTrue(p.can_approve())
+        print("SPP needs AE's endorsement only if animals are involved.")
+        print("SPP in approval not involving animals can be approved")
+        self.assertEqual(spp.status, Document.STATUS_INAPPROVAL)
+        self.assertFalse(spp.involves_animals)
+        self.assertTrue(spp.cleared_ae)
+
+        print("SPP in approval involving animals can not be approved "
+              "without AE endorsement")
+        spp.involves_animals = True
+        spp.save()
+        self.assertTrue(spp.involves_animals)
+        self.assertFalse(spp.cleared_ae)
+        self.assertTrue(spp.ae_endorsement, Document.ENDORSEMENT_REQUIRED)
+
+        print("AE endorses SPP, SPP can be approved")
+        spp.ae_endorsement = Document.ENDORSEMENT_GRANTED
+        spp.save()
+        self.assertEqual(spp.ae_endorsement, Document.ENDORSEMENT_GRANTED)
+        self.assertTrue(spp.cleared_ae)
+
+        print("SPP approval turns project ACTIVE")
+        spp.approve()
+        self.assertEqual(spp.status, Document.STATUS_APPROVED)
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+
+        print("Active projects can be suspended and brought back to ACTIVE")
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        self.assertTrue(p.can_suspend())
+        p.suspend()
+        self.assertEqual(p.status, Project.STATUS_SUSPENDED)
+        p.reactivate_suspended()
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+
+        print("Active projects can be terminated... they will be BACK")
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        self.assertTrue(p.can_terminate())
+        p.terminate()
+        self.assertEqual(p.status, Project.STATUS_TERMINATED)
+        p.reactivate_terminated()
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+
+        print("Active projects can be force-choked and resuscitated")
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        p.force_complete()
+        self.assertEqual(p.status, Project.STATUS_COMPLETED)
+        p.reactivate()
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+
+        print("Request update")
+        from datetime import datetime
+        n = datetime.now()
+        r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
+        p.request_update()
+        self.assertEqual(p.status, Project.STATUS_UPDATE)
+        pr = p.documents.instance_of(ProgressReport).get()
+        self.assertEqual(p.documents.instance_of(ProgressReport).count(), 1)
+        self.assertEqual(pr.status, Document.STATUS_NEW)
+        print("Complete update")
+        pr.seek_review()
+        pr.seek_approval()
+        pr.approve()
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+
+        print("Request closure")
+        print("Accept closure")
+        print("Request final update")
+        print("Approving final update completes project")
+
+
+    def test_force_closure_updating_project(self):
+        """Force-closing an updating project removes latest ProgressReport and
+        sets project to closure requested.
+        """
+        print("Create active project, request update")
+        p = self.project
+        p.status = Project.STATUS_ACTIVE
+        p.save()
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+
+        print("Create ARARReport so we can request updates")
+        from datetime import datetime
+        n = datetime.now()
+        r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
+        p.request_update()
+        self.assertEqual(p.status, Project.STATUS_UPDATE)
+        pr = p.documents.instance_of(ProgressReport).get()
+        self.assertEqual(p.documents.instance_of(ProgressReport).count(), 1)
+        self.assertEqual(pr.status, Document.STATUS_NEW)
+
+        print("Force closure of project sets project to closure requested")
+        p.force_closure()
+        self.assertEqual(p.status, Project.STATUS_CLOSURE_REQUESTED)
+        print("Force closure of project deletes latest projectplan")
+        self.assertEqual(p.documents.instance_of(ProgressReport).count(), 0)
 
     def test_reset_conceptplan_on_pending_scienceproject(self):
         """Resetting an approved SCP resets SCP and project to NEW."""
@@ -284,52 +387,6 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertEqual(p.status, Project.STATUS_NEW)
         print("Project setup should never spawn a second ConceptPlan")
         self.assertEqual(p.documents.instance_of(ConceptPlan).count(), 1)
-
-
-    def test_active_project_transitions(self):
-        """Test expected transitions for active ScienceProjects."""
-        p = ScienceProjectFactory.create(status=Project.STATUS_ACTIVE)
-        self.assertTrue(p.can_request_update())
-        self.assertTrue(p.can_suspend())
-        self.assertTrue(p.can_terminate())
-
-    # def test_request_update(self):
-    #     """
-    #     New ARARReports request an update from all active and closing projects.
-    #     """
-    #     p = ScienceProjectFactory.create(status=Project.STATUS_ACTIVE)
-    #     from datetime import datetime
-    #     n = datetime.now()
-    #     r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
-    #     pr = p.documents.instance_of(ProgressReport)
-    #     self.assertEqual(pr.count(), 1)
-    #     self.assertEqual(pr.latest().status, Document.STATUS_NEW)
-    #
-    #     p.request_update()  # this should have happened during ARAR create
-    #     self.assertEqual(p.status, Project.STATUS_UPDATE)
-
-    # def test_complete_update(self):
-    #     """
-    #     ScienceProjects require an approved ProgressReport to complete the
-    #     update.
-    #     """
-    #     self.project.status = Project.STATUS_UPDATE
-    #     self.project.save()
-    #     ProgressReport.objects.create(project=self.project,
-    #                                   status=ProgressReport.STATUS_APPROVED)
-    #     self.assertTrue(self.project.can_complete_update())
-    #     self.project.complete_update()
-    #     self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
-    #
-    # def test_request_closure(self):
-    #     """Test requesting closure for active ScienceProject.
-    #     """
-    #     project = ScienceProjectFactory.create(status=Project.STATUS_ACTIVE)
-    #     self.assertTrue(project.can_request_closure())
-    #     project.request_closure()
-    #     self.assertTrue(project.status, Project.STATUS_CLOSURE_REQUESTED)
-    #
-    #     # TODO tests for other transitions
 
 
 class CoreFunctionProjectModelTests(TestCase):
