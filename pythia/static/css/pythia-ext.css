@@ -153,6 +153,11 @@ fieldset input {
     width: auto;
 }
 
+/* Override margin-right for base.html navbar search form */
+.nomarginright {
+    margin-right: 0px;
+}
+
 /* Tweaks to make the file upload widget look nice */
 p.file-upload {
     font-size: 14px;

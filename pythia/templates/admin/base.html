@@ -303,8 +303,9 @@
         {% if request.user.is_authenticated %}
         {# block topsearch #}
         {% if not request.user.completed_registration %}
-            <form id="form-project-search" action="{{ list_project }}" method="get"
-                class="navbar-form navbar-right hidden-xs" role="search">
+            <form id="form-project-search"
+                class="navbar-form navbar-right hidden-xs nomarginright"
+                action="{{ list_project }}" method="get" role="search">
               <div class="search input-group input-group-sm">
                 <input name="q" id="mod-search-searchword" maxlength="20"
                     class="form-control" type="text"
@@ -427,8 +428,18 @@
         <p class="text-muted credit">
             {% block extra_footer %}
             {% load pythia_base %}
-            {% get_version_info %}
-            &copy; 2012&ndash;2016 Department of Parks and Wildlife
+            <a href="https://github.com/parksandwildlife/sdis">
+            {% get_version_info %}</a>
+            &copy; 2012&ndash;2016 Department of Parks and Wildlife&nbsp;
+            <a href="https://circleci.com/gh/parksandwildlife/sdis">
+                <img src="https://circleci.com/gh/parksandwildlife/sdis.svg?style=svg"
+                alt="Test Status" /></a>&nbsp;
+            <a href='https://coveralls.io/github/parksandwildlife/sdis?branch=master'>
+                <img src='https://coveralls.io/repos/github/parksandwildlife/sdis/badge.svg?branch=master'
+                alt='Coverage Status' /></a>&nbsp;
+            <a href='http://sdis.readthedocs.io/?badge=latest'>
+                <img src='http://readthedocs.org/projects/sdis/badge/?version=latest'
+                alt='Documentation Status' /></a>
             {% endblock %}
         </p>
     </div><!-- /.container -->
