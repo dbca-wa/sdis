@@ -234,69 +234,75 @@ class ScienceProjectModelTests(BaseTestCase):
 
         print("Endorsing the Project creates a ProjectPlan (SPP).")
         self.assertEqual(self.project.documents.instance_of(ProjectPlan).count(), 1)
-        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().status, Document.STATUS_NEW)
+        spp = self.project.documents.instance_of(ProjectPlan).get()
+        self.assertEqual(spp.status, Document.STATUS_NEW)
 
         print("SPP can be submitted for review, no mandatory fields.")
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().can_seek_review())
-        self.project.documents.instance_of(ProjectPlan).get().seek_review()
-        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().status, Document.STATUS_INREVIEW)
+        self.assertTrue(spp.can_seek_review())
+        spp.seek_review()
+        self.assertEqual(spp.status, Document.STATUS_INREVIEW)
         print("SPP cannot seek approval without BM and HC endorsement.")
-        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().can_seek_approval())
+        self.assertFalse(spp.can_seek_approval())
 
         print("SPP needs Biometrician's endorsement.")
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().bm_endorsement, Document.ENDORSEMENT_REQUIRED)
-        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().cleared_bm)
-        self.project.documents.instance_of(ProjectPlan).get().bm_endorsement = Document.ENDORSEMENT_GRANTED
-        self.project.documents.instance_of(ProjectPlan).get().save()
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().bm_endorsement, Document.ENDORSEMENT_GRANTED)
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().cleared_bm)
+        self.assertTrue(spp.bm_endorsement, Document.ENDORSEMENT_REQUIRED)
+        self.assertFalse(spp.cleared_bm)
+        spp.bm_endorsement = Document.ENDORSEMENT_GRANTED
+        spp.save()
+        self.assertTrue(spp.bm_endorsement, Document.ENDORSEMENT_GRANTED)
+        self.assertTrue(spp.cleared_bm)
 
         print("SPP needs Herbarium Curator's endorsement"
               " only if plants are involved.")
-        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().involves_plants)
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().cleared_hc)
+        self.assertFalse(spp.involves_plants)
+        self.assertTrue(spp.cleared_hc)
 
         print("SPP involves plants, HC endorsement required")
-        self.project.documents.instance_of(ProjectPlan).get().involves_plants = True
-        self.project.documents.instance_of(ProjectPlan).get().save()
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().involves_plants)
-        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().cleared_hc)
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().hc_endorsement, Document.ENDORSEMENT_REQUIRED)
+        spp.involves_plants = True
+        spp.save()
+        self.assertTrue(spp.involves_plants)
+        self.assertFalse(spp.cleared_hc)
+        self.assertTrue(spp.hc_endorsement, Document.ENDORSEMENT_REQUIRED)
 
         print("HC endorses SPP")
-        self.project.documents.instance_of(ProjectPlan).get().hc_endorsement = Document.ENDORSEMENT_GRANTED
-        self.project.documents.instance_of(ProjectPlan).get().save()
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().hc_endorsement, Document.ENDORSEMENT_GRANTED)
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().cleared_hc)
+        spp.hc_endorsement = Document.ENDORSEMENT_GRANTED
+        spp.save()
+        self.assertTrue(spp.hc_endorsement, Document.ENDORSEMENT_GRANTED)
+        self.assertTrue(spp.cleared_hc)
 
         print("SPP with BM and HC endorsement can seek approval")
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().can_seek_approval())
-        self.project.documents.instance_of(ProjectPlan).get().seek_approval()
-        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().status, Document.STATUS_INAPPROVAL)
+        self.assertTrue(spp.can_seek_approval())
+        spp.seek_approval()
+        self.assertEqual(spp.status, Document.STATUS_INAPPROVAL)
 
         print("SPP needs AE's endorsement only if animals are involved.")
         print("SPP in approval not involving animals can be approved")
-        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().status, Document.STATUS_INAPPROVAL)
-        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().involves_animals)
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().cleared_ae)
+        self.assertEqual(spp.status, Document.STATUS_INAPPROVAL)
+        self.assertFalse(spp.involves_animals)
+        self.assertTrue(spp.cleared_ae)
 
         print("SPP in approval involving animals can not be approved "
               "without AE endorsement")
-        self.project.documents.instance_of(ProjectPlan).get().involves_animals = True
-        self.project.documents.instance_of(ProjectPlan).get().save()
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().involves_animals)
-        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().cleared_ae)
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().ae_endorsement, Document.ENDORSEMENT_REQUIRED)
+        spp.involves_animals = True
+        spp.save()
+        self.assertTrue(spp.involves_animals)
+        self.assertFalse(spp.cleared_ae)
+        self.assertTrue(spp.ae_endorsement, Document.ENDORSEMENT_REQUIRED)
 
         print("AE endorses SPP, SPP can be approved")
-        self.project.documents.instance_of(ProjectPlan).get().ae_endorsement = Document.ENDORSEMENT_GRANTED
-        self.project.documents.instance_of(ProjectPlan).get().save()
-        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().ae_endorsement, Document.ENDORSEMENT_GRANTED)
-        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().cleared_ae)
+        spp.ae_endorsement = Document.ENDORSEMENT_GRANTED
+        spp.save()
+        self.assertEqual(spp.ae_endorsement, Document.ENDORSEMENT_GRANTED)
+        self.assertTrue(spp.cleared_ae)
 
         print("SPP approval turns project ACTIVE")
-        self.project.documents.instance_of(ProjectPlan).get().approve()
-        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().status, Document.STATUS_APPROVED)
+        spp.approve()
+        self.assertEqual(spp.status, Document.STATUS_APPROVED)
+        print("Is self.project the same as spp.project?")
+        self.assertEqual(self.project, spp.project)
+        print("Is self.project.status the same as spp.project.status?")
+        self.assertEqual(self.project.status, spp.project.status)
+        print("Check that project is ACTIVE")
         self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
         print("Active projects can be suspended and brought back to ACTIVE")
