@@ -1268,7 +1268,7 @@ class ProgressReport(Document):
         This will set the document status to APPROVED and call the appropriate
         project transition:
 
-        * projects in `Project.STATUS_UPDATE` will call
+        * projects in Project.STATUS_UPDATE will call
           `Project.complete_update` to transition back to
           `Project.STATUS_ACTIVE`;
         * projects in `Project.STATUS_FINAL_UPDATE` will call
@@ -1289,14 +1289,19 @@ class ProgressReport(Document):
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reset approval status", notify=True,)
         )
-    def reset(self):
+    def do_reset(self):
         """Push back to NEW to reset document approval."""
+
+    def reset(self):
+        """Push the project back to status before ProgressReport approval."""
+        self.do_reset()
         # Push project back to UPDATE_REQUESTED
         # to cancel ARAR update approval
         from pythia.projects.models import Project
         if self.project.status == Project.STATUS_ACTIVE:
             self.project.request_update()
             # request update again, possibly sending email
+            # TODO avoid duplicating latest update
         elif self.project.status == Project.STATUS_COMPLETED:
             self.project.request_final_update()   # resurrect completed project
         else:
@@ -1357,9 +1362,15 @@ class ProjectClosure(Document):
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Approve", notify=True,)
         )
+    def do_approve(self):
+        """Approve the ClosureForm."""
+
     def approve(self):
         """Auto-advance the project to CLOSING."""
+        self.do_approve()
+        self.save()
         self.project.accept_closure()
+        self.project.save()
 
     @transition(
         field='status',
@@ -1430,6 +1441,9 @@ class StudentReport(Document):
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Approve", notify=True,)
         )
+    def do_approve(self):
+        """Approve the StudentReport."""
+
     def approve(self):
         """
         Auto-advance the project to active if an update has been requested.
@@ -1437,11 +1451,10 @@ class StudentReport(Document):
         Do nothing on project level if the project is not in
         Project.STATUS_UPDATE.
         """
-        from pythia.projects.models import Project
-        if self.project.status == Project.STATUS_UPDATE:
-            self.project.complete_update()
-        else:
-            return True
+        self.do_approve()
+        self.save()
+        self.project.complete_update()
+        self.project.save()
 
     @transition(
         field='status',

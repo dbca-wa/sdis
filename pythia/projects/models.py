@@ -588,9 +588,13 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
         Needs override for STP to check for StudentReport to be approved.
         """
-        return (
-            self.documents.instance_of(ProgressReport).exists() and
-            self.documents.instance_of(ProgressReport).latest().is_approved)
+        if self.documents.instance_of(ProgressReport).exists():
+            pp = self.documents.instance_of(ProgressReport).get()
+            print("Project.can_complete_update checking {0}({1})".format(
+                pp.__str__(), pp.status))
+            return pp.is_approved
+        else:
+            return False
 
     @transition(
         field='status',
@@ -631,10 +635,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         Creates ProjectClosure as required for SPP and CF,
         requires override to fast-track STP and COL to STATUS_COMPLETED.
         """
-        ProjectClosure.objects.create(
-            project=self,
-            creator=self.creator,
-            modifier=self.modifier)
+        pc, created = ProjectClosure.objects.get_or_create(project=self)
 
     @transition(
         field='status',
@@ -653,10 +654,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         Deletes current progressreport (warning - is it the right one?)
         Fast-tracks project to complete the update
         """
-        ProjectClosure.objects.create(
-            project=self,
-            creator=self.creator,
-            modifier=self.modifier)
+        pc, created = ProjectClosure.objects.get_or_create(project=self)
         # TODO: delete Progressreports of currently active ARAR
         self.progressreport.delete()
 
@@ -671,7 +669,13 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         TODO: insert gate checks: is the projectplan updated with latest data
         management info, is the closure form approved
         """
-        return self.documents.instance_of(ProjectClosure).latest().is_approved
+        if self.documents.instance_of(ProjectClosure).exists():
+            pp = self.documents.instance_of(ProjectClosure).get()
+            print("Project.can_accept_closure checking {0}({1})".format(
+                pp.__str__(), pp.status))
+            return pp.is_approved
+        else:
+            return False
 
     @transition(
         field='status',
@@ -710,8 +714,6 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """Transition to move the project to STATUS_FINAL_UPDATE."""
         ProgressReport.objects.create(
             project=self,
-            creator=self.creator,
-            modifier=self.modifier,
             is_final_report=True,
             year=date.today().year)
 
@@ -1394,10 +1396,15 @@ class StudentProject(Project):
         """The academic organisation as plain text."""
         return mark_safe(strip_tags(self.organisation))
 
+    @transition(
+        field='status',
+        source=Project.STATUS_NEW,
+        target=Project.STATUS_ACTIVE,
+        permission=lambda instance, user: user in instance.approvers,
+        custom=dict(verbose="Setup Project", notify=False,)
+        )
     def setup(self):
         """A student project becomes active without approval process."""
-        self.status = Project.STATUS_ACTIVE
-        self.save(update_fields=['status'])
 
     @transition(
         field='status',

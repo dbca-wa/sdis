@@ -1168,10 +1168,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         pplan_list = ProjectPlan.objects.filter(
                 project__status=Project.STATUS_PENDING)
         for doc in pplan_list:
-            if (doc.bm_endorsement == Document.ENDORSEMENT_REQUIRED) or (
-                doc.hc_endorsement == Document.ENDORSEMENT_REQUIRED) or (
-                doc.ae_endorsement == Document.ENDORSEMENT_REQUIRED):
-                excludes.add(doc)
+            if ((doc.bm_endorsement == Document.ENDORSEMENT_REQUIRED) or (
+                 doc.hc_endorsement == Document.ENDORSEMENT_REQUIRED) or (
+                 doc.ae_endorsement == Document.ENDORSEMENT_REQUIRED)):
+                    excludes.add(doc)
 
         endorsements = set()
 

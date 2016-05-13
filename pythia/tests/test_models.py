@@ -5,7 +5,8 @@ from django.contrib.auth.models import Group
 
 from pythia.models import Program
 from pythia.documents.models import (
-    Document, StudentReport, ConceptPlan, ProjectPlan, ProgressReport)
+    Document, StudentReport, ConceptPlan, ProjectPlan,
+    ProgressReport, ProjectClosure)
 from pythia.projects.models import (Project, ProjectMembership)
 from pythia.reports.models import ARARReport
 from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
@@ -188,10 +189,8 @@ class ScienceProjectModelTests(BaseTestCase):
         Focus on objects being created, gate checks.
         Ignoring user permissions.
         """
-        p = self.project
-        scp = p.documents.instance_of(ConceptPlan).get()
-
         print("The ConceptPlan is new and ready to be submitted.")
+        scp = self.project.documents.instance_of(ConceptPlan).get()
         self.assertTrue(scp.status == Document.STATUS_NEW)
         self.assertTrue(scp.can_seek_review())
 
@@ -223,133 +222,158 @@ class ScienceProjectModelTests(BaseTestCase):
 
         print("Approvers approve the ConceptPlan "
               "({2}) on Project {0} ({1}).".format(
-                  p.__str__(), p.status, scp.status))
+                  self.project.__str__(), self.project.status, scp.status))
         scp.approve()
         print("Approvers have approved the ConceptPlan"
               " ({2}) on Project {0} ({1}).".format(
-                  p.__str__(), p.status, scp.status))
+                  self.project.__str__(), self.project.status, scp.status))
         self.assertEqual(scp.status, Document.STATUS_APPROVED)
 
         print("Approving the ConceptPlan endorses the Project.")
         self.assertEqual(scp.project.status, Project.STATUS_PENDING)
 
         print("Endorsing the Project creates a ProjectPlan (SPP).")
-        self.assertEqual(p.documents.instance_of(ProjectPlan).count(), 1)
-
-        spp = p.documents.instance_of(ProjectPlan).get()
-        self.assertEqual(spp.status, Document.STATUS_NEW)
+        self.assertEqual(self.project.documents.instance_of(ProjectPlan).count(), 1)
+        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().status, Document.STATUS_NEW)
 
         print("SPP can be submitted for review, no mandatory fields.")
-        self.assertTrue(spp.can_seek_review())
-        spp.seek_review()
-        self.assertEqual(spp.status, Document.STATUS_INREVIEW)
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().can_seek_review())
+        self.project.documents.instance_of(ProjectPlan).get().seek_review()
+        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().status, Document.STATUS_INREVIEW)
         print("SPP cannot seek approval without BM and HC endorsement.")
-        self.assertFalse(spp.can_seek_approval())
+        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().can_seek_approval())
 
         print("SPP needs Biometrician's endorsement.")
-        self.assertTrue(spp.bm_endorsement, Document.ENDORSEMENT_REQUIRED)
-        self.assertFalse(spp.cleared_bm)
-        spp.bm_endorsement = Document.ENDORSEMENT_GRANTED
-        spp.save()
-        self.assertTrue(spp.bm_endorsement, Document.ENDORSEMENT_GRANTED)
-        self.assertTrue(spp.cleared_bm)
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().bm_endorsement, Document.ENDORSEMENT_REQUIRED)
+        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().cleared_bm)
+        self.project.documents.instance_of(ProjectPlan).get().bm_endorsement = Document.ENDORSEMENT_GRANTED
+        self.project.documents.instance_of(ProjectPlan).get().save()
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().bm_endorsement, Document.ENDORSEMENT_GRANTED)
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().cleared_bm)
 
         print("SPP needs Herbarium Curator's endorsement"
               " only if plants are involved.")
-        self.assertFalse(spp.involves_plants)
-        self.assertTrue(spp.cleared_hc)
+        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().involves_plants)
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().cleared_hc)
 
         print("SPP involves plants, HC endorsement required")
-        spp.involves_plants = True
-        spp.save()
-        self.assertTrue(spp.involves_plants)
-        self.assertFalse(spp.cleared_hc)
-        self.assertTrue(spp.hc_endorsement, Document.ENDORSEMENT_REQUIRED)
+        self.project.documents.instance_of(ProjectPlan).get().involves_plants = True
+        self.project.documents.instance_of(ProjectPlan).get().save()
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().involves_plants)
+        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().cleared_hc)
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().hc_endorsement, Document.ENDORSEMENT_REQUIRED)
 
         print("HC endorses SPP")
-        spp.hc_endorsement = Document.ENDORSEMENT_GRANTED
-        spp.save()
-        self.assertTrue(spp.hc_endorsement, Document.ENDORSEMENT_GRANTED)
-        self.assertTrue(spp.cleared_hc)
+        self.project.documents.instance_of(ProjectPlan).get().hc_endorsement = Document.ENDORSEMENT_GRANTED
+        self.project.documents.instance_of(ProjectPlan).get().save()
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().hc_endorsement, Document.ENDORSEMENT_GRANTED)
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().cleared_hc)
 
         print("SPP with BM and HC endorsement can seek approval")
-        self.assertTrue(spp.can_seek_approval())
-        spp.seek_approval()
-        self.assertEqual(spp.status, Document.STATUS_INAPPROVAL)
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().can_seek_approval())
+        self.project.documents.instance_of(ProjectPlan).get().seek_approval()
+        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().status, Document.STATUS_INAPPROVAL)
 
         print("SPP needs AE's endorsement only if animals are involved.")
         print("SPP in approval not involving animals can be approved")
-        self.assertEqual(spp.status, Document.STATUS_INAPPROVAL)
-        self.assertFalse(spp.involves_animals)
-        self.assertTrue(spp.cleared_ae)
+        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().status, Document.STATUS_INAPPROVAL)
+        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().involves_animals)
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().cleared_ae)
 
         print("SPP in approval involving animals can not be approved "
               "without AE endorsement")
-        spp.involves_animals = True
-        spp.save()
-        self.assertTrue(spp.involves_animals)
-        self.assertFalse(spp.cleared_ae)
-        self.assertTrue(spp.ae_endorsement, Document.ENDORSEMENT_REQUIRED)
+        self.project.documents.instance_of(ProjectPlan).get().involves_animals = True
+        self.project.documents.instance_of(ProjectPlan).get().save()
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().involves_animals)
+        self.assertFalse(self.project.documents.instance_of(ProjectPlan).get().cleared_ae)
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().ae_endorsement, Document.ENDORSEMENT_REQUIRED)
 
         print("AE endorses SPP, SPP can be approved")
-        spp.ae_endorsement = Document.ENDORSEMENT_GRANTED
-        spp.save()
-        self.assertEqual(spp.ae_endorsement, Document.ENDORSEMENT_GRANTED)
-        self.assertTrue(spp.cleared_ae)
+        self.project.documents.instance_of(ProjectPlan).get().ae_endorsement = Document.ENDORSEMENT_GRANTED
+        self.project.documents.instance_of(ProjectPlan).get().save()
+        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().ae_endorsement, Document.ENDORSEMENT_GRANTED)
+        self.assertTrue(self.project.documents.instance_of(ProjectPlan).get().cleared_ae)
 
         print("SPP approval turns project ACTIVE")
-        spp.approve()
-        self.assertEqual(spp.status, Document.STATUS_APPROVED)
-        p = spp.project  # weird copy issue
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        self.project.documents.instance_of(ProjectPlan).get().approve()
+        self.assertEqual(self.project.documents.instance_of(ProjectPlan).get().status, Document.STATUS_APPROVED)
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
         print("Active projects can be suspended and brought back to ACTIVE")
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        self.assertTrue(p.can_suspend())
-        p.suspend()
-        self.assertEqual(p.status, Project.STATUS_SUSPENDED)
-        p.reactivate_suspended()
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+        self.assertTrue(self.project.can_suspend())
+        self.project.suspend()
+        self.assertEqual(self.project.status, Project.STATUS_SUSPENDED)
+        self.project.reactivate_suspended()
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
         print("Active projects can be terminated... they will be BACK")
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        self.assertTrue(p.can_terminate())
-        p.terminate()
-        self.assertEqual(p.status, Project.STATUS_TERMINATED)
-        p.reactivate_terminated()
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+        self.assertTrue(self.project.can_terminate())
+        self.project.terminate()
+        self.assertEqual(self.project.status, Project.STATUS_TERMINATED)
+        self.project.reactivate_terminated()
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
         print("Active projects can be force-choked and resuscitated")
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        p.force_complete()
-        self.assertEqual(p.status, Project.STATUS_COMPLETED)
-        p.reactivate()
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+        self.project.force_complete()
+        self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
+        self.project.reactivate()
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
         print("Request update")
         from datetime import datetime
         n = datetime.now()
-        r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
-        p.request_update()
-        self.assertEqual(p.status, Project.STATUS_UPDATE)
-        pr = p.documents.instance_of(ProgressReport).get()
-        self.assertEqual(p.documents.instance_of(ProgressReport).count(), 1)
-        self.assertEqual(pr.status, Document.STATUS_NEW)
+        r = ARARReport.objects.create(year=self.project.year, date_open=n, date_closed=n)
+        print("Created {0}".format(r.__str__()))
+        self.project.request_update()
+        self.assertEqual(self.project.status, Project.STATUS_UPDATE)
+        self.assertEqual(self.project.documents.instance_of(ProgressReport).count(), 1)
+        self.assertEqual(self.project.documents.instance_of(ProgressReport).get().status, Document.STATUS_NEW)
         print("Complete update")
-        pr.seek_review()
-        pr.seek_approval()
-        pr.approve()
-        self.assertEqual(pr.project.status, Project.STATUS_ACTIVE)
+        self.project.documents.instance_of(ProgressReport).get().seek_review()
+        self.project.documents.instance_of(ProgressReport).get().seek_approval()
+        self.project.documents.instance_of(ProgressReport).get().approve()
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
         print("Request closure")
-        print("Accept closure")
-        print("Request final update")
-        print("Approving final update completes project")
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+        self.project.request_closure()
+        print("Project should be in CLOSURE_REQUESTED")
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
+        print("Check for ProjectClosure document")
+        print("Project should be in CLOSURE_REQUESTED")
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
+        self.assertEqual(self.project.documents.instance_of(ProjectClosure).count(), 1)
+        self.assertEqual(self.project.documents.instance_of(ProjectClosure).get().status, Document.STATUS_NEW)
+        print("Fast-track ProjectClosure document through review and approval")
+        self.project.documents.instance_of(ProjectClosure).get().seek_review()
+        self.project.documents.instance_of(ProjectClosure).get().seek_approval()
+        self.project.documents.instance_of(ProjectClosure).get().approve()
+        print("Check that ProjectClosure is approved")
+        self.assertEqual(self.project.documents.instance_of(ProjectClosure).get().status, Document.STATUS_APPROVED)
+        print("Check that project is STATUS_CLOSING")
+        self.assertEqual(self.project.status, Project.STATUS_CLOSING)
 
+        print("Request final update")
+        self.project.request_update()
+        self.assertEqual(self.project.status, Project.STATUS_FINAL_UPDATE)
+        self.assertEqual(self.project.documents.instance_of(ProgressReport).count(), 2)
+        self.assertEqual(self.project.documents.instance_of(ProgressReport).get().status, Document.STATUS_NEW)
+        print("Complete update")
+        self.project.documents.instance_of(ProgressReport).get().seek_review()
+        self.project.documents.instance_of(ProgressReport).get().seek_approval()
+        self.project.documents.instance_of(ProgressReport).get().approve()
+        print("Approving final update completes project")
+        self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
+        print("Full ScienceProject test walkthrough successfully completed.")
 
     def test_force_closure_updating_project(self):
-        """Force-closing an updating project removes latest ProgressReport and
-        sets project to closure requested.
+        """Test force-closing an updating project.
+
+        Ensure latest ProgressReport is removed and project is set to closure
+        requested.
         """
         print("Create active project, request update")
         p = self.project
@@ -361,6 +385,7 @@ class ScienceProjectModelTests(BaseTestCase):
         from datetime import datetime
         n = datetime.now()
         r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
+        print("Creating ARAR {0}".format(r.__str__()))
         p.request_update()
         self.assertEqual(p.status, Project.STATUS_UPDATE)
         pr = p.documents.instance_of(ProgressReport).get()
@@ -391,7 +416,7 @@ class ScienceProjectModelTests(BaseTestCase):
 
 
 class CoreFunctionProjectModelTests(TestCase):
-    """Test CoreFunction model methods, transitions, gate checks"""
+    """Test CoreFunction model methods, transitions, gate checks."""
 
     def new_CF_is_active(self):
         """A new CoreFunction has STATUS_ACTIVE immediately."""
@@ -449,10 +474,19 @@ class StudentProjectModelTests(TestCase):
     #    project.request_update()
     #    self.assertEqual(StudentReport.objects.count(), 1)
 
-    def test_studentproject_can_complete_update(self):
-        """Completing the STP update requires an approved StudentReport."""
-        project = StudentProjectFactory.create(status=Project.STATUS_UPDATE)
-        self.assertFalse(project.can_complete_update())
-        StudentReport.objects.create(project=project,
-                                     status=StudentReport.STATUS_APPROVED)
-        self.assertTrue(project.can_complete_update())
+    def test_studentproject_progressreport(self):
+        """Test the life cycle of a StudentReport."""
+        p = StudentProjectFactory.create()
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        from datetime import datetime
+        n = datetime.now()
+        r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
+        print("Created {0}".format(r.__str__()))
+        print("Request update")
+        p.request_update()
+        self.assertFalse(p.can_complete_update())
+        p.documents.instance_of(StudentReport).get().seek_review()
+        p.documents.instance_of(StudentReport).get().seek_approval()
+        p.documents.instance_of(StudentReport).get().approve()
+        self.assertEqual(p.documents.instance_of(StudentReport).get().status, Document.STATUS_APPROVED)
+        self.assertTrue(p.status, Project.STATUS_ACTIVE)
