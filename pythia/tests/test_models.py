@@ -300,6 +300,7 @@ class ScienceProjectModelTests(BaseTestCase):
         print("SPP approval turns project ACTIVE")
         spp.approve()
         self.assertEqual(spp.status, Document.STATUS_APPROVED)
+        p = spp.project  # weird copy issue
         self.assertEqual(p.status, Project.STATUS_ACTIVE)
 
         print("Active projects can be suspended and brought back to ACTIVE")
@@ -338,7 +339,7 @@ class ScienceProjectModelTests(BaseTestCase):
         pr.seek_review()
         pr.seek_approval()
         pr.approve()
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        self.assertEqual(pr.project.status, Project.STATUS_ACTIVE)
 
         print("Request closure")
         print("Accept closure")

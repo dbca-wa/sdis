@@ -20,6 +20,10 @@ def documents_upload_to(instance, filename):
     return "documents/{0}-{1}/{2}".format(
         instance.project.year, instance.project.number, filename)
 
+#
+# NOTE permissions submit, review, approve are now handled in tx directly
+#
+
 
 def update_document_permissions(document):
     """
@@ -44,7 +48,7 @@ def update_document_permissions(document):
 
         for user in document.project.members.all():
             snitch("Assigning user {0} permission {1}".format(
-                user.pk, codename))
+                user.username, codename))
             assign_perm(codename, user, document)
 
 

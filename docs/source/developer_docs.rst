@@ -225,11 +225,3 @@ tests Package
     :members:
     :undoc-members:
     :show-inheritance:
-
-:mod:`tests` Module
--------------------
-
-.. automodule:: pythia.tests.tests
-    :members:
-    :undoc-members:
-    :show-inheritance:

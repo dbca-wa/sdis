@@ -394,13 +394,56 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     #        return self.title
 
     # -------------------------------------------------------------------------#
+    # audiences
+    #
+    @property
+    def submitters(self):
+        """Return all users with authority to author and "submit" this document.
+
+        Default: project team members.
+        """
+        return list(set(self.members.all()))  # reduce some duplication
+
+    @property
+    def reviewers(self):
+        """
+        Return all users with authority to "review" this document.
+
+        Default: The Program Leaders making up the SCMT.
+        """
+        # return [self.project.program.program_leader, ]
+        # Alternative: all PLs = SMT
+        # return Group.objects.get(name='SMT').user_set.all()
+        try:
+            smt, created = Group.objects.get_or_create(name='SMT')
+            return smt.user_set.all()
+        except:
+            print("reviewers not found")
+            return set()
+
+    @property
+    def approvers(self):
+        """
+        Return all users with permission to "approve" this document.
+
+        Default: Divisional Directorate members.
+        """
+        try:
+            scd, created = Group.objects.get_or_create(name='SCD')
+            return scd.user_set.all()
+        except:
+            print("approvers not found")
+            return set()
+        # return Group.objects.get(name='SCD').user_set.all()
+
+    # -------------------------------------------------------------------------#
     # Project approval
     #
     @transition(
         field='status',
-        source='*',
+        source=[STATUS_NEW, STATUS_PENDING],
         target=STATUS_NEW,
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Setup Project", notify=False,)
         )
     def setup(self):
@@ -423,20 +466,20 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         in status Document.STATUS_INAPPROVAL immediately before setting the
         status to Document.STATUS_APPROVED.
         """
-        print("Gate check can_endorse checking for Conceptplan: {0}".format(
-            self.documents.instance_of(ConceptPlan).exists()))
-        print("Gate check can_endorse checking Conceptplan status: {0}".format(
-            self.documents.instance_of(ConceptPlan).get().status))
-
-        return (self.documents.instance_of(ConceptPlan).exists() and
-                self.documents.instance_of(ConceptPlan).get().is_approved)
+        if self.documents.instance_of(ConceptPlan).exists():
+            pp = self.documents.instance_of(ConceptPlan).get()
+            print("Project.can_endorse checking {0}({1})".format(
+                pp.__str__(), pp.status))
+            return pp.is_approved
+        else:
+            return False
 
     @transition(
         field='status',
         source=STATUS_NEW,
         target=STATUS_PENDING,
         conditions=[can_endorse],
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Endorse project", notify=True,)
         )
     def do_endorse(self):
@@ -446,39 +489,61 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         Generates ProjectPlan as required for SPP and CF, skipped by others.
         """
         msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
-        snitch(msg + "adding a ProjectPlan")
+        print(msg + "adding a ProjectPlan")
         if not self.documents.instance_of(ProjectPlan).exists():
-            p, created = ProjectPlan.objects.get_or_create(project=self)
+            pp, created = ProjectPlan.objects.get_or_create(project=self)
+            pp.save()
 
     def endorse(self):
+        """Project endorsement is triggered through ConceptPlan approval tx."""
         msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
-        snitch(msg + "calling tx do_endorse...")
+        print(msg + "calling tx do_endorse...")
         self.do_endorse()
-        snitch(msg + "finished tx do_endorse.")
+        print(msg + "finished tx do_endorse.")
         self.save()
-        snitch(msg + "saved.")
+        print(msg + "saved.")
 
     # PENDING -> ACTIVE ------------------------------------------------------#
     def can_approve(self):
         """Whether ProjectPlan exists and is approved."""
-        if not self.documents.instance_of(ProjectPlan):
-            snitch("Cannot approve: {0} has missing ProjectPlan".format(
-                self.fullname))
-            return False
+        if self.documents.instance_of(ProjectPlan).exists():
+            pp = self.documents.instance_of(ProjectPlan).get()
+            print("Project.can_approve checking {0}({1})".format(
+                pp.__str__(), pp.status))
+            return pp.is_approved
         else:
-            return self.documents.instance_of(ProjectPlan).latest().is_approved
+            return False
 
     @transition(
         field='status',
         source=STATUS_PENDING,
         target=STATUS_ACTIVE,
         conditions=[can_approve],
-        permission="approve",
-        custom=dict(verbose="Approve Project", notify=True,)
+        permission=lambda instance, user: user in instance.approvers,
+        custom=dict(verbose="Approve Project", notify=False,)
         )
-    def approve(self):
+    def do_approve(self):
         """Transition to move the project to ACTIVE."""
-        return
+
+    def approve(self):
+        """Project approval is triggered through ProjectPlan approval tx."""
+        msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
+        print(msg + "calling tx do_approve...")
+        self.do_approve()
+        print(msg + "finished tx do_approve.")
+        self.save()
+        print(msg + "saved.")
+
+    @transition(
+        field='status',
+        source=STATUS_ACTIVE,
+        target=STATUS_PENDING,
+        conditions=[can_approve],
+        permission=lambda instance, user: user in instance.approvers,
+        custom=dict(verbose="Revoke approval", notify=False,)
+        )
+    def revoke_approval(self):
+        """Transition to move the project from ACTIVE to PENDING."""
 
     # ACTIVE -> UPDATING -----------------------------------------------------#
     def can_request_update(self):
@@ -494,7 +559,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_ACTIVE,
         target=STATUS_UPDATE,
         conditions=[can_request_update],
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Request update", notify=True,)
         )
     def request_update(self, report=None):
@@ -523,20 +588,16 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
         Needs override for STP to check for StudentReport to be approved.
         """
-        try:
-            return self.documents.instance_of(
-                ProgressReport).latest().is_approved
-        except:
-            logger.info('ProgressReport not found! Cannot complete update '
-                        'without approved Progress Report!')
-            return False
+        return (
+            self.documents.instance_of(ProgressReport).exists() and
+            self.documents.instance_of(ProgressReport).latest().is_approved)
 
     @transition(
         field='status',
         source=STATUS_UPDATE,
         target=STATUS_ACTIVE,
-        # conditions=[can_complete_update],
-        permission="submit",
+        conditions=[can_complete_update],
+        permission=lambda instance, user: user in instance.submitters,
         custom=dict(verbose="Complete update", notify=True,)
         )
     def complete_update(self):
@@ -561,7 +622,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_ACTIVE,
         target=STATUS_CLOSURE_REQUESTED,
         conditions=[can_request_closure],
-        permission="submit",
+        permission=lambda instance, user: user in instance.submitters,
         custom=dict(verbose="Request closure", notify=True,)
         )
     def request_closure(self):
@@ -580,7 +641,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_UPDATE,
         target=STATUS_CLOSURE_REQUESTED,
         # conditions=[can_request_closure],
-        permission="review",
+        permission=lambda instance, user: user in instance.reviewers,
         custom=dict(verbose="Force closure and cancel update", notify=True,)
         )
     def force_closure(self):
@@ -617,7 +678,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_CLOSURE_REQUESTED,
         target=STATUS_CLOSING,
         conditions=[can_accept_closure],
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Accept closure", notify=True,)
         )
     def accept_closure(self):
@@ -642,7 +703,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=[STATUS_CLOSING, STATUS_COMPLETED],
         target=STATUS_FINAL_UPDATE,
         conditions=[can_request_final_update],
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Request final update", notify=True,)
         )
     def request_final_update(self):
@@ -675,7 +736,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_FINAL_UPDATE,
         target=STATUS_COMPLETED,
         conditions=[can_complete],
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Complete final update", notify=True,)
         )
     def complete(self):
@@ -693,7 +754,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=[STATUS_ACTIVE, STATUS_CLOSING],
         target=STATUS_COMPLETED,
         # conditions=[can_complete],
-        permission="review",
+        permission=lambda instance, user: user in instance.reviewers,
         custom=dict(verbose="Force-complete project", notify=True,)
         )
     def force_complete(self):
@@ -722,7 +783,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_COMPLETED,
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate],
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reactivate project", notify=True,)
         )
     def reactivate(self):
@@ -739,7 +800,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_ACTIVE,
         target=STATUS_TERMINATED,
         # conditions=[can_terminate],
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Terminate project", notify=True,)
         )
     def terminate(self):
@@ -756,7 +817,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_TERMINATED,
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate_terminated],
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reactivate terminated project", notify=True,)
         )
     def reactivate_terminated(self):
@@ -773,7 +834,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_ACTIVE,
         target=STATUS_SUSPENDED,
         # conditions=[can_suspend],
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Suspend project", notify=True,)
         )
     def suspend(self):
@@ -790,7 +851,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_SUSPENDED,
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate_suspended],
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reactivate suspended project", notify=True,)
         )
     def reactivate_suspended(self):
@@ -974,9 +1035,9 @@ class ScienceProject(Project):
 
     @transition(
         field='status',
-        source='*',
+        source=[Project.STATUS_NEW, Project.STATUS_PENDING],
         target=Project.STATUS_NEW,
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Setup Project", notify=False,)
         )
     def setup(self):
@@ -1066,12 +1127,17 @@ class CoreFunctionProject(Project):
 
     @transition(
         field='status',
-        source='*',
+        source=[Project.STATUS_NEW, Project.STATUS_PENDING],
         target=Project.STATUS_NEW,
-        permission="approve",
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Setup Project", notify=False,)
         )
     def setup(self):
+        """Setup a new CoreFunctionProject.
+
+        Create a ProjectMembership for the project_owner,
+        create a ConceptPlan.
+        """
         ProjectMembership.objects.create(
             project=self,
             user=self.project_owner,
@@ -1166,10 +1232,15 @@ class CollaborationProject(Project):
         verbose_name = _("External Partnership")
         verbose_name_plural = _("External Partnerships")
 
+    @transition(
+        field='status',
+        source=Project.STATUS_NEW,
+        target=Project.STATUS_ACTIVE,
+        permission=lambda instance, user: user in instance.approvers,
+        custom=dict(verbose="Setup Project", notify=False,)
+        )
     def setup(self):
         """A collaboration project is automatically approved and active."""
-        self.status = self.STATUS_ACTIVE
-        self.save(update_fields=['status'])
 
     def get_staff_list_plain(self):
         """Return a string of DPaW staff."""
@@ -1205,9 +1276,16 @@ class CollaborationProject(Project):
     def can_suspend(self):
         return False  # TODO
 
-    def request_closure(self):
-        self.status = Project.STATUS_COMPLETED
-        self.save(update_fields=['status'])
+    @transition(
+        field='status',
+        source=Project.STATUS_ACTIVE,
+        target=Project.STATUS_COMPLETED,
+        # conditions=[can_request_closure],
+        permission=lambda instance, user: user in instance.submitters,
+        custom=dict(verbose="Close project", notify=False,)
+        )
+    def complete(self):
+        """External CollaborationProjects complete without closure process."""
 
 
 class StudentProject(Project):
@@ -1345,11 +1423,11 @@ class StudentProject(Project):
         field='status',
         source=Project.STATUS_ACTIVE,
         target=Project.STATUS_COMPLETED,
-        permission="submit",
+        permission=lambda instance, user: user in instance.submitters,
         custom=dict(verbose="Close project", notify=True,)
         )
-    def request_closure(self):
-        """Transition to move project to STATUS_COMPLETED."""
+    def complete(self):
+        """StudentProjects can complete without closure process."""
 
     def can_terminate(self):
         return False
@@ -1363,7 +1441,10 @@ class StudentProject(Project):
 
         TODO returns the latest progress report, not using the year.
         """
-        return self.documents.instance_of(StudentReport).latest() or None
+        if self.documents.instance_of(StudentReport).exists():
+            return self.documents.instance_of(StudentReport).latest()
+        else:
+            return None
 
     def get_progressreport(self, year):
         """Return the StudentReport for a given year."""

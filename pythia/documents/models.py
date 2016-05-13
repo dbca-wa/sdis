@@ -310,8 +310,7 @@ class Document(PolymorphicModel, Audit):
         # return Group.objects.get(name='SMT').user_set.all()
         try:
             smt, created = Group.objects.get_or_create(name='SMT')
-            REVIEWERS = smt.user_set.all()
-            return REVIEWERS
+            return smt.user_set.all()
         except:
             print("reviewers not found")
             return set()
@@ -325,8 +324,7 @@ class Document(PolymorphicModel, Audit):
         """
         try:
             scd, created = Group.objects.get_or_create(name='SCD')
-            APPROVERS = scd.user_set.all()
-            return APPROVERS
+            return scd.user_set.all()
         except:
             print("approvers not found")
             return set()
@@ -669,7 +667,7 @@ class ConceptPlan(Document):
             self.__str__(), self.status))
 
     def approve(self):
-        """Approve Document, endorse Project.
+        """Approve ConceptPlan, endorse Project.
 
         Calling save() on both Document after calling the transition should
         not be necessary, but the status change won't stick otherwise.
@@ -1113,14 +1111,11 @@ class ProjectPlan(Document):
         """Push back to NEW to reset document approval."""
 
     def reset(self):
+        """Resetting ProjectPlan approval pushes Project to PENDING."""
         self.do_reset()
         self.save()
-        # self.project.approve()
-        # self.project.save
-        # Push project back to PENDING to cancel SPP approval
-        from pythia.projects.models import Project
-        self.project.status = Project.STATUS_PENDING
-        self.project.save(update_fields=['status'])
+        self.project.revoke_approval()
+        self.project.save()
 
 
 def projectplan_post_save(sender, instance, created, **kwargs):
