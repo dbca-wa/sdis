@@ -114,6 +114,18 @@ class ScienceProjectModelTests(BaseTestCase):
 
         self.scp = self.project.documents.instance_of(ConceptPlan).get()
 
+    def tearDown(self):
+        """Destroy test objects after a test."""
+        [m.delete for m in ProjectMembership.objects.all()]
+        self.scp.delete()
+        self.project.delete()
+        self.superuser.delete()
+        self.bob.delete()
+        self.steven.delete()
+        self.marge.delete()
+        self.peter.delete()
+        self.program.delete()
+
     def test_new_science_project(self):
         """A new ScienceProject has one new ConceptPlan and only setup tx."""
         p = self.project
@@ -491,8 +503,10 @@ class StudentProjectModelTests(TestCase):
         print("Request update")
         p.request_update()
         self.assertFalse(p.can_complete_update())
-        p.documents.instance_of(StudentReport).get().seek_review()
-        p.documents.instance_of(StudentReport).get().seek_approval()
-        p.documents.instance_of(StudentReport).get().approve()
-        self.assertEqual(p.documents.instance_of(StudentReport).get().status, Document.STATUS_APPROVED)
-        self.assertTrue(p.status, Project.STATUS_ACTIVE)
+        pr = p.documents.instance_of(StudentReport).get()
+        pr = StudentReport.objects.filter(project=p)[0]
+        pr.seek_review()
+        pr.seek_approval()
+        pr.approve()
+        self.assertEqual(pr.status, Document.STATUS_APPROVED)
+        self.assertTrue(pr.project.status, Project.STATUS_ACTIVE)
