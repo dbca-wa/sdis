@@ -44,11 +44,21 @@ models.
   projects through their life cycles to re-align SDIS with reality.
 
 Notably, there are no Django permissions in place.
-This design decision was made necessary, as FSM transitions inherit down the
-polymorphic models, but hard-code their required permissions or use lambda functions.
-The path of permission strings goes from django_fsm's has_perm to
+Django-fsm accepts either hard-coded permission strings, or lambda functions.
+
+Hard-coded permission strings are referred from django_fsm's has_perm to
 django.contrib.auth.models.PermissionMixin's has_perm, which requires properly
-named "app.permission_model" permissions.
+named "app.permission_model" permissions. The "model" part is hard-coded, and
+will not be correct if the transition is inherited to a polymorphic child model.
+This will prevent permission strings to be used.
+
+Lamba functions however can accept arguments, such as model functions declared as
+properties. Properties can be inherited, and overwritten in child models where
+necessary. This means that lambda functions used in transition permissions can
+be inherited without problems. An added benefit is the somewhat cleaner design
+of keeping the definition and source of permissions together with the transitions
+with the model.
+
 
 Django Admin
 ============

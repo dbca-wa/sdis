@@ -669,12 +669,18 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         TODO: insert gate checks: is the projectplan updated with latest data
         management info, is the closure form approved
         """
+        print("Project {0} ({1}) checking can_accept_closure".format(
+                  self.__str__(), self.status))
         if self.documents.instance_of(ProjectClosure).exists():
-            pp = self.documents.instance_of(ProjectClosure).get()
+            # pp = self.documents.instance_of(ProjectClosure).get()
+            pp = ProjectClosure.objects.filter(project=self).latest()
             print("Project.can_accept_closure checking {0}({1})".format(
                 pp.__str__(), pp.status))
             return pp.is_approved
         else:
+            print("Project {0} ({1}) checking can_accept_closure "
+                  "but can't find a ProjectClosure!".format(
+                      self.__str__(), self.status))
             return False
 
     @transition(
@@ -687,7 +693,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         )
     def accept_closure(self):
         """Transition to move the project to CLOSING."""
-        return
+        self.save()
 
     # CLOSING -> FINAL_UPDATE ------------------------------------------------#
     def can_request_final_update(self):
@@ -1669,13 +1675,3 @@ def project_pre_delete(sender, instance, using, **kwargs):
     [d.delete() for d in instance.documents.all()]
     [m.delete() for m in instance.projectmembership_set.all()]
 signals.pre_delete.connect(project_pre_delete, sender=Project)
-
-# from django_fsm.signals import post_transition
-# from django.dispatch import receiver
-#
-#
-# @receiver(post_transition)
-# def saveme(sender, instance, **kwargs):
-#     print("Saving {0} ({1})".format(instance.__str__(), instance.status))
-#     instance.save()
-#     print("Instance status {0}".format(instance.status))

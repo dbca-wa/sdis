@@ -24,8 +24,7 @@ from django_fsm import FSMField, transition
 
 from pythia.models import Audit, ActiveGeoModelManager
 from pythia.fields import PythiaArrayField  # , PythiaTextField
-from pythia.documents.utils import (update_document_permissions,
-                                    documents_upload_to)
+from pythia.documents.utils import update_document_permissions
 from pythia.reports.models import ARARReport
 from pythia.utils import snitch
 
@@ -38,6 +37,12 @@ NULL_CHOICES = ((None, _("Not applicable")), (False, _("Incomplete")),
 
 # Add additional attributes/methods to the model Meta class.
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('display_order',)
+
+
+def documents_upload_to(instance, filename):
+    """Generate a project-specific document upload path."""
+    return "documents/{0}-{1}/{2}".format(
+        instance.project.year, instance.project.number, filename)
 
 
 class DocumentManager(PolymorphicManager, ActiveGeoModelManager):
@@ -701,6 +706,7 @@ class ConceptPlan(Document):
         """Push back to NEW to reset document approval."""
 
     def reset(self):
+        """Reset document approval, reset project status to NEW."""
         self.do_reset()
         self.save()
         # Push project back to NEW to cancel SCP endorsement
@@ -1090,7 +1096,7 @@ class ProjectPlan(Document):
         custom=dict(verbose="Approve", notify=True,)
         )
     def do_approve(self):
-        """Approve the document"""
+        """Approve the document."""
 
     def approve(self):
         """Approve document and turn project active."""
@@ -1369,8 +1375,13 @@ class ProjectClosure(Document):
         """Auto-advance the project to CLOSING."""
         self.do_approve()
         self.save()
+        print("{0} ({1}) is approved".format(self.__str__(), self.status))
+        print("{0} ({1}) asked to accept closure".format(
+            self.project.__str__(), self.project.status))
         self.project.accept_closure()
         self.project.save()
+        print("{0} ({1}) has accepted closure".format(
+            self.project.__str__(), self.project.status))
 
     @transition(
         field='status',
