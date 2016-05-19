@@ -4,86 +4,88 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
-from pythia.utils import text2html as m2h, html2text as h2m
+# from pythia.utils import text2html as m2h, html2text as h2m
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-        # Note: Don't use "from appname.models import ModelName". 
+        # Note: Don't use "from appname.models import ModelName".
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
-        for d in orm.Conceptplan.objects.all():
-            d.summary = m2h(d.summary) 
-            d.outcome = m2h(d.collaborations) 
-            d.collaborations = m2h(d.collaborations) 
-            d.strategic = m2h(d.strategic) 
-            d.director_scd_comment = m2h(d.director_scd_comment) 
-            d.director_outputprogram_comment = m2h(d.director_outputprogram_comment) 
-
-        for d in orm.ProjectPlan.objects.all():
-            d.related_projects = m2h(d.related_projects)
-            d.background = m2h(d.background)
-            d.aims = m2h(d.aims)
-            d.outcome = m2h(d.outcome)
-            d.knowledge_transfer = m2h(d.knowledge_transfer)
-            d.project_tasks = m2h(d.project_tasks)
-            d.references = m2h(d.references)
-            d.methodology = m2h(d.methodology)
-            d.no_specimens = m2h(d.no_specimens)
-            d.data_management = m2h(d.data_management)
-            d.operating_budget = m2h(d.operating_budget)
-
-        for d in orm.ProgressReport.objects.all():
-            d.context = m2h(d.context) 
-            d.aims = m2h(d.aims) 
-            d.progress = m2h(d.progress) 
-            d.implications = m2h(d.implications) 
-            d.future = m2h(d.future) 
-
-        for d in orm.ProjectClosure.objects.all():
-            d.scientific_outputs = m2h(d.scientific_outputs)
-            d.knowledge_transfer = m2h(d.knowledge_transfer)
-
-        for d in orm.StudentReport.objects.all():
-            d.progress_report = m2h(d.progress_report)
+        # for d in orm.Conceptplan.objects.all():
+        #     d.summary = m2h(d.summary)
+        #     d.outcome = m2h(d.collaborations)
+        #     d.collaborations = m2h(d.collaborations)
+        #     d.strategic = m2h(d.strategic)
+        #     d.director_scd_comment = m2h(d.director_scd_comment)
+        #     d.director_outputprogram_comment = m2h(d.director_outputprogram_comment)
+        #
+        # for d in orm.ProjectPlan.objects.all():
+        #     d.related_projects = m2h(d.related_projects)
+        #     d.background = m2h(d.background)
+        #     d.aims = m2h(d.aims)
+        #     d.outcome = m2h(d.outcome)
+        #     d.knowledge_transfer = m2h(d.knowledge_transfer)
+        #     d.project_tasks = m2h(d.project_tasks)
+        #     d.references = m2h(d.references)
+        #     d.methodology = m2h(d.methodology)
+        #     d.no_specimens = m2h(d.no_specimens)
+        #     d.data_management = m2h(d.data_management)
+        #     d.operating_budget = m2h(d.operating_budget)
+        #
+        # for d in orm.ProgressReport.objects.all():
+        #     d.context = m2h(d.context)
+        #     d.aims = m2h(d.aims)
+        #     d.progress = m2h(d.progress)
+        #     d.implications = m2h(d.implications)
+        #     d.future = m2h(d.future)
+        #
+        # for d in orm.ProjectClosure.objects.all():
+        #     d.scientific_outputs = m2h(d.scientific_outputs)
+        #     d.knowledge_transfer = m2h(d.knowledge_transfer)
+        #
+        # for d in orm.StudentReport.objects.all():
+        #     d.progress_report = m2h(d.progress_report)
+        return
 
     def backwards(self, orm):
         "Write your backwards methods here."
-        for d in orm.Conceptplan.objects.all():
-            d.summary = h2m(d.summary) 
-            d.outcome = h2m(d.collaborations) 
-            d.collaborations = h2m(d.collaborations) 
-            d.strategic = h2m(d.strategic) 
-            d.director_scd_comment = h2m(d.director_scd_comment) 
-            d.director_outputprogram_comment = h2m(d.director_outputprogram_comment) 
-
-        for d in orm.ProjectPlan.objects.all():
-            d.related_projects = h2m(d.related_projects)
-            d.background = h2m(d.background)
-            d.aims = h2m(d.aims)
-            d.outcome = h2m(d.outcome)
-            d.knowledge_transfer = h2m(d.knowledge_transfer)
-            d.project_tasks = h2m(d.project_tasks)
-            d.references = h2m(d.references)
-            d.methodology = h2m(d.methodology)
-            d.no_specimens = h2m(d.no_specimens)
-            d.data_management = h2m(d.data_management)
-            d.operating_budget = h2m(d.operating_budget)
-
-        for d in orm.ProgressReport.objects.all():
-            d.context = h2m(d.context) 
-            d.aims = h2m(d.aims) 
-            d.progress = h2m(d.progress) 
-            d.implications = h2m(d.implications) 
-            d.future = h2m(d.future) 
-            
-        for d in orm.ProjectClosure.objects.all():
-            d.scientific_outputs = h2m(d.scientific_outputs)
-            d.knowledge_transfer = h2m(d.knowledge_transfer)
-
-        for d in orm.StudentReport.objects.all():
-            d.progress_report = h2m(d.progress_report)
+        # for d in orm.Conceptplan.objects.all():
+        #     d.summary = h2m(d.summary)
+        #     d.outcome = h2m(d.collaborations)
+        #     d.collaborations = h2m(d.collaborations)
+        #     d.strategic = h2m(d.strategic)
+        #     d.director_scd_comment = h2m(d.director_scd_comment)
+        #     d.director_outputprogram_comment = h2m(d.director_outputprogram_comment)
+        #
+        # for d in orm.ProjectPlan.objects.all():
+        #     d.related_projects = h2m(d.related_projects)
+        #     d.background = h2m(d.background)
+        #     d.aims = h2m(d.aims)
+        #     d.outcome = h2m(d.outcome)
+        #     d.knowledge_transfer = h2m(d.knowledge_transfer)
+        #     d.project_tasks = h2m(d.project_tasks)
+        #     d.references = h2m(d.references)
+        #     d.methodology = h2m(d.methodology)
+        #     d.no_specimens = h2m(d.no_specimens)
+        #     d.data_management = h2m(d.data_management)
+        #     d.operating_budget = h2m(d.operating_budget)
+        #
+        # for d in orm.ProgressReport.objects.all():
+        #     d.context = h2m(d.context)
+        #     d.aims = h2m(d.aims)
+        #     d.progress = h2m(d.progress)
+        #     d.implications = h2m(d.implications)
+        #     d.future = h2m(d.future)
+        #
+        # for d in orm.ProjectClosure.objects.all():
+        #     d.scientific_outputs = h2m(d.scientific_outputs)
+        #     d.knowledge_transfer = h2m(d.knowledge_transfer)
+        #
+        # for d in orm.StudentReport.objects.all():
+        #     d.progress_report = h2m(d.progress_report)
+        return
 
 
     models = {

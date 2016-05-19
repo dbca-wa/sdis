@@ -1,11 +1,11 @@
-{% load pythia_base pbs_markdown humanize %}
+{% load pythia_base humanize %}
 {% block overview %}
 <div class="row" id="row-overview">
   <div class="col-md-12">
     <h1>Overview</h1>
     <span class="text-muted"><small>Navigate progress reports - click to expand</small></span>
     {# requires reports to be sorted by program, done in ARARReport.progressreports #}
-    {% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+    {% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
 
     <div class="panel-group" id="accordion">
       <div class="panel panel-default">
@@ -21,8 +21,8 @@
             {% url program.opts|pythia_urlname:'change' program.pk|pythia_urlquote as program_change %}
             <span>Program Leader: {{ program.program_leader.get_full_name }}</span>
 
-            <a href="{{ program_change }}" onclick="return showAddAnotherPopup(this);" 
-              type="button" class="btn btn-primary btn-xs pull-right" 
+            <a href="{{ program_change }}" onclick="return showAddAnotherPopup(this);"
+              type="button" class="btn btn-primary btn-xs pull-right"
               title="Edit Program Leader's introduction"
               ><i class="glyphicon glyphicon-pencil"></i>&nbsp; PL intro</a>
             <span class="text-muted">
@@ -36,9 +36,9 @@
               {% for report in program_reports.list %}
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <span class="label label-{{ report.status_label }} pull-left">{{ report.get_status_display }}</span> 
+                  <span class="label label-{{ report.status_label }} pull-left">{{ report.get_status_display }}</span>
                   <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#acc-{{ program.pk }}" 
+                    <a data-toggle="collapse" data-parent="#acc-{{ program.pk }}"
                       href="#collapse-{{ program.pk }}-{{ report.project.pk }}">
                       <span class="text-{{ report.status_label }}">&nbsp;{{ report.project.project_name_html|safe }}</span>
                     </a>
@@ -51,7 +51,7 @@
                       {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
 
                       <div class="row" id="ov-prg{{program.pk}}-prj{{report.project.pk}}-title">
-                        <a onclick="return showAddAnotherPopup(this);" 
+                        <a onclick="return showAddAnotherPopup(this);"
                           type="button" class="btn btn-primary btn-xs pull-right"
                           href="{{ project_change }}" title="Edit team list or project title"
                           ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Title</a>
@@ -59,7 +59,7 @@
                       </div><!-- /title -->
 
                       <div class="row" id="ov-prg{{program.pk}}-prj{{report.project.pk}}-team">
-                        <a onclick="return showAddAnotherPopup(this);" 
+                        <a onclick="return showAddAnotherPopup(this);"
                           type="button" class="btn btn-primary btn-xs pull-right"
                           href="{{ project_change }}" title="Edit team list or project title"
                           ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Team</a>
@@ -73,7 +73,7 @@
                           <small>updated {{ report.modified|naturaltime }} by {{ report.modifier.get_full_name }}</small>
                         </span>
                         {% url report.opts|pythia_urlname:'change' report.pk|pythia_urlquote as progressreport_change %}
-                        <span onclick="return showAddAnotherPopup(this);" 
+                        <span onclick="return showAddAnotherPopup(this);"
                           type="button" class="btn btn-primary btn-xs pull-right"
                           href="{{ progressreport_change }}" title="Edit progress report"
                           ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Progress report</span>
@@ -109,9 +109,9 @@
                 {% for report in sr %}
                 <div class="panel panel-default">
                   <div class="panel-heading">
-                    <span class="label label-{{ report.status_label }} pull-left">{{ report.get_status_display }}</span> 
+                    <span class="label label-{{ report.status_label }} pull-left">{{ report.get_status_display }}</span>
                     <h4 class="panel-title">
-                      <a data-toggle="collapse" data-parent="#acc-stp" 
+                      <a data-toggle="collapse" data-parent="#acc-stp"
                         href="#collapse-stp-{{ report.project.pk }}">
                         <span class="text-{{ report.status_label }}">&nbsp;{{ report.project.project_name_html|safe }}</span>
                       </a>
@@ -123,7 +123,7 @@
                       {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
 
                       <div class="row" id="ov-stp-prj{{report.project.pk}}-title">
-                        <a onclick="return showAddAnotherPopup(this);" 
+                        <a onclick="return showAddAnotherPopup(this);"
                           type="button" class="btn btn-primary btn-xs pull-right"
                           href="{{ project_change }}" title="Edit team list or project title"
                           ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Title</a>
@@ -131,7 +131,7 @@
                       </div><!-- /title -->
 
                       <div class="row" id="ov-stp-prj{{report.project.pk}}-team">
-                        <a onclick="return showAddAnotherPopup(this);" 
+                        <a onclick="return showAddAnotherPopup(this);"
                           type="button" class="btn btn-primary btn-xs pull-right"
                           href="{{ project_change }}" title="Edit team list or project title"
                           ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Team</a>
@@ -145,7 +145,7 @@
                           <small>updated {{ report.modified|naturaltime }} by {{ report.modifier.get_full_name }}</small>
                         </span>
                         {% url report.opts|pythia_urlname:'change' report.pk|pythia_urlquote as progressreport_change %}
-                        <span onclick="return showAddAnotherPopup(this);" 
+                        <span onclick="return showAddAnotherPopup(this);"
                           type="button" class="btn btn-primary btn-xs pull-right"
                           href="{{ progressreport_change }}" title="Edit progress report"
                           ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Progress report</span>
@@ -163,7 +163,7 @@
             </div><!-- /#collapse-stp -->
 
           </div><!-- /.panel-default OV -->
-        </div><!-- /.panel-group OV --> 
+        </div><!-- /.panel-group OV -->
       </div><!-- /.col-md-12 OV-->
     </div><!-- /#row-overview OV -->
     {% endblock %}

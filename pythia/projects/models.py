@@ -340,6 +340,11 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """The HTML-safe name."""
         return mark_safe(self.__str__())
 
+    @property
+    def debugname(self):
+        """Return name and status for use in debug messages."""
+        return "{0} ({1})".format(self.__str__(), self.status)
+
     def save(self, *args, **kwargs):
         """
         Save the project and call its setup method if created.
@@ -588,13 +593,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
         Needs override for STP to check for StudentReport to be approved.
         """
-        if self.documents.instance_of(ProgressReport).exists():
-            pp = self.documents.instance_of(ProgressReport).get()
-            print("Project.can_complete_update checking {0}({1})".format(
-                pp.__str__(), pp.status))
-            return pp.is_approved
-        else:
-            return False
+        return (self.documents.instance_of(ProgressReport).exists() and
+                self.documents.instance_of(ProgressReport).latest().is_approved)
 
     @transition(
         field='status',
@@ -605,11 +605,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         custom=dict(verbose="Complete update", notify=True,)
         )
     def complete_update(self):
-        """
-        Move the project back to ACTIVE after finishing its update.
-
-        WARNING Currently skips the gate check!
-        """
+        """Move the project back to ACTIVE after finishing its update."""
         return
 
     # ACTIVE -> CLOSURE_REQUESTED --------------------------------------------#
@@ -669,19 +665,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         TODO: insert gate checks: is the projectplan updated with latest data
         management info, is the closure form approved
         """
-        print("Project {0} ({1}) checking can_accept_closure".format(
-                  self.__str__(), self.status))
-        if self.documents.instance_of(ProjectClosure).exists():
-            # pp = self.documents.instance_of(ProjectClosure).get()
-            pp = ProjectClosure.objects.filter(project=self).latest()
-            print("Project.can_accept_closure checking {0}({1})".format(
-                pp.__str__(), pp.status))
-            return pp.is_approved
-        else:
-            print("Project {0} ({1}) checking can_accept_closure "
-                  "but can't find a ProjectClosure!".format(
-                      self.__str__(), self.status))
-            return False
+        can_haz_closure = (
+            self.documents.instance_of(ProjectClosure).exists() and
+            self.documents.instance_of(ProjectClosure).latest().is_approved)
+        print("{0} can_accept_closure: {1}".format(
+            self.debugname, can_haz_closure))
+        return can_haz_closure
 
     @transition(
         field='status',
@@ -693,7 +682,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         )
     def accept_closure(self):
         """Transition to move the project to CLOSING."""
-        self.save()
+        print("{0} accepting closure".format(self.debugname))
 
     # CLOSING -> FINAL_UPDATE ------------------------------------------------#
     def can_request_final_update(self):
@@ -1264,31 +1253,25 @@ class CollaborationProject(Project):
 
     # Forbid actions non applicable to this project type
     def can_endorse(self):
+        """CollaborationProjects cannot endorse."""
         return False
 
     def can_approve(self):
+        """CollaborationProjects cannot approve."""
         return False
 
     def can_request_update(self):
+        """CollaborationProjects cannot update."""
         return False
 
     def can_request_final_update(self):
+        """CollaborationProjects cannot request final updates."""
         return False
-
-    def can_complete(self):
-        return False  # TODO
-
-    def can_terminate(self):
-        return False  # TODO
-
-    def can_suspend(self):
-        return False  # TODO
 
     @transition(
         field='status',
         source=Project.STATUS_ACTIVE,
         target=Project.STATUS_COMPLETED,
-        # conditions=[can_request_closure],
         permission=lambda instance, user: user in instance.submitters,
         custom=dict(verbose="Close project", notify=False,)
         )
@@ -1431,6 +1414,21 @@ class StudentProject(Project):
         """Completion of update requires approved latest StudentReport."""
         return (self.documents.instance_of(StudentReport).exists() and
                 self.documents.instance_of(StudentReport).latest().is_approved)
+
+    @transition(
+        field='status',
+        source=Project.STATUS_UPDATE,
+        target=Project.STATUS_ACTIVE,
+        conditions=[can_complete_update],
+        permission=lambda instance, user: user in instance.submitters,
+        custom=dict(verbose="Complete update", notify=True,)
+        )
+    def complete_update(self):
+        """
+        Move the project back to ACTIVE after finishing its update.
+        """
+        return
+
 
     @transition(
         field='status',

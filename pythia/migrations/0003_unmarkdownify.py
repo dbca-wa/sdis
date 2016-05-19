@@ -4,46 +4,46 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
-from pythia.utils import text2html as m2h, html2text as h2m
+# from pythia.utils import text2html as m2h, html2text as h2m
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-        # Note: Don't use "from appname.models import ModelName". 
+        # Note: Don't use "from appname.models import ModelName".
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
-        for p in orm.Program.objects.all():
-            p.focus = m2h(p.focus)
-            p.introduction = m2h(p.introduction)
-            p.save()
-
-        for u in orm.User.objects.all():
-            u.profile_text = m2h(u.profile_text)
-            u.expertise = m2h(u.expertise)
-            u.curriculum_vitae = m2h(u.curriculum_vitae)
-            u.projects = m2h(u.projects)
-            u.publications_staff = m2h(u.publications_staff)
-            u.publications_other = m2h(u.publications_other)
-
+        # for p in orm.Program.objects.all():
+        #     p.focus = m2h(p.focus)
+        #     p.introduction = m2h(p.introduction)
+        #     p.save()
+        #
+        # for u in orm.User.objects.all():
+        #     u.profile_text = m2h(u.profile_text)
+        #     u.expertise = m2h(u.expertise)
+        #     u.curriculum_vitae = m2h(u.curriculum_vitae)
+        #     u.projects = m2h(u.projects)
+        #     u.publications_staff = m2h(u.publications_staff)
+        #     u.publications_other = m2h(u.publications_other)
+        return
 
 
     def backwards(self, orm):
         "Write your backwards methods here."
 
-        for p in orm.Program.objects.all():
-            p.focus = h2m(p.focus)
-            p.introduction = h2m(p.introduction)
-            p.save()
-        
-        for u in orm.User.objects.all():
-            u.profile_text = h2m(u.profile_text)
-            u.expertise = h2m(u.expertise)
-            u.curriculum_vitae = h2m(u.curriculum_vitae)
-            u.projects = h2m(u.projects)
-            u.publications_staff = h2m(u.publications_staff)
-            u.publications_other = h2m(u.publications_other)
-
+        # for p in orm.Program.objects.all():
+        #     p.focus = h2m(p.focus)
+        #     p.introduction = h2m(p.introduction)
+        #     p.save()
+        #
+        # for u in orm.User.objects.all():
+        #     u.profile_text = h2m(u.profile_text)
+        #     u.expertise = h2m(u.expertise)
+        #     u.curriculum_vitae = h2m(u.curriculum_vitae)
+        #     u.projects = h2m(u.projects)
+        #     u.publications_staff = h2m(u.publications_staff)
+        #     u.publications_other = h2m(u.publications_other)
+        return
 
     models = {
         u'auth.group': {

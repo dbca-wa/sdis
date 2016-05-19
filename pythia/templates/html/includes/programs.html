@@ -1,29 +1,28 @@
-{% load pbs_markdown %}
 <div class="ra_heading">Research Activities</div>
 <div class="ra_content">
     {# requires reports to be sorted by program, done in ARARReport.progressreports #}
-    {% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+    {% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
     {% for program_reports in report_list %}
     {% with program_reports.grouper as program %}
     <div class="program_heading">{{ program }}</div>
     <div class="program_content">
         <div class="program_leader">{{ program.program_leader.get_full_name }}</div>
-        <div class="program_intro">{{ program.introduction|markdownify }}</div>
+        <div class="program_intro">{{ program.introduction|safe }}</div>
         {% for report in program_reports.list %}
         <div class="project_title">{{ report.project.project_title_html|safe }}</div>
         <div class="project_number">{{ report.project.project_type_year_number }}</div>
         <div class="project_section_title">Team members</div>
         <div class="project_section_content">{{ report.project.team_list_plain|safe }}</div>
         <div class="project_section_title">Context</div>
-        <div class="project_section_content">{{ report.context|markdownify }}</div>
+        <div class="project_section_content">{{ report.context|safe }}</div>
         <div class="project_section_title">Aims</div>
-        <div class="project_section_content">{{ report.aims|markdownify }}</div>
+        <div class="project_section_content">{{ report.aims|safe }}</div>
         <div class="project_section_title">Summary of progress and main findings</div>
-        <div class="project_section_content">{{ report.progress|markdownify }}</div>
+        <div class="project_section_content">{{ report.progress|safe }}</div>
         <div class="project_section_title">Management Implications</div>
-        <div class="project_section_content">{{ report.implications|markdownify }}</div>
+        <div class="project_section_content">{{ report.implications|safe }}</div>
         <div class="project_section_title">Future directions (next 12 to 18 months)</div>
-        <div class="project_section_content">{{ report.future|markdownify }}</div>
+        <div class="project_section_content">{{ report.future|safe }}</div>
         {% endfor %}
     </div>
     {% endwith %}

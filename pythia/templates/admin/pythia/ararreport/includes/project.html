@@ -1,23 +1,28 @@
-{% load pythia_base pbs_markdown humanize %}
+{% load pythia_base humanize %}
 {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
 <hr>
 <div id="{{ report.project.opts.module_name }}:{{ report.project.pk }}">
   <div class="row">
     <div class="col-md-12">
-      <span class="pull-left label label-{{ report.status_label }}">{{ report.get_status_display }}</span>
+      <span class="pull-left label label-{{ report.status_label }}">
+          {{ report.get_status_display }}
+      </span>
     <span class="text-muted pull-right">
-          <small>last modified {{ report.modified|naturaltime }} by {{ report.modifier.get_full_name }}
+          <small>last modified {{ report.modified|naturaltime }}
+              by {{ report.modifier.get_full_name }}
           </small>
         </span>
-      <h3 class="text-{{ report.status_label }}">{{ report.project.project_name_html|safe }}</h3>
+      <h3 class="text-{{ report.status_label }}">
+          {{ report.project.project_name_html|safe }}
+      </h3>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <a onclick="return showAddAnotherPopup(this);" 
+      <a onclick="return showAddAnotherPopup(this);"
         type="button"
         class="btn btn-primary btn-xs pull-right"
-        href="{{ project_change }}" 
+        href="{{ project_change }}"
         title="Edit team list or project title"
       ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit team or title</a>
       <p>{{ report.project.team_list_plain }}</p>

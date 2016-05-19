@@ -14,23 +14,28 @@ from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
                    StudentProjectFactory, UserFactory, SuperUserFactory)
 
 
-def avail_tx(user, tx, obj):
-    """Return whether a user has transition tx available on an obj."""
-    return tx in [t.name for t in
-                  obj.get_available_user_status_transitions(user)]
+def avail_tx(u, tx, obj):
+    """Return whether a user has transition available on an obj.
+
+    Arguments:
+
+        u   User object
+
+    """
+    return tx in [t.name for t in obj.get_available_user_status_transitions(u)]
 
 
-class UserModelTests(TestCase):
-    """User model tests."""
-
-    def test_user_is_valid_with_email_only(self):
-        """Test that a user profile is valid with an email only.
-
-        A user profile must be valid with an email only.
-        Everything else is a bonus!
-        """
-        print("TODO")
-        pass  # TODO
+# class UserModelTests(TestCase):
+#     """User model tests."""
+#
+#     def test_user_is_valid_with_email_only(self):
+#         """Test that a user profile is valid with an email only.
+#
+#         A user profile must be valid with an email only.
+#         Everything else is a bonus!
+#         """
+#         print("TODO")
+#         pass  # TODO
 
 
 class ProjectModelTests(BaseTestCase):
@@ -417,7 +422,7 @@ class ScienceProjectModelTests(BaseTestCase):
 
     def test_scienceproject_closure(self):
         """Test the closure workflow of a ScienceProject."""
-        p = ScienceProjectFactory.create(
+        project = ScienceProjectFactory.create(
             creator=self.bob,
             modifier=self.bob,
             program=self.program,
@@ -425,53 +430,59 @@ class ScienceProjectModelTests(BaseTestCase):
             project_owner=self.bob)
 
         ProjectMembership.objects.create(
-            project=p,
+            project=project,
             user=self.bob,
             role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
-        p.status = Project.STATUS_ACTIVE
-        p.save()
+        project.status = Project.STATUS_ACTIVE
+        project.save()
 
         print("Request closure")
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        p.request_closure()
+        self.assertEqual(project.status, Project.STATUS_ACTIVE)
+        project.request_closure()
+        project.save()
         print("Project should be in CLOSURE_REQUESTED")
-        self.assertEqual(p.status, Project.STATUS_CLOSURE_REQUESTED)
+        self.assertEqual(project.status, Project.STATUS_CLOSURE_REQUESTED)
         print("Check for ProjectClosure document")
-        self.assertEqual(p.documents.instance_of(ProjectClosure).count(), 1)
-        pc = p.documents.instance_of(ProjectClosure).get()
+        self.assertEqual(
+            project.documents.instance_of(ProjectClosure).count(), 1)
+        pc = project.documents.instance_of(ProjectClosure).get()
         self.assertEqual(pc.status, Document.STATUS_NEW)
-        # p = pc.project
-        self.assertEqual(p.status, Project.STATUS_CLOSURE_REQUESTED)
+        self.assertEqual(project.status, Project.STATUS_CLOSURE_REQUESTED)
         print("Project closure requires existing and approved ProjectClosure")
-        self.assertFalse(p.can_accept_closure())
+        self.assertFalse(project.can_accept_closure())
         print("Fast-track ProjectClosure document through review and approval")
         pc.seek_review()
         pc.seek_approval()
-        print("[test_models] Closure's project is {0}".format(pc.project.status))
-        print("[test_models] Project is {0}".format(p.status))
-        # import ipdb
-        # ipdb.set_trace()
-        #
-        # pc.approve()  # TODO fails - pc.project is NEW
-        # print("Check that ProjectClosure is approved")
-        # self.assertEqual(pc.status, Document.STATUS_APPROVED)
-        # print("Check that project is STATUS_CLOSING")
-        # self.assertEqual(p.status, Project.STATUS_CLOSING)
-        #
-        # print("Request final update")
-        # p.request_update()
-        # self.assertEqual(p.status, Project.STATUS_FINAL_UPDATE)
-        # self.assertEqual(p.documents.instance_of(ProgressReport).count(), 2)
-        # pr = p.documents.instance_of(ProgressReport).get()
-        # self.assertEqual(pr.status, Document.STATUS_NEW)
-        # print("Complete update")
-        # pr.seek_review()
-        # pr.seek_approval()
-        # pr.approve()
-        # p = pr.project
-        # print("Approving final update completes project")
-        # self.assertEqual(p.status, Project.STATUS_COMPLETED)
-        # print("Full ScienceProject test walkthrough successfully completed.")
+        pc.approve()
+        print("Check that {0} is approved".format(pc.debugname))
+        self.assertEqual(pc.status, Document.STATUS_APPROVED)
+        # print("[project] {0}".format(project.debugname))  # closure requested
+        # print("[pc.project] {0}".format(pc.project.debugname))  # closing
+        project = pc.project    # NOTE pc.project has latest change
+        project.save()          # NOTE sync to db
+        # print("[project] {0}".format(project.debugname))  # closing
+        # print("[pc.project] {0}".format(pc.project.debugname))  # closing
+        # self.assertEqual(pc.project.status, Project.STATUS_CLOSING)
+        self.assertEqual(project.status, Project.STATUS_CLOSING)
+
+        print("Request final update")
+        project.request_final_update()
+        project.save()
+        self.assertEqual(project.status, Project.STATUS_FINAL_UPDATE)
+        print("Check that there's exactly one ProgressReport.")
+        self.assertEqual(
+            project.documents.instance_of(ProgressReport).count(), 1)
+        pr = project.documents.instance_of(ProgressReport).get()
+        self.assertEqual(pr.status, Document.STATUS_NEW)
+        print("Complete update by fast-tracking ProgressReport approval.")
+        pr.seek_review()
+        pr.seek_approval()
+        pr.approve()
+        project = pr.project  # pr.project has latest change in memory
+        project.save()
+        print("Approving final update completes project")
+        self.assertEqual(project.status, Project.STATUS_COMPLETED)
+        print("Full ScienceProject test walkthrough successfully completed.")
 
     def test_force_closure_updating_project(self):
         """Test force-closing an updating project.
@@ -557,34 +568,30 @@ class CollaborationProjectModelTests(TestCase):
 
 
 class StudentProjectModelTests(TestCase):
-    """StudentProject tests."""
+    """StudentProject model tests."""
 
     def test_new_student_project(self):
         """A new STP has no approval process and is ACTIVE."""
         project = StudentProjectFactory.create()
         self.assertEqual(project.status, Project.STATUS_ACTIVE)
 
-    # def test_request_update_creates_student_report(self):
-    #    project = StudentProjectFactory.create()
-    #    project.request_update()
-    #    self.assertEqual(StudentReport.objects.count(), 1)
-
-    # def test_studentproject_progressreport(self):
-    #     """Test the life cycle of a StudentReport."""
-    #     p = StudentProjectFactory.create()
-    #     self.assertEqual(p.status, Project.STATUS_ACTIVE)
-    #     from datetime import datetime
-    #     n = datetime.now()
-    #     r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
-    #     print("Created {0}".format(r.__str__()))
-    #     print("Request update")
-    #     p.request_update()
-    #     self.assertEqual(p.status, Project.STATUS_UPDATE)
-    #     self.assertFalse(p.can_complete_update())
-    #     pr = p.documents.instance_of(StudentReport).get()
-    #     # pr = StudentReport.objects.filter(project=p)[0]
-    #     pr.seek_review()
-    #     pr.seek_approval()
-    #     pr.approve()
-    #     self.assertEqual(pr.status, Document.STATUS_APPROVED)
-    #     self.assertTrue(pr.project.status, Project.STATUS_ACTIVE)
+    def test_studentproject_progressreport(self):
+        """Test the update workflow of a StudentReport."""
+        p = StudentProjectFactory.create()
+        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        from datetime import datetime
+        n = datetime.now()
+        r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
+        print("Created {0}".format(r.__str__()))
+        print("Request update")
+        p.request_update()
+        p.save()
+        self.assertEqual(StudentReport.objects.count(), 1)
+        self.assertEqual(p.status, Project.STATUS_UPDATE)
+        self.assertFalse(p.can_complete_update())
+        pr = p.documents.instance_of(StudentReport).get()
+        pr.seek_review()
+        pr.seek_approval()
+        pr.approve()
+        self.assertEqual(pr.status, Document.STATUS_APPROVED)
+        self.assertTrue(p.status, Project.STATUS_ACTIVE)

@@ -1,8 +1,8 @@
-{% load pbs_markdown static %}
+{% load static %}
 {% block extrastyle %}
   <link rel="stylesheet" type="text/css" href="{% static "handsontable/dist/jquery.handsontable.css" %}">
 {% endblock %}
-{% block extrahead %} 
+{% block extrahead %}
   <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
   <script src="{% static 'modernizr/modernizr.js' %}"></script>
   <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
@@ -21,13 +21,13 @@
 <div class="role_heading">Role</div>
 <div class="role_content">{{ original.role|safe }}</div>
 <div class="service_heading">Service Delivery Structure</div>
-<div class="service_content"><img alt="sds" height="786" 
+<div class="service_content"><img alt="sds" height="786"
     src="https://sdis.dpaw.wa.gov.au/static/img/sds.jpg" title="sds" width="483" /></div>
 <div class="pub_heading">Publications and Reports</div>
 <div class="pub_content">{{ original.pub|safe }}</div>
 
 {% include "html/includes/student_projects.html" with reports=original.student_reports %}
-{% include "html/includes/collaboration_projects.html" with projects=original.collaboration_projects %} 
+{% include "html/includes/collaboration_projects.html" with projects=original.collaboration_projects %}
 {% include "html/includes/science_projects.html" with reports=original.progress_reports %}
 {% include "html/includes/programs.html" with reports=original.progress_reports %}
 {% include "html/includes/student_reports.html" with reports=original.student_reports %}

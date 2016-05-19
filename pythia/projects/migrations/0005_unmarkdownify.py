@@ -4,42 +4,44 @@ from south.db import db
 from south.v2 import DataMigration
 from django.db import models
 
-from pythia.utils import text2html as m2h, html2text as h2m
+# from pythia.utils import text2html as m2h, html2text as h2m
 
 class Migration(DataMigration):
 
     def forwards(self, orm):
         "Write your forwards methods here."
-        # Note: Don't use "from appname.models import ModelName". 
+        # Note: Don't use "from appname.models import ModelName".
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
-        
-        for p in orm.Project.objects.all():
-            p.title = m2h(p.title)
-            p.tagline = m2h(p.tagline)
-            p.comments = m2h(p.comments)
-            p.save()
 
-        for p in orm.CollaborationProject.objects.all():
-            p.name = m2h(p.name)
-            p.budget = m2h(p.budget)
-            p.save()
+        # for p in orm.Project.objects.all():
+        #     p.title = m2h(p.title)
+        #     p.tagline = m2h(p.tagline)
+        #     p.comments = m2h(p.comments)
+        #     p.save()
+        #
+        # for p in orm.CollaborationProject.objects.all():
+        #     p.name = m2h(p.name)
+        #     p.budget = m2h(p.budget)
+        #     p.save()
 
         # add doc, profile fields
+        return
 
     def backwards(self, orm):
         "Write your backwards methods here."
 
-        for p in orm.Project.objects.all():
-            p.title = h2m(p.title)
-            p.tagline = h2m(p.tagline)
-            p.comments = h2m(p.comments)
-            p.save()
-
-        for p in orm.CollaborationProject.objects.all():
-            p.name = h2m(p.name)
-            p.budget = h2m(p.budget)
-            p.save()
+        # for p in orm.Project.objects.all():
+        #     p.title = h2m(p.title)
+        #     p.tagline = h2m(p.tagline)
+        #     p.comments = h2m(p.comments)
+        #     p.save()
+        #
+        # for p in orm.CollaborationProject.objects.all():
+        #     p.name = h2m(p.name)
+        #     p.budget = h2m(p.budget)
+        #     p.save()
+        return
 
 
     models = {

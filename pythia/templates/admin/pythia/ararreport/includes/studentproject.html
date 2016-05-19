@@ -1,4 +1,4 @@
-{% load pythia_base pbs_markdown humanize texify %}
+{% load pythia_base humanize %}
 {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
 <hr>
 <div id="{{ report.project.opts.module_name }}:{{ report.project.pk }}">
@@ -14,10 +14,10 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <a onclick="return showAddAnotherPopup(this);" 
+            <a onclick="return showAddAnotherPopup(this);"
                 type="button"
                 class="btn btn-primary btn-xs pull-right"
-                href="{{ project_change }}" 
+                href="{{ project_change }}"
                 title="Edit team list or project title"
                 ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit team or title</a>
             <!-->{# report.project.team_list_plain #}</p-->

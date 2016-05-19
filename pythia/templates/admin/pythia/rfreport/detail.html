@@ -1,8 +1,5 @@
 {% extends "admin/base.html" %}
-{% load pythia_base %}
-{# load pbs_markdown #}
-{% load static %}
-
+{% load pythia_base static %}
 
 {% block content %}
 {# original is an instance of ARARReport #}
@@ -16,21 +13,21 @@
     {% if request.user.is_superuser %}
     <div class="row">
         <div class="col-md-12">
-            <a href="{% url 'admin:pythia_ararreport_download_pdf' original.pk %}" 
+            <a href="{% url 'admin:pythia_ararreport_download_pdf' original.pk %}"
                 title="Download PDF print version"
                 class="btn btn-xs btn-primary">PDF</a>
-            <a href="{% url 'admin:pythia_ararreport_download_tex' original.pk %}" 
+            <a href="{% url 'admin:pythia_ararreport_download_tex' original.pk %}"
                 title="Download Latex source code"
                 class="btn btn-xs btn-primary">Latex</a>
-            <a href="{% url 'admin:pythia_ararreport_download_html' original.pk %}" 
+            <a href="{% url 'admin:pythia_ararreport_download_html' original.pk %}"
                 title="Download plain HTML version"
                 class="btn btn-xs btn-primary">HTML</a>
             {% url opts|pythia_urlname:'change' original.pk|pythia_urlquote as url_change %}
-            <a onclick="return showAddAnotherPopup(this);" 
+            <a onclick="return showAddAnotherPopup(this);"
                 type="button"
                 class="btn btn-primary btn-xs pull-right"
-                href="{{ url_change }}" 
-                title="Click to edit this ARAR"><i 
+                href="{{ url_change }}"
+                title="Click to edit this ARAR"><i
                 class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
         </div>
     </div>
@@ -47,7 +44,7 @@
     {% as_html original 'pub' 'h1' %}
 
     {% include "admin/pythia/ararreport/includes/student_projects.html" with reports=original.student_reports %}
-    {% include "admin/pythia/ararreport/includes/collaboration_projects.html" with projects=original.collaboration_projects %} 
+    {% include "admin/pythia/ararreport/includes/collaboration_projects.html" with projects=original.collaboration_projects %}
     {% include "admin/pythia/ararreport/includes/science_projects.html" with reports=original.progress_reports %}
     {% include "admin/pythia/ararreport/includes/programs.html" with reports=original.progress_reports %}
     {% include "admin/pythia/ararreport/includes/student_reports.html" with reports=original.student_reports %}
@@ -124,16 +121,16 @@
     a(function () {
         if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
             var b = document.createElement("style");
-            b.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}")), 
+            b.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}")),
             document.querySelector("head").appendChild(b)
         } {
             var c = a(window),
                 d = a(document.body);
             a("#main-navbar").outerHeight(!0) + 10
         }
-        d.scrollspy({ target: "#sidebar" }), 
-        c.on("load", function () {  d.scrollspy("refresh") }), 
-        a("#page-content [href=#]").click(function (a) { a.preventDefault() }), 
+        d.scrollspy({ target: "#sidebar" }),
+        c.on("load", function () {  d.scrollspy("refresh") }),
+        a("#page-content [href=#]").click(function (a) { a.preventDefault() }),
         setTimeout(function () {
             var b = a("#sidebar");
             b.affix({
@@ -149,8 +146,8 @@
                     }
                 }
             })
-        }, 100), 
-        setTimeout(function () { a(".bs-top").affix() }, 100),     
+        }, 100),
+        setTimeout(function () { a(".bs-top").affix() }, 100),
     });
 }(jquery);
 </script-->

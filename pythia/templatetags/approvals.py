@@ -11,23 +11,22 @@ register = template.Library()
 
 @register.assignment_tag(takes_context=True)
 def get_transitions(context, obj):
-    """Output a list of transitions that the document can make.
+    """Return a list of dicts with allowed transitions.
 
-    We are using custom, one-verb permissions on transitions (e.g. "submit"),
-    and reconstruct the fully qualified permission name (e.g.
-    "documents.submit_conceptplan") here. This allows us to inherit transitions
-    through the polymorphic models.
+    Each transition dict contains:
 
-    If we used get_available_user_status_transitions(user) here, we'd have to
-    instantiate each transition on each model with the explicit permission set.
+    * url: POST to the transition URL to run this transition
+    * transition: the django-fsm transition object
+    * name: the tx name as string
+    * verbose: the custom  tx property "verbose" with the human readable label
+    * notify: the custom tx property "notify", Boolean, whether the email
+      notification is selected by default or not (User can untick/tick)
     """
     o = obj._meta
     choices = []
     u = context['request'].user
-    # for tx in obj.get_available_status_transitions():
+
     for tx in obj.get_available_user_status_transitions(u):
-        # codename = "%s.%s_%s" % (o.app_label, tx.permission, o.model_name)
-        # if any([u.has_perm(codename), u.has_perm(codename, obj)]):
         url = reverse('admin:%s_%s_transition' % (
             o.app_label, o.model_name), args=(obj._get_pk_val(),))
         url += "?transition=%s" % tx.name

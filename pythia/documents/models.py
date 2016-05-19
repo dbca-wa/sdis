@@ -187,6 +187,11 @@ class Document(PolymorphicModel, Audit):
             self.project.year, self.project.number))
 
     @property
+    def debugname(self):
+        """Return name and status for use in debug messages."""
+        return "{0} ({1})".format(self.__str__(), self.status)
+
+    @property
     def fullname(self):
         """The HTML-safe document name."""
         return mark_safe(self.__str__())
@@ -1268,6 +1273,9 @@ class ProgressReport(Document):
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Approve", notify=True,)
         )
+    def do_approve(self):
+        """Transition to approve the ProgressReport."""
+
     def approve(self):
         """Complete the requested update.
 
@@ -1281,11 +1289,14 @@ class ProgressReport(Document):
           `Project.complete()` to transition forward to
           `Project.STATUS_COMPLETED`.
         """
+        self.do_approve()
+        self.save()
         from pythia.projects.models import Project
         if self.project.status == Project.STATUS_UPDATE:
             self.project.complete_update()
         elif self.project.status == Project.STATUS_FINAL_UPDATE:
             self.project.complete()
+        self.project.save()
 
     @transition(
         field='status',
@@ -1370,18 +1381,18 @@ class ProjectClosure(Document):
         )
     def do_approve(self):
         """Approve the ClosureForm."""
+        return
 
     def approve(self):
         """Auto-advance the project to CLOSING."""
         self.do_approve()
         self.save()
-        print("{0} ({1}) is approved".format(self.__str__(), self.status))
-        print("{0} ({1}) asked to accept closure".format(
-            self.project.__str__(), self.project.status))
+        print("{0} asking {1} to accept closure".format(
+            self.debugname, self.project.debugname))
         self.project.accept_closure()
         self.project.save()
-        print("{0} ({1}) has accepted closure".format(
-            self.project.__str__(), self.project.status))
+        print("{0} finished asking {1} to accept closure".format(
+            self.debugname, self.project.debugname))
 
     @transition(
         field='status',

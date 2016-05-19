@@ -1,19 +1,19 @@
-{% load pythia_base  humanize %}
+{% load pythia_base humanize %}
 {% block research_activities %}
 <h1 id="research_activities">Research Activities</h1>
 
 {# requires reports to be sorted by program, done in ARARReport.progressreports #}
-{% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+{% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
 {% for program_reports in report_list %}
 {% with program_reports.grouper as program %}
 <div>
     {% url program.opts|pythia_urlname:'change' program.pk|pythia_urlquote as program_change %}
     <h2 id="{{ program.opts.module_name }}:{{ program.pk }}">{{ program }}</h2>
     <h3>Program Leader: {{ program.program_leader.get_full_name }}</h3>
-    <a href="{{ program_change }}" 
-        onclick="return showAddAnotherPopup(this);" 
+    <a href="{{ program_change }}"
+        onclick="return showAddAnotherPopup(this);"
         type="button"
-        class="btn btn-primary btn-xs pull-right" 
+        class="btn btn-primary btn-xs pull-right"
         title="Edit Program Leader's introduction"
         ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit Pl's intro</a>
         <span class="text-muted">
