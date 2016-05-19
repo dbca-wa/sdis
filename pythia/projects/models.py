@@ -15,9 +15,9 @@ from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 
 from datetime import date
-# import json
+from itertools import chain
 import logging
-# import markdown
+
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -441,6 +441,17 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             return set()
         # return Group.objects.get(name='SCD').user_set.all()
 
+    @property
+    def reviewers_approvers(self):
+        """Return a deduplicated list of reviewers, approvers."""
+        return list(set(chain(self.reviewers, self.approvers)))
+
+    @property
+    def all_involved(self):
+        """Return a deduplicated list of submitters, reviewers, approvers."""
+        return list(set(chain(
+            self.submitters, self.reviewers, self.approvers)))
+
     # -------------------------------------------------------------------------#
     # Project approval
     #
@@ -622,7 +633,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_ACTIVE,
         target=STATUS_CLOSURE_REQUESTED,
         conditions=[can_request_closure],
-        permission=lambda instance, user: user in instance.submitters,
+        permission=lambda instance, user: user in instance.all_involved,
         custom=dict(verbose="Request closure", notify=True,)
         )
     def request_closure(self):
@@ -651,7 +662,6 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         Fast-tracks project to complete the update
         """
         pc, created = ProjectClosure.objects.get_or_create(project=self)
-        # TODO: delete Progressreports of currently active ARAR
         self.progressreport.delete()
 
     # CLOSURE_REQUESTED -> CLOSING -------------------------------------------#
@@ -665,12 +675,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         TODO: insert gate checks: is the projectplan updated with latest data
         management info, is the closure form approved
         """
-        can_haz_closure = (
-            self.documents.instance_of(ProjectClosure).exists() and
-            self.documents.instance_of(ProjectClosure).latest().is_approved)
-        print("{0} can_accept_closure: {1}".format(
-            self.debugname, can_haz_closure))
-        return can_haz_closure
+        return (self.documents.instance_of(ProjectClosure).exists() and
+                self.documents.instance_of(ProjectClosure).latest().is_approved)
 
     @transition(
         field='status',
@@ -707,10 +713,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         )
     def request_final_update(self):
         """Transition to move the project to STATUS_FINAL_UPDATE."""
-        ProgressReport.objects.create(
-            project=self,
-            is_final_report=True,
-            year=date.today().year)
+        pr, created = ProgressReport.objects.get_or_create(
+            project=self, is_final_report=True, year=date.today().year)
 
     # FINAL_UPDATE -> COMPLETED ----------------------------------------------#
     def can_complete(self):
@@ -751,7 +755,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=[STATUS_ACTIVE, STATUS_CLOSING],
         target=STATUS_COMPLETED,
         # conditions=[can_complete],
-        permission=lambda instance, user: user in instance.reviewers,
+        permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Force-complete project", notify=True,)
         )
     def force_complete(self):

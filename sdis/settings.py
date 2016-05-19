@@ -166,10 +166,8 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'pythia/templates'),)
 
-# User settings - enable Persona and SDIS custom user.
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'pythia.backends.PythiaBackend',
     'pythia.backends.EmailBackend',
     )
 

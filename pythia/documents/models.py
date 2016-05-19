@@ -306,7 +306,7 @@ class Document(PolymorphicModel, Audit):
 
         Default: project team members.
         """
-        return list(set(self.project.members.all()))  # reduce some duplication
+        return self.project.submitters
 
     @property
     def reviewers(self):
@@ -315,15 +315,7 @@ class Document(PolymorphicModel, Audit):
 
         Default: The Program Leaders making up the SCMT.
         """
-        # return [self.project.program.program_leader, ]
-        # Alternative: all PLs = SMT
-        # return Group.objects.get(name='SMT').user_set.all()
-        try:
-            smt, created = Group.objects.get_or_create(name='SMT')
-            return smt.user_set.all()
-        except:
-            print("reviewers not found")
-            return set()
+        self.project.reviewers
 
     @property
     def approvers(self):
@@ -332,13 +324,17 @@ class Document(PolymorphicModel, Audit):
 
         Default: Divisional Directorate members.
         """
-        try:
-            scd, created = Group.objects.get_or_create(name='SCD')
-            return scd.user_set.all()
-        except:
-            print("approvers not found")
-            return set()
-        # return Group.objects.get(name='SCD').user_set.all()
+        return self.project.approvers
+
+    @property
+    def reviewers_approvers(self):
+        """Return a deduplicated list of reviewers, approvers."""
+        return self.project.reviewers_approvers
+
+    @property
+    def all_involved(self):
+        """Return a deduplicated list of submitters, reviewers, approvers."""
+        return self.project.all_involved
 
     # -------------------------------------------------------------------------#
     # Author actions
@@ -352,7 +348,7 @@ class Document(PolymorphicModel, Audit):
         source=STATUS_NEW,
         target=STATUS_INREVIEW,
         conditions=[can_seek_review],
-        permission=lambda instance, user: user in instance.submitters,
+        permission=lambda instance, user: user in instance.all_involved,
         custom=dict(verbose="Submit for review", notify=True,)
         )
     def seek_review(self):
@@ -385,7 +381,7 @@ class Document(PolymorphicModel, Audit):
         source=STATUS_INREVIEW,
         target=STATUS_INAPPROVAL,
         conditions=[can_seek_approval],
-        permission=lambda instance, user: user in instance.reviewers,
+        permission=lambda instance, user: user in instance.reviewers_approvers,
         custom=dict(verbose="Submit for approval", notify=True,)
         )
     def seek_approval(self):
@@ -397,7 +393,7 @@ class Document(PolymorphicModel, Audit):
         source=STATUS_INREVIEW,
         target=STATUS_NEW,
         conditions=[can_seek_approval],
-        permission=lambda instance, user: user in instance.reviewers,
+        permission=lambda instance, user: user in instance.reviewers_approvers,
         custom=dict(verbose="Request revision from authors", notify=True,)
         )
     def request_revision_from_authors(self):
@@ -1493,9 +1489,8 @@ class StudentReport(Document):
         Project status hard-reset to STATUS_UPDATE (no tx).
         """
         from pythia.projects import Project
-        p = self.project
-        p.status = Project.STATUS_UPDATE
-        p.save(update_fields=['status', ])
+        self.project.status = Project.STATUS_UPDATE
+        self.project.save(update_fields=['status', ])
 
 
 class StaffTimeEstimate(Audit):
