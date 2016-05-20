@@ -51,7 +51,7 @@ def _collectstatic():
 
 
 def quickdeploy():
-    """Fix local permissions, deploy static files."""
+    """Deploy static files."""
     clean()
     _removestaticlinks()
     _collectstatic()
