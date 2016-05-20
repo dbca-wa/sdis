@@ -464,7 +464,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=[STATUS_NEW, STATUS_PENDING],
         target=STATUS_NEW,
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Setup Project", notify=False,)
+        custom=dict(verbose="Setup Project", explanation="", notify=False,)
         )
     def setup(self):
         """Perform post-save project setup."""
@@ -500,7 +500,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_PENDING,
         conditions=[can_endorse],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Endorse project", notify=True,)
+        custom=dict(verbose="Endorse project", explanation="", notify=True,)
         )
     def do_endorse(self):
         """
@@ -540,7 +540,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_ACTIVE,
         conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Approve Project", notify=False,)
+        custom=dict(verbose="Approve Project", explanation="", notify=False,)
         )
     def do_approve(self):
         """Transition to move the project to ACTIVE."""
@@ -560,7 +560,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_PENDING,
         conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Revoke approval", notify=False,)
+        custom=dict(verbose="Revoke approval", explanation="", notify=False,)
         )
     def revoke_approval(self):
         """Transition to move the project from ACTIVE to PENDING."""
@@ -580,7 +580,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_UPDATE,
         conditions=[can_request_update],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Request update", notify=True,)
+        custom=dict(verbose="Request update", explanation="", notify=True,)
         )
     def request_update(self, report=None):
         """
@@ -617,7 +617,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_ACTIVE,
         conditions=[can_complete_update],
         permission=lambda instance, user: user in instance.submitters,
-        custom=dict(verbose="Complete update", notify=True,)
+        custom=dict(verbose="Complete update", explanation="", notify=True,)
         )
     def complete_update(self):
         """Move the project back to ACTIVE after finishing its update."""
@@ -638,7 +638,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_CLOSURE_REQUESTED,
         conditions=[can_request_closure],
         permission=lambda instance, user: user in instance.all_involved,
-        custom=dict(verbose="Request closure", notify=True,)
+        custom=dict(verbose="Request closure", explanation="", notify=True,)
         )
     def request_closure(self):
         """Transition to move project to CLOSURE_REQUESTED.
@@ -654,7 +654,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_CLOSURE_REQUESTED,
         # conditions=[can_request_closure],
         permission=lambda instance, user: user in instance.reviewers,
-        custom=dict(verbose="Force closure and cancel update", notify=True,)
+        custom=dict(verbose="Force closure and cancel update", explanation="", notify=True,)
         )
     def force_closure(self):
         """Transition to move project to CLOSURE_REQUESTED during UPDATING.
@@ -688,7 +688,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_CLOSING,
         conditions=[can_accept_closure],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Accept closure", notify=True,)
+        custom=dict(verbose="Accept closure", explanation="", notify=True,)
         )
     def accept_closure(self):
         """Transition to move the project to CLOSING."""
@@ -713,7 +713,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_FINAL_UPDATE,
         conditions=[can_request_final_update],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Request final update", notify=True,)
+        custom=dict(verbose="Request final update", explanation="", notify=True,)
         )
     def request_final_update(self):
         """Transition to move the project to STATUS_FINAL_UPDATE."""
@@ -742,7 +742,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_COMPLETED,
         conditions=[can_complete],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Complete final update", notify=True,)
+        custom=dict(verbose="Complete final update", explanation="", notify=True,)
         )
     def complete(self):
         """
@@ -760,7 +760,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_COMPLETED,
         # conditions=[can_complete],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Force-complete project", notify=True,)
+        custom=dict(verbose="Force-complete project", explanation="", notify=True,)
         )
     def force_complete(self):
         """
@@ -789,7 +789,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reactivate project", notify=True,)
+        custom=dict(verbose="Reactivate project", explanation="", notify=True,)
         )
     def reactivate(self):
         """Transition to move the project to its ACTIVE state."""
@@ -806,7 +806,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_TERMINATED,
         # conditions=[can_terminate],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Terminate project", notify=True,)
+        custom=dict(verbose="Terminate project", explanation="", notify=True,)
         )
     def terminate(self):
         """Transition the project to its TERMINATED state."""
@@ -823,7 +823,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate_terminated],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reactivate terminated project", notify=True,)
+        custom=dict(verbose="Reactivate terminated project", explanation="", notify=True,)
         )
     def reactivate_terminated(self):
         """Transition the project to its ACTIVE state."""
@@ -840,7 +840,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_SUSPENDED,
         # conditions=[can_suspend],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Suspend project", notify=True,)
+        custom=dict(verbose="Suspend project", explanation="", notify=True,)
         )
     def suspend(self):
         """Transition the project to its SUSPENDED state."""
@@ -857,7 +857,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate_suspended],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reactivate suspended project", notify=True,)
+        custom=dict(verbose="Reactivate suspended project", explanation="", notify=True,)
         )
     def reactivate_suspended(self):
         """Transition the suspended project to its ACTIVE state."""
@@ -1043,7 +1043,7 @@ class ScienceProject(Project):
         source=[Project.STATUS_NEW, Project.STATUS_PENDING],
         target=Project.STATUS_NEW,
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Setup Project", notify=False,)
+        custom=dict(verbose="Setup Project", explanation="", notify=False,)
         )
     def setup(self):
         """Create a Conceptplan if not already existing. Make sure it's NEW."""
@@ -1135,7 +1135,7 @@ class CoreFunctionProject(Project):
         source=[Project.STATUS_NEW, Project.STATUS_PENDING],
         target=Project.STATUS_NEW,
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Setup Project", notify=False,)
+        custom=dict(verbose="Setup Project", explanation="", notify=False,)
         )
     def setup(self):
         """Setup a new CoreFunctionProject.
@@ -1281,7 +1281,7 @@ class CollaborationProject(Project):
         source=Project.STATUS_ACTIVE,
         target=Project.STATUS_COMPLETED,
         permission=lambda instance, user: user in instance.submitters,
-        custom=dict(verbose="Close project", notify=False,)
+        custom=dict(verbose="Close project", explanation="", notify=False,)
         )
     def complete(self):
         """External CollaborationProjects complete without closure process."""
@@ -1398,7 +1398,7 @@ class StudentProject(Project):
         source=Project.STATUS_NEW,
         target=Project.STATUS_ACTIVE,
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Setup Project", notify=False,)
+        custom=dict(verbose="Setup Project", explanation="", notify=False,)
         )
     def setup(self):
         """A student project becomes active without approval process."""
@@ -1409,7 +1409,7 @@ class StudentProject(Project):
         target=Project.STATUS_UPDATE,
         # conditions=[can_request_update]
         permission="approve",
-        custom=dict(verbose="Request update", notify=True,)
+        custom=dict(verbose="Request update", explanation="", notify=True,)
         )
     def request_update(self, report=None):
         """The Student Report replaces the Progress Report."""
@@ -1429,7 +1429,7 @@ class StudentProject(Project):
         target=Project.STATUS_ACTIVE,
         conditions=[can_complete_update],
         permission=lambda instance, user: user in instance.submitters,
-        custom=dict(verbose="Complete update", notify=True,)
+        custom=dict(verbose="Complete update", explanation="", notify=True,)
         )
     def complete_update(self):
         """
@@ -1443,7 +1443,7 @@ class StudentProject(Project):
         source=Project.STATUS_ACTIVE,
         target=Project.STATUS_COMPLETED,
         permission=lambda instance, user: user in instance.submitters,
-        custom=dict(verbose="Close project", notify=True,)
+        custom=dict(verbose="Close project", explanation="", notify=True,)
         )
     def complete(self):
         """StudentProjects can complete without closure process."""
