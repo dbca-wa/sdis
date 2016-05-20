@@ -6,25 +6,27 @@ versions, and superseded Markdown support.
 from __future__ import unicode_literals
 
 import datetime
+from itertools import chain
+import logging
 import os
 import subprocess
 
-from bs4 import BeautifulSoup as BS
-from bs4.element import NavigableString as NS
+# from bs4 import BeautifulSoup as BS
+# from bs4.element import NavigableString as NS
 # from html2text import HTML2Text
-import json
+# import json
 # import markdown
 
-
 from django.conf import settings
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
 from django.template import Context
 # from django.utils.encoding import force_unicode
 # from django.utils.safestring import mark_safe
+# from guardian.shortcuts import assign_perm
 
-import logging
 logger = logging.getLogger(__name__)
 
 
@@ -36,27 +38,6 @@ def snitch(msg):
     else:
         logger.info(msg)
 
-
-
-def mail_from_template(subject, recipients, template_basename, context):
-    """Create and send an email."""
-    # template_html = get_template('{0}.html'.format(template_basename))
-    template_text = get_template('{0}.txt'.format(template_basename))
-    ctx = Context(context)
-
-    for user in recipients:
-        target = '"{0}" <{1}>'.format(user.get_full_name(), user.email)
-        ctx['user'] = user
-        # content_html = template_html.render(ctx)
-        content_text = template_text.render(ctx)
-        msg = EmailMultiAlternatives(
-                '[SDIS] {0}'.format(subject),
-                content_text,
-                settings.DEFAULT_FROM_EMAIL,
-                [target])
-        # msg.attach_alternative(content_html, "text/html")
-        msg.send()
-
 # -----------------------------------------------------------------------------#
 # Permissions
 
@@ -67,12 +48,6 @@ def setup_permissions():
     Create project permissions, which can be assigned per object to teams.
     Create global permissions and assign to Group "Managers".
     """
-
-    from itertools import chain
-    from django.contrib.auth.models import Group
-    # from guardian.shortcuts import assign_perm
-    from django.contrib.contenttypes.models import ContentType
-    from django.contrib.auth.models import Permission
 
     managers, created = Group.objects.get_or_create(name='Managers')
     doc_ct = ContentType.objects.filter(app_label='documents')
@@ -192,68 +167,68 @@ def get_revision_hash():
 # -----------------------------------------------------------------------------#
 # Data migration utils
 
-
-def is_list_of_lists_of_navigable_strings(obj):
-    """Returns true if an object is a list of lists of NavigableStrings.
-
-    An example are tables stored in Markdown.
-    """
-    return (type(obj) == list and
-            type(obj[0]) == list and
-            type(obj[0][0]) == NS)
-
-
-def string_startswith_doubleleftbracket(string):
-    """Returns true of a given string starts with a double left bracket `[[`
-    """
-    return string.startswith("[[")
-
-
-def list2htmltable(some_string):
-    '''Returns a JSON 2D array (a list of list of NavigableStrings) as HTML table
-    '''
-
-    table_html = '<table style="width:400px;" border="1" ' +\
-                 'cellpadding="2"><tbody>{0}</tbody></table>'
-    row_html = '<tr>{0}</tr>'
-    cell_html = '<td>{0}</td>'
-
-    try:
-        return table_html.format(
-            ''.join([row_html.format(
-                ''.join([cell_html.format(cell) for cell in row]
-                        )) for row in json.loads(some_string)]))
-    except:
-        print("Found non-JSON string {0}".format(some_string))
-        return some_string
-
-
-def extract_md_tables(html_string):
-    '''Returns a given HTML string with markdown tables converted to HTML tables.
-
-    Use this method to convert any Markdown table stored in model fields of
-    type text to an HTML table while discarding non-table content.
-
-    '''
-    pp = [p.contents for p in BS(html_string).find_all(
-        'p', text=string_startswith_doubleleftbracket)]
-    if len(pp) > 0:
-        return ''.join([''.join(
-            [list2htmltable(navigablestring) for navigablestring in x]) for x
-                        in pp])
-    else:
-        return html_string
-
-
-def convert_md_tables(html_string):
-    '''Returns a given HTML string with markdown tables converted to HTML tables.
-
-    Use this method to convert any Markdown table stored in model fields of
-    type text to an HTML table.
-
-    `@param html_string` an HTML string containing MArkdown tables
-    '''
-    # pp = [p.contents for p in BS(html_string).find_all('p')]
-    # TODO extract all tags
-    # TODO convert only md tables, keep the rest
-    print("Not implemented: pythia.utils.convert_md_tables")
+#
+# def is_list_of_lists_of_navigable_strings(obj):
+#     """Returns true if an object is a list of lists of NavigableStrings.
+#
+#     An example are tables stored in Markdown.
+#     """
+#     return (type(obj) == list and
+#             type(obj[0]) == list and
+#             type(obj[0][0]) == NS)
+#
+#
+# def string_startswith_doubleleftbracket(string):
+#     """Returns true of a given string starts with a double left bracket `[[`
+#     """
+#     return string.startswith("[[")
+#
+#
+# def list2htmltable(some_string):
+#     '''Returns a JSON 2D array (a list of list of NavigableStrings) as HTML table
+#     '''
+#
+#     table_html = '<table style="width:400px;" border="1" ' +\
+#                  'cellpadding="2"><tbody>{0}</tbody></table>'
+#     row_html = '<tr>{0}</tr>'
+#     cell_html = '<td>{0}</td>'
+#
+#     try:
+#         return table_html.format(
+#             ''.join([row_html.format(
+#                 ''.join([cell_html.format(cell) for cell in row]
+#                         )) for row in json.loads(some_string)]))
+#     except:
+#         print("Found non-JSON string {0}".format(some_string))
+#         return some_string
+#
+#
+# def extract_md_tables(html_string):
+#     '''Returns a given HTML string with markdown tables converted to HTML tables.
+#
+#     Use this method to convert any Markdown table stored in model fields of
+#     type text to an HTML table while discarding non-table content.
+#
+#     '''
+#     pp = [p.contents for p in BS(html_string).find_all(
+#         'p', text=string_startswith_doubleleftbracket)]
+#     if len(pp) > 0:
+#         return ''.join([''.join(
+#             [list2htmltable(navigablestring) for navigablestring in x]) for x
+#                         in pp])
+#     else:
+#         return html_string
+#
+#
+# def convert_md_tables(html_string):
+#     '''Returns a given HTML string with markdown tables converted to HTML tables.
+#
+#     Use this method to convert any Markdown table stored in model fields of
+#     type text to an HTML table.
+#
+#     `@param html_string` an HTML string containing MArkdown tables
+#     '''
+#     # pp = [p.contents for p in BS(html_string).find_all('p')]
+#     # TODO extract all tags
+#     # TODO convert only md tables, keep the rest
+#     print("Not implemented: pythia.utils.convert_md_tables")

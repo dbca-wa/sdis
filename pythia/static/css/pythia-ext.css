@@ -8,17 +8,11 @@ body, h1, h2, h3, h4, h5 {
   font-family: Lato;
 }
 
-body p.help-block {
-    font-size: 0.9em;
-}
+body p.help-block { font-size: 0.9em; }
 
-body p.sub {
-    color: #999;
-}
+body p.sub { color: #999; }
 
-a, a:hover, a:active {
-  color: #006470;
-}
+a, a:hover, a:active { color: #006470; }
 
 /* Make the main content area look nice */
 .page {
@@ -29,12 +23,10 @@ a, a:hover, a:active {
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
 }
 
-table#result_list { width: 100%; }
+table#result_list { width: inherit; }
 
 /* Sticky footer hack - The html and body elements cannot have any padding or margin.  */
-html, body {
-    height: 100%;
-}
+html, body { height: 100%; }
 
 /* Wrapper for page content to push down footer */
 #wrap {
@@ -58,9 +50,7 @@ margin-right: 0px; /* we need less negativity, especially in margins */
 .container .credit {margin: 10px 0;}
 
 /* Used on templates/admin/change_list.html to provide a toolbar area above the list */
-.toolbar-list-pre {
-    min-height: 38px;
-}
+.toolbar-list-pre { min-height: 38px; }
 
 /* Bootstrap3's pagination widget is nice, but demands too much vertical space */
 .pagination {

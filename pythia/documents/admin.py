@@ -15,19 +15,20 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
+from mail_templated import send_mail
 
 from pythia.admin import BaseAdmin, Breadcrumb, DownloadAdminMixin
 
 # from pythia.documents.models import Document
 # from pythia.models import User
 from pythia.templatetags.pythia_base import pythia_urlname
-from pythia.utils import mail_from_template, snitch
+from pythia.utils import snitch
+from sdis import settings
 
 from diff_match_patch import diff_match_patch
 # from django_fsm import can_proceed
 from functools import update_wrapper
 from reversion.models import Version
-from sdis import settings
 
 class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
     """
@@ -50,36 +51,43 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
 
     # A few aux methods for list_display
     def project_id(self, obj):
+        """Return project_year_number as ID."""
         return obj.project.project_year_number
     project_id.short_description = 'ID'
 
     def project_title(self, obj):
+        """Return project_title_html as title."""
         return obj.project.project_title_html
     project_title.short_description = 'Project Name'
     project_title.admin_order_field = 'title'
     project_title.allow_tags = True
 
     def project_owner(self, obj):
+        """Return project_owner fullname as Supervising Scientist."""
         return obj.project.project_owner.get_full_name()
     project_owner.short_description = 'Supervising Scientist'
     project_owner.admin_order_field = 'project__project_owner__last_name'
 
     def project_type(self, obj):
+        """Return project_type as Project Type."""
         return obj.project.get_type_display()
     project_type.short_description = 'Project Type'
     project_type.admin_order_field = 'project__type'
 
     def project_year(self, obj):
+        """Return project_year as Project Year."""
         return obj.project.year
     project_year.short_description = 'Project Year'
     project_year.admin_order_field = 'project__year'
 
     def project_number(self, obj):
+        """Return project_number as Project Number."""
         return obj.project.number
     project_number.short_description = 'Project Number'
     project_year.admin_order_field = 'project__year'
 
     def program(self, obj):
+        """Return program as Program."""
         return obj.project.program
     program.short_description = 'Program'
     program.admin_order_field = 'project__program__cost_center'
@@ -87,6 +95,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
 
     @property
     def download_template(self):
+        """Derive a download template name from model name."""
         return "doc_"+self.model._meta.model_name
 
     def get_readonly_fields(self, request, obj=None):
@@ -96,15 +105,14 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
         return super(DocumentAdmin, self).get_readonly_fields(request, obj)
 
     def get_breadcrumbs(self, request, obj=None, add=False):
-        """
-        Override the base breadcrumbs to add the project list to the trail.
-        """
+        """Add the project list to the breadcrumb trail."""
         return (
             Breadcrumb(_('Home'), reverse('admin:index')),
             Breadcrumb(_('All projects'),
                        reverse('admin:projects_project_changelist')))
 
     def get_urls(self):
+        """Add transition/endorsement/diff views URLs."""
         from django.conf.urls import patterns, url
 
         def wrap(view):
@@ -143,69 +151,67 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                                 'name': force_text(opts.verbose_name),
                                 'key': escape(object_id)})
 
-        # Is current user allowed to do the stuff with the thing
-        # Should we use django_fsm.can_proceed instead?
+        # Is the tx available to the current user?
         if tx not in [t.name for t in
                       obj.get_available_user_status_transitions(request.user)]:
             print("Requested transition '{0}' not available for the "
                   "current user {1}".format(tx, request.user))
             raise PermissionDenied
 
+        # Is there a better way to get the transition object?
         t = [t for t in obj.get_available_user_status_transitions(request.user)
              if t.name == tx][0]
 
-        if request.method == 'POST':
-            # Then do the stuff with the thing
-            print("About to run transition {0}, object status {1}".format(
-                t.name, obj.status))
-            getattr(obj, t.name)()
-            obj.save()
-            print("Finished running transition {0}, object status {1}".format(
-                t.name, obj.status))
+        # Who should get notified about this tx?
+        recipients = obj.get_users_to_notify(t.target)
+        recipients_text = ", ".join([r.fullname for r in recipients])
+        explanation = t.custom["explanation"].format(recipients_text)
+        # recipients.discard(request.user)
 
-            # Email notifications
-            if ('_notify' in request.POST) and (
-                    request.POST.get('_notify') == u'on'):
-
-                recipients = obj.get_users_to_notify(t.name)
-                recipients.discard(request.user)
-                if settings.DEBUG:
-                    print("[DEBUG] recipients would have been: {0}".format(
-                       recipients))
-                    User = get_user_model()
-                    recipients = [User.objects.get(username='florianm'), ]
-                    print("[DEBUG] recipients replaced with: {0}".format(
-                       recipients))
-
-                context = {
-                    'instigator': request.user,
-                    'object_name': '{0} of {1}'.format(
-                        obj.__str__(), obj.project.fullname),
-                    'object_url': request.build_absolute_uri(reverse(
-                        pythia_urlname(obj.opts, 'change'), args=[obj.pk])),
-                    'action': t.name,
-                    'status': t.target,
-                    }
-                mail_from_template(
-                    '[SDIS] {0} has been updated'.format(
-                        obj.project.project_type_year_number),
-                    list(recipients), 'email/email_base', context)
-
-            # Redirect the user back to the document change page
-            redirect_url = reverse('admin:%s_%s_change' %
-                                   (opts.app_label, opts.model_name),
-                                   args=(object_id,),
-                                   current_app=self.admin_site.name)
-            return HttpResponseRedirect(redirect_url)
-
+        # We'll use the context to populate both email and transition.html page
         context = dict(
-            title=_('%s: %s') % (t.custom["verbose"], force_text(obj)),
+            instigator=request.user,
+            object_name=force_text(obj),
+            object_url=request.build_absolute_uri(reverse(
+                pythia_urlname(obj.opts, 'change'), args=[obj.pk])),
+            title=t.custom["verbose"],
+            recipients=recipients_text,
+            explanation=explanation,
+            notify_default=t.custom["notify"],
             breadcrumbs=self.get_breadcrumbs(request, obj),
-            transition_name=capfirst(force_text(t.name)),
             model_name=capfirst(force_text(opts.verbose_name_plural)),
             object=obj,
             opts=opts,)
         context.update(extra_context or {})
+
+        # This failsafe is not required, as DEBUG sends emails to console.
+        if settings.DEBUG:
+            print("[DEBUG] recipients would have been: {0}".format(recipients))
+            User = get_user_model()
+            recipients = [User.objects.get(username='florianm'), ]
+            print("[DEBUG] recipients replaced with: {0}".format(recipients))
+
+        # User clicks "confirm" on transition.html
+        if request.method == 'POST':
+
+            # run transition, save changed object to db
+            getattr(obj, t.name)()
+            obj.save()
+
+            # Send email notifications if requested
+            do_notify = ('_notify' in request.POST) and (
+                request.POST.get('_notify') == u'on')
+            tmpl = 'email/email_base.tpl'
+            to_emails = [u.email for u in recipients]
+            from_email = settings.DEFAULT_FROM_EMAIL
+            if do_notify:
+                send_mail(tmpl, context, from_email, to_emails)
+
+            # Redirect the user back to the document change page
+            redirect_url = reverse(
+                'admin:%s_%s_change' % (opts.app_label, opts.model_name),
+                args=(object_id,), current_app=self.admin_site.name)
+            return HttpResponseRedirect(redirect_url)
 
         return TemplateResponse(request, [
             "admin/%s/%s/%s_transition.html" % (
@@ -216,10 +222,11 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
             ], context, current_app=self.admin_site.name)
 
     def endorsement_view(self, request, object_id, extra_context=None):
-        """
-        Handle adding an endorsement to a document. For an endorsement to be
-        added, the document must be in review. An endorsement indicates that
-        a review is happy with the state of the document as written.
+        """Handle adding an endorsement to a document.
+
+        For an endorsement to be added, the document must be in review.
+        An endorsement indicates that a review is happy with the state of the
+        document as written.
         """
         model = self.model
         opts = model._meta
@@ -238,7 +245,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
             model_name=capfirst(force_text(opts.verbose_name_plural)),
             object=obj,
             opts=opts,
-        )
+            )
         context.update(extra_context or {})
         return TemplateResponse(request, [
             "admin/%s/%s/endorsement.html" % (
@@ -248,12 +255,13 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
         ], context, current_app=self.admin_site.name)
 
     def history_view(self, request, object_id, extra_context=None):
+        """History view."""
         obj = get_object_or_404(self.model, pk=unquote(object_id))
 
         context = {
             'has_diff_view': True,
             'breadcrumbs': self.get_breadcrumbs(request, obj)
-        }
+            }
         context.update(extra_context or {})
         return super(DocumentAdmin, self).history_view(request, object_id,
                                                        extra_context=context)
@@ -263,15 +271,13 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
     # I have removed some offending code -- search the history of this
     # repository. Remove this comment when all is good in the world of diff.
     def diff_view(self, request, object_id, version_id, extra_context=None):
-        """
-        Generate a diff between document versions.
-        """
+        """Generate a diff between document versions."""
         opts = self.model._meta
         app_label = opts.app_label
 
         obj = get_object_or_404(self.model, pk=unquote(object_id))
-        obj_old = get_object_or_404(Version, pk=unquote(version_id),
-                                    object_id=force_text(obj.pk))
+        obj_old = get_object_or_404(
+            Version, pk=unquote(version_id), object_id=force_text(obj.pk))
 
         fieldsets = self.get_fieldsets(request, obj)
         inline_instances = self.get_inline_instances(request, obj)
@@ -285,18 +291,17 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                     field = getattr(obj, f)
                     if (not field) or (type(field) not in (str, unicode)):
                         continue
-                    diff = d.diff_main( obj_old.field_dict[f] or '',
-                            field)
+                    diff = d.diff_main(obj_old.field_dict[f] or '', field)
                     d.diff_cleanupSemantic(diff)
-                    diffs.append((opts.get_field_by_name(f)[0].verbose_name,
-                            mark_safe(d.diff_prettyHtml(diff))))
-
+                    diffs.append((
+                        opts.get_field_by_name(f)[0].verbose_name,
+                        mark_safe(d.diff_prettyHtml(diff))))
 
         context = {
             'breadcrumbs': self.get_breadcrumbs(request, obj),
             'diffs': diffs, 'object': obj, 'opts': self.model._meta,
             'version_date': obj_old.revision.date_created,
-        }
+            }
         context.update(extra_context or {})
 
         return TemplateResponse(request, self.object_diff_template or [
@@ -304,7 +309,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                                               opts.object_name.lower()),
             'admin/%s/object_diff.html' % app_label,
             'admin/object_diff.html'
-        ], context, current_app=self.admin_site.name)
+            ], context, current_app=self.admin_site.name)
 
 
 class ConceptPlanAdmin(DocumentAdmin):

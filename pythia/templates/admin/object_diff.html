@@ -37,10 +37,8 @@
 {% block content %}
     {% for diff in diffs %}
         <div>
-            <h3>{{ diff.0 }}</h3>
-            <div>
-            {{ diff.1 }}
-            </div>
+            <h3>{{ diff.0|safe }}</h3>
+            <div>{{ diff.1|safe }}</div>
         </div>
     {% endfor %}
 {% endblock %}

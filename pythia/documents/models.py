@@ -315,7 +315,11 @@ class Document(PolymorphicModel, Audit):
 
         Default: The Program Leaders making up the SCMT.
         """
-        self.project.reviewers
+        return self.project.reviewers
+
+    @property
+    def reviewer(self):
+        return self.project.reviewer
 
     @property
     def approvers(self):
@@ -349,7 +353,13 @@ class Document(PolymorphicModel, Audit):
         target=STATUS_INREVIEW,
         conditions=[can_seek_review],
         permission=lambda instance, user: user in instance.all_involved,
-        custom=dict(verbose="Submit for review", notify=True,)
+        custom=dict(
+            verbose="Submit for review",
+            explanation=("The Program Leader {0} will review and possibly "
+                         "update the document, then either request a revision "
+                         "from the project team or submit to the Directorate "
+                         "for approval."),
+            notify=True,)
         )
     def seek_review(self):
         """Transition this document to being in review."""
@@ -364,7 +374,12 @@ class Document(PolymorphicModel, Audit):
         target=STATUS_NEW,
         conditions=[can_recall],
         permission=lambda instance, user: user in instance.submitters,
-        custom=dict(verbose="Recall from review", notify=True,)
+        custom=dict(verbose="Recall from review",
+                    explanation=("The document will be recalled from the "
+                                 "Program Leader, made editable to the project"
+                                 " team again, who then can submit the"
+                                 " document for review again."),
+                    notify=True,)
         )
     def recall(self):
         """Transition this document to being new."""
@@ -382,7 +397,11 @@ class Document(PolymorphicModel, Audit):
         target=STATUS_INAPPROVAL,
         conditions=[can_seek_approval],
         permission=lambda instance, user: user in instance.reviewers_approvers,
-        custom=dict(verbose="Submit for approval", notify=True,)
+        custom=dict(
+            verbose="Submit for approval",
+            explanation=("Submit the document for approval to the "
+                         "Directorate."),
+            notify=True,)
         )
     def seek_approval(self):
         """Transition this document to be in approval."""
@@ -394,7 +413,11 @@ class Document(PolymorphicModel, Audit):
         target=STATUS_NEW,
         conditions=[can_seek_approval],
         permission=lambda instance, user: user in instance.reviewers_approvers,
-        custom=dict(verbose="Request revision from authors", notify=True,)
+        custom=dict(
+            verbose="Request revision from authors",
+            explanation=("Request a substantial revision of the document from "
+                         " the project team."),
+            notify=True,)
         )
     def request_revision_from_authors(self):
         """Push back to NEW to request a revision from the authors."""
@@ -412,7 +435,11 @@ class Document(PolymorphicModel, Audit):
         target=STATUS_APPROVED,
         conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Approve", notify=True,)
+        custom=dict(
+            verbose="Approve",
+            explanation=("Approve the document. This will have consequences"
+                         " for the project."),
+            notify=True,)
         )
     def approve(self):
         """Approve document."""
@@ -423,7 +450,11 @@ class Document(PolymorphicModel, Audit):
         target=STATUS_INREVIEW,
         conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Request reviewer revision", notify=True,)
+        custom=dict(
+            verbose="Request reviewer revision",
+            explanation=("Request a substantial revision of the document from "
+                         " the Program Leader."),
+            notify=True,)
         )
     def request_reviewer_revision(self):
         """Push back to INREVIEW to request reviewer revision."""
@@ -435,7 +466,11 @@ class Document(PolymorphicModel, Audit):
         target=STATUS_NEW,
         conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Request author revision", notify=True,)
+        custom=dict(
+            verbose="Request revision from authors",
+            explanation=("Request a substantial revision of the document from "
+                         " the project team."),
+            notify=True,)
         )
     def request_author_revision(self):
         """Push back to NEW to request author revision."""
@@ -456,7 +491,12 @@ class Document(PolymorphicModel, Audit):
         target=STATUS_NEW,
         conditions=[can_reset],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reset approval status", notify=True,)
+        custom=dict(
+            verbose="Reset approval status",
+            explanation=("Reset the document approval status. "
+                         "Revoking this document will have consequences for "
+                         "the project."),
+            notify=True,)
         )
     def reset(self):
         """Push back to NEW to reset document approval."""
@@ -477,26 +517,21 @@ class Document(PolymorphicModel, Audit):
         return self.status in [self.STATUS_INAPPROVAL, self.STATUS_APPROVED]
 
     # EMAIL NOTIFICATIONS ----------------------------------------------------#
-    def get_users_to_notify(self, status):
+    def get_users_to_notify(self, target):
         """Return a set of recipients for a given destination status.
 
         Default: use self.submitters, reviewers and approvers and
         override in Document models
         """
-        if status in [Document.STATUS_NEW, Document.STATUS_APPROVED]:
-            # if transition in ["request_revision_from_authors",
-            # "approve","request_author_revision"]:
-            print("[DEBUG] status {0} has recipients {1}".format(
-                transition, self.submitters))
-            return set(self.submitters)
-        elif status == Document.STATUS_INREVIEW:
-            # elif transition in ["seek_review", "request_reviewer_revision"]:
-            return set(self.reviewers)
-        elif status == Document.STATUS_INAPPROVAL:
-            # elif transition in ["seek_approval"]:
-            return set(self.approvers)
+        print("Getting recipients for transition target {0}".format(target))
+        if target in [Document.STATUS_NEW, Document.STATUS_APPROVED]:
+            return self.submitters
+        elif target == Document.STATUS_INREVIEW:
+            return self.reviewer
+        elif target == Document.STATUS_INAPPROVAL:
+            return self.approvers
         else:
-            return set()
+            return self.submitters
 
 
 class ConceptPlan(Document):
@@ -652,7 +687,13 @@ class ConceptPlan(Document):
         target=Document.STATUS_APPROVED,
         conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Approve", notify=True,)
+        custom=dict(
+            verbose="Approve",
+            explanation=("Approval of a ConceptPlan signals Directorate "
+                         "endorsement for the Project, creates a ProjectPlan, "
+                         "which the project team then needs to update and "
+                         " submit for review."),
+            notify=True,)
         )
     def do_approve(self):
         """
@@ -701,7 +742,13 @@ class ConceptPlan(Document):
         target=Document.STATUS_NEW,
         # conditions=[can_reset],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reset approval status", notify=True,)
+        custom=dict(
+            verbose="Reset approval status",
+            explanation=("Revoking the approval of a ConceptPlan will revoke"
+                         " the Directorate's endorsement for the Project. "
+                         "The project team will have to revise and submit the "
+                         "ConceptPlan."),
+            notify=True,)
         )
     def do_reset(self):
         """Push back to NEW to reset document approval."""
@@ -1094,7 +1141,12 @@ class ProjectPlan(Document):
         target=Document.STATUS_APPROVED,
         conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Approve", notify=True,)
+        custom=dict(
+            verbose="Approve",
+            explanation=("Approving the ProjectPlan activates the Project."
+                         "This means that formal work on the Project may "
+                         "commence, and annual updates will be required."),
+            notify=True,)
         )
     def do_approve(self):
         """Approve the document."""
@@ -1112,7 +1164,13 @@ class ProjectPlan(Document):
         target=Document.STATUS_NEW,
         # conditions=[can_reset],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reset approval status", notify=True,)
+        custom=dict(
+            verbose="Reset approval status",
+            explanation=("Revoking the approval of a ProjectPlan will "
+                         "push the Project back to being in the planning "
+                         "phase. The Project team will have to submit a"
+                         "revised ProjectPlan."),
+            notify=True,)
         )
     def do_reset(self):
         """Push back to NEW to reset document approval."""
@@ -1267,7 +1325,13 @@ class ProgressReport(Document):
         target=Document.STATUS_APPROVED,
         conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Approve", notify=True,)
+        custom=dict(
+            verbose="Approve",
+            explanation=("Approving a ProgressReport will complete the annual "
+                         "update and bring the Project back to its normal, "
+                         "active state, or complete an ongoing closure "
+                         "process."),
+            notify=True,)
         )
     def do_approve(self):
         """Transition to approve the ProgressReport."""
@@ -1300,7 +1364,11 @@ class ProgressReport(Document):
         target=Document.STATUS_NEW,
         # conditions=[can_reset],  # needs def can_reset() here
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reset approval status", notify=True,)
+        custom=dict(
+            verbose="Reset approval status",
+            explanation=("Revoking the approval of a ProgressReport will "
+                         "restart its annual update process."),
+            notify=True,)
         )
     def do_reset(self):
         """Push back to NEW to reset document approval."""
@@ -1373,7 +1441,12 @@ class ProjectClosure(Document):
         target=Document.STATUS_APPROVED,
         # conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Approve", notify=True,)
+        custom=dict(
+            verbose="Approve",
+            explanation=("Approving a ClosureForm will make the Project "
+                         "await its last annual update before the closure "
+                         "process is complete."),
+            notify=True,)
         )
     def do_approve(self):
         """Approve the ClosureForm."""
@@ -1396,7 +1469,11 @@ class ProjectClosure(Document):
         target=Document.STATUS_NEW,
         # conditions=[can_reset],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reset approval status", notify=True,)
+        custom=dict(
+            verbose="Reset approval status",
+            explanation=("Revoking the approval of a ProjectClosure pushes "
+                         "the Project back to its active state."),
+            notify=True,)
         )
     def reset(self):
         """Push back to NEW to reset document approval.
@@ -1457,7 +1534,12 @@ class StudentReport(Document):
         target=Document.STATUS_APPROVED,
         # conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Approve", notify=True,)
+        custom=dict(
+            verbose="Approve",
+            explanation=("Approving a StudentReport will complete the annual "
+                         "update and bring the Project back to its normal, "
+                         "active state."),
+            notify=True,)
         )
     def do_approve(self):
         """Approve the StudentReport."""
@@ -1480,7 +1562,13 @@ class StudentReport(Document):
         target=Document.STATUS_NEW,
         # conditions=[can_reset],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reset approval status", notify=True,)
+        custom=dict(
+            verbose="Reset approval status",
+            explanation=("Revoking the approval of a StudentReport will "
+                         "restart the annual update. The project team "
+                         "will have to submit a revised StudentReport "
+                         "to complete the update."),
+            notify=True,)
         )
     def reset(self):
         """

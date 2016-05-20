@@ -427,6 +427,10 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             return set()
 
     @property
+    def reviewer(self):
+        return [self.program.program_leader,]
+
+    @property
     def approvers(self):
         """
         Return all users with permission to "approve" this document.

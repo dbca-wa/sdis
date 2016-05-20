@@ -1,5 +1,5 @@
 from __future__ import unicode_literals, absolute_import
-
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.admin.util import unquote
 from django.core.exceptions import PermissionDenied
@@ -13,12 +13,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect, Http404
 
 from pythia.admin import BaseAdmin, Breadcrumb, DetailAdmin, DownloadAdminMixin
-from pythia.models import User
 from pythia.projects.models import PROJECT_CLASS_MAP
 from pythia.templatetags.pythia_base import pythia_urlname
+from pythia.utils import snitch
 from pythia.widgets import AreasWidgetWrapper
-from pythia.utils import mail_from_template
-
+from mail_templated import send_mail
+from sdis import settings
 from functools import update_wrapper
 
 
@@ -234,9 +234,9 @@ class ProjectAdmin(BaseAdmin):
 
         extra_urls = patterns(
             "",
-            url(r'^(.+)/transition/$', wrap(self.transition_view),
-                name='%s_%s_transition' % info),
-        )
+            url(r'^(.+)/transition/$',
+                wrap(self.transition_view),
+                name='%s_%s_transition' % info),)
         return extra_urls + super(BaseAdmin, self).get_urls()
 
     def transition_view(self, request, object_id, extra_context=None):
@@ -267,37 +267,47 @@ class ProjectAdmin(BaseAdmin):
         t = [t for t in obj.get_available_user_status_transitions(request.user)
              if t.name == tx][0]
 
+        # Who should get notified about this tx?
+        recipients = obj.get_users_to_notify(t.target)
+        recipients_text = ", ".join([r.fullname for r in recipients])
+        explanation = t.custom["explanation"].format(recipients_text)
+        # recipients.discard(request.user)
+
+        context = dict(
+            instigator=request.user,
+            object_name=force_text(obj),
+            title=t.custom["verbose"],
+            recipients=recipients_text,
+            explanation=explanation,
+            notify_default=t.custom["notify"],
+            breadcrumbs=self.get_breadcrumbs(request, obj),
+            model_name=capfirst(force_text(opts.verbose_name_plural)),
+            object=obj,
+            opts=opts,)
+        context.update(extra_context or {})
+
+        # This failsafe is not required, as DEBUG sends emails to console.
+        if settings.DEBUG:
+            print("[DEBUG] recipients would have been: {0}".format(recipients))
+            User = get_user_model()
+            recipients = [User.objects.get(username='florianm'), ]
+            print("[DEBUG] recipients replaced with: {0}".format(recipients))
+
+        # User clicks "confirm" on transition.html
         if request.method == 'POST':
-            # Then do the stuff with the thing
-            print("About to run transition {0}, object status {1}".format(
-                t.name, obj.status))
+
+            # run transition, save changed object to db
             getattr(obj, t.name)()
             obj.save()
-            print("Finished running transition {0}, object status {1}".format(
-                t.name, obj.status))
 
-            if ('_notify' in request.POST) and (
-                    request.POST.get('_notify') == u'on'):
-                if settings.DEBUG:
-                    print("[DEBUG] recipients would have been: {0}".format(
-                       recipients))
-                    User = get_user_model()
-                    recipients = [User.objects.get(username='florianm'), ]
-                    print("[DEBUG] recipients replaced with: {0}".format(
-                       recipients))
-
-                context = {
-                    'instigator': request.user,
-                    'object_name': '{0} of {1}'.format(
-                        obj.__str__(), obj.project.fullname),
-                    'object_url': request.build_absolute_uri(reverse(
-                        pythia_urlname(obj.opts, 'change'), args=[obj.pk])),
-                    'action': t.name,
-                    'status': t.target,
-                    }
-                mail_from_template('[SDIS] {0} has been updated'.format(
-                    obj.project_type_year_number),
-                    list(recipients), 'email/email_base', context)
+            # Send email notifications if requested
+            do_notify = ('_notify' in request.POST) and (
+                request.POST.get('_notify') == u'on')
+            tmpl = 'email/email_base.tpl'
+            to_emails = [u.email for u in recipients]
+            from_email = settings.DEFAULT_FROM_EMAIL
+            if do_notify:
+                send_mail(tmpl, context, from_email, to_emails)
 
             # Redirect the user back to the document change page
             redirect_url = reverse('admin:%s_%s_change' %
@@ -307,14 +317,6 @@ class ProjectAdmin(BaseAdmin):
             return HttpResponseRedirect(redirect_url)
 
 
-        context = dict(
-            title=_('%s: %s') % (t.custom["verbose"], force_text(obj)),
-            breadcrumbs=self.get_breadcrumbs(request, obj),
-            transition_name=capfirst(force_text(t.name)),
-            model_name=capfirst(force_text(opts.verbose_name_plural)),
-            object=obj,
-            opts=opts,)
-        context.update(extra_context or {})
 
         return TemplateResponse(request, [
             "admin/%s/%s/%s_transition.html" % (
