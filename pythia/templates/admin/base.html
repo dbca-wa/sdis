@@ -1,4 +1,4 @@
-{% load i18n staticfiles pythia_base compress%}
+{% load i18n staticfiles pythia_base compress %}
 <!doctype html>
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
@@ -18,7 +18,7 @@
   <link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/joyride/2.1.0/joyride.min.css">
   <link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/handsontable/0.9.9/jquery.handsontable.css">
 
-  <!--link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/font-awesome/4.5.0/css/font-awesome.min.css"-->
+  <link rel="stylesheet" type="text/css" href="https://static.dpaw.wa.gov.au/static/libs/font-awesome/4.5.0/css/font-awesome.min.css">
   {{ form.media.css }}
 
   {% if LANGUAGE_BIDI %}
@@ -294,8 +294,10 @@
 
         <li id="nav-button-docs">
             <a href="http://sdis.readthedocs.io/"
-               target="_" id="user-docs-navbtn"
-               title="Open the documentation in a new tab" style="color:red;">
+               target="_"
+               id="user-docs-navbtn"
+               style="color:red;"
+               title="Stuck? Find all answers in the SDIS documentation.">
                Need help?</a>
         </li>
       </ul><!-- /.nav.navbar-nav -->
