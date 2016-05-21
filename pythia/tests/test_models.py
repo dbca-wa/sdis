@@ -202,28 +202,30 @@ class ScienceProjectModelTests(BaseTestCase):
 
         print("Fast-track ConceptPlan to INAPPROVAL.")
         self.scp.seek_approval()
-        s = self.scp
-        s.save()
-        self.assertEqual(s.status, Document.STATUS_INAPPROVAL)
-        self.assertTrue(avail_tx(self.marge, 'do_approve', s))
-        self.assertTrue(avail_tx(self.marge, 'request_reviewer_revision', s))
-        self.assertTrue(avail_tx(self.marge, 'request_author_revision', s))
+        self.assertEqual(self.scp.status, Document.STATUS_INAPPROVAL)
+        self.assertEqual(
+            [tx.name for tx in self.scp.get_available_user_status_transitions(self.marge)],
+            ['do_approve', 'request_reviewer_revision', 'request_author_revision'])
 
-        self.assertFalse(avail_tx(self.steven, 'do_approve', s))
-        self.assertFalse(avail_tx(self.steven, 'request_reviewer_revision', s))
-        self.assertFalse(avail_tx(self.steven, 'request_author_revision', s))
+        self.assertEqual(
+            [tx.name for tx in
+             self.scp.get_available_user_status_transitions(self.steven)], [])
 
-        self.assertFalse(avail_tx(self.fran, 'do_approve', s))
-        self.assertFalse(avail_tx(self.fran, 'request_reviewer_revision', s))
-        self.assertFalse(avail_tx(self.fran, 'request_author_revision', s))
+        self.assertEqual(
+            [tx.name for tx in
+             self.scp.get_available_user_status_transitions(self.fran)], [])
 
-        self.assertFalse(avail_tx(self.bob, 'do_approve', s))
-        self.assertFalse(avail_tx(self.bob, 'request_reviewer_revision', s))
-        self.assertFalse(avail_tx(self.bob, 'request_author_revision', s))
+        self.assertEqual(
+            [tx.name for tx in
+             self.scp.get_available_user_status_transitions(self.bob)], [])
 
-        self.assertFalse(avail_tx(self.peter, 'do_approve', s))
-        self.assertFalse(avail_tx(self.peter, 'request_reviewer_revision', s))
-        self.assertFalse(avail_tx(self.peter, 'request_author_revision', s))
+        self.assertEqual(
+            [tx.name for tx in
+             self.scp.get_available_user_status_transitions(self.john)], [])
+
+        self.assertEqual(
+            [tx.name for tx in
+             self.scp.get_available_user_status_transitions(self.peter)], [])
 
         print("Fast-track ConceptPlan to APPROVED.")
         self.scp.approve()
