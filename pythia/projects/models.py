@@ -1280,7 +1280,7 @@ class CollaborationProject(Project):
         field='status',
         source=Project.STATUS_ACTIVE,
         target=Project.STATUS_COMPLETED,
-        permission=lambda instance, user: user in instance.submitters,
+        permission=lambda instance, user: user in instance.all_involved,
         custom=dict(verbose="Close project", explanation="", notify=False,)
         )
     def complete(self):

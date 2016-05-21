@@ -204,8 +204,11 @@ class ScienceProjectModelTests(BaseTestCase):
         self.scp.seek_approval()
         self.assertEqual(self.scp.status, Document.STATUS_INAPPROVAL)
         self.assertEqual(
-            [tx.name for tx in self.scp.get_available_user_status_transitions(self.marge)],
-            ['do_approve', 'request_reviewer_revision', 'request_author_revision'])
+            [tx.name for tx in
+             self.scp.get_available_user_status_transitions(self.marge)],
+            ['do_approve',
+             'request_reviewer_revision',
+             'request_author_revision'])
 
         self.assertEqual(
             [tx.name for tx in
@@ -428,19 +431,9 @@ class ScienceProjectModelTests(BaseTestCase):
 
     def test_scienceproject_update(self):
         """Test the update workflow of a ScienceProject."""
-        p = ScienceProjectFactory.create(
-            creator=self.bob,
-            modifier=self.bob,
-            program=self.program,
-            # data_custodian=self.bob, site_custodian=self.bob,
-            project_owner=self.bob)
 
-        ProjectMembership.objects.create(
-            project=p,
-            user=self.bob,
-            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
-        p.status = Project.STATUS_ACTIVE
-        p.save()
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save()
 
         print("Request update")
         from datetime import datetime
@@ -448,152 +441,134 @@ class ScienceProjectModelTests(BaseTestCase):
         r = ARARReport.objects.create(
             year=self.project.year, date_open=n, date_closed=n)
         print("Created {0}".format(r.__str__()))
-        p.request_update()
+        self.project.request_update()
+        self.project.save()
 
-        pr = p.documents.instance_of(ProgressReport).get()
-        # p = pr.project
+        pr = self.project.documents.instance_of(ProgressReport).get()
 
-        self.assertEqual(p.status, Project.STATUS_UPDATE)
-        self.assertEqual(ProgressReport.objects.filter(project=p).count(), 1)
+        self.assertEqual(self.project.status, Project.STATUS_UPDATE)
+        self.assertEqual(
+            self.project.documents.instance_of(ProgressReport).count(), 1)
         self.assertEqual(pr.status, Document.STATUS_NEW)
         print("Complete update")
         pr.seek_review()
         pr.seek_approval()
         pr.approve()
-        self.assertEqual(pr.project.status, Project.STATUS_ACTIVE)
-        p = pr.project
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-
+        self.project = pr.project
+        self.project.save()
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
     def test_scienceproject_cancel_update(self):
         """Test force closure during update of a ScienceProject."""
-        project = ScienceProjectFactory.create(
-            creator=self.bob,
-            modifier=self.bob,
-            program=self.program,
-            # data_custodian=self.bob, site_custodian=self.bob,
-            project_owner=self.bob)
-
-        ProjectMembership.objects.create(
-            project=project,
-            user=self.bob,
-            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
-        project.status = Project.STATUS_ACTIVE
-        project.save()
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save()
 
         print("Request update")
         from datetime import datetime
         n = datetime.now()
         r = ARARReport.objects.create(
-            year=project.year, date_open=n, date_closed=n)
+            year=self.project.year, date_open=n, date_closed=n)
         print("Created {0}".format(r.__str__()))
-        project.request_update()
+        self.project.request_update()
+        self.project.save()
 
-        pr = project.documents.instance_of(ProgressReport).get()
-        # p = pr.project
-        # p.save()
+        pr = self.project.documents.instance_of(ProgressReport).get()
 
-        self.assertEqual(project.status, Project.STATUS_UPDATE)
+        self.assertEqual(self.project.status, Project.STATUS_UPDATE)
         self.assertEqual(
-            project.documents.instance_of(ProgressReport).all().count(), 1)
+            self.project.documents.instance_of(ProgressReport).count(), 1)
         self.assertEqual(pr.status, Document.STATUS_NEW)
 
         print("force_closure is available to reviewers_approvers")
-        self.assertTrue(avail_tx(self.marge, 'force_closure', project))
-        self.assertTrue(avail_tx(self.steven, 'force_closure', project))
-        self.assertTrue(avail_tx(self.fran, 'force_closure', project))
-        self.assertFalse(avail_tx(self.bob, 'force_closure', project))
-        self.assertFalse(avail_tx(self.john, 'force_closure', project))
-        self.assertFalse(avail_tx(self.peter, 'force_closure', project))
+        self.assertTrue(avail_tx(self.marge, 'force_closure', self.project))
+        self.assertTrue(avail_tx(self.steven, 'force_closure', self.project))
+        self.assertTrue(avail_tx(self.fran, 'force_closure', self.project))
+        self.assertFalse(avail_tx(self.bob, 'force_closure', self.project))
+        self.assertFalse(avail_tx(self.john, 'force_closure', self.project))
+        self.assertFalse(avail_tx(self.peter, 'force_closure', self.project))
 
-        print("Run force_closure on {0}".format(project.debugname))
-        project.force_closure()
-        project.save()
-        print("{0} should be CLOSURE_REQUESTED".format(project.debugname))
-        self.assertEqual(project.status, Project.STATUS_CLOSURE_REQUESTED)
+        print("Run force_closure on {0}".format(self.project.debugname))
+        self.project.force_closure()
+        self.project.save()
+        print("{0} should be CLOSURE_REQUESTED".format(self.project.debugname))
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
         print("There should be one NEW ProjectClosure")
-        pc = project.documents.instance_of(ProjectClosure).get()
+        pc = self.project.documents.instance_of(ProjectClosure).get()
         self.assertEqual(
-            project.documents.instance_of(ProjectClosure).all().count(), 1)
+            self.project.documents.instance_of(ProjectClosure).count(), 1)
         print("There should be zero ProgressReports")
         self.assertEqual(pc.status, Document.STATUS_NEW)
         self.assertEqual(
-            project.documents.instance_of(ProgressReport).all().count(), 0)
+            self.project.documents.instance_of(ProgressReport).count(), 0)
 
     def test_scienceproject_closure(self):
         """Test the closure workflow of a ScienceProject."""
-        project = ScienceProjectFactory.create(
-            creator=self.bob,
-            modifier=self.bob,
-            program=self.program,
-            # data_custodian=self.bob, site_custodian=self.bob,
-            project_owner=self.bob)
-
-        ProjectMembership.objects.create(
-            project=project,
-            user=self.bob,
-            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
-        project.status = Project.STATUS_ACTIVE
-        project.save()
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save()
 
         print("Request closure")
-        self.assertEqual(project.status, Project.STATUS_ACTIVE)
-        project.request_closure()
-        project.save()
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+        self.project.request_closure()
+        self.project.save()
         print("Project should be in CLOSURE_REQUESTED")
-        self.assertEqual(project.status, Project.STATUS_CLOSURE_REQUESTED)
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
         print("Check for ProjectClosure document")
         self.assertEqual(
-            project.documents.instance_of(ProjectClosure).count(), 1)
-        pc = project.documents.instance_of(ProjectClosure).get()
+            self.project.documents.instance_of(ProjectClosure).count(), 1)
+        pc = self.project.documents.instance_of(ProjectClosure).get()
         self.assertEqual(pc.status, Document.STATUS_NEW)
-        self.assertEqual(project.status, Project.STATUS_CLOSURE_REQUESTED)
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
         print("Project closure requires existing and approved ProjectClosure")
-        self.assertFalse(project.can_accept_closure())
+        self.assertFalse(self.project.can_accept_closure())
         print("Fast-track ProjectClosure document through review and approval")
         pc.seek_review()
         pc.seek_approval()
         pc.approve()
         print("Check that {0} is approved".format(pc.debugname))
         self.assertEqual(pc.status, Document.STATUS_APPROVED)
-        project = pc.project    # NOTE pc.project has latest change
-        project.save()          # NOTE sync to db
-        self.assertEqual(project.status, Project.STATUS_CLOSING)
+        self.project = pc.project    # NOTE pc.project has latest change
+        self.project.save()          # NOTE sync to db
+        self.assertEqual(self.project.status, Project.STATUS_CLOSING)
 
         print("Request final update")
-        project.request_final_update()
-        project.save()
-        self.assertEqual(project.status, Project.STATUS_FINAL_UPDATE)
+        self.project.request_final_update()
+        self.project.save()
+        self.assertEqual(self.project.status, Project.STATUS_FINAL_UPDATE)
         print("Check that there's exactly one ProgressReport.")
         self.assertEqual(
-            project.documents.instance_of(ProgressReport).count(), 1)
-        pr = project.documents.instance_of(ProgressReport).get()
+            self.project.documents.instance_of(ProgressReport).count(), 1)
+        pr = self.project.documents.instance_of(ProgressReport).get()
         self.assertEqual(pr.status, Document.STATUS_NEW)
         print("Complete update by fast-tracking ProgressReport approval.")
         pr.seek_review()
         pr.seek_approval()
         pr.approve()
-        project = pr.project  # pr.project has latest change in memory
-        project.save()
+        self.project = pr.project  # pr.project has latest change in memory
+        self.project.save()
         print("Approving final update completes project")
-        self.assertEqual(project.status, Project.STATUS_COMPLETED)
+        self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
         print("Full ScienceProject test walkthrough successfully completed.")
 
     def test_reset_conceptplan_on_pending_scienceproject(self):
         """Resetting an approved SCP resets SCP and project to NEW."""
         print("Fast-forward SP to pending.")
-        p = self.project
-        scp = p.documents.instance_of(ConceptPlan).get()
+        scp = self.project.documents.instance_of(ConceptPlan).get()
         scp.seek_review()
         scp.seek_approval()
         scp.approve()
+        self.project = scp.project
+        self.project.save()
         self.assertEqual(scp.status, Document.STATUS_APPROVED)
         scp.reset()
+        scp.save()
+        self.project = scp.project
+        self.project.save()
         print("After reset, both ConceptPlan and Project must be STATUS_NEW")
         self.assertEqual(scp.status, Document.STATUS_NEW)
-        self.assertEqual(p.status, Project.STATUS_NEW)
+        self.assertEqual(self.project.status, Project.STATUS_NEW)
         print("Project setup should never spawn a second ConceptPlan")
-        self.assertEqual(p.documents.instance_of(ConceptPlan).count(), 1)
+        self.assertEqual(
+            self.project.documents.instance_of(ConceptPlan).count(), 1)
 
 
 class CoreFunctionProjectModelTests(TestCase):
@@ -612,7 +587,7 @@ class CoreFunctionProjectModelTests(TestCase):
         self.assertEqual(p.documents.count(), 1)
         self.assertEqual(p.documents.instace_of(ConceptPlan).count(), 1)
 
-    def test_that_active_CF_cannot_be_closed_without_closureform(self):
+    def test_that_active_CF_cannot_be_closed(self):
         """A CoreFunction requires an approved ClosureForm for closure."""
         u = UserFactory.create()
         p = CoreFunctionProjectFactory.create(creator=u, project_owner=u)
@@ -624,6 +599,58 @@ class CoreFunctionProjectModelTests(TestCase):
 class CollaborationProjectModelTests(TestCase):
     """CollaborationProject tests."""
 
+    def setUp(self):
+        """Create a StudentProject and users."""
+        self.smt, created = Group.objects.get_or_create(name='SMT')
+        self.scd, created = Group.objects.get_or_create(name='SCD')
+        self.users, created = Group.objects.get_or_create(name='Users')
+
+        self.superuser = SuperUserFactory.create(username='admin')
+        self.bob = UserFactory.create(
+            username='bob', first_name='Bob', last_name='Bobson')
+        self.john = UserFactory.create(
+            username='john', first_name='John', last_name='Johnson')
+        self.steven = UserFactory.create(
+            username='steven', first_name='Steven', last_name='Stevenson')
+        self.steven.groups.add(self.smt)
+        self.fran = UserFactory.create(
+            username='fran', first_name='Fran', last_name='Franson')
+        self.fran.groups.add(self.smt)
+        self.marge = UserFactory.create(
+            username='marge', first_name='Marge', last_name='Simpson')
+        self.marge.groups.add(self.scd)
+        self.peter = UserFactory.create(
+            username='peter', first_name='Peter', last_name='Peterson')
+
+        self.program = Program.objects.create(
+                name="ScienceProgram",
+                slug="scienceprogram",
+                position=0,
+                program_leader=self.steven)
+
+        self.project = CollaborationProjectFactory.create(
+            creator=self.bob,
+            modifier=self.bob,
+            program=self.program,
+            # data_custodian=self.bob, site_custodian=self.bob,
+            project_owner=self.bob)
+
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.bob,
+            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+
+    def tearDown(self):
+        """Destroy test objects after a test."""
+        [m.delete for m in ProjectMembership.objects.all()]
+        self.project.delete()
+        self.superuser.delete()
+        self.bob.delete()
+        self.steven.delete()
+        self.marge.delete()
+        self.peter.delete()
+        self.program.delete()
+
     def test_new_collaboration_project(self):
         """A new CollaborationProject is ACTIVE.
 
@@ -631,7 +658,25 @@ class CollaborationProjectModelTests(TestCase):
         """
         project = CollaborationProjectFactory.create()
         self.assertEqual(project.status, Project.STATUS_ACTIVE)
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
+    def test_complete_active_collaborationproject(self):
+        """Test complete of an active CollaborationProject."""
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+
+        print("complete is available to all_involved")
+        self.assertTrue(avail_tx(self.marge, 'complete', self.project))
+        self.assertTrue(avail_tx(self.steven, 'complete', self.project))
+        self.assertTrue(avail_tx(self.fran, 'complete', self.project))
+        self.assertTrue(avail_tx(self.bob, 'complete', self.project))
+        self.assertFalse(avail_tx(self.john, 'complete', self.project))
+        self.assertFalse(avail_tx(self.peter, 'complete', self.project))
+
+        print("Run complete on {0}".format(self.project.debugname))
+        self.project.complete()
+        self.project.save()
+        print("{0} should be COMLETED".format(self.project.debugname))
+        self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
 
 class StudentProjectModelTests(TestCase):
     """StudentProject model tests."""
@@ -677,6 +722,16 @@ class StudentProjectModelTests(TestCase):
             user=self.bob,
             role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
 
+    def tearDown(self):
+        """Destroy test objects after a test."""
+        [m.delete for m in ProjectMembership.objects.all()]
+        self.project.delete()
+        self.superuser.delete()
+        self.bob.delete()
+        self.steven.delete()
+        self.marge.delete()
+        self.peter.delete()
+        self.program.delete()
 
     def test_new_student_project(self):
         """A new STP has no approval process and is ACTIVE."""
