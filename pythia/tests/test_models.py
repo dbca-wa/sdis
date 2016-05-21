@@ -735,4 +735,23 @@ class StudentProjectModelTests(TestCase):
         self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
         print("There should be zero ProgressReports")
         self.assertEqual(
-            self.project.documents.instance_of(ProgressReport).all().count(), 0)
+            self.project.documents.instance_of(ProgressReport).all().count(),
+            0)
+
+    def test_complete_active_studentproject(self):
+        """Test complete of an active StudentProject."""
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+
+        print("complete is available to all_involved")
+        self.assertTrue(avail_tx(self.marge, 'complete', self.project))
+        self.assertTrue(avail_tx(self.steven, 'complete', self.project))
+        self.assertTrue(avail_tx(self.fran, 'complete', self.project))
+        self.assertTrue(avail_tx(self.bob, 'complete', self.project))
+        self.assertFalse(avail_tx(self.john, 'complete', self.project))
+        self.assertFalse(avail_tx(self.peter, 'complete', self.project))
+
+        print("Run complete on {0}".format(self.project.debugname))
+        self.project.complete()
+        self.project.save()
+        print("{0} should be COMLETED".format(self.project.debugname))
+        self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
