@@ -572,28 +572,105 @@ class ScienceProjectModelTests(BaseTestCase):
 
 
 class CoreFunctionProjectModelTests(TestCase):
-    """Test CoreFunction model methods, transitions, gate checks."""
+    """Test CoreFunction model methods, transitions, gate checks.
+
+    As both SP and CF inherit the same code and behaviour from Project,
+    the detailed tests for SP won't require duplication here.
+
+    The tests here are canary tests.
+    """
+
+    def setUp(self):
+        """Create a CF and users for all roles.
+
+        * user: a superuser
+        * smt: reviewer group
+        * scd: approver group
+        * bob bobson: Bob, a research scientist, wants to create a new
+            science project. Bob will be the principal scientist of that
+            project, add team members, write project documentation,
+            submit docs for approval, and write updates.
+        * John Johnson: John will join Bob's team. Then he should be able
+            to execute "team-only" submit actions.
+        * Steven Stevenson: Steven is Bob's Program Leader.
+            As a member of SMT, the reviewers, Steven is the first instance of
+            approval.
+        * Marge Simpson: Marge is the Divisional Director.
+            As member of the Directorate, M is the highest instance of approval
+            and has resurrection powers for projects.
+        * Fran Franson, another PL and member of SMT, is also a reviewer.
+        * Peter Peterson: Peter won't have anything to do with the project.
+            Peter should not be able to execute any "team-only" actions!
+        """
+        self.smt, created = Group.objects.get_or_create(name='SMT')
+        self.scd, created = Group.objects.get_or_create(name='SCD')
+        self.users, created = Group.objects.get_or_create(name='Users')
+
+        self.superuser = SuperUserFactory.create(username='admin')
+        self.bob = UserFactory.create(
+            username='bob', first_name='Bob', last_name='Bobson')
+        self.john = UserFactory.create(
+            username='john', first_name='John', last_name='Johnson')
+        self.steven = UserFactory.create(
+            username='steven', first_name='Steven', last_name='Stevenson')
+        self.steven.groups.add(self.smt)
+        self.fran = UserFactory.create(
+            username='fran', first_name='Fran', last_name='Franson')
+        self.fran.groups.add(self.smt)
+        self.marge = UserFactory.create(
+            username='marge', first_name='Marge', last_name='Simpson')
+        self.marge.groups.add(self.scd)
+        self.peter = UserFactory.create(
+            username='peter', first_name='Peter', last_name='Peterson')
+
+        self.program = Program.objects.create(
+                name="ScienceProgram",
+                slug="scienceprogram",
+                position=0,
+                program_leader=self.steven)
+
+        self.project = CoreFunctionProjectFactory.create(
+            creator=self.bob,
+            modifier=self.bob,
+            program=self.program,
+            # data_custodian=self.bob, site_custodian=self.bob,
+            project_owner=self.bob)
+
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.bob,
+            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+
+        self.scp = self.project.documents.instance_of(ConceptPlan).get()
+
+    def tearDown(self):
+        """Destroy test objects after a test."""
+        [m.delete for m in ProjectMembership.objects.all()]
+        self.scp.delete()
+        self.project.delete()
+        self.superuser.delete()
+        self.bob.delete()
+        self.steven.delete()
+        self.marge.delete()
+        self.peter.delete()
+        self.program.delete()
 
     def new_CF_is_active(self):
         """A new CoreFunction has STATUS_ACTIVE immediately."""
         u = UserFactory.create()
         p = CoreFunctionProjectFactory.create(creator=u, project_owner=u)
         self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
     def new_CF_has_conceptplan(self):
         """A new CoreFunction has one doc, a ConceptPlan."""
-        u = UserFactory.create()
-        p = CoreFunctionProjectFactory.create(creator=u, project_owner=u)
-        self.assertEqual(p.documents.count(), 1)
-        self.assertEqual(p.documents.instace_of(ConceptPlan).count(), 1)
+        self.assertEqual(self.project.documents.count(), 1)
+        self.assertEqual(
+            self.project.documents.instace_of(ConceptPlan).count(), 1)
 
     def test_that_active_CF_cannot_be_closed(self):
-        """A CoreFunction requires an approved ClosureForm for closure."""
-        u = UserFactory.create()
-        p = CoreFunctionProjectFactory.create(creator=u, project_owner=u)
-        p.status = Project.STATUS_ACTIVE
-        p.save()
-        self.assertFalse(p.can_complete())
+        """A CoreFunction has the same closure process as ScienceProjects."""
+        self.assertFalse(self.project.can_complete())
 
 
 class CollaborationProjectModelTests(TestCase):
