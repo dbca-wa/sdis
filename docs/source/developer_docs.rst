@@ -86,6 +86,50 @@ After four years of "scraping over the line" in "whatever it takes" mode, we now
 finally are implementing Test Driven Development. See the badges on GitHub and
 at the top of this documentation for current build status and test coverage.
 
+The ideal development work flow
+-------------------------------
+* Translate feature requests by stakeholders into functional specs
+* Translate functional specs into tests
+* Write code, add docstrings
+* Document intended usage of new fatures in user docs
+* Add/adjust UI elements, feature tours (joyride.js), tooltips
+
+
+Testing
+=======
+
+Objects and database persistence
+--------------------------------
+
+One intriguing bug we found had us scratching our heads for longer than we liked.
+Consider a test case involving a Project subclass, e.g. ScienceProject.
+ScienceProjects have transitions, which spawn subclasses of Documents, which
+have their own transitions. A Document's final "approve" transition will trigger
+the corresponding transition on their Project object.
+
+On one hand, accessing the attributes of the document's FK to the project (`d.project`)
+will fetch the new, changed project from memory.
+
+On the other hand, accessing the project directly will fetch the old, unchanged
+object fresh from the database. It will appear as the transitions had no effect.
+
+To synchronise db and memory, the reference to the project has to be saved to db.
+::
+    p = ScienceProjectFactory.create()
+    d = p.documents.instance_of(ConceptPlan).get()
+    d.first_transition()
+    d.next_transition()
+    d.final_transition_that_triggers_project_transition()
+
+    # p is unchanged
+    self.assertEqual(p.status, UNCHANGED_STATUS)
+    # d.project is changed
+    self.assertEqual(d.project.status, CHANGED_STATUS)
+    p = d.project
+    p.save()
+
+    self.assertEqual(p.status, CHANGED_STATUS)
+
 
 Data models
 ===========

@@ -19,8 +19,12 @@ def avail_tx(u, tx, obj):
 
     Arguments:
 
-        u   User object
+        u   User instance (User)
+        tx  transition name (String)
+        obj An object with django-fsm transitions
 
+    Returns:
+        boolean Whether a user can run transition on an object.
     """
     return tx in [t.name for t in obj.get_available_user_status_transitions(u)]
 
@@ -93,6 +97,9 @@ class ScienceProjectModelTests(BaseTestCase):
         self.steven = UserFactory.create(
             username='steven', first_name='Steven', last_name='Stevenson')
         self.steven.groups.add(self.smt)
+        self.fran = UserFactory.create(
+            username='fran', first_name='Fran', last_name='Franson')
+        self.fran.groups.add(self.smt)
         self.marge = UserFactory.create(
             username='marge', first_name='Marge', last_name='Simpson')
         self.marge.groups.add(self.scd)
@@ -158,8 +165,12 @@ class ScienceProjectModelTests(BaseTestCase):
         * Only SMT members should be able to review.
         * Only SCD members should be able to approve.
         """
-        print("Only project team members like Bob can submit the ConceptPlan.")
+        print("Only project team members like Bob, reviewers and approvers "
+              "can submit the ConceptPlan.")
         self.assertTrue(avail_tx(self.bob, 'seek_review', self.scp))
+        self.assertTrue(avail_tx(self.steven, 'seek_review', self.scp))
+        self.assertTrue(avail_tx(self.fran, 'seek_review', self.scp))
+        self.assertTrue(avail_tx(self.marge, 'seek_review', self.scp))
 
         print("John is not on the team and has no permission to submit.")
         self.assertFalse(avail_tx(self.john, 'seek_review', self.scp))
@@ -189,10 +200,26 @@ class ScienceProjectModelTests(BaseTestCase):
             avail_tx(self.steven, 'request_revision_from_authors', self.scp))
 
         print("Fast-track ConceptPlan to INAPPROVAL.")
+        t = ['approve', 'request_reviewer_revision', 'request_author_revision']
         self.scp.seek_approval()
         self.assertEqual(self.scp.status, Document.STATUS_INAPPROVAL)
+        [self.assertTrue(avail_tx(self.marge, tx, self.scp)) for tx in t]
+        [self.assertFalse(avail_tx(self.steven, tx, self.scp)) for tx in t]
+        [self.assertFalse(avail_tx(self.fran, tx, self.scp)) for tx in t]
+        [self.assertFalse(avail_tx(self.bob, tx, self.scp)) for tx in t]
+        [self.assertFalse(avail_tx(self.john, tx, self.scp)) for tx in t]
+        [self.assertFalse(avail_tx(self.peter, tx, self.scp)) for tx in t]
 
-        # TODO directorate actions
+        print("Fast-track ConceptPlan to APPROVED.")
+        self.scp.approve()
+        self.assertEqual(self.scp.status, Document.STATUS_APPROVED)
+        print("Only approvers can reset the document.")
+        self.assertTrue(avail_tx(self.marge, 'reset', self.scp))
+        self.assertFalse(avail_tx(self.steven, 'reset', self.scp))
+        self.assertFalse(avail_tx(self.fran, 'reset', self.scp))
+        self.assertFalse(avail_tx(self.bob, 'reset', self.scp))
+        self.assertFalse(avail_tx(self.john, 'reset', self.scp))
+        self.assertFalse(avail_tx(self.peter, 'reset', self.scp))
 
     def test_scienceproject_endorsement(self):
         """Test all possible transitions in a ScienceProject's life cycle.
@@ -456,13 +483,8 @@ class ScienceProjectModelTests(BaseTestCase):
         pc.approve()
         print("Check that {0} is approved".format(pc.debugname))
         self.assertEqual(pc.status, Document.STATUS_APPROVED)
-        # print("[project] {0}".format(project.debugname))  # closure requested
-        # print("[pc.project] {0}".format(pc.project.debugname))  # closing
         project = pc.project    # NOTE pc.project has latest change
         project.save()          # NOTE sync to db
-        # print("[project] {0}".format(project.debugname))  # closing
-        # print("[pc.project] {0}".format(pc.project.debugname))  # closing
-        # self.assertEqual(pc.project.status, Project.STATUS_CLOSING)
         self.assertEqual(project.status, Project.STATUS_CLOSING)
 
         print("Request final update")
