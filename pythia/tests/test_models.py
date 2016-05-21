@@ -464,6 +464,62 @@ class ScienceProjectModelTests(BaseTestCase):
         p = pr.project
         self.assertEqual(p.status, Project.STATUS_ACTIVE)
 
+
+    def test_scienceproject_cancel_update(self):
+        """Test force closure during update of a ScienceProject."""
+        project = ScienceProjectFactory.create(
+            creator=self.bob,
+            modifier=self.bob,
+            program=self.program,
+            # data_custodian=self.bob, site_custodian=self.bob,
+            project_owner=self.bob)
+
+        ProjectMembership.objects.create(
+            project=project,
+            user=self.bob,
+            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+        project.status = Project.STATUS_ACTIVE
+        project.save()
+
+        print("Request update")
+        from datetime import datetime
+        n = datetime.now()
+        r = ARARReport.objects.create(
+            year=project.year, date_open=n, date_closed=n)
+        print("Created {0}".format(r.__str__()))
+        project.request_update()
+
+        pr = project.documents.instance_of(ProgressReport).get()
+        # p = pr.project
+        # p.save()
+
+        self.assertEqual(project.status, Project.STATUS_UPDATE)
+        self.assertEqual(
+            project.documents.instance_of(ProgressReport).all().count(), 1)
+        self.assertEqual(pr.status, Document.STATUS_NEW)
+
+        print("force_closure is available to reviewers_approvers")
+        self.assertTrue(avail_tx(self.marge, 'force_closure', project))
+        self.assertTrue(avail_tx(self.steven, 'force_closure', project))
+        self.assertTrue(avail_tx(self.fran, 'force_closure', project))
+        self.assertFalse(avail_tx(self.bob, 'force_closure', project))
+        self.assertFalse(avail_tx(self.john, 'force_closure', project))
+        self.assertFalse(avail_tx(self.peter, 'force_closure', project))
+
+        print("Run force_closure on {0}".format(project.debugname))
+        project.force_closure()
+        project.save()
+        print("{0} should be CLOSURE_REQUESTED".format(project.debugname))
+        self.assertEqual(project.status, Project.STATUS_CLOSURE_REQUESTED)
+        print("There should be one NEW ProjectClosure")
+        pc = project.documents.instance_of(ProjectClosure).get()
+        self.assertEqual(
+            project.documents.instance_of(ProjectClosure).all().count(), 1)
+        print("There should be zero ProgressReports")
+        self.assertEqual(pc.status, Document.STATUS_NEW)
+        self.assertEqual(
+            project.documents.instance_of(ProgressReport).all().count(), 0)
+
     def test_scienceproject_closure(self):
         """Test the closure workflow of a ScienceProject."""
         project = ScienceProjectFactory.create(
@@ -523,35 +579,6 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertEqual(project.status, Project.STATUS_COMPLETED)
         print("Full ScienceProject test walkthrough successfully completed.")
 
-    def test_force_closure_updating_project(self):
-        """Test force-closing an updating project.
-
-        Ensure latest ProgressReport is removed and project is set to closure
-        requested.
-        """
-        print("Create active project, request update")
-        p = self.project
-        p.status = Project.STATUS_ACTIVE
-        p.save()
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-
-        print("Create ARARReport so we can request updates")
-        from datetime import datetime
-        n = datetime.now()
-        r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
-        print("Creating ARAR {0}".format(r.__str__()))
-        p.request_update()
-        self.assertEqual(p.status, Project.STATUS_UPDATE)
-        pr = p.documents.instance_of(ProgressReport).get()
-        self.assertEqual(p.documents.instance_of(ProgressReport).count(), 1)
-        self.assertEqual(pr.status, Document.STATUS_NEW)
-
-        print("Force closure of project sets project to closure requested")
-        p.force_closure()
-        self.assertEqual(p.status, Project.STATUS_CLOSURE_REQUESTED)
-        print("Force closure of project deletes latest projectplan")
-        self.assertEqual(p.documents.instance_of(ProgressReport).count(), 0)
-
     def test_reset_conceptplan_on_pending_scienceproject(self):
         """Resetting an approved SCP resets SCP and project to NEW."""
         print("Fast-forward SP to pending.")
@@ -609,28 +636,103 @@ class CollaborationProjectModelTests(TestCase):
 class StudentProjectModelTests(TestCase):
     """StudentProject model tests."""
 
+    def setUp(self):
+        """Create a StudentProject and users."""
+        self.smt, created = Group.objects.get_or_create(name='SMT')
+        self.scd, created = Group.objects.get_or_create(name='SCD')
+        self.users, created = Group.objects.get_or_create(name='Users')
+
+        self.superuser = SuperUserFactory.create(username='admin')
+        self.bob = UserFactory.create(
+            username='bob', first_name='Bob', last_name='Bobson')
+        self.john = UserFactory.create(
+            username='john', first_name='John', last_name='Johnson')
+        self.steven = UserFactory.create(
+            username='steven', first_name='Steven', last_name='Stevenson')
+        self.steven.groups.add(self.smt)
+        self.fran = UserFactory.create(
+            username='fran', first_name='Fran', last_name='Franson')
+        self.fran.groups.add(self.smt)
+        self.marge = UserFactory.create(
+            username='marge', first_name='Marge', last_name='Simpson')
+        self.marge.groups.add(self.scd)
+        self.peter = UserFactory.create(
+            username='peter', first_name='Peter', last_name='Peterson')
+
+        self.program = Program.objects.create(
+                name="ScienceProgram",
+                slug="scienceprogram",
+                position=0,
+                program_leader=self.steven)
+
+        self.project = StudentProjectFactory.create(
+            creator=self.bob,
+            modifier=self.bob,
+            program=self.program,
+            # data_custodian=self.bob, site_custodian=self.bob,
+            project_owner=self.bob)
+
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.bob,
+            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+
+
     def test_new_student_project(self):
         """A new STP has no approval process and is ACTIVE."""
         project = StudentProjectFactory.create()
         self.assertEqual(project.status, Project.STATUS_ACTIVE)
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
     def test_studentproject_progressreport(self):
         """Test the update workflow of a StudentReport."""
-        p = StudentProjectFactory.create()
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
         from datetime import datetime
         n = datetime.now()
-        r = ARARReport.objects.create(year=p.year, date_open=n, date_closed=n)
+        r = ARARReport.objects.create(
+            year=self.project.year, date_open=n, date_closed=n)
         print("Created {0}".format(r.__str__()))
         print("Request update")
-        p.request_update()
-        p.save()
+        self.project.request_update()
+        self.project.save()
         self.assertEqual(StudentReport.objects.count(), 1)
-        self.assertEqual(p.status, Project.STATUS_UPDATE)
-        self.assertFalse(p.can_complete_update())
-        pr = p.documents.instance_of(StudentReport).get()
+        self.assertEqual(self.project.status, Project.STATUS_UPDATE)
+        self.assertFalse(self.project.can_complete_update())
+        pr = self.project.documents.instance_of(StudentReport).get()
         pr.seek_review()
         pr.seek_approval()
         pr.approve()
+        self.project = pr.project
+        self.project.save()
         self.assertEqual(pr.status, Document.STATUS_APPROVED)
-        self.assertTrue(p.status, Project.STATUS_ACTIVE)
+        self.assertTrue(self.project.status, Project.STATUS_ACTIVE)
+
+    def test_force_closure_updating_studentproject(self):
+        """Test force closure of updating studentproject."""
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+        from datetime import datetime
+        n = datetime.now()
+        r = ARARReport.objects.create(
+            year=self.project.year, date_open=n, date_closed=n)
+        print("Created {0}".format(r.__str__()))
+        print("Request update")
+        self.project.request_update()
+        self.project.save()
+        self.assertEqual(StudentReport.objects.count(), 1)
+        self.assertEqual(self.project.status, Project.STATUS_UPDATE)
+
+        print("force_closure is available to all_involved")
+        self.assertTrue(avail_tx(self.marge, 'force_closure', self.project))
+        self.assertTrue(avail_tx(self.steven, 'force_closure', self.project))
+        self.assertTrue(avail_tx(self.fran, 'force_closure', self.project))
+        self.assertTrue(avail_tx(self.bob, 'force_closure', self.project))
+        self.assertFalse(avail_tx(self.john, 'force_closure', self.project))
+        self.assertFalse(avail_tx(self.peter, 'force_closure', self.project))
+
+        print("Run force_closure on {0}".format(self.project.debugname))
+        self.project.force_closure()
+        self.project.save()
+        print("{0} should be COMLETED".format(self.project.debugname))
+        self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
+        print("There should be zero ProgressReports")
+        self.assertEqual(
+            self.project.documents.instance_of(ProgressReport).all().count(), 0)

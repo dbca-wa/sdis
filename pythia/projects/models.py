@@ -653,7 +653,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_UPDATE,
         target=STATUS_CLOSURE_REQUESTED,
         # conditions=[can_request_closure],
-        permission=lambda instance, user: user in instance.reviewers,
+        permission=lambda instance, user: user in instance.reviewers_approvers,
         custom=dict(verbose="Force closure and cancel update", explanation="", notify=True,)
         )
     def force_closure(self):
@@ -1437,12 +1437,33 @@ class StudentProject(Project):
         """
         return
 
+    @transition(
+        field='status',
+        source=Project.STATUS_UPDATE,
+        target=Project.STATUS_COMPLETED,
+        # conditions=[can_request_closure],
+        permission=lambda instance, user: user in instance.all_involved,
+        custom=dict(verbose="Force closure and cancel update", explanation="", notify=True,)
+        )
+    def force_closure(self):
+        """Transition to move project to COMPLETED during UPDATING.
+
+        All involved staff can run this tx on a StudentProject for which
+        an ARAR update was requested, but which should have been closed.
+
+        The permission to run this tx is given to all involved, as closure
+        can be requested for a StudentProject by all involved staff, and does
+        not require a formal process.
+
+        Deletes current progressreport (warning - is it the right one?)
+        """
+        self.progressreport.delete()
 
     @transition(
         field='status',
         source=Project.STATUS_ACTIVE,
         target=Project.STATUS_COMPLETED,
-        permission=lambda instance, user: user in instance.submitters,
+        permission=lambda instance, user: user in instance.all_involved,
         custom=dict(verbose="Close project", explanation="", notify=True,)
         )
     def complete(self):
