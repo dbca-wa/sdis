@@ -158,10 +158,11 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertFalse(p.can_endorse())
 
     def test_conceptplan_permissions(self):
-        """Test expected ConceptPlan permissions for submitters.
+        """Test expected ConceptPlan permissions for transitions.
 
         * All users should be able to view.
-        * Only project team members should be able to change and submit.
+        * Only involved staff (submitters, reviewers, approvers)
+          should be able to change and submit.
         * Only SMT members should be able to review.
         * Only SCD members should be able to approve.
         """
@@ -200,26 +201,40 @@ class ScienceProjectModelTests(BaseTestCase):
             avail_tx(self.steven, 'request_revision_from_authors', self.scp))
 
         print("Fast-track ConceptPlan to INAPPROVAL.")
-        t = ['approve', 'request_reviewer_revision', 'request_author_revision']
         self.scp.seek_approval()
-        self.assertEqual(self.scp.status, Document.STATUS_INAPPROVAL)
-        [self.assertTrue(avail_tx(self.marge, tx, self.scp)) for tx in t]
-        [self.assertFalse(avail_tx(self.steven, tx, self.scp)) for tx in t]
-        [self.assertFalse(avail_tx(self.fran, tx, self.scp)) for tx in t]
-        [self.assertFalse(avail_tx(self.bob, tx, self.scp)) for tx in t]
-        [self.assertFalse(avail_tx(self.john, tx, self.scp)) for tx in t]
-        [self.assertFalse(avail_tx(self.peter, tx, self.scp)) for tx in t]
+        s = self.scp
+        s.save()
+        self.assertEqual(s.status, Document.STATUS_INAPPROVAL)
+        self.assertTrue(avail_tx(self.marge, 'do_approve', s))
+        self.assertTrue(avail_tx(self.marge, 'request_reviewer_revision', s))
+        self.assertTrue(avail_tx(self.marge, 'request_author_revision', s))
+
+        self.assertFalse(avail_tx(self.steven, 'do_approve', s))
+        self.assertFalse(avail_tx(self.steven, 'request_reviewer_revision', s))
+        self.assertFalse(avail_tx(self.steven, 'request_author_revision', s))
+
+        self.assertFalse(avail_tx(self.fran, 'do_approve', s))
+        self.assertFalse(avail_tx(self.fran, 'request_reviewer_revision', s))
+        self.assertFalse(avail_tx(self.fran, 'request_author_revision', s))
+
+        self.assertFalse(avail_tx(self.bob, 'do_approve', s))
+        self.assertFalse(avail_tx(self.bob, 'request_reviewer_revision', s))
+        self.assertFalse(avail_tx(self.bob, 'request_author_revision', s))
+
+        self.assertFalse(avail_tx(self.peter, 'do_approve', s))
+        self.assertFalse(avail_tx(self.peter, 'request_reviewer_revision', s))
+        self.assertFalse(avail_tx(self.peter, 'request_author_revision', s))
 
         print("Fast-track ConceptPlan to APPROVED.")
         self.scp.approve()
         self.assertEqual(self.scp.status, Document.STATUS_APPROVED)
         print("Only approvers can reset the document.")
-        self.assertTrue(avail_tx(self.marge, 'reset', self.scp))
-        self.assertFalse(avail_tx(self.steven, 'reset', self.scp))
-        self.assertFalse(avail_tx(self.fran, 'reset', self.scp))
-        self.assertFalse(avail_tx(self.bob, 'reset', self.scp))
-        self.assertFalse(avail_tx(self.john, 'reset', self.scp))
-        self.assertFalse(avail_tx(self.peter, 'reset', self.scp))
+        self.assertTrue(avail_tx(self.marge, 'do_reset', self.scp))
+        self.assertFalse(avail_tx(self.steven, 'do_reset', self.scp))
+        self.assertFalse(avail_tx(self.fran, 'do_reset', self.scp))
+        self.assertFalse(avail_tx(self.bob, 'do_reset', self.scp))
+        self.assertFalse(avail_tx(self.john, 'do_reset', self.scp))
+        self.assertFalse(avail_tx(self.peter, 'do_reset', self.scp))
 
     def test_scienceproject_endorsement(self):
         """Test all possible transitions in a ScienceProject's life cycle.
