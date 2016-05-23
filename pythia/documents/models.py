@@ -443,6 +443,7 @@ class Document(PolymorphicModel, Audit):
         )
     def approve(self):
         """Approve document."""
+        return
 
     @transition(
         field=status,
@@ -458,7 +459,7 @@ class Document(PolymorphicModel, Audit):
         )
     def request_reviewer_revision(self):
         """Push back to INREVIEW to request reviewer revision."""
-        self.save()
+        return
 
     @transition(
         field=status,
@@ -474,7 +475,7 @@ class Document(PolymorphicModel, Audit):
         )
     def request_author_revision(self):
         """Push back to NEW to request author revision."""
-        self.save()
+        return
 
     def can_reset(self):
         """Return True if the document can be reset to NEW.
@@ -670,22 +671,22 @@ class ConceptPlan(Document):
         # doc permission "review" restricts seek_approval to SMT already
         return True
 
-    def can_approve(self):
-        """
-        Return true if this document can be approved.
-
-        Insert here any restrictions (originating from project status etc)
-        which could prevent an INAPPROVAL document from being approved
-        by users with the permission "approve".
-        """
-        # doc permission "approve" restricts approve to SCD already
-        return True
+    # def can_approve(self):
+    #     """
+    #     Return true if this document can be approved.
+    #
+    #     Insert here any restrictions (originating from project status etc)
+    #     which could prevent an INAPPROVAL document from being approved
+    #     by users with the permission "approve".
+    #     """
+    #     # doc permission "approve" restricts approve to SCD already
+    #     return True
 
     @transition(
         field='status',
         source=Document.STATUS_INAPPROVAL,
         target=Document.STATUS_APPROVED,
-        conditions=[can_approve],
+        # conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(
             verbose="Approve",
@@ -695,7 +696,7 @@ class ConceptPlan(Document):
                          " submit for review."),
             notify=True,)
         )
-    def do_approve(self):
+    def approve(self):
         """
         Advance the project to status "pending".
 
@@ -710,31 +711,16 @@ class ConceptPlan(Document):
         Another venue might be to use django_fsm.signals.post_transition, if we
         can isolate ConceptPlan.approve from within the signal.
         """
-        snitch("Document {0} ({1}) running tx approve...".format(
-            self.__str__(), self.status))
+        from pythia.projects.models import Project
+        self.project.status = Project.STATUS_PENDING
+        self.project.save(update_fields=['status', ])
 
-    def approve(self):
-        """Approve ConceptPlan, endorse Project.
+        pp, created = ProjectPlan.objects.get_or_create(project=self.project)
+        pp.save()
 
-        Calling save() on both Document after calling the transition should
-        not be necessary, but the status change won't stick otherwise.
-        This could be a bug in django-fsm or in SDIS.
-        """
-        snitch("Document {0} ({1}) calling tx approve...".format(
-            self.__str__(), self.status))
-        self.do_approve()
-        snitch("Document {0} ({1}) done running tx approve.".format(
-            self.__str__(), self.status))
-        self.save()  # Required for Document status change to stick
-        snitch("Project {0} ({1}) can endorse: {2}".format(
-            self.project.__str__(), self.project.status,
-            self.project.can_endorse()))
-        self.project.endorse()
-        self.project.save()  # Required for Project status change to stick
-
-    def can_reset(self):
-        """Return True if the document can be reset to NEW."""
-        return True
+    # def can_reset(self):
+    #     """Return True if the document can be reset to NEW."""
+    #     return True
 
     @transition(
         field='status',
@@ -746,20 +732,15 @@ class ConceptPlan(Document):
             verbose="Reset approval status",
             explanation=("Revoking the approval of a ConceptPlan will revoke"
                          " the Directorate's endorsement for the Project. "
-                         "The project team will have to revise and submit the "
-                         "ConceptPlan."),
+                         "The project team will have to revise and re-submit "
+                         "the ConceptPlan."),
             notify=True,)
         )
-    def do_reset(self):
-        """Push back to NEW to reset document approval."""
-
     def reset(self):
         """Reset document approval, reset project status to NEW."""
-        self.do_reset()
-        self.save()
-        # Push project back to NEW to cancel SCP endorsement
-        self.project.setup()
-        self.project.save()
+        from pythia.projects.models import Project
+        self.project.status = Project.STATUS_NEW
+        self.project.save(update_fields=['status', ])
 
 
 class ProjectPlan(Document):
@@ -1148,15 +1129,11 @@ class ProjectPlan(Document):
                          "commence, and annual updates will be required."),
             notify=True,)
         )
-    def do_approve(self):
-        """Approve the document."""
-
     def approve(self):
         """Approve document and turn project active."""
-        self.do_approve()
-        self.save()
-        self.project.approve()
-        self.project.save()
+        from pythia.projects.models import Project
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save(update_fields=['status', ])
 
     @transition(
         field='status',
@@ -1172,15 +1149,11 @@ class ProjectPlan(Document):
                          "revised ProjectPlan."),
             notify=True,)
         )
-    def do_reset(self):
-        """Push back to NEW to reset document approval."""
-
     def reset(self):
         """Resetting ProjectPlan approval pushes Project to PENDING."""
-        self.do_reset()
-        self.save()
-        self.project.revoke_approval()
-        self.project.save()
+        from pythia.projects.models import Project
+        self.project.status = Project.STATUS_PENDING
+        self.project.save(update_fields=['status', ])
 
 
 def projectplan_post_save(sender, instance, created, **kwargs):
@@ -1286,44 +1259,44 @@ class ProgressReport(Document):
             str(self.year-1),
             str(self.year))
 
-    def can_seek_review(self):
-        """
-        Return true if this document can be passed to the review stage.
+    # def can_seek_review(self):
+    #     """
+    #     Return true if this document can be passed to the review stage.
+    #
+    #     Insert here any restrictions (originating from project status etc)
+    #     which could prevent a NEW document from being
+    #     submitted for review by users with permission "submit" (=team).
+    #     """
+    #     # doc permission "submit" restricts seek_review to team already
+    #     return True
 
-        Insert here any restrictions (originating from project status etc)
-        which could prevent a NEW document from being
-        submitted for review by users with permission "submit" (=team).
-        """
-        # doc permission "submit" restricts seek_review to team already
-        return True
+    # def can_seek_approval(self):
+    #     """
+    #     Return true if this document can seek approval.
+    #
+    #     Insert here any restrictions (originating from project status etc)
+    #     which could prevent an INREVIEW document from being
+    #     submitted for approval by users with permission "review" (=SMT).
+    #     """
+    #     # doc permission "review" restricts seek_approval to SMT already
+    #     return True
 
-    def can_seek_approval(self):
-        """
-        Return true if this document can seek approval.
-
-        Insert here any restrictions (originating from project status etc)
-        which could prevent an INREVIEW document from being
-        submitted for approval by users with permission "review" (=SMT).
-        """
-        # doc permission "review" restricts seek_approval to SMT already
-        return True
-
-    def can_approve(self):
-        """
-        Return true if this document can be approved.
-
-        Insert here any restrictions (originating from project status etc)
-        which could prevent an INAPPROVAL document from being approved
-        by users with the permission "approve".
-        """
-        # doc permission "approve" restricts approve to SCD already
-        return True
+    # def can_approve(self):
+    #     """
+    #     Return true if this document can be approved.
+    #
+    #     Insert here any restrictions (originating from project status etc)
+    #     which could prevent an INAPPROVAL document from being approved
+    #     by users with the permission "approve".
+    #     """
+    #     # doc permission "approve" restricts approve to SCD already
+    #     return True
 
     @transition(
         field='status',
         source=Document.STATUS_INAPPROVAL,
         target=Document.STATUS_APPROVED,
-        conditions=[can_approve],
+        # conditions=[can_approve],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(
             verbose="Approve",
@@ -1333,30 +1306,23 @@ class ProgressReport(Document):
                          "process."),
             notify=True,)
         )
-    def do_approve(self):
-        """Transition to approve the ProgressReport."""
-
     def approve(self):
         """Complete the requested update.
 
         This will set the document status to APPROVED and call the appropriate
         project transition:
 
-        * projects in Project.STATUS_UPDATE will call
-          `Project.complete_update` to transition back to
+        * projects in Project.STATUS_UPDATE will transition back to
           `Project.STATUS_ACTIVE`;
-        * projects in `Project.STATUS_FINAL_UPDATE` will call
-          `Project.complete()` to transition forward to
+        * projects in `Project.STATUS_FINAL_UPDATE` will transition forward to
           `Project.STATUS_COMPLETED`.
         """
-        self.do_approve()
-        self.save()
         from pythia.projects.models import Project
         if self.project.status == Project.STATUS_UPDATE:
-            self.project.complete_update()
+            self.project.status = Project.STATUS_ACTIVE
         elif self.project.status == Project.STATUS_FINAL_UPDATE:
-            self.project.complete()
-        self.project.save()
+            self.project.status = Project.STATUS_COMPLETED
+        self.project.save(update_fields=['status', ])
 
     @transition(
         field='status',
@@ -1370,26 +1336,14 @@ class ProgressReport(Document):
                          "restart its annual update process."),
             notify=True,)
         )
-    def do_reset(self):
-        """Push back to NEW to reset document approval."""
-
     def reset(self):
         """Push the project back to status before ProgressReport approval."""
-        self.do_reset()
-        # Push project back to UPDATE_REQUESTED
-        # to cancel ARAR update approval
         from pythia.projects.models import Project
         if self.project.status == Project.STATUS_ACTIVE:
-            self.project.request_update()
-            # request update again, possibly sending email
-            # TODO avoid duplicating latest update
+            self.project.status = Project.STATUS_UPDATE
         elif self.project.status == Project.STATUS_COMPLETED:
-            self.project.request_final_update()   # resurrect completed project
-        else:
-            p = self.project
-            p.status = Project.STATUS_UPDATE
-            p.save(update_fields=['status', ])
-
+            self.project.status = Project.STATUS_FINAL_UPDATE
+        self.project.save(update_fields=['status', ])
 
 class ProjectClosure(Document):
     """
@@ -1448,20 +1402,11 @@ class ProjectClosure(Document):
                          "process is complete."),
             notify=True,)
         )
-    def do_approve(self):
-        """Approve the ClosureForm."""
-        return
-
     def approve(self):
         """Auto-advance the project to CLOSING."""
-        self.do_approve()
-        self.save()
-        print("{0} asking {1} to accept closure".format(
-            self.debugname, self.project.debugname))
-        self.project.accept_closure()
-        self.project.save()
-        print("{0} finished asking {1} to accept closure".format(
-            self.debugname, self.project.debugname))
+        from pythia.projects.models import Project
+        self.project.status = Project.STATUS_CLOSING
+        self.project.save(update_fields=['status', ])
 
     @transition(
         field='status',
@@ -1476,16 +1421,11 @@ class ProjectClosure(Document):
             notify=True,)
         )
     def reset(self):
-        """Push back to NEW to reset document approval.
-
-        This doesn't use a transition as it's a hard reset, and, being a
-        transition itself, doesn't need any additional gate checks.
+        """Revoke document approval transitions project back to active.
         """
-        # Push project back to ACTIVE to cancel CF endorsement
         from pythia.projects.models import Project
-        p = self.project
-        p.status = Project.STATUS_ACTIVE
-        p.save(update_fields=['status', ])
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save(update_fields=['status', ])
 
 
 @python_2_unicode_compatible
@@ -1536,25 +1476,19 @@ class StudentReport(Document):
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(
             verbose="Approve",
-            explanation=("Approving a StudentReport will complete the annual "
-                         "update and bring the Project back to its normal, "
+            explanation=("Approving a StudentReport completes the annual "
+                         "update and brings the Project back to its normal, "
                          "active state."),
             notify=True,)
         )
-    def do_approve(self):
-        """Approve the StudentReport."""
-
     def approve(self):
         """
-        Auto-advance the project to active if an update has been requested.
+        Approving the update transitions project back to active.
 
-        Do nothing on project level if the project is not in
-        Project.STATUS_UPDATE.
         """
-        self.do_approve()
-        self.save()
-        self.project.complete_update()
-        self.project.save()
+        from pythia.projects.models import Project
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save(update_fields=['status', ])
 
     @transition(
         field='status',
@@ -1576,7 +1510,7 @@ class StudentReport(Document):
 
         Project status hard-reset to STATUS_UPDATE (no tx).
         """
-        from pythia.projects import Project
+        from pythia.projects.models import Project
         self.project.status = Project.STATUS_UPDATE
         self.project.save(update_fields=['status', ])
 

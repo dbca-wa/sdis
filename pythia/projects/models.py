@@ -459,111 +459,104 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     # -------------------------------------------------------------------------#
     # Project approval
     #
-    @transition(
-        field='status',
-        source=[STATUS_NEW, STATUS_PENDING],
-        target=STATUS_NEW,
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Setup Project", explanation="", notify=False,)
-        )
     def setup(self):
         """Perform post-save project setup."""
-        ProjectMembership.objects.create(
+        pm, created = ProjectMembership.objects.get_or_create(
             project=self,
             user=self.project_owner,
             role=ProjectMembership.ROLE_SUPERVISING_SCIENTIST)
 
-    # NEW -> PENDING ---------------------------------------------------------#
-    def can_endorse(self):
-        """
-        Inactive gate-check prior to `endorse()`.
+    # # NEW -> PENDING --------------------------------------------------------#
+    # def can_endorse(self):
+    #     """
+    #     Inactive gate-check prior to `endorse()`.
+    #
+    #     A science project or core function can only become PENDING if its
+    #     Concept Plan has been approved.
+    #     Other projects are fast-tracked to status PROJECT_ACTIVE on `setup()`.
+    #
+    #     NOTE ConceptPlan.approve() calls Project.endorse() while still being
+    #     in status Document.STATUS_INAPPROVAL immediately before setting the
+    #     status to Document.STATUS_APPROVED.
+    #     """
+    #     if self.documents.instance_of(ConceptPlan).exists():
+    #         pp = self.documents.instance_of(ConceptPlan).get()
+    #         print("Project.can_endorse checking {0}({1})".format(
+    #             pp.__str__(), pp.status))
+    #         return pp.is_approved
+    #     else:
+    #         return False
+    #
+    # @transition(
+    #     field='status',
+    #     source=STATUS_NEW,
+    #     target=STATUS_PENDING,
+    #     conditions=[can_endorse],
+    #     permission=lambda instance, user: user in instance.approvers,
+    #     custom=dict(verbose="Endorse project", explanation="", notify=True,)
+    #     )
+    # def do_endorse(self):
+    #     """
+    #     Transition to move project to PENDING.
+    #
+    #     Generates ProjectPlan as required for SPP and CF, skipped by others.
+    #     """
+    #     msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
+    #     print(msg + "adding a ProjectPlan")
+    #     if not self.documents.instance_of(ProjectPlan).exists():
+    #         pp, created = ProjectPlan.objects.get_or_create(project=self)
+    #         pp.save()
+    #
+    # def endorse(self):
+    #     """Project endorsement triggered through ConceptPlan approval tx."""
+    #     msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
+    #     print(msg + "calling tx do_endorse...")
+    #     self.do_endorse()
+    #     print(msg + "finished tx do_endorse.")
+    #     self.save()
+    #     print(msg + "saved.")
 
-        A science project or core function can only become PENDING if its
-        Concept Plan has been approved.
-        Other projects are fast-tracked to status PROJECT_ACTIVE on `setup()`.
-
-        NOTE ConceptPlan.approve() calls Project.endorse() while still being
-        in status Document.STATUS_INAPPROVAL immediately before setting the
-        status to Document.STATUS_APPROVED.
-        """
-        if self.documents.instance_of(ConceptPlan).exists():
-            pp = self.documents.instance_of(ConceptPlan).get()
-            print("Project.can_endorse checking {0}({1})".format(
-                pp.__str__(), pp.status))
-            return pp.is_approved
-        else:
-            return False
-
-    @transition(
-        field='status',
-        source=STATUS_NEW,
-        target=STATUS_PENDING,
-        conditions=[can_endorse],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Endorse project", explanation="", notify=True,)
-        )
-    def do_endorse(self):
-        """
-        Transition to move project to PENDING.
-
-        Generates ProjectPlan as required for SPP and CF, skipped by others.
-        """
-        msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
-        print(msg + "adding a ProjectPlan")
-        if not self.documents.instance_of(ProjectPlan).exists():
-            pp, created = ProjectPlan.objects.get_or_create(project=self)
-            pp.save()
-
-    def endorse(self):
-        """Project endorsement is triggered through ConceptPlan approval tx."""
-        msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
-        print(msg + "calling tx do_endorse...")
-        self.do_endorse()
-        print(msg + "finished tx do_endorse.")
-        self.save()
-        print(msg + "saved.")
-
-    # PENDING -> ACTIVE ------------------------------------------------------#
-    def can_approve(self):
-        """Whether ProjectPlan exists and is approved."""
-        if self.documents.instance_of(ProjectPlan).exists():
-            pp = self.documents.instance_of(ProjectPlan).get()
-            print("Project.can_approve checking {0}({1})".format(
-                pp.__str__(), pp.status))
-            return pp.is_approved
-        else:
-            return False
-
-    @transition(
-        field='status',
-        source=STATUS_PENDING,
-        target=STATUS_ACTIVE,
-        conditions=[can_approve],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Approve Project", explanation="", notify=False,)
-        )
-    def do_approve(self):
-        """Transition to move the project to ACTIVE."""
-
-    def approve(self):
-        """Project approval is triggered through ProjectPlan approval tx."""
-        msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
-        print(msg + "calling tx do_approve...")
-        self.do_approve()
-        print(msg + "finished tx do_approve.")
-        self.save()
-        print(msg + "saved.")
-
-    @transition(
-        field='status',
-        source=STATUS_ACTIVE,
-        target=STATUS_PENDING,
-        conditions=[can_approve],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Revoke approval", explanation="", notify=False,)
-        )
-    def revoke_approval(self):
-        """Transition to move the project from ACTIVE to PENDING."""
+    # # PENDING -> ACTIVE -----------------------------------------------------#
+    # def can_approve(self):
+    #     """Whether ProjectPlan exists and is approved."""
+    #     if self.documents.instance_of(ProjectPlan).exists():
+    #         pp = self.documents.instance_of(ProjectPlan).get()
+    #         print("Project.can_approve checking {0}({1})".format(
+    #             pp.__str__(), pp.status))
+    #         return pp.is_approved
+    #     else:
+    #         return False
+    #
+    # @transition(
+    #     field='status',
+    #     source=STATUS_PENDING,
+    #     target=STATUS_ACTIVE,
+    #     conditions=[can_approve],
+    #     permission=lambda instance, user: user in instance.approvers,
+    #     custom=dict(verbose="Approve Project", explanation="", notify=False,)
+    #     )
+    # def do_approve(self):
+    #     """Transition to move the project to ACTIVE."""
+    #
+    # def approve(self):
+    #     """Project approval is triggered through ProjectPlan approval tx."""
+    #     msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
+    #     print(msg + "calling tx do_approve...")
+    #     self.do_approve()
+    #     print(msg + "finished tx do_approve.")
+    #     self.save()
+    #     print(msg + "saved.")
+    #
+    # @transition(
+    #     field='status',
+    #     source=STATUS_ACTIVE,
+    #     target=STATUS_PENDING,
+    #     conditions=[can_approve],
+    #     permission=lambda instance, user: user in instance.approvers,
+    #     custom=dict(verbose="Revoke approval", explanation="", notify=False,)
+    #     )
+    # def revoke_approval(self):
+    #     """Transition to move the project from ACTIVE to PENDING."""
 
     # ACTIVE -> UPDATING -----------------------------------------------------#
     def can_request_update(self):
@@ -594,34 +587,34 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         self.make_progressreport(report)
         return
 
-    # UPDATING --> ACTIVE ----------------------------------------------------#
-    def can_complete_update(self):
-        """
-        Gate-check prior to `complete_update()`.
-
-        Allow the update to be complete when the document has been approved.
-        WARNING: will check against the latest progress report to be approved.
-        Could return True if no current ProgressReport has been requested and
-        previous ProgressReport is approved. Assumes that `request_update()`
-        has been called, and new projects joining the party during an active
-        ARAR reporting cycle will get their `request_update()` called.
-
-        Needs override for STP to check for StudentReport to be approved.
-        """
-        return (self.documents.instance_of(ProgressReport).exists() and
-                self.documents.instance_of(ProgressReport).latest().is_approved)
-
-    @transition(
-        field='status',
-        source=STATUS_UPDATE,
-        target=STATUS_ACTIVE,
-        conditions=[can_complete_update],
-        permission=lambda instance, user: user in instance.submitters,
-        custom=dict(verbose="Complete update", explanation="", notify=True,)
-        )
-    def complete_update(self):
-        """Move the project back to ACTIVE after finishing its update."""
-        return
+    # # UPDATING --> ACTIVE ---------------------------------------------------#
+    # def can_complete_update(self):
+    #     """
+    #     Gate-check prior to `complete_update()`.
+    #
+    #     Allow the update to be complete when the document has been approved.
+    #     WARNING: will check against the latest progress report to be approved.
+    #     Could return True if no current ProgressReport has been requested and
+    #     previous ProgressReport is approved. Assumes that `request_update()`
+    #     has been called, and new projects joining the party during an active
+    #     ARAR reporting cycle will get their `request_update()` called.
+    #
+    #     Needs override for STP to check for StudentReport to be approved.
+    #     """
+    #     return (self.documents.instance_of(ProgressReport).exists() and
+    #             self.documents.instance_of(ProgressReport).latest().is_approved)
+    #
+    # @transition(
+    #     field='status',
+    #     source=STATUS_UPDATE,
+    #     target=STATUS_ACTIVE,
+    #     conditions=[can_complete_update],
+    #     permission=lambda instance, user: user in instance.submitters,
+    #     custom=dict(verbose="Complete update", explanation="", notify=True,)
+    #     )
+    # def complete_update(self):
+    #     """Move the project back to ACTIVE after finishing its update."""
+    #     return
 
     # ACTIVE -> CLOSURE_REQUESTED --------------------------------------------#
     def can_request_closure(self):
@@ -668,31 +661,31 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         pc, created = ProjectClosure.objects.get_or_create(project=self)
         self.progressreport.delete()
 
-    # CLOSURE_REQUESTED -> CLOSING -------------------------------------------#
-    def can_accept_closure(self):
-        """
-        Gate-check prior to `accept_closure()`.
-
-        Allow the update to progress to closing if the closure form
-        has been approved.
-
-        TODO: insert gate checks: is the projectplan updated with latest data
-        management info, is the closure form approved
-        """
-        return (self.documents.instance_of(ProjectClosure).exists() and
-                self.documents.instance_of(ProjectClosure).latest().is_approved)
-
-    @transition(
-        field='status',
-        source=STATUS_CLOSURE_REQUESTED,
-        target=STATUS_CLOSING,
-        conditions=[can_accept_closure],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Accept closure", explanation="", notify=True,)
-        )
-    def accept_closure(self):
-        """Transition to move the project to CLOSING."""
-        print("{0} accepting closure".format(self.debugname))
+    # # CLOSURE_REQUESTED -> CLOSING -----------------------------------------#
+    # def can_accept_closure(self):
+    #     """
+    #     Gate-check prior to `accept_closure()`.
+    #
+    #     Allow the update to progress to closing if the closure form
+    #     has been approved.
+    #
+    #     TODO: insert gate checks: is the projectplan updated with latest data
+    #     management info, is the closure form approved
+    #     """
+    #     return (self.documents.instance_of(ProjectClosure).exists() and
+    #             self.documents.instance_of(ProjectClosure).latest().is_approved)
+    #
+    # @transition(
+    #     field='status',
+    #     source=STATUS_CLOSURE_REQUESTED,
+    #     target=STATUS_CLOSING,
+    #     conditions=[can_accept_closure],
+    #     permission=lambda instance, user: user in instance.approvers,
+    #     custom=dict(verbose="Accept closure", explanation="", notify=True,)
+    #     )
+    # def accept_closure(self):
+    #     """Transition to move the project to CLOSING."""
+    #     print("{0} accepting closure".format(self.debugname))
 
     # CLOSING -> FINAL_UPDATE ------------------------------------------------#
     def can_request_final_update(self):
@@ -720,38 +713,40 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         pr, created = ProgressReport.objects.get_or_create(
             project=self, is_final_report=True, year=date.today().year)
 
-    # FINAL_UPDATE -> COMPLETED ----------------------------------------------#
-    def can_complete(self):
-        """
-        Gate-check prior to `complete()`.
-
-        Projects can be completed if the final progress report and project
-        closure are approved.
-        """
-        return (
-            self.documents.instance_of(ProgressReport).exists() and
-            self.documents.instance_of(
-                ProgressReport).latest().is_final_report and
-            self.documents.instance_of(ProgressReport).latest().is_approved and
-            self.documents.instance_of(ProjectClosure).exists() and
-            self.documents.instance_of(ProjectClosure).latest().is_approved)
-
-    @transition(
-        field='status',
-        source=STATUS_FINAL_UPDATE,
-        target=STATUS_COMPLETED,
-        conditions=[can_complete],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Complete final update", explanation="", notify=True,)
-        )
-    def complete(self):
-        """
-        Transition to move the project to its COMPLETED state.
-
-        No more actions are required of this project.
-        Only reactivate() should be possible now.
-        """
-        return
+    # # FINAL_UPDATE -> COMPLETED --------------------------------------------#
+    # def can_complete(self):
+    #     """
+    #     Gate-check prior to `complete()`.
+    #
+    #     Projects can be completed if the final progress report and project
+    #     closure are approved.
+    #     """
+    #     return (
+    #         self.documents.instance_of(ProgressReport).exists() and
+    #         self.documents.instance_of(
+    #             ProgressReport).latest().is_final_report and
+    #         self.documents.instance_of(
+    #           ProgressReport).latest().is_approved and
+    #         self.documents.instance_of(ProjectClosure).exists() and
+    #         self.documents.instance_of(ProjectClosure).latest().is_approved)
+    #
+    # @transition(
+    #     field='status',
+    #     source=STATUS_FINAL_UPDATE,
+    #     target=STATUS_COMPLETED,
+    #     conditions=[can_complete],
+    #     permission=lambda instance, user: user in instance.approvers,
+    #     custom=dict(verbose="Complete final update",
+    #                 explanation="", notify=True,)
+    #     )
+    # def complete(self):
+    #     """
+    #     Transition to move the project to its COMPLETED state.
+    #
+    #     No more actions are required of this project.
+    #     Only reactivate() should be possible now.
+    #     """
+    #     return
 
     # ACTIVE -> COMPLETED ----------------------------------------------------#
     @transition(
@@ -760,7 +755,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_COMPLETED,
         # conditions=[can_complete],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Force-complete project", explanation="", notify=True,)
+        custom=dict(verbose="Force-complete project",
+                    explanation="",
+                    notify=True,)
         )
     def force_complete(self):
         """
@@ -789,7 +786,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reactivate project", explanation="", notify=True,)
+        custom=dict(verbose="Reactivate project",
+                    explanation="",
+                    notify=True,)
         )
     def reactivate(self):
         """Transition to move the project to its ACTIVE state."""
@@ -806,7 +805,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_TERMINATED,
         # conditions=[can_terminate],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Terminate project", explanation="", notify=True,)
+        custom=dict(verbose="Terminate project",
+                    explanation="",
+                    notify=True,)
         )
     def terminate(self):
         """Transition the project to its TERMINATED state."""
@@ -823,7 +824,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate_terminated],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reactivate terminated project", explanation="", notify=True,)
+        custom=dict(verbose="Reactivate terminated project",
+                    explanation="",
+                    notify=True,)
         )
     def reactivate_terminated(self):
         """Transition the project to its ACTIVE state."""
@@ -840,7 +843,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_SUSPENDED,
         # conditions=[can_suspend],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Suspend project", explanation="", notify=True,)
+        custom=dict(verbose="Suspend project",
+                    explanation="",
+                    notify=True,)
         )
     def suspend(self):
         """Transition the project to its SUSPENDED state."""
@@ -857,7 +862,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_ACTIVE,
         # conditions=[can_reactivate_suspended],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reactivate suspended project", explanation="", notify=True,)
+        custom=dict(verbose="Reactivate suspended project",
+                    explanation="",
+                    notify=True,)
         )
     def reactivate_suspended(self):
         """Transition the suspended project to its ACTIVE state."""
@@ -1038,25 +1045,13 @@ class ScienceProject(Project):
         verbose_name = _("Science Project")
         verbose_name_plural = _("Science Projects")
 
-    @transition(
-        field='status',
-        source=[Project.STATUS_NEW, Project.STATUS_PENDING],
-        target=Project.STATUS_NEW,
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Setup Project", explanation="", notify=False,)
-        )
     def setup(self):
         """Create a Conceptplan if not already existing. Make sure it's NEW."""
-        ProjectMembership.objects.create(
+        pm, created = ProjectMembership.objects.get_or_create(
             project=self,
             user=self.project_owner,
             role=ProjectMembership.ROLE_SUPERVISING_SCIENTIST)
-        if not self.documents.instance_of(ConceptPlan):
-            ConceptPlan.objects.create(
-                    project=self,
-                    creator=self.creator,
-                    modifier=self.modifier)
-        scp = self.documents.instance_of(ConceptPlan).get()
+        scp, created = ConceptPlan.objects.get_or_create(project=self)
         from pythia.documents.models import Document
         scp.status = Document.STATUS_NEW
         scp.save()
@@ -1088,9 +1083,7 @@ class ScienceProject(Project):
         :param report: an instance of pythia.reports.models.ARARReport
         """
         msg = "Creating ProgressReport for {0}".format(self.__str__())
-        logger.info(msg)
-        if settings.DEBUG:
-            print(msg)
+        snitch(msg)
         p, created = ProgressReport.objects.get_or_create(
                 year=report.year, project=self)
         p.report = report
@@ -1107,9 +1100,7 @@ class ScienceProject(Project):
         p.save()
         msg = "{0} Added ProgressReport for year {1} in report {2}".format(
             p.project.project_type_year_number, p.year, p.report)
-        logger.info(msg)
-        if settings.DEBUG:
-            print(msg)
+        snitch(msg)
 
 
 class CoreFunctionProject(Project):
@@ -1130,29 +1121,17 @@ class CoreFunctionProject(Project):
         verbose_name = _("Core Function")
         verbose_name_plural = _("Core Functions")
 
-    @transition(
-        field='status',
-        source=[Project.STATUS_NEW, Project.STATUS_PENDING],
-        target=Project.STATUS_NEW,
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Setup Project", explanation="", notify=False,)
-        )
     def setup(self):
         """Setup a new CoreFunctionProject.
 
         Create a ProjectMembership for the project_owner,
         create a ConceptPlan.
         """
-        ProjectMembership.objects.create(
+        pm, created = ProjectMembership.objects.get_or_create(
             project=self,
             user=self.project_owner,
             role=ProjectMembership.ROLE_SUPERVISING_SCIENTIST)
-        if not self.documents.instance_of(ConceptPlan):
-            ConceptPlan.objects.create(
-                    project=self,
-                    creator=self.creator,
-                    modifier=self.modifier)
-        scp = self.documents.instance_of(ConceptPlan).get()
+        scp, created = ConceptPlan.objects.get_or_create(project=self)
         from pythia.documents.models import Document
         scp.status = Document.STATUS_NEW
         scp.save()
@@ -1246,6 +1225,8 @@ class CollaborationProject(Project):
         )
     def setup(self):
         """A collaboration project is automatically approved and active."""
+        self.status = Project.STATUS_ACTIVE
+        self.save(update_fields=['status', ])
 
     def get_staff_list_plain(self):
         """Return a string of DPaW staff."""
@@ -1393,15 +1374,10 @@ class StudentProject(Project):
         """The academic organisation as plain text."""
         return mark_safe(strip_tags(self.organisation))
 
-    @transition(
-        field='status',
-        source=Project.STATUS_NEW,
-        target=Project.STATUS_ACTIVE,
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Setup Project", explanation="", notify=False,)
-        )
     def setup(self):
         """A student project becomes active without approval process."""
+        self.status = Project.STATUS_ACTIVE
+        self.save(update_fields=['status', ])
 
     @transition(
         field='status',
@@ -1418,24 +1394,24 @@ class StudentProject(Project):
         self.make_progressreport(report)
         return None
 
-    def can_complete_update(self):
-        """Completion of update requires approved latest StudentReport."""
-        return (self.documents.instance_of(StudentReport).exists() and
-                self.documents.instance_of(StudentReport).latest().is_approved)
-
-    @transition(
-        field='status',
-        source=Project.STATUS_UPDATE,
-        target=Project.STATUS_ACTIVE,
-        conditions=[can_complete_update],
-        permission=lambda instance, user: user in instance.submitters,
-        custom=dict(verbose="Complete update", explanation="", notify=True,)
-        )
-    def complete_update(self):
-        """
-        Move the project back to ACTIVE after finishing its update.
-        """
-        return
+    # def can_complete_update(self):
+    #     """Completion of update requires approved latest StudentReport."""
+    #     return (self.documents.instance_of(StudentReport).exists() and
+    #             self.documents.instance_of(StudentReport).latest().is_approved)
+    #
+    # @transition(
+    #     field='status',
+    #     source=Project.STATUS_UPDATE,
+    #     target=Project.STATUS_ACTIVE,
+    #     conditions=[can_complete_update],
+    #     permission=lambda instance, user: user in instance.submitters,
+    #     custom=dict(verbose="Complete update", explanation="", notify=True,)
+    #     )
+    # def complete_update(self):
+    #     """
+    #     Move the project back to ACTIVE after finishing its update.
+    #     """
+    #     return
 
     @transition(
         field='status',

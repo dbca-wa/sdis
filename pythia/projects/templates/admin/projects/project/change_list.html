@@ -55,7 +55,7 @@
           // end-of-life by then.
           var templateUrl = '{% url cl.opts|pythia_urlname:"delete" 1234567890 current.id %}';
           var pk = $('.hiddenfields').find(name).first().val();
-          // prevent users from deleting non-saved objects (objects withoug
+          // prevent users from deleting non-saved objects (objects without
           // pk), maybe this objects did not validate so the form is redisplayed
           if (typeof pk !== 'undefined') {
               url = templateUrl.replace('1234567890', pk);

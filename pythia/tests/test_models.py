@@ -151,11 +151,7 @@ class ScienceProjectModelTests(BaseTestCase):
 
         print("A new SP has only setup tx until the SCP is approved.")
         avail_tx = [t.name for t in p.get_available_status_transitions()]
-        self.assertEqual(len(avail_tx), 1)
-        self.assertTrue('setup' in avail_tx)
-
-        print("A project cannot be endorsed without an approved ConceptPlan.")
-        self.assertFalse(p.can_endorse())
+        self.assertEqual(len(avail_tx), 0)
 
     def test_conceptplan_permissions(self):
         """Test expected ConceptPlan permissions for transitions.
@@ -204,11 +200,11 @@ class ScienceProjectModelTests(BaseTestCase):
         self.scp.seek_approval()
         self.assertEqual(self.scp.status, Document.STATUS_INAPPROVAL)
         self.assertEqual(
-            [tx.name for tx in
-             self.scp.get_available_user_status_transitions(self.marge)],
-            ['do_approve',
-             'request_reviewer_revision',
-             'request_author_revision'])
+            set([tx.name for tx in
+                 self.scp.get_available_user_status_transitions(self.marge)]),
+            set(['approve',
+                 'request_reviewer_revision',
+                 'request_author_revision']))
 
         self.assertEqual(
             [tx.name for tx in
@@ -234,12 +230,12 @@ class ScienceProjectModelTests(BaseTestCase):
         self.scp.approve()
         self.assertEqual(self.scp.status, Document.STATUS_APPROVED)
         print("Only approvers can reset the document.")
-        self.assertTrue(avail_tx(self.marge, 'do_reset', self.scp))
-        self.assertFalse(avail_tx(self.steven, 'do_reset', self.scp))
-        self.assertFalse(avail_tx(self.fran, 'do_reset', self.scp))
-        self.assertFalse(avail_tx(self.bob, 'do_reset', self.scp))
-        self.assertFalse(avail_tx(self.john, 'do_reset', self.scp))
-        self.assertFalse(avail_tx(self.peter, 'do_reset', self.scp))
+        self.assertTrue(avail_tx(self.marge, 'reset', self.scp))
+        self.assertFalse(avail_tx(self.steven, 'reset', self.scp))
+        self.assertFalse(avail_tx(self.fran, 'reset', self.scp))
+        self.assertFalse(avail_tx(self.bob, 'reset', self.scp))
+        self.assertFalse(avail_tx(self.john, 'reset', self.scp))
+        self.assertFalse(avail_tx(self.peter, 'reset', self.scp))
 
     def test_scienceproject_endorsement(self):
         """Test all possible transitions in a ScienceProject's life cycle.
@@ -518,8 +514,6 @@ class ScienceProjectModelTests(BaseTestCase):
         pc = self.project.documents.instance_of(ProjectClosure).get()
         self.assertEqual(pc.status, Document.STATUS_NEW)
         self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
-        print("Project closure requires existing and approved ProjectClosure")
-        self.assertFalse(self.project.can_accept_closure())
         print("Fast-track ProjectClosure document through review and approval")
         pc.seek_review()
         pc.seek_approval()
@@ -667,10 +661,6 @@ class CoreFunctionProjectModelTests(TestCase):
         self.assertEqual(self.project.documents.count(), 1)
         self.assertEqual(
             self.project.documents.instace_of(ConceptPlan).count(), 1)
-
-    def test_that_active_CF_cannot_be_closed(self):
-        """A CoreFunction has the same closure process as ScienceProjects."""
-        self.assertFalse(self.project.can_complete())
 
 
 class CollaborationProjectModelTests(TestCase):
@@ -828,14 +818,13 @@ class StudentProjectModelTests(TestCase):
         self.project.save()
         self.assertEqual(StudentReport.objects.count(), 1)
         self.assertEqual(self.project.status, Project.STATUS_UPDATE)
-        self.assertFalse(self.project.can_complete_update())
         pr = self.project.documents.instance_of(StudentReport).get()
         pr.seek_review()
         pr.seek_approval()
         pr.approve()
+        self.assertEqual(pr.status, Document.STATUS_APPROVED)
         self.project = pr.project
         self.project.save()
-        self.assertEqual(pr.status, Document.STATUS_APPROVED)
         self.assertTrue(self.project.status, Project.STATUS_ACTIVE)
 
     def test_force_closure_updating_studentproject(self):
