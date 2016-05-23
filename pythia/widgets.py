@@ -107,7 +107,7 @@ class InlineEditWidgetWrapper(widgets.Widget):
     @property
     def media(self):
         if isinstance(self.widget, widgets.Textarea):
-            cdn = 'http://static.dpaw.wa.gov.au/static/libs/'
+            cdn = 'https://static.dpaw.wa.gov.au/static/libs/'
             return forms.Media(
                 js=[cdn + 'tinymce/4.3.9/tinymce.min.js',
                     cdn + 'tinymce/4.3.9/jquery.tinymce.min.js'
