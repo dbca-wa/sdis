@@ -52,14 +52,14 @@ favicon.badge({{ my_tasklist.count }});
                 <a href="#" class="list-group-item"><span class="glyphicon glyphicon-ok"></span>All done!</a>
                 {% else %}
                 {% for doc in my_tasklist.approvals %}
-                <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}" 
-                    class="list-group-item portfolio"><span 
+                <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}"
+                    class="list-group-item portfolio"><span
                         class="glyphicon glyphicon-flag text-danger"></span>
                     {{ doc.project.project_name_html|safe }}
                 </a>
                 {% endfor %}
-                {% for doc in my_tasklist.endorsements %} 
-                <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}" 
+                {% for doc in my_tasklist.endorsements %}
+                <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}"
                     class="list-group-item portfolio">
                     <span class="glyphicon glyphicon-thumbs-up"></span>
                     {{ doc.project.project_name_html|safe }}
@@ -109,7 +109,7 @@ favicon.badge({{ my_tasklist.count }});
         <div class="panel panel-default" id="panel-collaborations">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#panel-collaborations" 
+                    <a data-toggle="collapse" data-parent="#panel-collaborations"
                         href="#collapseCollaborations">My Collaborations
                         {% if my_portfolio.collabs %}
                         <span class="pull-right">
@@ -147,7 +147,7 @@ favicon.badge({{ my_tasklist.count }});
             <div class="panel-collapse list-group collapse in" id="collapseProfile">
                 <a href="#" class="list-group-item"><span class="glyphicon glyphicon-envelope"></span>Contact details</a>
                 <a href="#" class="list-group-item"><span class="glyphicon glyphicon-book"></span>Publications</a>
-                <a href="http://data-demo.dpaw.wa.gov.au/dataset?groups=outputs" target="_" 
+                <a href="http://data-demo.dpaw.wa.gov.au/dataset?groups=outputs" target="_"
                     class="list-group-item"><span class="glyphicon glyphicon-dashboard"></span>Productivity metrics</a>
                 <a href="#" class="list-group-item"><span class="glyphicon glyphicon-time"></span>Time allocation</a>
             </div>
@@ -159,6 +159,7 @@ favicon.badge({{ my_tasklist.count }});
             <div class="col-md-6">
                 <h2>Projects</h2>
                 <a class="btn btn-primary btn-block" href="{% url 'admin:projects_project_changelist' %}">Browse all Projects</a>
+                <a class="btn btn-default btn-block" href="export/projects.Project/">Download all Projects (XLS)</a>
                 <a class="btn btn-default btn-block" href="{% url 'admin:projects_project_add' %}">Create new Project</a>
             </div>
             <div class="col-md-6">
@@ -166,32 +167,32 @@ favicon.badge({{ my_tasklist.count }});
                 {% load documents %}
                 {% get_current_arar as current_arar %}
                 {% if current_arar %}
-                <a class="btn btn-success btn-block" href="{% url 'admin:arar_dashboard' %}" 
+                <a class="btn btn-success btn-block" href="{% url 'admin:arar_dashboard' %}"
                     title="Read and work on progress reports">Current ARAR (progress report overview)</a>
                 <a class="btn btn-primary btn-block" href="{% url 'admin:pythia_ararreport_detail' current_arar.pk %}"
                     title="View the current ARAR online">Current ARAR (print preview)</a>
-                <button class="btn btn-default btn-block dropdown-toggle" 
+                <button class="btn btn-default btn-block dropdown-toggle"
                     data-toggle="dropdown">Download published ARAR <span class="caret"></span></button>
                 {% endif %}
                 <ul class="dropdown-menu" role="menu">
                     {% include 'admin/includes/arar_list_static.html' %}
                 </ul>
-                
+
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-6">
             <h2>Data</h2>
-                <a class="btn btn-primary btn-block" 
-                    href="http://internal-data.dpaw.wa.gov.au/" 
+                <a class="btn btn-primary btn-block"
+                    href="http://internal-data.dpaw.wa.gov.au/"
                     target="_"
                     title="Browse the data catalogue (new tab)">Data Catalogue</a>
             </div>
             <div class="col-md-6">
             <h2>Sites</h2>
-                <a class="btn btn-primary btn-block" 
-                    href="http://scientificsites.dpaw.wa.gov.au/" 
+                <a class="btn btn-primary btn-block"
+                    href="http://scientificsites.dpaw.wa.gov.au/"
                     target="_"
                     title="Browse the Scientific Site Register (new tab)">Scientific Site Register</a>
             </div>
