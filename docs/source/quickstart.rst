@@ -12,9 +12,9 @@ If there are urgent or new Tasks, SDIS will notify you via email.
 
 Find a Project
 ==============
-On the ``"Browse all Projects" page <https://sdis.dpaw.wa.gov.au/projects/project/>`_
+On the `"Browse all Projects" page <https://sdis.dpaw.wa.gov.au/projects/project/>`_
 you can filter and search for projects.
-Under "actions", a selected list of projects can also be exported to CSV or MS Excel spreadsheets.
+.. Under "actions", a selected list of projects can also be exported to CSV or MS Excel spreadsheets.
 
 
 Create a new Science Project

@@ -18,13 +18,10 @@ urlpatterns = patterns(
     url(r'^terms-and-conditions-agreed/$',
         TemplateView.as_view(template_name="admin/toc-agreed.html"),
         name='terms-and-conditions-agreed'),
-    url(r'^docs/dev/$',
-        TemplateView.as_view(
-            template_name=os.path.join(settings.STATIC_ROOT,
-                                       'docs/dev/html/index.html')),
-        name='dev-docs'),
-    url(r'^api-auth/', include('rest_framework.urls',
-                               namespace='rest_framework')),
+    url(r'^api-auth/',
+        include('rest_framework.urls', namespace='rest_framework')),
+    url(r'export/(?P<model_name>[^/]+)/$',
+        "django_tablib.views.generic_export"),
     url(r'', include(site.urls)),
     )
 

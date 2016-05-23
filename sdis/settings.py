@@ -217,6 +217,10 @@ AUTH_LDAP_USER_ATTR_MAP = {
     'email': "mail",
     }
 
+# Django-tablib CSV export
+TABLIB_MODELS = {
+    'projects.Project': {},
+    }
 
 # Django-Restframework
 REST_FRAMEWORK = {
