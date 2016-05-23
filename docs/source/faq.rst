@@ -86,3 +86,14 @@ you need to update. They simply don't exist earlier.
 If you need to provide early updates (e.g. because of field work), use the latest
 progress reports as starting point (copy out the text), and email the new version
 to Florian.
+
+What happens in the last weeks before a new ARAR comes around?
+==============================================================
+The ARAR update process has three phases, relative to the last SCMT meeting before
+the ARAR process starts. (This meeting has the power to approve requested project closures).
+
+1. Before the last SCMT meeting before the ARAR: PLs and Scientists review their projects, request closure / termination / suspending where required, and update the team lists.
+2. At the last SCMT meeting before the ARAR: SCMT discusses and approves/rejects Project Closure documents, and terminates / suspends projects as appropriate.
+3. After the last SCMT meeting: SDIS admins (Paul/Florian) create a new ARAR when instructed to by the Directorate. This will generate Progress Reports for all active and closing ScienceProjects, all active CoreFunctions, and all active StudentProjects.
+
+Running through updates in this order will speed up the update process considerably by preventing the confusion (as there's no staff training ahead of the ARAR process) and required subsequent individual coaching from the ARAR admins to involved staff members to back each falsely project open out of the ARAR update process.
