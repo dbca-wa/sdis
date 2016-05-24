@@ -2,12 +2,9 @@
 {% load i18n staticfiles admin_modify pythia_base %}
 
 {% block extrastyle %}
-<link rel="stylesheet" href="{% static "admin/css/widgets.css" %}">
 {% endblock %}
 
 {% block extrahead %}
-<!--script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script-->
-<!--script src="https://static.dpaw.wa.gov.au/static/libs/tinymce/4.3.9/tinymce.min.js"></script-->
 <script>tinymce.init({selector:'textarea.tinymce'});</script>
 {{ media }}
 {% endblock %}

@@ -109,8 +109,8 @@ class InlineEditWidgetWrapper(widgets.Widget):
         if isinstance(self.widget, widgets.Textarea):
             cdn = 'https://static.dpaw.wa.gov.au/static/libs/'
             return forms.Media(
-                js=[cdn + 'tinymce/4.3.9/tinymce.min.js',
-                    cdn + 'tinymce/4.3.9/jquery.tinymce.min.js'
+                js=[cdn + 'tinymce/4.3.12/tinymce.min.js',
+                    cdn + 'tinymce/4.3.12/jquery.tinymce.min.js'
             ]) + self.widget.media
         else:
             return self.widget.media
