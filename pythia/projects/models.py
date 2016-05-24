@@ -478,98 +478,6 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             user=self.project_owner,
             role=ProjectMembership.ROLE_SUPERVISING_SCIENTIST)
 
-    # # NEW -> PENDING --------------------------------------------------------#
-    # def can_endorse(self):
-    #     """
-    #     Inactive gate-check prior to `endorse()`.
-    #
-    #     A science project or core function can only become PENDING if its
-    #     Concept Plan has been approved.
-    #     Other projects are fast-tracked to status PROJECT_ACTIVE on `setup()`.
-    #
-    #     NOTE ConceptPlan.approve() calls Project.endorse() while still being
-    #     in status Document.STATUS_INAPPROVAL immediately before setting the
-    #     status to Document.STATUS_APPROVED.
-    #     """
-    #     if self.documents.instance_of(ConceptPlan).exists():
-    #         pp = self.documents.instance_of(ConceptPlan).get()
-    #         print("Project.can_endorse checking {0}({1})".format(
-    #             pp.__str__(), pp.status))
-    #         return pp.is_approved
-    #     else:
-    #         return False
-    #
-    # @transition(
-    #     field='status',
-    #     source=STATUS_NEW,
-    #     target=STATUS_PENDING,
-    #     conditions=[can_endorse],
-    #     permission=lambda instance, user: user in instance.approvers,
-    #     custom=dict(verbose="Endorse project", explanation="", notify=True,)
-    #     )
-    # def do_endorse(self):
-    #     """
-    #     Transition to move project to PENDING.
-    #
-    #     Generates ProjectPlan as required for SPP and CF, skipped by others.
-    #     """
-    #     msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
-    #     print(msg + "adding a ProjectPlan")
-    #     if not self.documents.instance_of(ProjectPlan).exists():
-    #         pp, created = ProjectPlan.objects.get_or_create(project=self)
-    #         pp.save()
-    #
-    # def endorse(self):
-    #     """Project endorsement triggered through ConceptPlan approval tx."""
-    #     msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
-    #     print(msg + "calling tx do_endorse...")
-    #     self.do_endorse()
-    #     print(msg + "finished tx do_endorse.")
-    #     self.save()
-    #     print(msg + "saved.")
-
-    # # PENDING -> ACTIVE -----------------------------------------------------#
-    # def can_approve(self):
-    #     """Whether ProjectPlan exists and is approved."""
-    #     if self.documents.instance_of(ProjectPlan).exists():
-    #         pp = self.documents.instance_of(ProjectPlan).get()
-    #         print("Project.can_approve checking {0}({1})".format(
-    #             pp.__str__(), pp.status))
-    #         return pp.is_approved
-    #     else:
-    #         return False
-    #
-    # @transition(
-    #     field='status',
-    #     source=STATUS_PENDING,
-    #     target=STATUS_ACTIVE,
-    #     conditions=[can_approve],
-    #     permission=lambda instance, user: user in instance.approvers,
-    #     custom=dict(verbose="Approve Project", explanation="", notify=False,)
-    #     )
-    # def do_approve(self):
-    #     """Transition to move the project to ACTIVE."""
-    #
-    # def approve(self):
-    #     """Project approval is triggered through ProjectPlan approval tx."""
-    #     msg = "Project {0} ({1}) ".format(self.__str__(), self.status)
-    #     print(msg + "calling tx do_approve...")
-    #     self.do_approve()
-    #     print(msg + "finished tx do_approve.")
-    #     self.save()
-    #     print(msg + "saved.")
-    #
-    # @transition(
-    #     field='status',
-    #     source=STATUS_ACTIVE,
-    #     target=STATUS_PENDING,
-    #     conditions=[can_approve],
-    #     permission=lambda instance, user: user in instance.approvers,
-    #     custom=dict(verbose="Revoke approval", explanation="", notify=False,)
-    #     )
-    # def revoke_approval(self):
-    #     """Transition to move the project from ACTIVE to PENDING."""
-
     # ACTIVE -> UPDATING -----------------------------------------------------#
     def can_request_update(self):
         """
@@ -604,42 +512,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             report = ARARReport.objects.all().latest()
         self.make_progressreport(report)
 
-    # # UPDATING --> ACTIVE ---------------------------------------------------#
-    # def can_complete_update(self):
-    #     """
-    #     Gate-check prior to `complete_update()`.
-    #
-    #     Allow the update to be complete when the document has been approved.
-    #     WARNING: will check against the latest progress report to be approved.
-    #     Could return True if no current ProgressReport has been requested and
-    #     previous ProgressReport is approved. Assumes that `request_update()`
-    #     has been called, and new projects joining the party during an active
-    #     ARAR reporting cycle will get their `request_update()` called.
-    #
-    #     Needs override for STP to check for StudentReport to be approved.
-    #     """
-    #     return (self.documents.instance_of(ProgressReport).exists() and
-    #             self.documents.instance_of(ProgressReport).latest().is_approved)
-    #
-    # @transition(
-    #     field='status',
-    #     source=STATUS_UPDATE,
-    #     target=STATUS_ACTIVE,
-    #     conditions=[can_complete_update],
-    #     permission=lambda instance, user: user in instance.submitters,
-    #     custom=dict(verbose="Complete update", explanation="", notify=True,)
-    #     )
-    # def complete_update(self):
-    #     """Move the project back to ACTIVE after finishing its update."""
-    #     return
-
     # ACTIVE -> CLOSURE_REQUESTED --------------------------------------------#
     def can_request_closure(self):
-        """
-        Gate-check prior to `request_closure()`.
-
-        Currently no checks.
-        """
+        """Gate-check prior to `request_closure()`. Currently no checks."""
         return True
 
     @transition(
@@ -662,11 +537,15 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         pc, created = ProjectClosure.objects.get_or_create(project=self)
 
+    def can_force_closure(self):
+        """Gate check open."""
+        return True
+
     @transition(
         field='status',
         source=STATUS_UPDATE,
         target=STATUS_CLOSURE_REQUESTED,
-        # conditions=[can_request_closure],
+        conditions=[can_force_closure],
         permission=lambda instance, user: user in instance.reviewers_approvers,
         custom=dict(verbose="Force closure and cancel update",
                     explanation="If a project should have been closing, but "
@@ -691,32 +570,6 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         pc, created = ProjectClosure.objects.get_or_create(project=self)
         self.progressreport.delete()
 
-    # # CLOSURE_REQUESTED -> CLOSING -----------------------------------------#
-    # def can_accept_closure(self):
-    #     """
-    #     Gate-check prior to `accept_closure()`.
-    #
-    #     Allow the update to progress to closing if the closure form
-    #     has been approved.
-    #
-    #     TODO: insert gate checks: is the projectplan updated with latest data
-    #     management info, is the closure form approved
-    #     """
-    #     return (self.documents.instance_of(ProjectClosure).exists() and
-    #             self.documents.instance_of(ProjectClosure).latest().is_approved)
-    #
-    # @transition(
-    #     field='status',
-    #     source=STATUS_CLOSURE_REQUESTED,
-    #     target=STATUS_CLOSING,
-    #     conditions=[can_accept_closure],
-    #     permission=lambda instance, user: user in instance.approvers,
-    #     custom=dict(verbose="Accept closure", explanation="", notify=True,)
-    #     )
-    # def accept_closure(self):
-    #     """Transition to move the project to CLOSING."""
-    #     print("{0} accepting closure".format(self.debugname))
-
     # CLOSING -> FINAL_UPDATE ------------------------------------------------#
     def can_request_final_update(self):
         """
@@ -734,7 +587,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         field='status',
         source=STATUS_CLOSING,
         target=STATUS_FINAL_UPDATE,
-        # conditions=[can_request_final_update],
+        conditions=[can_request_final_update],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Request final update",
                     explanation="A final progress report is required to "
@@ -749,47 +602,15 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         pr, created = ProgressReport.objects.get_or_create(
             project=self, is_final_report=True, year=date.today().year)
 
-    # # FINAL_UPDATE -> COMPLETED --------------------------------------------#
-    # def can_complete(self):
-    #     """
-    #     Gate-check prior to `complete()`.
-    #
-    #     Projects can be completed if the final progress report and project
-    #     closure are approved.
-    #     """
-    #     return (
-    #         self.documents.instance_of(ProgressReport).exists() and
-    #         self.documents.instance_of(
-    #             ProgressReport).latest().is_final_report and
-    #         self.documents.instance_of(
-    #           ProgressReport).latest().is_approved and
-    #         self.documents.instance_of(ProjectClosure).exists() and
-    #         self.documents.instance_of(ProjectClosure).latest().is_approved)
-    #
-    # @transition(
-    #     field='status',
-    #     source=STATUS_FINAL_UPDATE,
-    #     target=STATUS_COMPLETED,
-    #     conditions=[can_complete],
-    #     permission=lambda instance, user: user in instance.approvers,
-    #     custom=dict(verbose="Complete final update",
-    #                 explanation="", notify=True,)
-    #     )
-    # def complete(self):
-    #     """
-    #     Transition to move the project to its COMPLETED state.
-    #
-    #     No more actions are required of this project.
-    #     Only reactivate() should be possible now.
-    #     """
-    #     return
-
     # ACTIVE -> COMPLETED ----------------------------------------------------#
+    def can_force_complete(self):
+        return True
+
     @transition(
         field='status',
         source=[STATUS_ACTIVE, STATUS_CLOSING],
         target=STATUS_COMPLETED,
-        # conditions=[can_complete],
+        conditions=[can_force_complete],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Force-complete project",
                     explanation="The Directorate can override project closure "
@@ -805,8 +626,6 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         No more actions are required of this project.
         Only reactivate() should be possible now.
         """
-        # if self.status == Project.STATUS_UPDATE:
-        #    self.progressreport.delete()
 
     # COMPLETED -> ACTIVE ----------------------------------------------------#
     def can_reactivate(self):
@@ -821,7 +640,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         field='status',
         source=STATUS_COMPLETED,
         target=STATUS_ACTIVE,
-        # conditions=[can_reactivate],
+        conditions=[can_reactivate],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reactivate project",
                     explanation="The Directorate can reactivate a completed "
@@ -841,7 +660,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         field='status',
         source=STATUS_ACTIVE,
         target=STATUS_TERMINATED,
-        # conditions=[can_terminate],
+        conditions=[can_terminate],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Terminate project",
                     explanation="The Directorate can terminate projects which "
@@ -861,7 +680,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         field='status',
         source=STATUS_TERMINATED,
         target=STATUS_ACTIVE,
-        # conditions=[can_reactivate_terminated],
+        conditions=[can_reactivate_terminated],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reactivate terminated project",
                     explanation="The Directorate can reactivate terminated "
@@ -881,7 +700,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         field='status',
         source=STATUS_ACTIVE,
         target=STATUS_SUSPENDED,
-        # conditions=[can_suspend],
+        conditions=[can_suspend],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Suspend project",
                     explanation="The Directorate can suspend projects which "
@@ -901,7 +720,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         field='status',
         source=STATUS_SUSPENDED,
         target=STATUS_ACTIVE,
-        # conditions=[can_reactivate_suspended],
+        conditions=[can_reactivate_suspended],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reactivate suspended project",
                     explanation="The Directorate can reactivate suspended "
@@ -1285,20 +1104,28 @@ class CollaborationProject(Project):
             ])
 
     # Forbid actions non applicable to this project type
-    def can_endorse(self):
-        """CollaborationProjects cannot endorse."""
-        return False
-
-    def can_approve(self):
-        """CollaborationProjects cannot approve."""
-        return False
-
     def can_request_update(self):
         """CollaborationProjects cannot update."""
         return False
 
     def can_request_final_update(self):
         """CollaborationProjects cannot request final updates."""
+        return False
+
+    def can_force_closure(self):
+        """CollaborationProjects cannot force closure."""
+        return False
+
+    def can_request_closure(self):
+        """CollaborationProjects cannot request closure."""
+        return False
+
+    def can_suspend(self):
+        """CollaborationProjects cannot be suspended."""
+        return False
+
+    def can_terminate(self):
+        """CollaborationProjects cannot be terminated."""
         return False
 
     @transition(
@@ -1438,32 +1265,43 @@ class StudentProject(Project):
         self.make_progressreport(report)
         return None
 
-    # def can_complete_update(self):
-    #     """Completion of update requires approved latest StudentReport."""
-    #     return (self.documents.instance_of(StudentReport).exists() and
-    #             self.documents.instance_of(StudentReport).latest().is_approved)
-    #
-    # @transition(
-    #     field='status',
-    #     source=Project.STATUS_UPDATE,
-    #     target=Project.STATUS_ACTIVE,
-    #     conditions=[can_complete_update],
-    #     permission=lambda instance, user: user in instance.submitters,
-    #     custom=dict(verbose="Complete update", explanation="", notify=True,)
-    #     )
-    # def complete_update(self):
-    #     """
-    #     Move the project back to ACTIVE after finishing its update.
-    #     """
-    #     return
+    # Forbid actions non applicable to this project type
+    def can_request_update(self):
+        """CollaborationProjects cannot update."""
+        return False
+
+    def can_request_final_update(self):
+        """CollaborationProjects cannot request final updates."""
+        return False
+
+    def can_force_closure(self):
+        """CollaborationProjects cannot force closure."""
+        return False
+
+    def can_request_closure(self):
+        """CollaborationProjects cannot request closure."""
+        return False
+
+    def can_suspend(self):
+        """CollaborationProjects cannot be suspended."""
+        return False
+
+    def can_terminate(self):
+        """CollaborationProjects cannot be terminated."""
+        return False
 
     @transition(
         field='status',
         source=Project.STATUS_UPDATE,
         target=Project.STATUS_COMPLETED,
-        # conditions=[can_request_closure],
         permission=lambda instance, user: user in instance.all_permitted,
-        custom=dict(verbose="Force closure and cancel update", explanation="", notify=True,)
+        custom=dict(verbose="Force closure and cancel update",
+                    explanation="If a StudentProject should have been closed"
+                    ", but an ARAR has erroneously requested an update, "
+                    "the project team or their line management can close "
+                    "the project without any further process. Doing so will"
+                    "remove the unwanted progress report.",
+                    notify=True,)
         )
     def force_closure(self):
         """Transition to move project to COMPLETED during UPDATING.
@@ -1485,23 +1323,13 @@ class StudentProject(Project):
         target=Project.STATUS_COMPLETED,
         permission=lambda instance, user: user in instance.all_permitted,
         custom=dict(verbose="Close project",
-                    explanation="The project team, the PL and the Directorate "
+                    explanation="The project team or their line management "
                     "can request the closure of an active StudentProject, "
                     "which immediately completes without any further process.",
                     notify=False,)
         )
     def complete(self):
         """StudentProjects can complete without closure process."""
-
-    def can_terminate(self):
-        return False
-
-    def can_suspend(self):
-        return False
-
-    def can_request_closure(self):
-        """Disable closure via closure form."""
-        return False
 
     @property
     def progressreport(self):
