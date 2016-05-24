@@ -10,6 +10,19 @@ all in your browser. SDIS will tell you what to do (your Tasks), offer short cut
 to your Projects, and allow you to browse other Projects and Reports.
 If there are urgent or new Tasks, SDIS will notify you via email.
 
+Login
+=====
+SDIS uses the Parks & Wildlife Single-Sign-On login, provided by Microsoft.
+Once-off, SDIS will redirect you to login.microsoftonline.com, which you already
+have used to login to other Parks & Wildlife online services, such as Office 365.
+
+Remember to use your email address (including @dpaw.wa.gov.au), not your user name.
+
+Feel free to select "Keep me signed in", and let your browser "remember the password".
+
+Your browser will remember your login status for a few weeks. However,
+for security reasons, SDIS will occasionally ask you to provide your login again.
+
 Find a Project
 ==============
 On the `"Browse all Projects" page <https://sdis.dpaw.wa.gov.au/projects/project/>`_
@@ -60,3 +73,15 @@ Register an external colleague
 * Enter as many user details as you can and click Save Changes.
 
 Now the new user can be added to project teams or project roles.
+
+
+Managing privileged user roles
+==============================
+The application's superusers can manage members of the "reviewer" (all Program
+Leaders and SCMT members) and "approver" (Directorate) group, as well as set
+the SCD program's details, such as current program leader.
+
+Also, representatives of Biometrician (BM), Herbarium Curator (HC), Data Manager (DM),
+and Animal Ethics Committee (AE) are managed by superusers.
+
+If you feel you should be in either of these groups, contact the system administrators.
