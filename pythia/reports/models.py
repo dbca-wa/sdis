@@ -12,6 +12,7 @@ from django.db.models import signals
 from django.core.validators import MinValueValidator
 from pythia import models as pythia_models
 from django.db import models
+from pythia.utils import snitch
 
 logger = logging.getLogger(__name__)
 
@@ -121,8 +122,7 @@ class ARARReport(pythia_models.Audit):
         from pythia.projects.models import (
             Project, CollaborationProject as x)
         return x.objects.filter(
-            status=Project.STATUS_ACTIVE
-            ).order_by(
+            status=Project.STATUS_ACTIVE).order_by(
                 "position", "-year", "-number")
 
     """
@@ -174,22 +174,29 @@ class ARARReport(pythia_models.Audit):
 
 def request_progress_reports(instance):
     """Call Project.request_update() for each active or closing project."""
-    print("Function request_progress_reports() called.")
-    logger.debug("Function request_progress_reports() called.")
+    snitch("Function request_progress_reports() called.")
     from pythia.projects.models import (
         Project, ScienceProject, CoreFunctionProject, StudentProject)
+
     [Project.objects.get(pk=p).request_update(instance) for p in
-        ScienceProject.objects.filter(
-        status__in=[Project.STATUS_ACTIVE, Project.STATUS_CLOSING],
-        ).values_list('pk', flat=True)]
+        ScienceProject.objects.filter(status=Project.STATUS_ACTIVE
+                                      ).values_list('pk', flat=True)]
+
+    [Project.objects.get(pk=p).request_final_update(instance) for p in
+        ScienceProject.objects.filter(status=Project.STATUS_CLOSING
+                                      ).values_list('pk', flat=True)]
+
     [Project.objects.get(pk=p).request_update(instance) for p in
-        CoreFunctionProject.objects.filter(
-        status__in=[Project.STATUS_ACTIVE, Project.STATUS_CLOSING],
-        ).values_list('pk', flat=True)]
+        CoreFunctionProject.objects.filter(status=Project.STATUS_ACTIVE
+                                           ).values_list('pk', flat=True)]
+
+    [Project.objects.get(pk=p).request_final_update(instance) for p in
+        CoreFunctionProject.objects.filter(status=Project.STATUS_CLOSING
+                                           ).values_list('pk', flat=True)]
+
     [Project.objects.get(pk=p).request_update(instance) for p in
-        StudentProject.objects.filter(
-        status=Project.STATUS_ACTIVE
-        ).values_list('pk', flat=True)]
+        StudentProject.objects.filter(status=Project.STATUS_ACTIVE
+                                      ).values_list('pk', flat=True)]
 
 
 def arar_post_save(sender, instance, created, **kwargs):
@@ -199,7 +206,7 @@ def arar_post_save(sender, instance, created, **kwargs):
     An existing ARAR will not request updates.
     """
     if created:
-        logger.info("ARARReport saved as new calls request_progress_reports.")
+        snitch("ARARReport saved as new calls request_progress_reports.")
         request_progress_reports(instance)
 
 signals.post_save.connect(arar_post_save, sender=ARARReport)

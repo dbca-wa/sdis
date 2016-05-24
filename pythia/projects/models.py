@@ -702,13 +702,19 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     @transition(
         field='status',
-        source=[STATUS_CLOSING, STATUS_COMPLETED],
+        source=STATUS_CLOSING,
         target=STATUS_FINAL_UPDATE,
         conditions=[can_request_final_update],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Request final update", explanation="", notify=True,)
+        custom=dict(verbose="Request final update",
+                    explanation="A final progress report is required to "
+                    "complete the project closure process. Team members can "
+                    "update and submit the final update. Once the final "
+                    "progress report is approved, the project is successfully"
+                    " completed.",
+                    notify=True,)
         )
-    def request_final_update(self):
+    def request_final_update(self, *args, **kwargs):
         """Transition to move the project to STATUS_FINAL_UPDATE."""
         pr, created = ProgressReport.objects.get_or_create(
             project=self, is_final_report=True, year=date.today().year)

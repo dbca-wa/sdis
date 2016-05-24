@@ -1,3 +1,4 @@
+"""pythia.documents Admin."""
 from __future__ import unicode_literals, absolute_import
 
 from django.contrib.admin.util import unquote
@@ -7,7 +8,7 @@ from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.forms import fields_for_model
-from django.http import Http404, HttpResponseRedirect, HttpResponseForbidden
+from django.http import Http404, HttpResponseRedirect  # HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_text
@@ -30,6 +31,7 @@ from diff_match_patch import diff_match_patch
 from functools import update_wrapper
 from reversion.models import Version
 
+
 class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
     """
     Add some additional functionality to documents.
@@ -42,6 +44,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
     All document types should inherit from this ModelAdmin, or use it
     directly.
     """
+
     exclude = ('project', 'status')
     list_display = (
         'project_id', '__str__', 'project_title',
@@ -252,7 +255,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                 opts.app_label, opts.model_name),
             "admin/%s/endorsement.html" % opts.app_label,
             "admin/endorsement.html"
-        ], context, current_app=self.admin_site.name)
+            ], context, current_app=self.admin_site.name)
 
     def history_view(self, request, object_id, extra_context=None):
         """History view."""
@@ -280,7 +283,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
             Version, pk=unquote(version_id), object_id=force_text(obj.pk))
 
         fieldsets = self.get_fieldsets(request, obj)
-        inline_instances = self.get_inline_instances(request, obj)
+        # inline_instances = self.get_inline_instances(request, obj)
 
         d = diff_match_patch()
         diffs = []
@@ -319,25 +322,26 @@ class ConceptPlanAdmin(DocumentAdmin):
 
 
 class ProjectPlanAdmin(DocumentAdmin):
-   def get_readonly_fields(self, request, obj=None):
-    """
-    Lock the document after approval. Allow super-users to edit it after
-    clicking a link that sets a GET variable. If a super user makes a POST
-    request, it should be allowed.
-    """
+    def get_readonly_fields(self, request, obj=None):
+        """
+        Lock the document after approval. Allow super-users to edit it after
+        clicking a link that sets a GET variable. If a super user makes a POST
+        request, it should be allowed.
+        """
 
-    if (obj and not obj.is_approved and not (request.user.is_superuser or
+        if (obj and not obj.is_approved and not (request.user.is_superuser or
             request.user in Group.objects.get(name='SMT').user_set.all() or
             request.user in Group.objects.get(name='SCD').user_set.all() or
             request.user in Group.objects.get(name='BM').user_set.all() or
             request.user in Group.objects.get(name='HC').user_set.all() or
             request.user in Group.objects.get(name='AE').user_set.all() or
             request.user in Group.objects.get(name='DM').user_set.all())):
-        return ('bm_endorsement', 'hc_endorsement', 'ae_endorsement')
+            return ('bm_endorsement', 'hc_endorsement', 'ae_endorsement')
 
-    # if is_approved: all readonly except for superuser
-    elif (obj and obj.is_approved and not request.user.is_superuser):
-        return fields_for_model(obj, exclude=self.exclude).keys()
+        # if is_approved: all readonly except for superuser
+        elif (obj and obj.is_approved and not request.user.is_superuser):
+            return fields_for_model(obj, exclude=self.exclude).keys()
 
-    else:
-        return super(ProjectPlanAdmin, self).get_readonly_fields(request, obj)
+        else:
+            return super(ProjectPlanAdmin, self).get_readonly_fields(
+                request, obj)

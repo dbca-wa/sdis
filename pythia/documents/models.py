@@ -12,7 +12,7 @@ import logging
 import json
 from polymorphic import PolymorphicModel, PolymorphicManager
 
-from django.contrib.auth.models import Group
+# from django.contrib.auth.models import Group
 from django.db.models import signals
 import django.db.models.options as options
 from django.utils.encoding import python_2_unicode_compatible
@@ -319,6 +319,7 @@ class Document(PolymorphicModel, Audit):
 
     @property
     def reviewer(self):
+        """Return the program leader, who needs to review the document."""
         return self.project.reviewer
 
     @property
@@ -1345,6 +1346,7 @@ class ProgressReport(Document):
             self.project.status = Project.STATUS_FINAL_UPDATE
         self.project.save(update_fields=['status', ])
 
+
 class ProjectClosure(Document):
     """
     The required documentation to apply for project closure.
@@ -1421,8 +1423,7 @@ class ProjectClosure(Document):
             notify=True,)
         )
     def reset(self):
-        """Revoke document approval transitions project back to active.
-        """
+        """Revoke document approval transitions project back to active."""
         from pythia.projects.models import Project
         self.project.status = Project.STATUS_ACTIVE
         self.project.save(update_fields=['status', ])
@@ -1482,10 +1483,7 @@ class StudentReport(Document):
             notify=True,)
         )
     def approve(self):
-        """
-        Approving the update transitions project back to active.
-
-        """
+        """Approving the update transitions project back to active."""
         from pythia.projects.models import Project
         self.project.status = Project.STATUS_ACTIVE
         self.project.save(update_fields=['status', ])
