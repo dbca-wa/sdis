@@ -332,15 +332,30 @@ class Document(PolymorphicModel, Audit):
         return self.project.approvers
 
     @property
+    def reviewer_approvers(self):
+        """Return a deduplicated list of program leader and approvers."""
+        return self.project.reviewer_approvers
+
+    @property
     def reviewers_approvers(self):
         """Return a deduplicated list of reviewers, approvers."""
         return self.project.reviewers_approvers
 
     @property
     def all_involved(self):
-        """Return a deduplicated list of submitters, reviewers, approvers."""
+        """Return a deduplicated list of submitters, reviewer, approvers.
+
+        This audience is the widest audience to notify.
+        """
         return self.project.all_involved
 
+    @property
+    def all_permitted(self):
+        """Return a deduplicated list of submitters, reviewers, approvers.
+
+        This audience is the widest audience to have write permissions.
+        """
+        return self.project.all_permitted
     # -------------------------------------------------------------------------#
     # Author actions
     #
@@ -353,7 +368,7 @@ class Document(PolymorphicModel, Audit):
         source=STATUS_NEW,
         target=STATUS_INREVIEW,
         conditions=[can_seek_review],
-        permission=lambda instance, user: user in instance.all_involved,
+        permission=lambda instance, user: user in instance.all_permitted,
         custom=dict(
             verbose="Submit for review",
             explanation=("The Program Leader {0} will review and possibly "

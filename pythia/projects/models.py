@@ -446,15 +446,27 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         # return Group.objects.get(name='SCD').user_set.all()
 
     @property
+    def reviewer_approvers(self):
+        """Return a deduplicated list of program leader and approvers."""
+        return list(set(chain(self.reviewer, self.approvers)))
+
+    @property
     def reviewers_approvers(self):
         """Return a deduplicated list of reviewers, approvers."""
         return list(set(chain(self.reviewers, self.approvers)))
 
     @property
     def all_involved(self):
+        """Return a deduplicated list of submitters, program leader, approvers."""
+        return list(set(chain(
+            self.submitters, self.reviewer, self.approvers)))
+
+    @property
+    def all_permitted(self):
         """Return a deduplicated list of submitters, reviewers, approvers."""
         return list(set(chain(
             self.submitters, self.reviewers, self.approvers)))
+
 
     # -------------------------------------------------------------------------#
     # Project approval
@@ -573,7 +585,13 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_UPDATE,
         conditions=[can_request_update],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Request update", explanation="", notify=True,)
+        custom=dict(verbose="Request update",
+                    explanation="The project team can update and submit the "
+                    "annual progress report. Once the progress report is "
+                    "approved, the project will become 'active' again. If the "
+                    "project should have been closed, the Directorate can "
+                    "fast-track the project into the correct work flow.",
+                    notify=True,)
         )
     def request_update(self, report=None):
         """
@@ -630,8 +648,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         source=STATUS_ACTIVE,
         target=STATUS_CLOSURE_REQUESTED,
         conditions=[can_request_closure],
-        permission=lambda instance, user: user in instance.all_involved,
-        custom=dict(verbose="Request closure", explanation="", notify=True,)
+        permission=lambda instance, user: user in instance.all_permitted,
+        custom=dict(verbose="Request closure",
+                    explanation="Once a project is completed as planned, "
+                    "the normal closure process involves approval of the "
+                    "ClosureForm, then a final ARAR progress report.",
+                    notify=True,)
         )
     def request_closure(self):
         """Transition to move project to CLOSURE_REQUESTED.
@@ -647,7 +669,16 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_CLOSURE_REQUESTED,
         # conditions=[can_request_closure],
         permission=lambda instance, user: user in instance.reviewers_approvers,
-        custom=dict(verbose="Force closure and cancel update", explanation="", notify=True,)
+        custom=dict(verbose="Force closure and cancel update",
+                    explanation="If a project should have been closing, but "
+                    "a progress report was requested in error, Program "
+                    "Leaders and Directorate can cancel and delete the update "
+                    "and fast-track the project into the closing state and "
+                    "generate a ClosureForm. If the ClosureForm is approved "
+                    "in time, the project can join the current ARAR for a "
+                    "final update (requested by the Directorate), the "
+                    "approval of which completes the project successfully.",
+                    notify=True,)
         )
     def force_closure(self):
         """Transition to move project to CLOSURE_REQUESTED during UPDATING.
@@ -762,7 +793,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         # conditions=[can_complete],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Force-complete project",
-                    explanation="",
+                    explanation="The Directorate can override project closure "
+                    "workflows by force-completing active or closing projects.",
                     notify=True,)
         )
     def force_complete(self):
@@ -793,7 +825,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         # conditions=[can_reactivate],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reactivate project",
-                    explanation="",
+                    explanation="The Directorate can reactivate a completed "
+                    "project.",
                     notify=True,)
         )
     def reactivate(self):
@@ -812,7 +845,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         # conditions=[can_terminate],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Terminate project",
-                    explanation="",
+                    explanation="The Directorate can terminate projects which "
+                    "are not expected to ever be completed successfully.",
                     notify=True,)
         )
     def terminate(self):
@@ -831,7 +865,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         # conditions=[can_reactivate_terminated],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reactivate terminated project",
-                    explanation="",
+                    explanation="The Directorate can reactivate terminated "
+                    "projects.",
                     notify=True,)
         )
     def reactivate_terminated(self):
@@ -850,7 +885,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         # conditions=[can_suspend],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Suspend project",
-                    explanation="",
+                    explanation="The Directorate can suspend projects which "
+                    "are currently not worked on.",
                     notify=True,)
         )
     def suspend(self):
@@ -869,7 +905,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         # conditions=[can_reactivate_suspended],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Reactivate suspended project",
-                    explanation="",
+                    explanation="The Directorate can reactivate suspended "
+                    "projects.",
                     notify=True,)
         )
     def reactivate_suspended(self):
@@ -877,17 +914,19 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return
 
     # EMAIL NOTIFICATIONS ----------------------------------------------------#
-    def get_users_to_notify(self, transition):
+    def get_users_to_notify(self, target_status):
         """Return the appropriate audience to notify for a transition.
 
         TODO make specific to transition and include email template.
         """
-        # result = set()
-        # if transition in (STATUS_ACTIVE, STATUS_COMPLETED,
-        #        STATUS_TERMINATED, STATUS_SUSPENDED):
-        result = set(self.members.all())  # reduce some duplication
-        return result
-
+        if target_status in [Project.STATUS_UPDATE,
+                             Project.STATUS_FINAL_UPDATE,
+                             Project.STATUS_CLOSING,
+                             Project.STATUS_SUSPENDED,
+                             Project.STATUS_TERMINATED]:
+            return self.submitters
+        else:
+            return set()
     # -------------------------------------------------------------------------#
     # Project labels and short codes
     #
@@ -1267,7 +1306,7 @@ class CollaborationProject(Project):
         field='status',
         source=Project.STATUS_ACTIVE,
         target=Project.STATUS_COMPLETED,
-        permission=lambda instance, user: user in instance.all_involved,
+        permission=lambda instance, user: user in instance.all_permitted,
         custom=dict(verbose="Close project", explanation="", notify=False,)
         )
     def complete(self):
@@ -1424,7 +1463,7 @@ class StudentProject(Project):
         source=Project.STATUS_UPDATE,
         target=Project.STATUS_COMPLETED,
         # conditions=[can_request_closure],
-        permission=lambda instance, user: user in instance.all_involved,
+        permission=lambda instance, user: user in instance.all_permitted,
         custom=dict(verbose="Force closure and cancel update", explanation="", notify=True,)
         )
     def force_closure(self):
@@ -1445,7 +1484,7 @@ class StudentProject(Project):
         field='status',
         source=Project.STATUS_ACTIVE,
         target=Project.STATUS_COMPLETED,
-        permission=lambda instance, user: user in instance.all_involved,
+        permission=lambda instance, user: user in instance.all_permitted,
         custom=dict(verbose="Close project", explanation="", notify=True,)
         )
     def complete(self):

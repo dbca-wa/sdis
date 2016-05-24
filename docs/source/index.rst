@@ -28,8 +28,8 @@ In tech speak, every feature, button, and workflow of SDIS should be defined in
 the :doc:`specs`, we should have a test case covering each requirement
 (badge "Test Coverage"), and all tests should pass (badge "Test Status").
 
-Installing, running and maintaining SDIs is documented in the :doc:`maintainer_docs`;
-the sofware architecture and design decisions are discussed in the :doc:`developer_docs`.
+Installing, running and maintaining SDIS is documented in the :doc:`maintainer_docs`;
+the software architecture and design decisions are discussed in the :doc:`developer_docs`.
 
 .. toctree::
    :maxdepth: 3
