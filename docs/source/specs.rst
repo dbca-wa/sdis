@@ -82,8 +82,13 @@ Science Projects and Core Functions
 .. image:: https://www.lucidchart.com/publicSegments/view/958f90d2-acd3-46c3-984f-95767bfb52aa/image.png
    :alt: Science Project Life Cycle
 
-Science Projects have a two-stage approval process, annual reporting requirements,
-and a two-stage closure process.
+Science Projects have
+
+* a two-stage approval process,
+* annual reporting requirements,
+* a two-stage closure process, and
+* a few admin shortcuts to force-choke projects into the correct status.
+
 Core Functions have the same documentation as Science Projects, but as ongoing
 Divisional business, have no formal approval or closure process.
 
@@ -91,13 +96,15 @@ Science Project Approval
 ~~~~~~~~~~~~~~~~~~~~~~~~
 * Create new Science Project
 * Update and submit ConceptPlan
+* ConceptPlan approval creates ProjectPlan
 * Update and submit ProjectPlan
+* ProjectPlan approval activates Project
 
 
 Science Project Annual Reporting
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Users get one central email broadcast about Annual Report
-* Users find all progress reports requiring their input in "My Tasks", update and submit them
+* Users find all Progress Reports requiring their input in "My Tasks", update and submit them
 * If an update is rejected, it will turn up in "My Tasks" again
 
 

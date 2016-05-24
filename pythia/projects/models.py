@@ -603,7 +603,6 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         if report is None:
             report = ARARReport.objects.all().latest()
         self.make_progressreport(report)
-        return
 
     # # UPDATING --> ACTIVE ---------------------------------------------------#
     # def can_complete_update(self):
@@ -735,7 +734,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         field='status',
         source=STATUS_CLOSING,
         target=STATUS_FINAL_UPDATE,
-        conditions=[can_request_final_update],
+        # conditions=[can_request_final_update],
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Request final update",
                     explanation="A final progress report is required to "
@@ -1485,7 +1484,11 @@ class StudentProject(Project):
         source=Project.STATUS_ACTIVE,
         target=Project.STATUS_COMPLETED,
         permission=lambda instance, user: user in instance.all_permitted,
-        custom=dict(verbose="Close project", explanation="", notify=True,)
+        custom=dict(verbose="Close project",
+                    explanation="The project team, the PL and the Directorate "
+                    "can request the closure of an active StudentProject, "
+                    "which immediately completes without any further process.",
+                    notify=False,)
         )
     def complete(self):
         """StudentProjects can complete without closure process."""
@@ -1494,6 +1497,10 @@ class StudentProject(Project):
         return False
 
     def can_suspend(self):
+        return False
+
+    def can_request_closure(self):
+        """Disable closure via closure form."""
         return False
 
     @property
