@@ -127,14 +127,15 @@ def doc():
     dm_cmd = "python manage.py graph_models {0} -o docs/source/img/dm_{0}.svg"
     [local(dm_cmd.format(app)) for app in apps]
 
-    doc_models = ['Document', 'ConceptPlan', 'ProjectPlan', 'ProgressReport',
-                  'ProjectClosure', 'StudentReport']
-    pro_models = ['Project', 'ScienceProject', 'CoreFunctionProject',
-                  'CollaborationProject', 'StudentProject']
-    cmd = ("python manage.py graph_transitions " +
-           "-o docs/source/img/tx_{1}.png {0}.{1} " +
-           "> docs/source/img/tx_{1}.dot")
-    [local(cmd.format("documents", i)) for i in doc_models]
-    [local(cmd.format("projects", i)) for i in pro_models]
+    # custom lucidchart docs are better
+    # doc_models = ['Document', 'ConceptPlan', 'ProjectPlan', 'ProgressReport',
+    #               'ProjectClosure', 'StudentReport']
+    # pro_models = ['Project', 'ScienceProject', 'CoreFunctionProject',
+    #               'CollaborationProject', 'StudentProject']
+    # cmd = ("python manage.py graph_transitions " +
+    #        "-o docs/source/img/tx_{1}.png {0}.{1} " +
+    #        "> docs/source/img/tx_{1}.dot")
+    # [local(cmd.format("documents", i)) for i in doc_models]
+    # [local(cmd.format("projects", i)) for i in pro_models]
 
     local("cd docs && make html && cd ..")

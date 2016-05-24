@@ -79,7 +79,7 @@ approval work flow. Approval of documents advances projects to new life cycle st
 
 Science Projects and Core Functions
 -----------------------------------
-.. image:: img/lc_project.jpeg
+.. image:: https://www.lucidchart.com/publicSegments/view/958f90d2-acd3-46c3-984f-95767bfb52aa/image.png
    :alt: Science Project Life Cycle
 
 Science Projects have a two-stage approval process, annual reporting requirements,
@@ -96,8 +96,8 @@ Science Project Approval
 
 Science Project Annual Reporting
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* Get email broadcast about Annual Report
-* Find all progress reports in "My Tasks", update and submit them all
+* Users get one central email broadcast about Annual Report
+* Users find all progress reports requiring their input in "My Tasks", update and submit them
 * If an update is rejected, it will turn up in "My Tasks" again
 
 
@@ -105,33 +105,28 @@ Science Project Closure
 ~~~~~~~~~~~~~~~~~~~~~~~
 There are many ways to retire a ScienceProject.
 
-* Submitters can "request closure" to create a Project Closure form:
+* Submitters (and their line management) can "request closure" on active projects
+  to create a Project Closure form:
 
   * "Request closure" button creates Project Closure document;
   * Approval of Project Closure document advances the project to status "Closing pending final update";
   * The next ARAR will create a final Progress Report;
   * Approval of the final Progress Report will close the project.
 
-* Reviewers can force-choke any project into closure from almost any active state.
-* Approves can terminate or suspend active projects to reflect a change in strategy,
+* Approvers can force-choke any project into closure from almost any active state.
+* Approvers can terminate or suspend active projects to reflect a change in strategy,
   take a project out of the circulation without due closure process.
 
 All steps are reversible.
 
 External Partnerships
 ---------------------
-.. image:: img/tx_CollaborationProject.png
-   :alt: External Partnership Life Cycle
-
-Partnerships have on approval or closure process, and require no separate annual updates.
+Partnerships have no approval or closure process, and require no separate annual updates.
 Simply registering, updating project details every now and then,
 and closing them as required will be enough.
 
 Student Projects
 ----------------
-.. image:: img/tx_StudentProject.png
-   :alt: Student Project Life Cycle
-
 Student Projects have no approval workflow or closure process, but require
 simple annual progress reports.
 
@@ -141,16 +136,17 @@ Progress reports requiring your input will turn up in "My Tasks" as well.
 Document Life Cycles
 ====================
 
-.. image:: img/lc_document.jpeg
+.. image:: https://www.lucidchart.com/publicSegments/view/131bad06-80e1-465f-af8e-07e0b491186c/image.png
    :alt: Document Life Cycle
 
 All documents share the same approval work flow:
 
-* Submitters update the content, then submit for review.
-* Reviewers reject or submit for approval.
-* Approvers reject (to reviewers or submitters) or approve the document.
+* Submitters (project team) update the content, then submit for review.
+* Reviewers (project's program leader) reject or submit for approval.
+* Approvers (Directorate) reject (to reviewers or submitters) or approve the document.
 * Approvers can reset the document to "new" and fast-track it through its approval stages.
 
 Document approval will often advance their project to a new stage.
+Revoking document approval will return the project into the previous stage.
 
 The individual documents differ only in the actions caused by their approval.

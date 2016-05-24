@@ -428,7 +428,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     @property
     def reviewer(self):
-        return [self.program.program_leader,]
+        return [self.program.program_leader, ]
 
     @property
     def approvers(self):
