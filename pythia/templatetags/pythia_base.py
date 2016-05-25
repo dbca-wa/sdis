@@ -2,6 +2,7 @@ import json
 
 import django
 from django.contrib.admin.util import lookup_field, quote
+from django.conf import settings
 from django.core.urlresolvers import resolve, reverse
 from django.utils.encoding import force_str
 from django import template
@@ -60,12 +61,21 @@ def doccontext(fieldset):
             'field': field_,
             'help_text': help_text}
 
+@register.inclusion_tag('admin/google_analytics.html', takes_context=True)
+def google_analytics(context):
+    """Return the GA tracking code JS snippet with a key from settings."""
+    context['GOOGLE_ANALYTICS_KEY'] = settings.GOOGLE_ANALYTICS_KEY
+    return context
+
+@register.simple_tag
+def google_analytics_key():
+    """Return the GA tracking code key from .env via settings."""
+    return settings.GOOGLE_ANALYTICS_KEY
+
 
 @register.inclusion_tag('admin/submit_line.html', takes_context=True)
 def submit_widgets(context):
-    """
-    Displays the row of buttons for delete and save.
-    """
+    """Display the row of buttons for delete and save."""
     opts = context['opts']
     change = context['change']
     is_popup = context['is_popup']
@@ -77,8 +87,9 @@ def submit_widgets(context):
                              and change and context.get('show_delete', True)),
         'show_save_as_new': not is_popup and change and save_as,
         'show_save_and_add_another': context['has_add_permission'] and
-                            not is_popup and (not save_as or context['add']),
-        'show_save_and_continue': not is_popup and context['has_change_permission'],
+                not is_popup and (not save_as or context['add']),
+        'show_save_and_continue': not is_popup and
+                context['has_change_permission'],
         'is_popup': is_popup,
         'show_save': True,
         'preserved_filters': context.get('preserved_filters'),

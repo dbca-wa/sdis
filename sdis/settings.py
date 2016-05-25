@@ -20,6 +20,7 @@ SECRET_KEY = env('SECRET_KEY', default='foo')
 DEBUG = env('DEBUG', default=False)
 CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
+GOOGLE_ANALYTICS_KEY = env('GOOGLE_ANALYTICS_KEY', default='')
 
 TEMPLATE_DEBUG = DEBUG
 
