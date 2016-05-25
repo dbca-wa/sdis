@@ -597,10 +597,11 @@ class Project(PolymorphicModel, Audit, ActiveModel):
                     " completed.",
                     notify=True,)
         )
-    def request_final_update(self, *args, **kwargs):
+    def request_final_update(self, report=None):
         """Transition to move the project to STATUS_FINAL_UPDATE."""
-        pr, created = ProgressReport.objects.get_or_create(
-            project=self, is_final_report=True, year=date.today().year)
+        if report is None:
+            report = ARARReport.objects.latest()
+        self.make_progressreport(report, final=True)
 
     # ACTIVE -> COMPLETED ----------------------------------------------------#
     def can_force_complete(self):
@@ -937,7 +938,7 @@ class ScienceProject(Project):
             self.make_progressreport(a)
         return ProgressReport.objects.get(project=self, year=year)
 
-    def make_progressreport(self, report):
+    def make_progressreport(self, report, final=False):
         """Create (if neccessary) a ProgressReport for the given ARARReport.
 
         Populate fields from previous ProgressReport.
@@ -948,7 +949,7 @@ class ScienceProject(Project):
         msg = "Creating ProgressReport for {0}".format(self.__str__())
         snitch(msg)
         p, created = ProgressReport.objects.get_or_create(
-                year=report.year, project=self)
+                year=report.year, project=self, is_final_report=final)
         p.report = report
         if (created and
             ProgressReport.objects.filter(
@@ -1017,7 +1018,7 @@ class CoreFunctionProject(Project):
             self.make_progressreport(a)
         return ProgressReport.objects.get(project=self, year=year)
 
-    def make_progressreport(self, report):
+    def make_progressreport(self, report, final=False):
         """Create (if neccessary) a ProgressReport for the given ARARReport.
 
         Populate fields from previous ProgressReport.
@@ -1030,7 +1031,7 @@ class CoreFunctionProject(Project):
         if settings.DEBUG:
             print(msg)
         p, created = ProgressReport.objects.get_or_create(
-                year=report.year, project=self)
+                year=report.year, project=self, is_final_report=final)
         p.report = report
         if (created and
             ProgressReport.objects.filter(

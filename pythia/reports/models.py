@@ -119,11 +119,10 @@ class ARARReport(pythia_models.Audit):
     @property
     def collaboration_projects(self):
         """A QuerySet of CollaborationProjects with prefetched documents."""
-        from pythia.projects.models import (
-            Project, CollaborationProject as x)
+        from pythia.projects.models import (Project, CollaborationProject as x)
         return x.objects.filter(
-            status=Project.STATUS_ACTIVE).order_by(
-                "position", "-year", "-number")
+            status=Project.STATUS_ACTIVE
+            ).order_by("position", "-year", "-number")
 
     """
     @property
@@ -172,31 +171,49 @@ class ARARReport(pythia_models.Audit):
         return self._meta
 
 
+def call_update(proj, rep, final=False):
+    """Request a (final) update from a project for a report.
+
+    HACK: project status is set and saved, although the transition should do.
+    """
+    from pythia.projects.models import Project
+    if final:
+        proj.request_final_update(rep)
+        proj.status = Project.STATUS_FINAL_UPDATE
+    else:
+        proj.request_update(rep)
+        proj.status = Project.STATUS_UPDATE
+    proj.save()
+    snitch("{0} processed request for progress report".format(proj.debugname))
+
+
 def request_progress_reports(instance):
     """Call Project.request_update() for each active or closing project."""
     snitch("Function request_progress_reports() called.")
     from pythia.projects.models import (
         Project, ScienceProject, CoreFunctionProject, StudentProject)
 
-    [Project.objects.get(pk=p).request_update(instance) for p in
+    snitch("{0} requesting progress reports".format(instance.fullname))
+    [call_update(Project.objects.get(pk=p), instance) for p in
         ScienceProject.objects.filter(status=Project.STATUS_ACTIVE
                                       ).values_list('pk', flat=True)]
 
-    [Project.objects.get(pk=p).request_final_update(instance) for p in
+    [call_update(Project.objects.get(pk=p), instance, final=True) for p in
         ScienceProject.objects.filter(status=Project.STATUS_CLOSING
                                       ).values_list('pk', flat=True)]
 
-    [Project.objects.get(pk=p).request_update(instance) for p in
+    [call_update(Project.objects.get(pk=p), instance) for p in
         CoreFunctionProject.objects.filter(status=Project.STATUS_ACTIVE
                                            ).values_list('pk', flat=True)]
 
-    [Project.objects.get(pk=p).request_final_update(instance) for p in
+    [call_update(Project.objects.get(pk=p), instance, final=True) for p in
         CoreFunctionProject.objects.filter(status=Project.STATUS_CLOSING
                                            ).values_list('pk', flat=True)]
 
-    [Project.objects.get(pk=p).request_update(instance) for p in
+    [call_update(Project.objects.get(pk=p), instance) for p in
         StudentProject.objects.filter(status=Project.STATUS_ACTIVE
                                       ).values_list('pk', flat=True)]
+    snitch("{0} finished requesting progressreports".format(instance.fullname))
 
 
 def arar_post_save(sender, instance, created, **kwargs):

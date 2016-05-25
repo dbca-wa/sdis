@@ -1,4 +1,6 @@
 """Model tests for SDIS."""
+from datetime import datetime
+
 from django.test import TestCase
 from django.contrib.auth.models import Group
 # from django_fsm.db.fields import TransitionNotAllowed
@@ -427,7 +429,6 @@ class ScienceProjectModelTests(BaseTestCase):
 
     def test_scienceproject_update(self):
         """Test the update workflow of a ScienceProject."""
-
         self.project.status = Project.STATUS_ACTIVE
         self.project.save()
 
@@ -524,8 +525,14 @@ class ScienceProjectModelTests(BaseTestCase):
         self.project.save()          # NOTE sync to db
         self.assertEqual(self.project.status, Project.STATUS_CLOSING)
 
+        print("Create ARAR")
+        arar = ARARReport.objects.create(
+            year=self.project.year,
+            date_open=datetime.now(),
+            date_closed=datetime.now())
+
         print("Request final update")
-        self.project.request_final_update()
+        self.project.request_final_update(arar)
         self.project.save()
         self.assertEqual(self.project.status, Project.STATUS_FINAL_UPDATE)
         print("Check that there's exactly one ProgressReport.")
@@ -745,6 +752,7 @@ class CollaborationProjectModelTests(TestCase):
         print("{0} should be COMLETED".format(self.project.debugname))
         self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
 
+
 class StudentProjectModelTests(TestCase):
     """StudentProject model tests."""
 
@@ -876,3 +884,154 @@ class StudentProjectModelTests(TestCase):
         self.project.save()
         print("{0} should be COMLETED".format(self.project.debugname))
         self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
+
+
+class ARARReportModelTests(TestCase):
+    """ARARReport model tests."""
+
+    def setUp(self):
+        """Create one of each project type and users."""
+        self.smt, created = Group.objects.get_or_create(name='SMT')
+        self.scd, created = Group.objects.get_or_create(name='SCD')
+        self.users, created = Group.objects.get_or_create(name='Users')
+
+        self.superuser = SuperUserFactory.create(username='admin')
+        self.bob = UserFactory.create(
+            username='bob', first_name='Bob', last_name='Bobson')
+        self.john = UserFactory.create(
+            username='john', first_name='John', last_name='Johnson')
+        self.steven = UserFactory.create(
+            username='steven', first_name='Steven', last_name='Stevenson')
+        self.steven.groups.add(self.smt)
+        self.fran = UserFactory.create(
+            username='fran', first_name='Fran', last_name='Franson')
+        self.fran.groups.add(self.smt)
+        self.marge = UserFactory.create(
+            username='marge', first_name='Marge', last_name='Simpson')
+        self.marge.groups.add(self.scd)
+        self.peter = UserFactory.create(
+            username='peter', first_name='Peter', last_name='Peterson')
+
+        self.program = Program.objects.create(
+                name="ScienceProgram",
+                slug="scienceprogram",
+                position=0,
+                program_leader=self.steven)
+
+        self.sp = ScienceProjectFactory.create(
+            creator=self.bob,
+            modifier=self.bob,
+            program=self.program,
+            # data_custodian=self.bob, site_custodian=self.bob,
+            project_owner=self.bob)
+
+        ProjectMembership.objects.create(
+            project=self.sp,
+            user=self.bob,
+            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+
+        self.cf = CoreFunctionProjectFactory.create(
+            creator=self.bob,
+            modifier=self.bob,
+            program=self.program,
+            # data_custodian=self.bob, site_custodian=self.bob,
+            project_owner=self.bob)
+
+        ProjectMembership.objects.create(
+            project=self.cf,
+            user=self.bob,
+            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+
+        self.ext = CollaborationProjectFactory.create(
+            creator=self.bob,
+            modifier=self.bob,
+            program=self.program,
+            # data_custodian=self.bob, site_custodian=self.bob,
+            project_owner=self.bob)
+
+        ProjectMembership.objects.create(
+            project=self.ext,
+            user=self.bob,
+            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+
+        self.stp = StudentProjectFactory.create(
+            creator=self.bob,
+            modifier=self.bob,
+            program=self.program,
+            # data_custodian=self.bob, site_custodian=self.bob,
+            project_owner=self.bob)
+
+        ProjectMembership.objects.create(
+            project=self.stp,
+            user=self.bob,
+            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+
+    def tearDown(self):
+        """Destroy test objects after a test."""
+        [m.delete for m in ProjectMembership.objects.all()]
+        self.sp.delete()
+        self.cf.delete()
+        self.ext.delete()
+        self.stp.delete()
+        self.superuser.delete()
+        self.bob.delete()
+        self.steven.delete()
+        self.marge.delete()
+        self.peter.delete()
+        self.program.delete()
+
+    def test_new_arar(self):
+        """Test new ARAR creates updates and changes project status."""
+        print("Fast-track {0} to active".format(self.sp.debugname))
+        self.assertEqual(self.sp.status, Project.STATUS_NEW)
+        self.sp.status = Project.STATUS_ACTIVE
+        self.sp.save()
+        self.assertEqual(self.sp.status, Project.STATUS_ACTIVE)
+
+        print("Fast-track {0} to active".format(self.cf.debugname))
+        self.assertEqual(self.cf.status, Project.STATUS_NEW)
+        self.cf.status = Project.STATUS_ACTIVE
+        self.cf.save()
+        self.assertEqual(self.cf.status, Project.STATUS_ACTIVE)
+
+        print("{0} should be active".format(self.ext.debugname))
+        self.assertEqual(self.cf.status, Project.STATUS_ACTIVE)
+
+        print("{0} should be active".format(self.stp.debugname))
+        self.assertEqual(self.stp.status, Project.STATUS_ACTIVE)
+
+        print("Create ARAR")
+        self.arar = ARARReport.objects.create(
+            year=self.sp.year,
+            date_open=datetime.now(),
+            date_closed=datetime.now())
+        print("New {0} requests progress reports".format(self.arar.fullname))
+
+        print("Test saving changed object to db")
+        self.sp = self.sp.progressreport.project
+        self.sp.save()
+        self.cf = self.cf.progressreport.project
+        self.cf.save()
+        self.stp = self.stp.progressreport.project
+        self.stp.save()
+
+        print("{0} should have a progressreport".format(self.sp.debugname))
+        self.assertTrue(self.sp.progressreport is not None)
+
+        print("{0} should have a progressreport".format(self.cf.debugname))
+        self.assertTrue(self.cf.progressreport is not None)
+
+        print("{0} should have a progressreport".format(self.stp.debugname))
+        self.assertTrue(self.stp.progressreport is not None)
+
+        print("{0} should be updating".format(self.sp.debugname))
+        self.assertEqual(self.sp.status, Project.STATUS_UPDATE)
+
+        print("{0} should be updating".format(self.cf.debugname))
+        self.assertEqual(self.cf.status, Project.STATUS_UPDATE)
+
+        print("{0} should be active".format(self.ext.debugname))
+        self.assertEqual(self.ext.status, Project.STATUS_ACTIVE)
+
+        print("{0} should be updating".format(self.stp.debugname))
+        self.assertEqual(self.stp.status, Project.STATUS_UPDATE)
