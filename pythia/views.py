@@ -70,6 +70,32 @@ def update_cache(request):
 
 
 @csrf_exempt
+def batch_approve_progressreports(request):
+    """Approve all progress reports that are in approval.
+
+    This is handy to close off an ARAR cycle.
+    """
+    if not request.user.is_superuser:
+        messages.error(request,
+                       "Only superusers can batch-approve ProgressReports!")
+        return HttpResponseRedirect("/")
+
+    from pythia.documents.models import (
+        Document, ProgressReport, StudentReport)
+    pr = [d.approve() for d in
+          ProgressReport.objects.filter(status=Document.STATUS_INAPPROVAL)]
+    sr = [d.approve() for d in
+          StudentReport.objects.filter(status=Document.STATUS_INAPPROVAL)]
+
+    messages.success(
+        request,
+        "Batch-approved {0} ProgressReports and {1} StudentReports".format(
+            len(pr), len(sr)))
+
+    return HttpResponseRedirect("/")
+
+
+@csrf_exempt
 def spell_check(request):
     """Spellcheck view."""
     import enchant
