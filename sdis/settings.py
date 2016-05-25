@@ -74,6 +74,7 @@ INSTALLED_APPS = (
     'markup_deprecated',
     'guardian',
     'django_fsm',
+    # 'django_fsm_log',  # pending django 1.7+
 
     'mail_templated',
     'reversion',
