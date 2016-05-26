@@ -27,11 +27,40 @@ Find a Project
 ==============
 On the `"Browse all Projects" page <https://sdis.dpaw.wa.gov.au/projects/project/>`_
 you can filter and search for projects.
+On the start page, the big "Download all Projects (XLS)" button will download all
+projects as an Excel spreadsheet. Please note that this is a rapidly outdating
+snapshot. **Do not** update this spreadsheet - that's what SDIS is there for.
 .. Under "actions", a selected list of projects can also be exported to CSV or MS Excel spreadsheets.
 
+**Note** Currently, the project list is a huge table scrolling sideways, we're working to make it smaller.
+
+Project Life Cycles
+===================
+First, let's have a look at the game of snakes and ladders that is SDIS's project
+life cycle management.
+
+There are three main workflows:
+
+* Project creation and approval ("New" to "Active"),
+* providing annual ARAR updates ("Active" to "Updating" and back), and
+* project closure (goal: "Completed").
+
+Project creation and approval will require solving two side quests, Concept Plan
+and Project Plan approval.
+
+Active projects are allowed to be worked on, and will require annual progress reports.
+
+Closing a project requires an intricate, multi-step process, which we'll discuss here
+in detail.
+
+.. image:: https://www.lucidchart.com/publicSegments/view/958f90d2-acd3-46c3-984f-95767bfb52aa/image.png
+   :alt: Science Project Life Cycle
+
+Project Creation and Approval
+=============================
 
 Create a new Science Project
-============================
+----------------------------
 * On the `SDIS home page <https://sdis.dpaw.wa.gov.au>`_ click Create New Project
 * In the Project Type dropdown box select Science Project
 * Enter a project title and divisional program (and as many other fields as you can fill in), then click Save Changes
@@ -42,7 +71,7 @@ Create a new Science Project
 Core Functions look the same as Science Projects, however they are maintained by SDIS admins.
 
 Create a new External Collaboration
-===================================
+-----------------------------------
 * On the SDIS home page (https://sdis.dpaw.wa.gov.au) click Create New Project
 * In the Project Type dropdown box select External Collaboration
 * Enter a project title and divisional program, then click Save Changes
@@ -50,32 +79,41 @@ Create a new External Collaboration
 * Click Edit project details, then under Collaboration details enter the collaboration name and budget.
 
 Create a new Student Project
-============================
+----------------------------
 * On the SDIS home page (https://sdis.dpaw.wa.gov.au) click Create New Project
 * In the Project Type dropdown box select Student Project
 * Enter a project title and divisional program, then click Save Changes
 * In the Overview tab, enter team members. If student is external you must first register them with SDIS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member.
 * Click Edit project details, then under Student project details enter the study level and academic organisation.
 
+Managing project teams
+======================
+
 Add a DPaW employee as team member
-======================================
+----------------------------------
 Before SDIS can add DPaW employees to teams, they have to login once in person,
 so that SDIS adds them to its internal user database.
 
 A user that has never logged in cannot be added to teams or into project roles.
 
 Register an external colleague
-==============================
+------------------------------
 * Click on the project Overview tab or open Menu > Staff
 * Click Register external colleague
-* Provide a username (use firstname_surname) and password (can be same as username)
-  and click Save Changes (first screen). Ignore the next screen.
-* Enter as many user details as you can and click Save Changes.
+* Provide a username (use givenname_surname) and password (can be same as username)
+  and click Save Changes (first screen).
+* On the second screen, enter as many user details as you can and click Save Changes.
+* External colleagues can be natural persons or groups/organisations. Choose to
+  "Show as Group" accordingly.
 
 Now the new user can be added to project teams or project roles.
 
+**Note** External colleagues cannot login to SDIS, unless they have a DPaW account and email.
+However, a profile needs to be created as shown here in order to add them to project team
+lists and represent them with their correct name and attribution.
+
 Managing privileged user roles
-==============================
+------------------------------
 The application's superusers can manage members of the "reviewer" (all Program
 Leaders and SCMT members) and "approver" (Directorate) group, as well as set
 the SCD program's details, such as current program leader.
@@ -87,12 +125,6 @@ If you feel you should be in either of these groups, contact the system administ
 
 Closing a Project
 =================
-First, let's have a look at the game of snakes and ladders that is SDIS's project
-life cycle management.
-
-.. image:: https://www.lucidchart.com/publicSegments/view/958f90d2-acd3-46c3-984f-95767bfb52aa/image.png
-   :alt: Science Project Life Cycle
-
 
 Closing a Science Project
 -------------------------
