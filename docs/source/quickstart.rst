@@ -41,10 +41,10 @@ Create a new Science Project
 
 Core Functions look the same as Science Projects, however they are maintained by SDIS admins.
 
-Create a new External Partnership
-=================================
+Create a new External Collaboration
+===================================
 * On the SDIS home page (https://sdis.dpaw.wa.gov.au) click Create New Project
-* In the Project Type dropdown box select Collaboration Project
+* In the Project Type dropdown box select External Collaboration
 * Enter a project title and divisional program, then click Save Changes
 * In the Overview tab, enter team members. External collaborators must first be registered with SDIS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member.
 * Click Edit project details, then under Collaboration details enter the collaboration name and budget.
@@ -74,7 +74,6 @@ Register an external colleague
 
 Now the new user can be added to project teams or project roles.
 
-
 Managing privileged user roles
 ==============================
 The application's superusers can manage members of the "reviewer" (all Program
@@ -85,3 +84,69 @@ Also, representatives of Biometrician (BM), Herbarium Curator (HC), Data Manager
 and Animal Ethics Committee (AE) are managed by superusers.
 
 If you feel you should be in either of these groups, contact the system administrators.
+
+Closing a Project
+=================
+First, let's have a look at the game of snakes and ladders that is SDIS's project
+life cycle management.
+
+.. image:: https://www.lucidchart.com/publicSegments/view/958f90d2-acd3-46c3-984f-95767bfb52aa/image.png
+   :alt: Science Project Life Cycle
+
+
+Closing a Science Project
+-------------------------
+The official way to initiate the closure process an active Science Project is
+for the project team to hit the "Request Closure" button.
+
+* "Request Closure" will create a Project Closure form and forward the project
+  to the status "Closure Requested".
+* The project team has to update the Project Closure, the submit for review.
+* The Program Leader, then the Directorate have to approve the form.
+* On approval of the Project Closure, the project turns to status "Closing", which
+  means that a last ARAR update has to be provided.
+* When the next ARAR comes around, a Progress Report (ARAR update) is requested.
+* The project team has to update the Progress Report and submit it for review
+  and approval.
+* Approval of the Progress Report will automatically mark the project as "completed".
+
+Notes:
+
+* If a project is in the process of Project Closure approval (status "Closure Requested"),
+  and an ARAR cycle is started, no Progress Report will be requested from the project -
+  the Project Closure has to be approved first, then the Directorate can request
+  the final Progress Report.
+* If a project is "Active", but really should have been "Closing" (and working
+  on the Projcet Closure document), and an ARAR came around, incorrectly asking
+  the project to provide a standard Progress Report, the Directorate can "Force
+  Closure", which will delete the Progress Report, create a Project Closure,
+  and fast-forward the project into the correct status "Closure Requested". Now,
+  the Project Closure can be submitted and approved, then the Directorate can
+  immediately request a final Progress Report.
+* The Directorate can (when asked to, and at their discretion), suspend or
+  terminate a project to indicate that although the project goals have not been
+  met, the project is currently or permanently set aside and not being worked on.
+* The Directorate can also force-choke a project into status "Completed" without
+  due process. With great power comes great responsibility.
+* The Directorate can reactivate suspended, terminated, and completed projects.
+
+Closing a Student Project
+-------------------------
+The project team can "Request Closure" of any active Student Project.
+Since there is no formal closure process, the project simply will be marked as "Completed".
+
+If the Student Project is in the middle of an ARAR update, the project team can still
+choose to "Cancel update and request closure", which will mark the project as "Completed"
+and delete the Progress Report. Since SDIS cannot decide whether this Progress Report
+is required or not, it is up to the team to decide the appropriate action.
+
+Closing an External Collaboration
+---------------------------------
+Project-level details of an External Collaborations will be included in an ARAR,
+but no separate Progress Report will be requested. Therefore it is important for
+staff to keep the project details and team lists of External Collaborations
+updated, and close them as appropriate.
+
+There is no formal closure process of External Collaborations, so, as with Student
+Projects, "Request Closure" will simply mark them as "Completed" and remove them
+from any active ARAR.
