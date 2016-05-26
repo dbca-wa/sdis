@@ -6,7 +6,7 @@ The most common and fun things to do in SDIS revolve around project approval
 and taking the "ow" out of the "how" of annual reporting.
 
 Gone are the days of emailing MS Word documents - the future is here, and it's
-all in your browser. SDIS will tell you what to do (your Tasks), offer short cuts
+all in your browser. SDIS will tell you what to do (your Tasks), offer shortcuts
 to your Projects, and allow you to browse other Projects and Reports.
 If there are urgent or new Tasks, SDIS will notify you via email.
 
