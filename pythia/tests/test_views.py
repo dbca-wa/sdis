@@ -1,27 +1,26 @@
 from django.core.urlresolvers import reverse
+from django.test import Client
 from guardian.models import Group
 
 from pythia.models import Program
 from pythia.documents.models import ConceptPlan, ProjectPlan
 from pythia.projects.models import ProjectMembership
 
-from .base import BaseTestCase, UserFactory, ScienceProjectFactory
+from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
+                   CoreFunctionProjectFactory, CollaborationProjectFactory,
+                   StudentProjectFactory, UserFactory, SuperUserFactory)
 
 
 class ConceptPlanAdminTests(BaseTestCase):
     """ConceptPlan view tests."""
 
     def setUp(self):
+        """Create initial objects for test."""
         self.smt, created = Group.objects.get_or_create(name='SMT')
         self.scd, created = Group.objects.get_or_create(name='SCD')
         self.users, created = Group.objects.get_or_create(name='Users')
 
-        self.user = UserFactory.create(username='test')
-        self.user.is_superuser = True
-        self.user.save()
-        # self.user.groups.add(self.smt)
-        # self.user.groups.add(self.scd)
-
+        self.superuser = SuperUserFactory.create(username='admin')
         self.bob = UserFactory.create(
             username='bob', first_name='Bob', last_name='Bobson')
         self.john = UserFactory.create(
@@ -44,12 +43,6 @@ class ConceptPlanAdminTests(BaseTestCase):
                 position=0,
                 program_leader=self.steven)
 
-        self.program = Program.objects.create(
-                name="ConservationProgram",
-                slug="conservationprogram",
-                position=0,
-                program_leader=self.fran)
-
         self.project = ScienceProjectFactory.create(
             creator=self.bob,
             modifier=self.bob,
@@ -61,13 +54,8 @@ class ConceptPlanAdminTests(BaseTestCase):
             project=self.project,
             user=self.bob,
             role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
-        ProjectMembership.objects.create(
-            project=self.project,
-            user=self.john,
-            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
 
-        self.project.save()
-        self.client.login(username='bob', password='password')
+        self.client = Client()
         self.scp = self.project.documents.instance_of(ConceptPlan).get()
         self.url = reverse('admin:documents_conceptplan_change',
                            args=(self.scp.id,))
@@ -76,8 +64,11 @@ class ConceptPlanAdminTests(BaseTestCase):
     def test_everyone_can_view_conceptplan(self):
         """Test that everyone can view the ConceptPlan"""
         # get ConceptPlan detail
-        #     response = self.client.get(self.url)
-        #     self.assertEqual(response.context['original'], self.plan)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        # import ipdb; ipdb.set_trace()
+        # print(response.context)
+        # self.assertEqual(response.context['original'], self.scp)
         #     self.client.logout()
         #     self.client.login(username='user', password='password')
         #     self.scp.status = self.scp.STATUS_APPROVED

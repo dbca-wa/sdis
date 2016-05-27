@@ -59,6 +59,17 @@ You sure can! The "View PDF" link above each document will create a beautifully
 laid out PDF with a cover page indicating its approval status and project details.
 The PDFs have links in the page headers back to their online counterparts in SDIS.
 
+The "Create PDF" link does not work
+===================================
+Likely there's some invisible markup in at least one of the document's fields.
+This can happen if the content has been copy-pasted from MS Word, EndNote, or
+web pages.
+
+Cut and paste the content into a text exitor like Notepad and back to remove
+this invisible markup. Do not use "clever" text processors like MS Word, as they
+understand and preserve the invisible markup we want to get rid of. Do use simple
+text editors like Notepad, which don't understand, and discard, the invisible markup.
+
 
 What will happen when a new ARAR is kicked off?
 ===============================================
