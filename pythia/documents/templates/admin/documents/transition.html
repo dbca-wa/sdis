@@ -21,9 +21,12 @@
 {% if explanation %}
 <p>{{ explanation }}</p>
 {% endif %}
+
+{% if recipients %}
 <p><input type="checkbox" id="id_notify" name="_notify"
-    {% if notify_default == True %}checked{% endif %}></input>&nbsp;
+    {% if recipients and notify_default == True %}checked{% endif %}></input>&nbsp;
 <label for="id_notify">Send an email notification to {{ recipients }}.</label></p>
+{% endif %}
 
 <p>If you wish to proceed, click "Confirm".</p>
 
