@@ -3,22 +3,6 @@
 {% load markup %}
 {% load pythia_base %}
 
-{% block extrastyle %}
-  {{ block.super }}
-  <!--<link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />-->
-  {% if cl.formset %}
-  <!-- <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />-->
-  <style>
-    .empty-form { display: none;}
-  </style>
-  {% endif %}
-  {% if cl.formset or action_form %}
-    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-  {% endif %}
-  <link rel="stylesheet" type="text/css" href="{% static "admin/css/widgets.css" %}" />
-  {{ media.css }}
-  <link rel="stylesheet" href="{% static "css/changelists.css" %}">
-{% endblock %}
 
 {% block extrahead %}
   {{ block.super }}

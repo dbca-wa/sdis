@@ -144,8 +144,7 @@ class ProjectAdmin(BaseAdmin):
     fm_end_date.admin_order_field = 'end_date'
 
     def get_changelist(self, request, **kwargs):
-        ChangeList = super(ProjectAdmin, self).get_changelist(request,
-                                                              **kwargs)
+        ChangeList = super(ProjectAdmin, self).get_changelist(request, **kwargs)
 
         class ProjectChangeList(ChangeList):
             def __init__(self, request, model, list_display,
@@ -162,8 +161,7 @@ class ProjectAdmin(BaseAdmin):
                     request, model, list_display, list_display_links,
                     list_filter, date_hierarchy, search_fields,
                     list_select_related, list_per_page, list_max_show_all,
-                    list_editable, model_admin
-                )
+                    list_editable, model_admin)
 
             def get_filters(self, request):
                 (filter_specs, has_filters, lookup_params,
@@ -200,7 +198,7 @@ class ProjectAdmin(BaseAdmin):
             Breadcrumb(_('Home'), reverse('admin:index')),
             Breadcrumb(_('All projects'),
                        reverse('admin:projects_project_changelist'))
-        )
+                       )
 
     def get_readonly_fields(self, request, obj=None):
         """Control which fields can be updated by whom.
@@ -286,12 +284,12 @@ class ProjectAdmin(BaseAdmin):
             opts=opts,)
         context.update(extra_context or {})
 
-        # This failsafe is not required, as DEBUG sends emails to console.
-        if settings.DEBUG:
-            print("[DEBUG] recipients would have been: {0}".format(recipients))
-            User = get_user_model()
-            recipients = [User.objects.get(username='florianm'), ]
-            print("[DEBUG] recipients replaced with: {0}".format(recipients))
+        # # This failsafe is not required, as DEBUG sends emails to console.
+        # if settings.DEBUG:
+        #     print("[DEBUG] recipients would have been: {0}".format(recipients))
+        #     User = get_user_model()
+        #     recipients = [User.objects.get(username='florianm'), ]
+        #     print("[DEBUG] recipients replaced with: {0}".format(recipients))
 
         # User clicks "confirm" on transition.html
         if request.method == 'POST':
@@ -308,6 +306,7 @@ class ProjectAdmin(BaseAdmin):
             from_email = settings.DEFAULT_FROM_EMAIL
             if do_notify:
                 send_mail(tmpl, context, from_email, to_emails)
+                print("email sent to " + recipients_text)
 
             # Redirect the user back to the document change page
             redirect_url = reverse('admin:%s_%s_change' %
@@ -315,8 +314,6 @@ class ProjectAdmin(BaseAdmin):
                                    args=(object_id,),
                                    current_app=self.admin_site.name)
             return HttpResponseRedirect(redirect_url)
-
-
 
         return TemplateResponse(request, [
             "admin/%s/%s/%s_transition.html" % (
