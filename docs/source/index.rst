@@ -9,7 +9,7 @@ SDIS Documentation
    :target: https://coveralls.io/github/parksandwildlife/sdis
    :alt: Test Coverage
 .. image:: https://badge.waffle.io/parksandwildlife/sdis.svg?label=ready&title=Ready
-   :target: http://waffle.io/parksandwildlife/sdis
+   :target: https://waffle.io/parksandwildlife/sdis
    :alt: Tasks
 
 The Science Directorate Information System (SDIS) is the project documentation,

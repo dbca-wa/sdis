@@ -43,7 +43,7 @@ models.
 * All Directorate representatives are allowed to "approve" things and fast-track
   projects through their life cycles to re-align SDIS with reality.
 
-Notably, there are no Django permissions in place.
+Notably, there are no customisations to Django permissions in place.
 Django-fsm accepts either hard-coded permission strings, or lambda functions.
 
 Hard-coded permission strings are referred from django_fsm's has_perm to
@@ -58,6 +58,20 @@ necessary. This means that lambda functions used in transition permissions can
 be inherited without problems. An added benefit is the somewhat cleaner design
 of keeping the definition and source of permissions together with the transitions
 with the model.
+
+Finding the right audience for notifications and write permissions
+------------------------------------------------------------------
+
+To restrict editing of documents to the correct audience,
+`pythia.documents.admin.DocumentAdmin.get_readonly_fields` refers to
+`Document.get_users_with_change_permissions()`, which in turn returns the
+audience corresponding to its status.
+
+The current implementation permits the respectively involved users and their line
+management to edit documents.
+
+This keeps the business logic, which depends on the model's status, close to the
+implementation of the status - at the model.
 
 
 Django Admin
@@ -131,22 +145,22 @@ To synchronise db and memory, the reference to the project has to be saved to db
     self.assertEqual(p.status, CHANGED_STATUS)
 
 
-Data models
-===========
-
-These data models are auto-generated with each commit.
-
-.. image:: img/dm_projects.svg
-   :alt: pythia.projects data model
-
-.. image:: img/dm_documents.svg
-   :alt: pythia.documents data model
-
-.. image:: img/dm_reports.svg
-   :alt: pythia.reports data model
-
-.. image:: img/dm_pythia.svg
-   :alt: pythia data model
+.. Data models
+.. ===========
+..
+.. These data models are auto-generated with each commit.
+..
+.. .. image:: img/dm_projects.svg
+..    :alt: pythia.projects data model
+..
+.. .. image:: img/dm_documents.svg
+..    :alt: pythia.documents data model
+..
+.. .. image:: img/dm_reports.svg
+..    :alt: pythia.reports data model
+..
+.. .. image:: img/dm_pythia.svg
+..    :alt: pythia data model
 
 
 ***********************
