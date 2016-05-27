@@ -7,7 +7,8 @@
 {% endif %}
 {% if results %}
 <div class="results">
-<table id="result_list{% if cl.formset.prefix and cl.formset.prefix != 'form' %}_{{ cl.formset.prefix }}{% endif %}" class="table table-striped table-condensed table-hover table-fixed-header">
+<!-- <table id="result_list{% if cl.formset.prefix and cl.formset.prefix != 'form' %}_{{ cl.formset.prefix }}{% endif %}" class="table table-striped table-condensed table-hover table-fixed-header"> -->
+<table id="result_list{% if cl.formset.prefix and cl.formset.prefix != 'form' %}_{{ cl.formset.prefix }}{% endif %}" class="table-striped table-hover table-fixed-header">
 <thead class="header">
 <tr>
 {% for header in result_headers %}
@@ -42,7 +43,7 @@
 </div>
 <script type="text/javascript">
   $(function($) {
-      $('.table-fixed-header').fixedHeader();
+    //   $('.table-fixed-header').fixedHeader();
       /*
        * Create the onchange handler for the "relevant" table rows.
        */
@@ -169,7 +170,8 @@
   });
   </script>
 {% else %}
-<table id="result_list" class="table table-striped table-condensed">
+<!-- <table id="result_list" class="table table-striped table-condensed"> -->
+<table id="result_list" class="table-striped">
   <thead>
     {% for header in result_headers %}
     <th scope="col" {{ header.class_attrib }}>{{ header.text|capfirst }}</th>

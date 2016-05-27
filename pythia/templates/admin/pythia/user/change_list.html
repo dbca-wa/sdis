@@ -11,7 +11,7 @@
 {% block extrahead %}
   {{ block.super }}
   {{ media.js }}
-  <script src="{% static 'js/table-fixed-header.js' %}"></script>
+  <!-- <script src="{% static 'js/table-fixed-header.js' %}"></script> -->
   {% if action_form %}{% if actions_on_top or actions_on_bottom %}
   <script type="text/javascript">
     (function($) {
@@ -123,11 +123,6 @@ $(function() {
     //});
     //$("#cfspp").click();
 });//document.ready
-
-
-
-
-
   </script>
 {% endblock %}
 
@@ -211,12 +206,12 @@ $(function() {
 
 {% block filters %}
 {% if cl.has_filters %}
-<!-- <div class="col-md-2">
+<div class="col-md-2">
   <h5>Filter</h5>
   <ul class="nav nav-list">
     {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
   </ul>
-</div> -->
+</div>
 {% endif %}
 {% endblock %}
 

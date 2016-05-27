@@ -3,12 +3,14 @@
 /* fix empty cells over blue background picture */
 table {background-color: white;}
 
-
 @media only screen and (max-width: 760px),
 (min-device-width: 768px) and (max-device-width: 1024px)  {
 
     /* Force table to not be like tables anymore */
-    table, thead, tbody, th, td, tr {display: block; width: inherit;}
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: inherit;
+    }
 
     /* Hide table headers (but not display: none;, for accessibility) */
     thead tr {position: absolute; top: -9999px; left: -9999px;}
@@ -48,6 +50,12 @@ table .header-fixed {
     border-radius: 0;
 }
 
+/* JQuery Tablesorter with filters width */
+.tablesorter { width: auto;}
+.tablesorter .tablesorter-filter {  width: 100%; }
+
+/*.header {width: inherit}*/
+
 input:focus, select:focus {background-color: #D1F0FF;}
 
 textarea {height: 1.5em; width: 95%; overflow-y: hidden;}
@@ -59,5 +67,3 @@ input.vForeignKeyRawIdAdminField, input.vIntegerField {display:block;}
 
 /* 10 more than .navbar-fixed */
 .chzn-drop { z-index: 1040 !important;}
-
- #changelist table thead th:first-child {width: inherit}
