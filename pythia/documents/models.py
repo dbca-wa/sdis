@@ -540,7 +540,7 @@ class Document(PolymorphicModel, Audit):
         Default: use self.submitters, reviewers and approvers and
         override in Document models
         """
-        print("Getting recipients for transition target {0}".format(target))
+        snitch("Getting recipients for transition target {0}".format(target))
         if target in [Document.STATUS_NEW, Document.STATUS_APPROVED]:
             return self.submitters
         elif target == Document.STATUS_INREVIEW:
@@ -549,6 +549,31 @@ class Document(PolymorphicModel, Audit):
             return self.approvers
         else:
             return self.submitters
+
+    def get_users_with_change_permissions(self):
+        """Return the write-permitted audience for a given status.
+
+        At each status, the directly involved audience plus their line
+        management are permitted to change a document.
+
+        * STATUS_NEW: project team + all PLs + Directorate
+        * STATUS_INREVIEW: all PLs + Directorate
+        * STATUS_INAPPROVAL: Directorate
+        * STATUS_APPROVED: None (empty set), but Directorate can reset status
+        """
+        permitted = set()
+        if self.status == Document.STATUS_NEW:
+            permitted = self.all_involved
+        elif self.status == Document.STATUS_INREVIEW:
+            permitted = self.reviewers_approvers
+        elif self.status == Document.STATUS_INAPPROVAL:
+            permitted = self.approvers
+        elif self.status == Document.STATUS_APPROVED:
+            permitted = set()
+
+        # snitch("Permitted to change {0}: {1}".format(
+        #     self.debugname, ", ".join([p.fullname for p in permitted])))
+        return permitted
 
 
 class ConceptPlan(Document):

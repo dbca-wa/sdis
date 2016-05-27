@@ -13,7 +13,7 @@
     <div class="col-sm-12 mini-headline">{{ field.label_tag }}</div>
     <div class="col-sm-12">
     {% if field.is_readonly %}
-        {{ field.contents|safe }} {# TODO allow_tags #}
+        {{ field.contents }} {# TODO allow_tags issue #44 #}
     {% else %}
         {{ field }}
     {% endif %}
@@ -32,7 +32,7 @@
         {{ field.label_tag }}
     </div><div class="col-sm-7">
         {% if field.is_readonly %}
-            {{ field.contents|safe }}
+            {{ field.contents }}
         {% else %}
             {{ field }}
         {% endif %}
@@ -45,4 +45,3 @@
 
 {% endif %}
 </div>
-

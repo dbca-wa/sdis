@@ -428,6 +428,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     @property
     def reviewer(self):
+        """Return the one reviewer to notify, the program leader."""
         return [self.program.program_leader, ]
 
     @property
@@ -949,10 +950,10 @@ class ScienceProject(Project):
         msg = "Creating ProgressReport for {0}".format(self.__str__())
         snitch(msg)
         p, created = ProgressReport.objects.get_or_create(
-                year=report.year, project=self, is_final_report=final)
+                year=report.year, project=self)
         p.report = report
-        if (created and
-            ProgressReport.objects.filter(
+        p.is_final_report = final
+        if (created and ProgressReport.objects.filter(
                 project=self, year=report.year-1).exists()):
             # This can go wrong:
             p0 = ProgressReport.objects.get(project=self, year=report.year-1)
@@ -1031,10 +1032,10 @@ class CoreFunctionProject(Project):
         if settings.DEBUG:
             print(msg)
         p, created = ProgressReport.objects.get_or_create(
-                year=report.year, project=self, is_final_report=final)
+                year=report.year, project=self)
         p.report = report
-        if (created and
-            ProgressReport.objects.filter(
+        p.is_final_report = final
+        if (created and ProgressReport.objects.filter(
                 project=self, year=report.year-1).exists()):
             # This can go wrong:
             p0 = ProgressReport.objects.get(project=self, year=report.year-1)
@@ -1364,17 +1365,15 @@ class StudentProject(Project):
         p, created = StudentReport.objects.get_or_create(
                 year=report.year, project=self)
         p.report = report
-        if (created and
-            StudentReport.objects.filter(
+        if (created and StudentReport.objects.filter(
                 project=self, year=report.year-1).exists()):
             p0 = StudentReport.objects.get(project=self, year=report.year-1)
             p.progress_report = p0.progress_report
         p.save()
         msg = "{0} Added StudentReport for year {1} in report {2}".format(
             p.project.project_type_year_number, p.year, p.report)
-        logger.debug(msg)
-        if settings.DEBUG:
-            print(msg)
+        snitch(msg)
+
 
 PROJECT_CLASS_MAP = {
     Project.SCIENCE_PROJECT: ScienceProject,

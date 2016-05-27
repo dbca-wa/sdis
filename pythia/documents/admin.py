@@ -103,9 +103,12 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
 
     def get_readonly_fields(self, request, obj=None):
         """Lock the document after seeking approval for all but superusers."""
-        if (obj and obj.is_nearly_approved and not request.user.is_superuser):
+        if obj and request.user.is_superuser:
+            return ()
+        elif obj and request.user in obj.get_users_with_change_permissions():
+            return super(DocumentAdmin, self).get_readonly_fields(request, obj)
+        else:
             return fields_for_model(obj, exclude=self.exclude).keys()
-        return super(DocumentAdmin, self).get_readonly_fields(request, obj)
 
     def get_breadcrumbs(self, request, obj=None, add=False):
         """Add the project list to the breadcrumb trail."""
