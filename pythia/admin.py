@@ -60,6 +60,15 @@ class DetailAdmin(ModelAdmin):
         from pythia.views import DetailChangeList
         return DetailChangeList
 
+    def has_change_permission(self, request, obj=None):
+        """Return whether user has view permission for object.
+
+        App label and object name are retrieved automatically.
+        """
+        opts = self.opts
+        return request.user.has_perm(
+            opts.app_label + '.' + 'change_%s' % opts.object_name.lower())
+
     def has_view_permission(self, request, obj=None):
         """Return whether user has view permission for object.
 
@@ -427,29 +436,14 @@ class UserAdmin(DjangoUserAdmin):
             # superuser can edit all fields, add global permissions via groups
             return ()
 
-        elif (obj is None):
-            # called from the add form: non-superuser registers another user
-            return ('is_superuser', 'is_active', 'is_staff',
+        else:
+            return ('is_superuser', 'is_active', 'is_staff', 'username',
                     'date_joined', 'groups')
 
-        elif (request.user == obj and getattr(self, 'hack', True)):
-            # non-superuser can update own profile, but not add privileges
-            return ('is_superuser', 'is_active', 'is_staff',
-                    'date_joined', 'groups')
-
-        elif (request.user != obj and getattr(self, 'hack', True)):
-            # non-superuser is viewing the profile page of another user
-            # all fields readonly
-            setattr(self, 'hack', False)
-            rf = flatten_fieldsets(self.get_fieldsets(request, obj))
-            delattr(self, 'hack')
-            return rf
         # this would work if pythia.models.User would inherit from ActiveModel
         # elif (request.user == obj.creator) and getattr(self, 'hack', True)):
         #    # the user is viewing another profile he created
         #    return super(UserAdmin, self).get_readonly_fields(request, obj)
-        else:
-            return super(UserAdmin, self).get_readonly_fields(request, obj)
 
     def get_fieldsets(self, request, obj=None):
         """Custom get_fieldsets."""

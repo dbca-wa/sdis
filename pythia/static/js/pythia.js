@@ -2,16 +2,15 @@
   $.ajaxSetup({
     beforeSend: function() {
       if (typeof(tinyMCE) != "undefined") {
-        pythia.activeEdColour = $(
-            tinyMCE.activeEditor.getContainer()
-        ).css('border-color');
+        pythia.activeEdColour = $(tinyMCE.activeEditor
+            .getContainer()).css('border-color');
         $(tinyMCE.activeEditor.getContainer()).css('border-color', '#bb0000');
       }
     },
     complete: function() {
       if (typeof(tinyMCE) != "undefined") {
-        $(tinyMCE.activeEditor.getContainer())
-        .css('border-color', pythia.activeEdColour);
+        $(tinyMCE.activeEditor.getContainer()).css(
+            'border-color', pythia.activeEdColour);
         hasChanged = false; // hasChanged defined in "admin/change_form.html"
       }
     }
@@ -33,9 +32,7 @@
       // create the text block
       ed.pythiaText = $('<div class="tinymce-wrap">' + ed.getContent() +'</div>');
 
-      ed.pythiaText.click(function() {
-        pythia.inlineShowTinyMCE(ed);
-      });
+      ed.pythiaText.click(function() { pythia.inlineShowTinyMCE(ed); });
 
       ed.csrftoken = pythia.getCsrfToken($(ed.getElement()));
 
@@ -52,14 +49,9 @@
       };
 
       // attach events for AJAX save
-      ed.on('change', function(args) {
-        save();
-      });
+      ed.on('change', function(args) { save(); });
 
-      ed.on('blur', function() {
-        save();
-        pythia.inlineHideTinyMCE(ed);
-      });
+      ed.on('blur', function() { save(); pythia.inlineHideTinyMCE(ed); });
     });
   });
 
@@ -123,9 +115,7 @@
 
   // textinput
   pythia.inlineEditTextInput = (function(input_id, url) {
-    $(function() {
-      pythia.inlineEditWidget(input_id, url);
-    });
+    $(function() { pythia.inlineEditWidget(input_id, url); });
   });
 
   // select
@@ -190,7 +180,8 @@
     } else {
         href  += '&_popup=1';
     }
-    var win = window.open(href, name, 'height=600,width=1200,resizable=yes,scrollbars=yes');
+    var win = window.open(
+        href, name, 'height=600, width=1200, resizable=yes, scrollbars=yes');
     win.focus();
     return false;
   });
