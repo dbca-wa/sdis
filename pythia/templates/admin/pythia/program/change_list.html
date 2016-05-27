@@ -1,71 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n staticfiles admin_list %}
-{% load markup %}
-{% load pythia_base %}
-
-{% block extrastyle %}
-  {{ block.super }}
-  <!--<link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />-->
-  {% if cl.formset %}
-  <!-- <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />-->
-  <style> 
-    .empty-form { display: none;}
-  </style>
-  {% endif %}
-  {% if cl.formset or action_form %}
-    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-  {% endif %}
-  <link rel="stylesheet" type="text/css" href="{% static "admin/css/widgets.css" %}" />
-  {{ media.css }}
-  <style>
-    @media only screen and (max-width: 760px),
-    (min-device-width: 768px) and (max-device-width: 1024px)  {
-
-        /* Force table to not be like tables anymore */
-        table, thead, tbody, th, td, tr {
-            display: block;
-        }
-
-        /* Hide table headers (but not display: none;, for accessibility) */
-        thead tr {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-        }
-
-        tr { border: 1px solid #ccc; }
-
-        td {
-            /* Behave  like a "row" */
-            border: none;
-            border-bottom: 1px solid #eee;
-            position: relative;
-            padding-left: 50%;
-        }
-
-        td:before {
-            /* Now like a table header */
-            position: absolute;
-            /* Top/left values mimic padding */
-            top: 6px;
-            left: 6px;
-            width: 45%;
-            padding-right: 10px;
-            white-space: nowrap;
-        }
-
-        /*
-        Label the data
-        */
-    }
-  </style>
-  {% if not actions_on_top and not actions_on_bottom %}
-    <style>
-      #changelist table thead th:first-child {width: inherit}
-    </style>
-  {% endif %}
-<link rel="stylesheet" href="{% static "css/changelists.css" %}">
-{% endblock %}
+{% load i18n staticfiles admin_list markup pythia_base %}
 
 {% block extrahead %}
   {{ block.super }}
@@ -135,7 +69,7 @@
   });
 
 $(function() {
-    // init tablesorter 
+    // init tablesorter
     //$('table#result_list thead th:nth-child(3)').addClass('filter-select');
     //$('table#result_list thead th:nth-child(4)').addClass('filter-select');
     // bloody django makes a "second" column th instead of td (which confuses tablesorter)
@@ -149,7 +83,7 @@ $(function() {
         headerTemplate : '{content} {icon}', // new in v2.7. Needed to add the bootstrap icon!
         widgets : [ "uitheme", "filter", "pager", "stickyHeaders"],
         widgetOptions : {
-            filter_reset : ".reset", 
+            filter_reset : ".reset",
             filter_hideFilters : false,
         },
     });
@@ -166,23 +100,7 @@ $(function() {
         $.each(s, function(){$("table#result_list tbody tr:visible .indexColumn:not(:contains('"+ this + "'))").parent().hide();});
     });//key up.
 
-    // three shortcut buttons
-    //$("#clear").click(function(){$("table#result_list tbody tr:hidden").show(); $("#FilterTextBox").val(""); return false; });
-    //$("#current-user").click(function(){$("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false;});
-    //$("#cfspp").click(function(){
-    //    $("table#result_list tbody tr:visible").hide();
-    //    $("table#result_list tbody .indexColumn:contains('science project')").parent().show();
-    //    $("table#result_list tbody .indexColumn:contains('core function project')").parent().show();
-    //    $("#FilterTextBox").val("");
-    //    return false;
-    //});
-    //$("#cfspp").click();
 });//document.ready
-
-
-
-
-
   </script>
 {% endblock %}
 
@@ -214,7 +132,7 @@ $(function() {
   {% block content %}
   {% if cl.formset.errors %}
   <p class="errornote alert alert-block alert-error fade in">
-    <i class="glyphicon-warning-sign"></i> 
+    <i class="glyphicon-warning-sign"></i>
         {% blocktrans count cl.formset.errors|length as counter %}
         Please correct the error below.{% plural %}Please correct the errors below.
         {% endblocktrans %}
@@ -231,7 +149,7 @@ $(function() {
       {% if has_add_permission %}
       <div class="object-tools pull-right">
           {% block object-tools-items %}
-          <a class="btn btn-small btn-info" 
+          <a class="btn btn-small btn-info"
               href="{% if current %}{% url cl.opts|pythia_urlname:'add' current.id %}{% else %}{% url cl.opts|pythia_urlname:'add' %}{% endif %}{% if is_popup %}?_popup=1{% endif %}">
           <i class="glyphicon-plus glyphicon-white"></i>
           {% blocktrans with cl.opts.verbose_name as name %}Create {{ name }}{% endblocktrans %}
@@ -239,7 +157,7 @@ $(function() {
           {% endblock %}
       </div>
       {% endif %}
-      {% endblock %}   
+      {% endblock %}
 
       {% block search %}{% search_form cl %}{% endblock %}
       {% block date_hierarchy %}{% date_hierarchy cl %}{% endblock %}

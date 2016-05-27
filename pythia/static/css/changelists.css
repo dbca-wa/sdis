@@ -59,3 +59,5 @@ input.vForeignKeyRawIdAdminField, input.vIntegerField {display:block;}
 
 /* 10 more than .navbar-fixed */
 .chzn-drop { z-index: 1040 !important;}
+
+ #changelist table thead th:first-child {width: inherit}

@@ -1,8 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n staticfiles admin_list %}
-{% load markup %}
-{% load pythia_base %}
-
+{% load i18n staticfiles admin_list markup pythia_base %}
 
 {% block extrahead %}
   {{ block.super }}
@@ -56,6 +53,7 @@
         {% endif %}
     });
   })(django.jQuery);
+
   $(function() {
     // reinit the chosen() widgets (so that the event is bound to a
     // correct select element)
@@ -108,25 +106,7 @@ $(function() {
              ).parent().hide();});
     });//key up.
 
-    // three shortcut buttons
-    //$("#clear").click(function(){$("table#result_list tbody tr:hidden").show();
-    // $("#FilterTextBox").val(""); return false; });
-    //$("#current-user").click(function(){$("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false;});
-    //$("#cfspp").click(function(){
-    //    $("table#result_list tbody tr:visible").hide();
-    //    $("table#result_list tbody .indexColumn:contains('science project')").parent().show();
-    //    $("table#result_list tbody .indexColumn:contains('core function project')"
-    //).parent().show();
-    //    $("#FilterTextBox").val("");
-    //    return false;
-    //});
-    //$("#cfspp").click();
 });//document.ready
-
-
-
-
-
   </script>
 {% endblock %}
 

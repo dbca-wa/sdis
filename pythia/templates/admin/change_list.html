@@ -7,7 +7,6 @@
   {{ block.super }}
   {{ media.js }}
   <script src="{% static 'js/table-fixed-header.js' %}"></script>
-  <!--script src="{% static 'js/table-fixed-header.js' %}"></script-->
   {% if action_form %}{% if actions_on_top or actions_on_bottom %}
   <script type="text/javascript">
     (function($) {
@@ -69,7 +68,7 @@
     });
   });
 
-$(function() {
+  $(function() {
     // init tablesorter
     //$('table#result_list thead th:nth-child(5)').addClass('filter-select');
     // bloody django makes a "second" column th instead of td (which confuses tablesorter)
@@ -102,76 +101,15 @@ $(function() {
              ).parent().hide();});
     });//key up.
 
-    // three shortcut buttons
-    //$("#clear").click(function(){$("table#result_list tbody tr:hidden").show();
-    // $("#FilterTextBox").val(""); return false; });
-    //$("#current-user").click(function(){$("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false;});
-    //$("#cfspp").click(function(){
-    //    $("table#result_list tbody tr:visible").hide();
-    //    $("table#result_list tbody .indexColumn:contains('science project')").parent().show();
-    //    $("table#result_list tbody .indexColumn:contains('core function project')"
-    //).parent().show();
-    //    $("#FilterTextBox").val("");
-    //    return false;
-    //});
-    //$("#cfspp").click();
-});//document.ready
+  });//document.ready
 
   </script>
 {% endblock %}
 
-
-{% block extrastyle %}
-  {{ block.super }}
-
-  {# if cl.formset #}{# endif #}
-  {% if cl.formset or action_form %}
-    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
-  {% endif %}
-  <link rel="stylesheet" type="text/css" href="{% static "admin/css/widgets.css" %}" />
-  {{ media.css }}
-  <style>
-  @media only screen and (max-width: 760px),
-  (min-device-width: 768px) and (max-device-width: 1024px)  {
-      /* Force table to not be like tables anymore */
-      table, thead, tbody, th, td, tr {
-          display: block;
-      }
-      /* Hide table headers (but not display: none;, for accessibility) */
-      thead tr {
-          position: absolute;
-          top: -9999px;
-          left: -9999px;
-      }
-      tr { border: 1px solid #ccc; }
-      td {
-          /* Behave  like a "row" */
-          border: none;
-          border-bottom: 1px solid #eee;
-          position: relative;
-          padding-left: 50%;
-      }
-      td:before {
-          /* Now like a table header */
-          position: absolute;
-          /* Top/left values mimic padding */
-          top: 6px;
-          left: 6px;
-          width: 45%;
-          padding-right: 10px;
-          white-space: nowrap;
-      }
-      /*
-      Label the data
-      */
-  }
-</style>
-{% endblock %}
-
-
 {% block bodyclass %}change-list{% endblock %}
 
 {% block breadcrumbs %}
+admin/change_list.html
 {% if not is_popup %}
 <ul class="breadcrumb">
 {% for breadcrumb in breadcrumbs %}
