@@ -3,7 +3,6 @@ from __future__ import (division, print_function, unicode_literals,
 import copy
 import logging
 import reversion
-import threading
 
 from django.conf import settings
 from django.core import validators
@@ -27,24 +26,12 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
+from pythia.middleware.auth import get_current_user
+
 # from south.modelsinspector import add_introspection_rules
 # add_introspection_rules([], ["^myapp\.stuff\.fields\.SomeNewField"])
 
 logger = logging.getLogger(__name__)
-_locals = threading.local()
-
-
-def get_locals():
-    """
-    Setup locals for a request thread so we can attach stuff and make it
-    available globally.
-    import from request.models::
-        from request.models import get_locals
-        _locals = get_locals
-        _locals.request.user = amazing
-    """
-    return _locals
-
 
 class ActiveQuerySet(QuerySet):
     def __init__(self, model, query=None, using=None):
@@ -284,15 +271,10 @@ class Audit(geo_models.Model):
         This falls back on using an admin user if a thread request object
         wasn't found.
         """
-        if ((not hasattr(_locals, "request") or
-             _locals.request.user.is_anonymous())):
-            if hasattr(_locals, "user"):
-                user = _locals.user
-            else:
-                user = User.objects.get(id=1)
-                _locals.user = user
-        else:
-            user = _locals.request.user
+        # import ipdb; ipdb.set_trace()
+
+        user = get_current_user() or User.objects.first()
+        assert(user is not None)
 
         # If saving a new model, set the creator.
         if not self.pk:

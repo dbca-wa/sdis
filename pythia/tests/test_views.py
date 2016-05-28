@@ -36,10 +36,12 @@ class ConceptPlanAdminTests(BaseTestCase):
         self.marge.groups.add(self.scd)
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
-
+        from django.conf import settings
+        User = settings.AUTH_USER_MODEL
         self.program = Program.objects.create(
                 name="ScienceProgram",
                 slug="scienceprogram",
+                creator=User.objects.first(),
                 position=0,
                 program_leader=self.steven)
 
@@ -201,12 +203,14 @@ class ProjectPlanAdminTests(BaseTestCase):
         self.program = Program.objects.create(
                 name="ScienceProgram",
                 slug="scienceprogram",
+                creator=self.marge,
                 position=0,
                 program_leader=self.steven)
 
         self.program = Program.objects.create(
                 name="ConservationProgram",
                 slug="conservationprogram",
+                creator=self.marge,
                 position=0,
                 program_leader=self.fran)
 

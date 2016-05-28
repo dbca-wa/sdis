@@ -528,6 +528,8 @@ class ScienceProjectModelTests(BaseTestCase):
         print("Create ARAR")
         arar = ARARReport.objects.create(
             year=self.project.year,
+            creator=self.marge,
+            modifier=self.marge,
             date_open=datetime.now(),
             date_closed=datetime.now())
 
@@ -819,7 +821,8 @@ class StudentProjectModelTests(TestCase):
         from datetime import datetime
         n = datetime.now()
         r = ARARReport.objects.create(
-            year=self.project.year, date_open=n, date_closed=n)
+            year=self.project.year, creator=self.marge,
+            date_open=n, date_closed=n)
         print("Created {0}".format(r.__str__()))
         print("Request update")
         self.project.request_update()
@@ -973,12 +976,12 @@ class ARARReportModelTests(TestCase):
         self.cf.delete()
         self.ext.delete()
         self.stp.delete()
+        self.program.delete()
         self.superuser.delete()
         self.bob.delete()
         self.steven.delete()
         self.marge.delete()
         self.peter.delete()
-        self.program.delete()
 
     def test_new_arar(self):
         """Test new ARAR creates updates and changes project status."""

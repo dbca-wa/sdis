@@ -101,6 +101,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'dpaw_utils.middleware.SSOLoginMiddleware',
+    'pythia.middleware.auth.LocalUserMiddleware',
     # loaded if DEBUG (below):
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'django_pdb.middleware.PdbMiddleware'
