@@ -326,9 +326,7 @@ class ProjectAdmin(BaseAdmin):
     def history_view(self, request, object_id, extra_context=None):
         obj = get_object_or_404(self.model, pk=unquote(object_id))
 
-        context = {
-            'breadcrumbs': self.get_breadcrumbs(request, obj)
-        }
+        context = {'breadcrumbs': self.get_breadcrumbs(request, obj)}
         context.update(extra_context or {})
         return super(ProjectAdmin, self).history_view(request, object_id,
                                                       extra_context=context)

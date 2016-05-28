@@ -102,6 +102,16 @@ class ConceptPlanAdminTests(BaseTestCase):
         # self.assertEqual(response.status_code, 200)
         # self.assertEqual(self.scp.summary, "New summary")
 
+    def test_change_conceptplan_sets_modifier(self):
+        """Test that Audit fields are correctly set on change.
+
+        An authenticated request should set the request.user as modifier,
+        and the date as modified on.
+        An unauthenticated request (such as model tests) should default to the
+        superuser (pk=1) as modifier, but should still set the date.
+        """
+        pass
+
     def test_only_team_can_submit_conceptplan(self):
         """Test that only team can submit their ConceptPlan."""
         pass

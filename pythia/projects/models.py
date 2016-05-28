@@ -919,7 +919,7 @@ class ScienceProject(Project):
         scp, created = ConceptPlan.objects.get_or_create(project=self)
         from pythia.documents.models import Document
         scp.status = Document.STATUS_NEW
-        scp.save()
+        scp.save(update_fields=['status', ])
 
     @property
     def progressreport(self):
@@ -999,7 +999,7 @@ class CoreFunctionProject(Project):
         scp, created = ConceptPlan.objects.get_or_create(project=self)
         from pythia.documents.models import Document
         scp.status = Document.STATUS_NEW
-        scp.save()
+        scp.save(update_fields=['status', ])
 
     @property
     def progressreport(self):

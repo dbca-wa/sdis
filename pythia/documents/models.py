@@ -164,16 +164,15 @@ class Document(PolymorphicModel, Audit):
         """Expose self._meta as property `opts`."""
         return self._meta
 
-    def save(self, *args, **kwargs):
-        """Update document permissions on every save."""
-        # created = True if not self.pk else False
-
-        super(Document, self).save(*args, **kwargs)
-        try:
-            update_document_permissions(self)  # hack: give team access
-        except:
-            snitch("Document {0} couldn't update permissions".format(
-                self.__str__()))
+    # def save(self, *args, **kwargs):
+    #     """Update document permissions on every save."""
+    #     # created = True if not self.pk else False
+    #
+    #     super(Document, self).save(*args, **kwargs)
+        # try:
+        #     update_document_permissions(self)  # hack: give team access
+        # except:
+        #     snitch("{0} couldn't update permissions".format(self.__str__()))
 
         # if created:
         #    self.setup()
@@ -379,6 +378,7 @@ class Document(PolymorphicModel, Audit):
         )
     def seek_review(self):
         """Transition this document to being in review."""
+        return
 
     def can_recall(self):
         """Return true if this document can be recalled from review."""
@@ -399,6 +399,7 @@ class Document(PolymorphicModel, Audit):
         )
     def recall(self):
         """Transition this document to being new."""
+        return
 
     # -------------------------------------------------------------------------#
     # Reviewer actions
@@ -421,7 +422,6 @@ class Document(PolymorphicModel, Audit):
         )
     def seek_approval(self):
         """Transition this document to be in approval."""
-        self.save()
 
     @transition(
         field=status,
@@ -437,6 +437,7 @@ class Document(PolymorphicModel, Audit):
         )
     def request_revision_from_authors(self):
         """Push back to NEW to request a revision from the authors."""
+        return
 
     # -------------------------------------------------------------------------#
     # Approver actions
