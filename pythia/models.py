@@ -25,14 +25,10 @@ from django.utils import timezone, six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user_model
-# from pythia.middleware.auth import get_current_user
+from pythia.middleware import get_current_user
 
 # from south.modelsinspector import add_introspection_rules
-# add_introspection_rules([], ["^myapp\.stuff\.fields\.SomeNewField"])
-
-import threading
-_locals = threading.local()
+# add_introspection_rules([], ["^myapp\.stuff\.fields\.SomeNewField"])s
 
 logger = logging.getLogger(__name__)
 
@@ -274,18 +270,8 @@ class Audit(geo_models.Model):
         This falls back on using an admin user if a thread request object
         wasn't found.
         """
-        User = get_user_model()
-        if ((not hasattr(_locals, "request") or
-             _locals.request.user.is_anonymous())):
-            if hasattr(_locals, "user"):
-                user = _locals.user
-            else:
-                user = User.objects.get(id=1)
-                _locals.user = user
-        else:
-            user = _locals.request.user
-
-        print("Audit saving {0} for {1}".format(self.__str__(), user))
+        user = get_current_user()
+        # print("Audit saving {0} for {1}".format(self.__str__(), user))
 
         # If saving a new model, set the creator.
         if not self.pk:
