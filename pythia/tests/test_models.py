@@ -4,6 +4,8 @@ from datetime import datetime
 from django.test import TestCase
 from django.contrib.auth.models import Group
 # from django_fsm.db.fields import TransitionNotAllowed
+from django.core.urlresolvers import reverse
+from django.test import Client
 
 from pythia.models import Program
 from pythia.documents.models import (
@@ -13,7 +15,8 @@ from pythia.projects.models import (Project, ProjectMembership)
 from pythia.reports.models import ARARReport
 from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
                    CoreFunctionProjectFactory, CollaborationProjectFactory,
-                   StudentProjectFactory, UserFactory, SuperUserFactory)
+                   StudentProjectFactory, UserFactory, SuperUserFactory,
+                   ProgramFactory)
 
 
 def avail_tx(u, tx, obj):
@@ -91,7 +94,8 @@ class ScienceProjectModelTests(BaseTestCase):
         self.scd, created = Group.objects.get_or_create(name='SCD')
         self.users, created = Group.objects.get_or_create(name='Users')
 
-        self.superuser = SuperUserFactory.create(username='admin')
+        self.superuser = SuperUserFactory.create(
+            username='admin', first_name="Admin", last_name="Superuser")
         self.bob = UserFactory.create(
             username='bob', first_name='Bob', last_name='Bobson')
         self.john = UserFactory.create(
@@ -108,15 +112,11 @@ class ScienceProjectModelTests(BaseTestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
 
-        self.program = Program.objects.create(
-                name="ScienceProgram",
-                slug="scienceprogram",
-                position=0,
-                program_leader=self.steven)
+        self.program = ProgramFactory.create(
+            creator=self.marge, program_leader=self.steven)
 
         self.project = ScienceProjectFactory.create(
-            creator=self.bob,
-            modifier=self.bob,
+            # creator=self.bob,
             program=self.program,
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
@@ -128,32 +128,49 @@ class ScienceProjectModelTests(BaseTestCase):
 
         self.scp = self.project.documents.instance_of(ConceptPlan).get()
 
-    def tearDown(self):
-        """Destroy test objects after a test."""
-        [m.delete for m in ProjectMembership.objects.all()]
-        self.scp.delete()
-        self.project.delete()
-        self.superuser.delete()
-        self.bob.delete()
-        self.steven.delete()
-        self.marge.delete()
-        self.peter.delete()
-        self.program.delete()
+        self.client = Client()
+        self.url = reverse('admin:documents_conceptplan_change',
+                           args=(self.scp.id,))
+        self.tx_url = 'admin:documents_conceptplan_transition?transition={0}'
+
+    # def tearDown(self):
+    #     """Destroy test objects after a test."""
+        # self.scp.delete()
+        # self.project.delete()
+        # self.superuser.delete()
+        # self.bob.delete()
+        # self.steven.delete()
+        # self.marge.delete()
+        # self.peter.delete()
+        # self.program.delete()
+
+    def test_everyone_can_view_conceptplan(self):
+        """Test that everyone can view the ConceptPlan"""
+        # get ConceptPlan detail
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
 
     def test_new_science_project(self):
         """A new ScienceProject has one new ConceptPlan and only setup tx."""
+        print("step 1")
         p = self.project
 
         print("A new ScienceProject must be of STATUS_NEW.")
+        print("step 2")
         self.assertEqual(p.status, Project.STATUS_NEW)
 
         print("A new SP has exactly one document, a ConceptPlan.")
+        print("step 3")
         self.assertEqual(p.documents.count(), 1)
+        print("step 4")
         self.assertEqual(p.documents.instance_of(ConceptPlan).count(), 1)
 
         print("A new SP has only setup tx until the SCP is approved.")
+        print("step 5")
         avail_tx = [t.name for t in p.get_available_status_transitions()]
+        print("step 6")
         self.assertEqual(len(avail_tx), 0)
+        print("step 7")
 
     def test_conceptplan_permissions(self):
         """Test expected ConceptPlan permissions for transitions.
@@ -529,7 +546,6 @@ class ScienceProjectModelTests(BaseTestCase):
         arar = ARARReport.objects.create(
             year=self.project.year,
             creator=self.marge,
-            modifier=self.marge,
             date_open=datetime.now(),
             date_closed=datetime.now())
 
@@ -626,15 +642,11 @@ class CoreFunctionProjectModelTests(TestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
 
-        self.program = Program.objects.create(
-                name="ScienceProgram",
-                slug="scienceprogram",
-                position=0,
-                program_leader=self.steven)
+        self.program = ProgramFactory.create(
+            creator=self.marge, program_leader=self.steven)
 
         self.project = CoreFunctionProjectFactory.create(
             creator=self.bob,
-            modifier=self.bob,
             program=self.program,
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
@@ -698,11 +710,8 @@ class CollaborationProjectModelTests(TestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
 
-        self.program = Program.objects.create(
-                name="ScienceProgram",
-                slug="scienceprogram",
-                position=0,
-                program_leader=self.steven)
+        self.program = ProgramFactory.create(
+            creator=self.marge, program_leader=self.steven)
 
         self.project = CollaborationProjectFactory.create(
             creator=self.bob,
@@ -781,11 +790,8 @@ class StudentProjectModelTests(TestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
 
-        self.program = Program.objects.create(
-                name="ScienceProgram",
-                slug="scienceprogram",
-                position=0,
-                program_leader=self.steven)
+        self.program = ProgramFactory.create(
+            creator=self.marge, program_leader=self.steven)
 
         self.project = StudentProjectFactory.create(
             creator=self.bob,
@@ -915,15 +921,10 @@ class ARARReportModelTests(TestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
 
-        self.program = Program.objects.create(
-                name="ScienceProgram",
-                slug="scienceprogram",
-                position=0,
-                program_leader=self.steven)
+        self.program = ProgramFactory.create(program_leader=self.steven)
 
         self.sp = ScienceProjectFactory.create(
             creator=self.bob,
-            modifier=self.bob,
             program=self.program,
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
@@ -935,7 +936,6 @@ class ARARReportModelTests(TestCase):
 
         self.cf = CoreFunctionProjectFactory.create(
             creator=self.bob,
-            modifier=self.bob,
             program=self.program,
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
@@ -947,7 +947,6 @@ class ARARReportModelTests(TestCase):
 
         self.ext = CollaborationProjectFactory.create(
             creator=self.bob,
-            modifier=self.bob,
             program=self.program,
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
@@ -959,7 +958,6 @@ class ARARReportModelTests(TestCase):
 
         self.stp = StudentProjectFactory.create(
             creator=self.bob,
-            modifier=self.bob,
             program=self.program,
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)

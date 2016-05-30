@@ -3,6 +3,8 @@ from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 from new import instancemethod
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 USER_ATTR_NAME = getattr(settings, 'LOCAL_USER_ATTR_NAME', '_current_user')
 
 try:
@@ -31,5 +33,15 @@ class LocalUserMiddleware(object):
 
 
 def get_current_user():
-    current_user = getattr(_thread_locals, USER_ATTR_NAME, None)
-    return current_user() if current_user else current_user
+    # u = getattr(_thread_locals, USER_ATTR_NAME, None)
+    User = get_user_model()
+    if ((not hasattr(_thread_locals, "request") or
+         _thread_locals.request.user.is_anonymous())):
+        if hasattr(_thread_locals, "user"):
+            user = _thread_locals.user
+        else:
+            user = User.objects.get(id=1)
+            _thread_locals.user = user
+    else:
+        user = _thread_locals.request.user
+    return user
