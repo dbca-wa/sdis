@@ -1,6 +1,6 @@
 """Provide request.user to Audit's save as modifier.
 
-
+Originally provided (mixed with other code) by django-swingers' auth middleware
 Modified from http://stackoverflow.com/questions/2006295/
 """
 from __future__ import (division, print_function, unicode_literals,
@@ -19,13 +19,13 @@ except ImportError:
 _thread_locals = local()
 
 def get_first_user():
-    """Return v."""
+    """Return the superuser."""
     User = get_user_model()
     return User.objects.first()
 
 
 def get_current_user():
-    """Return the current user or the superuser."""
+    """Return the current request user or the superuser."""
     return getattr(_thread_locals, 'user', get_first_user())
 
 

@@ -306,7 +306,6 @@ class ProjectAdmin(BaseAdmin):
             from_email = settings.DEFAULT_FROM_EMAIL
             if do_notify:
                 send_mail(tmpl, context, from_email, to_emails)
-                print("email sent to " + recipients_text)
 
             # Redirect the user back to the document change page
             redirect_url = reverse('admin:%s_%s_change' %
