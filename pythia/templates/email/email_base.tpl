@@ -7,9 +7,9 @@
 {% block html %}
 Hi,
 
-<p>{{ instigator.fullname }} has just requested to run "{{ title }}" on
-    <a href="{{ object_url }}">{{ object_name }}</a>.
-    This action had the following effect: {{ explanation }}
+<p>{{ instigator.fullname }} has just run "{{ title }}" on
+    <a href="{{ object_url }}">{{ object_name }}</a>.<br />
+    This means: {{ explanation }}
 </p>
 
 <p>
@@ -23,14 +23,17 @@ Hi,
 </p>
 
 <p>
-    For your convenience, a link to <a href="{{ object_url }}">{{ object_name }}</a>
+    For your convenience, the link to <a href="{{ object_url }}">{{ object_name }}</a>
     is also listed under "My Tasks" on your
     <a href="https://sdis.dpaw.wa.gov.au">SDIS home page</a>.
 </p>
 
-Cheers,
-SDIS
+<p>
+    Cheers,<br />
+    SDIS
+</p>
 
-p.s. If you get stuck, please consult the
-<a href="http://sdis.readthedocs.io/">SDIS Documentation</a>.
+<p>
+ps. If you get stuck, please consult the <a href="http://sdis.readthedocs.io/">SDIS Documentation</a>.
+</p>
 {% endblock %}
