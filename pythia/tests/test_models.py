@@ -133,16 +133,16 @@ class ScienceProjectModelTests(BaseTestCase):
                            args=(self.scp.id,))
         self.tx_url = 'admin:documents_conceptplan_transition?transition={0}'
 
-    # def tearDown(self):
-    #     """Destroy test objects after a test."""
-        # self.scp.delete()
-        # self.project.delete()
-        # self.superuser.delete()
-        # self.bob.delete()
-        # self.steven.delete()
-        # self.marge.delete()
-        # self.peter.delete()
-        # self.program.delete()
+    def tearDown(self):
+        """Destroy test objects after a test."""
+        self.scp.delete()
+        self.project.delete()
+        self.superuser.delete()
+        self.bob.delete()
+        self.steven.delete()
+        self.marge.delete()
+        self.peter.delete()
+        self.program.delete()
 
     def test_everyone_can_view_conceptplan(self):
         """Test that everyone can view the ConceptPlan"""
@@ -152,25 +152,18 @@ class ScienceProjectModelTests(BaseTestCase):
 
     def test_new_science_project(self):
         """A new ScienceProject has one new ConceptPlan and only setup tx."""
-        print("step 1")
         p = self.project
 
         print("A new ScienceProject must be of STATUS_NEW.")
-        print("step 2")
         self.assertEqual(p.status, Project.STATUS_NEW)
 
         print("A new SP has exactly one document, a ConceptPlan.")
-        print("step 3")
         self.assertEqual(p.documents.count(), 1)
-        print("step 4")
         self.assertEqual(p.documents.instance_of(ConceptPlan).count(), 1)
 
         print("A new SP has only setup tx until the SCP is approved.")
-        print("step 5")
         avail_tx = [t.name for t in p.get_available_status_transitions()]
-        print("step 6")
         self.assertEqual(len(avail_tx), 0)
-        print("step 7")
 
     def test_conceptplan_permissions(self):
         """Test expected ConceptPlan permissions for transitions.
