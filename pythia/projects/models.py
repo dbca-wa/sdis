@@ -1213,37 +1213,6 @@ class StudentProject(Project):
         self.make_progressreport(report)
         return None
 
-    # Forbid actions non applicable to this project type
-    def can_request_update(self):
-        """
-        Gate-check prior to `request_update()`.
-
-        Currently no checks. Does an ARAR need to exist?
-        """
-        return False
-
-    @transition(
-        field='status',
-        source=Project.STATUS_ACTIVE,
-        target=Project.STATUS_UPDATE,
-        conditions=[can_request_update],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Request update",
-                    explanation="The project team can update and submit the "
-                    "annual progress report. Once the progress report is "
-                    "approved, the project will become 'active' again. If the "
-                    "project should have been closed, the Directorate can "
-                    "fast-track the project into the correct work flow.",
-                    notify=True,)
-        )
-    def request_update(self, report=None):
-        """
-        Transition to move the project to STATUS_UPDATING.
-
-        Creates ProgressReport as required for SPP, CF.
-        Override for STP to generate StudentReport, ignore for COL.
-        """
-
     def can_request_final_update(self):
         """StudentProjects have no request final updates."""
         return False
