@@ -1139,6 +1139,22 @@ class CollaborationProject(Project):
         )
     def complete(self):
         """External CollaborationProjects complete without closure process."""
+        return
+
+    @transition(
+        field='status',
+        source=Project.STATUS_COMPLETED,
+        target=Project.STATUS_ACTIVE,
+        # conditions=[Project.can_reactivate],
+        permission=lambda instance, user: user in instance.submitters,
+        custom=dict(verbose="Reactivate project",
+                    explanation="The project team can reactivate a completed "
+                    "project.",
+                    notify=True,)
+        )
+    def reactivate(self):
+        """Transition to move the project to its ACTIVE state."""
+        return
 
 
 class StudentProject(Project):
@@ -1333,6 +1349,21 @@ class StudentProject(Project):
     def complete(self):
         """StudentProjects can complete without closure process."""
 
+    @transition(
+        field='status',
+        source=Project.STATUS_COMPLETED,
+        target=Project.STATUS_ACTIVE,
+        # conditions=[Project.can_reactivate],
+        permission=lambda instance, user: user in instance.submitters,
+        custom=dict(verbose="Reactivate project",
+                    explanation="The project team can reactivate a completed "
+                    "project.",
+                    notify=True,)
+        )
+    def reactivate(self):
+        """Transition to move the project to its ACTIVE state."""
+        return
+        
     @property
     def progressreport(self):
         """Return the latest progress report.
