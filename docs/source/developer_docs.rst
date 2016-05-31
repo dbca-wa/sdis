@@ -52,7 +52,7 @@ named "app.permission_model" permissions. The "model" part is hard-coded, and
 will not be correct if the transition is inherited to a polymorphic child model.
 This will prevent permission strings to be used.
 
-Lamba functions however can accept arguments, such as model functions declared as
+Lambda functions however can accept arguments, such as model functions declared as
 properties. Properties can be inherited, and overwritten in child models where
 necessary. This means that lambda functions used in transition permissions can
 be inherited without problems. An added benefit is the somewhat cleaner design
@@ -70,8 +70,10 @@ audience corresponding to its status.
 The current implementation permits the respectively involved users and their line
 management to edit documents.
 
-This keeps the business logic, which depends on the model's status, close to the
-implementation of the status - at the model.
+This keeps the business logic with the field `status` it depends on at the model.
+The previous implementation to use post-save signals setting (custom) document permissions,
+and letting views determine read-only fields from these permissions, was more indirect,
+extremely error-prone and hard to understand.
 
 
 Django Admin

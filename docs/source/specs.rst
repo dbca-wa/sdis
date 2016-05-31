@@ -12,14 +12,10 @@ SDIS's philosophy is to be permissive, but log everything.
 The point of truth for project approval is the SCMT; necessarily, SDIS will always
 require to be brought up to speed with the latest SCMT decisions.
 
-After 4 years of development and honing, SDIS implements all known SCD rules and
+After 4 years of development and honing workflows and user interface,
+SDIS implements all known SCD rules and
 workflows around project approval. If things go to plan, SDIS will
-do, show, and allow "the right buttons", or appropriate actions.
-But sometimes, we need a shortcut, or things don't follow the rules. In this case,
-rather than blindly enforcing the rules (we did that, and it was more hassle
-than worth), SDIS will allow privileged users to override business rules and
-e.g. force-choke projects to death, or kill zombies (back out of Progress Reports
-that were requested for projects that should have been closed).
+show "the right buttons" to allow appropriate actions.
 
 SDIS features a role-based permission system, based on three roles:
 
@@ -36,17 +32,16 @@ The Project Owner is added as "Supervising Scientist" to the project team when
 a project is created. The Project Owner, and any other team members, can add/edit
 Team membership.
 
-While every logged in SDIS user can update any document (these updates are logged),
-only team members of a project can execute any life cycle steps, such as
+Only team members of a project can update a document and execute any life cycle steps, such as
 submitting related documents for review, or requesting closure.
 
-Project team permissions are updated whenever a project team member gets added
-or removed, or when a new document is added. Permissions are given to all team
-members for the project (e.g. to request closure) and all related documents.
+**Only DPaW staff are notified** when the team is emailed. SDIS leaves prompting
+contributions from external collaborators to personal communication as (and when)
+appropriate by DPaW staff.
 
 Program Leaders
 ---------------
-Members of SCMT (all Program Leaders) have the permission "review".
+Members of SCMT (all Program Leaders) have the permission to "review".
 This allows them to review documents (Concept Plans, Project Plans,
 Progress Reports, Closure Forms, Student Reports), update them if appropriate,
 and submit further up the approval chain, or request updates from the authors.
@@ -57,6 +52,9 @@ Program Leaders can review other programs' projects as well, because:
 * we assume (as everything is logged), that no PL will act without SCMT's approval
 
 Program Leader permissions are global (for all projects and documents).
+**Only the direct Program Leader is notified** when actions from reviewers are
+requested. SDIS leaves the edge case of prompting another PL for input as (and when)
+appropriate to the directly involved and notified PLs.
 
 Directorate
 -----------
@@ -67,6 +65,8 @@ and will cause projects to proceed in their life cycle.
 
 Directorate permissions are global (for all projects and documents).
 
+**Only explicitly nominated representatives of the Directorate are notified** when
+actions from the Directorate is required.
 
 Project Life Cycles
 ===================

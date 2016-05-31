@@ -12,16 +12,20 @@ If there are urgent or new Tasks, SDIS will notify you via email.
 
 Login
 =====
-SDIS uses the Parks & Wildlife Single-Sign-On login, provided by Microsoft.
+SDIS uses the Parks & Wildlife Single-Sign-On login, provided by Microsoft's Office 365.
 Once-off, SDIS will redirect you to login.microsoftonline.com, which you already
 have used to login to other Parks & Wildlife online services, such as Office 365.
 
-Remember to use your email address (including @dpaw.wa.gov.au), not your user name.
+Remember to use your **email address** (including @dpaw.wa.gov.au), not your user name.
 
 Feel free to select "Keep me signed in", and let your browser "remember the password".
+At this point, you already are logged into your computer with the same credentials,
+so letting the browser keep you logged in is no extra security risk.
 
 Your browser will remember your login status for a few weeks. However,
 for security reasons, SDIS will occasionally ask you to provide your login again.
+
+SDIS recommends to use Google Chrome or Mozilla Firefox for optimal browsing experience.
 
 Find a Project
 ==============
@@ -29,10 +33,8 @@ On the `"Browse all Projects" page <https://sdis.dpaw.wa.gov.au/projects/project
 you can filter and search for projects.
 On the start page, the big "Download all Projects (XLS)" button will download all
 projects as an Excel spreadsheet. Please note that this is a rapidly outdating
-snapshot. **Do not** update this spreadsheet - that's what SDIS is there for.
-.. Under "actions", a selected list of projects can also be exported to CSV or MS Excel spreadsheets.
-
-**Note** Currently, the project list is a huge table scrolling sideways, we're working to make it smaller.
+snapshot. **Do not** update this spreadsheet - do update projects directly in
+SDIS instead.
 
 Project Life Cycles
 ===================
