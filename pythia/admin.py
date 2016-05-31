@@ -433,12 +433,14 @@ class UserAdmin(DjangoUserAdmin):
          get_fieldsets may call .get_form, which calls .get_readonly_fields
         """
         if request.user.is_superuser:
-            # superuser can edit all fields, add global permissions via groups
+            # superuser can edit all fields
             return ()
-
+        elif obj and obj.pk:
+            return ('is_superuser', 'is_active', 'is_staff', 'date_joined',
+                    'groups', 'username')
         else:
-            return ('is_superuser', 'is_active', 'is_staff', 'username',
-                    'date_joined', 'groups')
+            return ('is_superuser', 'is_active', 'is_staff', 'date_joined',
+                    'groups')
 
         # this would work if pythia.models.User would inherit from ActiveModel
         # elif (request.user == obj.creator) and getattr(self, 'hack', True)):

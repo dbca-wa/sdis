@@ -11,6 +11,11 @@ from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
                    StudentProjectFactory, UserFactory, SuperUserFactory)
 
 
+# TEST: User adds external user, enter username, password
+# next screen add first name, last name etc, username must be ro
+# check superuser fields are ro
+# Test user updates own profile, all but superuser fields are ro
+
 class ConceptPlanAdminTests(BaseTestCase):
     """ConceptPlan view tests."""
 
