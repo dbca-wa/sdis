@@ -398,45 +398,6 @@ class ScienceProjectModelTests(BaseTestCase):
         print("Check that project is ACTIVE")
         self.assertEqual(spp.project.status, Project.STATUS_ACTIVE)
 
-    # def test_scienceproject_retirement(self):
-    #     """Test suspending, terminating and resuscitating a ScienceProject."""
-    #     p = ScienceProjectFactory.create(
-    #         creator=self.bob,
-    #         modifier=self.bob,
-    #         program=self.program,
-    #         # data_custodian=self.bob, site_custodian=self.bob,
-    #         project_owner=self.bob)
-    #
-    #     ProjectMembership.objects.create(
-    #         project=p,
-    #         user=self.bob,
-    #         role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
-    #     p.status = Project.STATUS_ACTIVE
-    #     p.save()
-
-        # print("Active projects can be suspended and brought back to ACTIVE")
-        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        # self.assertTrue(p.can_suspend())
-        # p.suspend()
-        # self.assertEqual(p.status, Project.STATUS_SUSPENDED)
-        # p.reactivate_suspended()
-        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        #
-        # print("Active projects can be terminated... they will be BACK")
-        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        # self.assertTrue(p.can_terminate())
-        # p.terminate()
-        # self.assertEqual(p.status, Project.STATUS_TERMINATED)
-        # p.reactivate_terminated()
-        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        #
-        # print("Active projects can be force-choked and resuscitated")
-        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        # p.force_complete()
-        # self.assertEqual(p.status, Project.STATUS_COMPLETED)
-        # p.reactivate()
-        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
-
     def test_scienceproject_update(self):
         """Test the update workflow of a ScienceProject."""
         self.project.status = Project.STATUS_ACTIVE
@@ -653,7 +614,6 @@ class ScienceProjectModelTests(BaseTestCase):
         self.project.save()          # NOTE sync to db
         print("Project must be in STATUS_COMPLETED")
         self.assertEqual(self.project.status, Project.STATUS_TERMINATED)
-
 
     def test_reset_conceptplan_on_pending_scienceproject(self):
         """Resetting an approved SCP resets SCP and project to NEW."""

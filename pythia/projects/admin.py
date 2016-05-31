@@ -284,13 +284,6 @@ class ProjectAdmin(BaseAdmin):
             opts=opts,)
         context.update(extra_context or {})
 
-        # # This failsafe is not required, as DEBUG sends emails to console.
-        # if settings.DEBUG:
-        #     print("[DEBUG] recipients would have been: {0}".format(recipients))
-        #     User = get_user_model()
-        #     recipients = [User.objects.get(username='florianm'), ]
-        #     print("[DEBUG] recipients replaced with: {0}".format(recipients))
-
         # User clicks "confirm" on transition.html
         if request.method == 'POST':
 
