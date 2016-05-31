@@ -528,7 +528,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         custom=dict(verbose="Request closure",
                     explanation="Once a project is completed as planned, "
                     "the normal closure process involves approval of the "
-                    "ClosureForm, then a final ARAR progress report.",
+                    "ClosureForm, then a final ARAR progress report."
+                    "Alternatively, immediate closure, suspension, or "
+                    "termination can be requested as closure goal.",
                     notify=True,)
         )
     def request_closure(self):
@@ -605,30 +607,30 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             report = ARARReport.objects.latest()
         self.make_progressreport(report, final=True)
 
-    # ACTIVE -> COMPLETED ----------------------------------------------------#
-    def can_force_complete(self):
-        return True
-
-    @transition(
-        field='status',
-        source=[STATUS_ACTIVE, STATUS_CLOSING],
-        target=STATUS_COMPLETED,
-        conditions=[can_force_complete],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Force-complete project",
-                    explanation="The Directorate can override project closure "
-                    "workflows by force-completing active or closing projects.",
-                    notify=True,)
-        )
-    def force_complete(self):
-        """
-        Force-choke the project to its COMPLETED state.
-
-        Available to Reviewers on active projects.
-        Project Members must go through the official process.
-        No more actions are required of this project.
-        Only reactivate() should be possible now.
-        """
+    # # ACTIVE -> COMPLETED ----------------------------------------------------#
+    # def can_force_complete(self):
+    #     return True
+    #
+    # @transition(
+    #     field='status',
+    #     source=[STATUS_ACTIVE, STATUS_CLOSING],
+    #     target=STATUS_COMPLETED,
+    #     conditions=[can_force_complete],
+    #     permission=lambda instance, user: user in instance.approvers,
+    #     custom=dict(verbose="Force-complete project",
+    #                 explanation="The Directorate can override project closure "
+    #                 "workflows by force-completing active or closing projects.",
+    #                 notify=True,)
+    #     )
+    # def force_complete(self):
+    #     """
+    #     Force-choke the project to its COMPLETED state.
+    #
+    #     Available to Reviewers on active projects.
+    #     Project Members must go through the official process.
+    #     No more actions are required of this project.
+    #     Only reactivate() should be possible now.
+    #     """
 
     # COMPLETED -> ACTIVE ----------------------------------------------------#
     def can_reactivate(self):
@@ -641,7 +643,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     @transition(
         field='status',
-        source=STATUS_COMPLETED,
+        source=CLOSED,
         target=STATUS_ACTIVE,
         conditions=[can_reactivate],
         permission=lambda instance, user: user in instance.approvers,
@@ -654,85 +656,85 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """Transition to move the project to its ACTIVE state."""
         return
 
-    # ACTIVE -> TERMINATED ---------------------------------------------------#
-    def can_terminate(self):
-        """Return true if the project can be reactivated."""
-        return True
+    # # ACTIVE -> TERMINATED ---------------------------------------------------#
+    # def can_terminate(self):
+    #     """Return true if the project can be reactivated."""
+    #     return True
+    #
+    # @transition(
+    #     field='status',
+    #     source=STATUS_ACTIVE,
+    #     target=STATUS_TERMINATED,
+    #     conditions=[can_terminate],
+    #     permission=lambda instance, user: user in instance.approvers,
+    #     custom=dict(verbose="Terminate project",
+    #                 explanation="The Directorate can terminate projects which "
+    #                 "are not expected to ever be completed successfully.",
+    #                 notify=True,)
+    #     )
+    # def terminate(self):
+    #     """Transition the project to its TERMINATED state."""
+    #     return
 
-    @transition(
-        field='status',
-        source=STATUS_ACTIVE,
-        target=STATUS_TERMINATED,
-        conditions=[can_terminate],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Terminate project",
-                    explanation="The Directorate can terminate projects which "
-                    "are not expected to ever be completed successfully.",
-                    notify=True,)
-        )
-    def terminate(self):
-        """Transition the project to its TERMINATED state."""
-        return
+    # # TERMINATED -> ACTIVE --------------------------------------------------#
+    # def can_reactivate_terminated(self):
+    #     """Whether the project can be reactivated from being terminated."""
+    #     return True
+    #
+    # @transition(
+    #     field='status',
+    #     source=STATUS_TERMINATED,
+    #     target=STATUS_ACTIVE,
+    #     conditions=[can_reactivate_terminated],
+    #     permission=lambda instance, user: user in instance.approvers,
+    #     custom=dict(verbose="Reactivate terminated project",
+    #                 explanation="The Directorate can reactivate terminated "
+    #                 "projects.",
+    #                 notify=True,)
+    #     )
+    # def reactivate_terminated(self):
+    #     """Transition the project to its ACTIVE state."""
+    #     return
 
-    # TERMINATED -> ACTIVE ---------------------------------------------------#
-    def can_reactivate_terminated(self):
-        """Whether the project can be reactivated from being terminated."""
-        return True
+    # # ACTIVE -> SUSPENDED ---------------------------------------------------#
+    # def can_suspend(self):
+    #     """Return true if the project can be suspended."""
+    #     return True
+    #
+    # @transition(
+    #     field='status',
+    #     source=STATUS_ACTIVE,
+    #     target=STATUS_SUSPENDED,
+    #     conditions=[can_suspend],
+    #     permission=lambda instance, user: user in instance.approvers,
+    #     custom=dict(verbose="Suspend project",
+    #                 explanation="The Directorate can suspend projects which "
+    #                 "are currently not worked on.",
+    #                 notify=True,)
+    #     )
+    # def suspend(self):
+    #     """Transition the project to its SUSPENDED state."""
+    #     return
 
-    @transition(
-        field='status',
-        source=STATUS_TERMINATED,
-        target=STATUS_ACTIVE,
-        conditions=[can_reactivate_terminated],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reactivate terminated project",
-                    explanation="The Directorate can reactivate terminated "
-                    "projects.",
-                    notify=True,)
-        )
-    def reactivate_terminated(self):
-        """Transition the project to its ACTIVE state."""
-        return
-
-    # ACTIVE -> SUSPENDED ----------------------------------------------------#
-    def can_suspend(self):
-        """Return true if the project can be suspended."""
-        return True
-
-    @transition(
-        field='status',
-        source=STATUS_ACTIVE,
-        target=STATUS_SUSPENDED,
-        conditions=[can_suspend],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Suspend project",
-                    explanation="The Directorate can suspend projects which "
-                    "are currently not worked on.",
-                    notify=True,)
-        )
-    def suspend(self):
-        """Transition the project to its SUSPENDED state."""
-        return
-
-    # SUSPENDED -> ACTIVE ----------------------------------------------------#
-    def can_reactivate_suspended(self):
-        """Whether the project can be reactivated from suspension."""
-        return True
-
-    @transition(
-        field='status',
-        source=STATUS_SUSPENDED,
-        target=STATUS_ACTIVE,
-        conditions=[can_reactivate_suspended],
-        permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Reactivate suspended project",
-                    explanation="The Directorate can reactivate suspended "
-                    "projects.",
-                    notify=True,)
-        )
-    def reactivate_suspended(self):
-        """Transition the suspended project to its ACTIVE state."""
-        return
+    # # SUSPENDED -> ACTIVE ---------------------------------------------------#
+    # def can_reactivate_suspended(self):
+    #     """Whether the project can be reactivated from suspension."""
+    #     return True
+    #
+    # @transition(
+    #     field='status',
+    #     source=STATUS_SUSPENDED,
+    #     target=STATUS_ACTIVE,
+    #     conditions=[can_reactivate_suspended],
+    #     permission=lambda instance, user: user in instance.approvers,
+    #     custom=dict(verbose="Reactivate suspended project",
+    #                 explanation="The Directorate can reactivate suspended "
+    #                 "projects.",
+    #                 notify=True,)
+    #     )
+    # def reactivate_suspended(self):
+    #     """Transition the suspended project to its ACTIVE state."""
+    #     return
 
     # EMAIL NOTIFICATIONS ----------------------------------------------------#
     def get_users_to_notify(self, target_status):
@@ -1115,21 +1117,21 @@ class CollaborationProject(Project):
         """CollaborationProjects cannot request final updates."""
         return False
 
-    def can_force_closure(self):
-        """CollaborationProjects cannot force closure."""
-        return False
+    # def can_force_closure(self):
+    #     """CollaborationProjects cannot force closure."""
+    #     return False
 
     def can_request_closure(self):
         """CollaborationProjects cannot request closure."""
         return False
 
-    def can_suspend(self):
-        """CollaborationProjects cannot be suspended."""
-        return False
-
-    def can_terminate(self):
-        """CollaborationProjects cannot be terminated."""
-        return False
+    # def can_suspend(self):
+    #     """CollaborationProjects cannot be suspended."""
+    #     return False
+    #
+    # def can_terminate(self):
+    #     """CollaborationProjects cannot be terminated."""
+    #     return False
 
     @transition(
         field='status',
@@ -1290,23 +1292,12 @@ class StudentProject(Project):
         return False
 
     def can_request_final_update(self):
-        """CollaborationProjects cannot request final updates."""
+        """StudentProjects have no request final updates."""
         return False
 
-    def can_force_closure(self):
-        """CollaborationProjects cannot force closure."""
-        return False
 
     def can_request_closure(self):
-        """CollaborationProjects cannot request closure."""
-        return False
-
-    def can_suspend(self):
-        """CollaborationProjects cannot be suspended."""
-        return False
-
-    def can_terminate(self):
-        """CollaborationProjects cannot be terminated."""
+        """StudentProjects have no formal closure process."""
         return False
 
     @transition(

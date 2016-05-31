@@ -398,44 +398,44 @@ class ScienceProjectModelTests(BaseTestCase):
         print("Check that project is ACTIVE")
         self.assertEqual(spp.project.status, Project.STATUS_ACTIVE)
 
-    def test_scienceproject_retirement(self):
-        """Test suspending, terminating and resuscitating a ScienceProject."""
-        p = ScienceProjectFactory.create(
-            creator=self.bob,
-            modifier=self.bob,
-            program=self.program,
-            # data_custodian=self.bob, site_custodian=self.bob,
-            project_owner=self.bob)
+    # def test_scienceproject_retirement(self):
+    #     """Test suspending, terminating and resuscitating a ScienceProject."""
+    #     p = ScienceProjectFactory.create(
+    #         creator=self.bob,
+    #         modifier=self.bob,
+    #         program=self.program,
+    #         # data_custodian=self.bob, site_custodian=self.bob,
+    #         project_owner=self.bob)
+    #
+    #     ProjectMembership.objects.create(
+    #         project=p,
+    #         user=self.bob,
+    #         role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+    #     p.status = Project.STATUS_ACTIVE
+    #     p.save()
 
-        ProjectMembership.objects.create(
-            project=p,
-            user=self.bob,
-            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
-        p.status = Project.STATUS_ACTIVE
-        p.save()
-
-        print("Active projects can be suspended and brought back to ACTIVE")
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        self.assertTrue(p.can_suspend())
-        p.suspend()
-        self.assertEqual(p.status, Project.STATUS_SUSPENDED)
-        p.reactivate_suspended()
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-
-        print("Active projects can be terminated... they will be BACK")
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        self.assertTrue(p.can_terminate())
-        p.terminate()
-        self.assertEqual(p.status, Project.STATUS_TERMINATED)
-        p.reactivate_terminated()
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-
-        print("Active projects can be force-choked and resuscitated")
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
-        p.force_complete()
-        self.assertEqual(p.status, Project.STATUS_COMPLETED)
-        p.reactivate()
-        self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        # print("Active projects can be suspended and brought back to ACTIVE")
+        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        # self.assertTrue(p.can_suspend())
+        # p.suspend()
+        # self.assertEqual(p.status, Project.STATUS_SUSPENDED)
+        # p.reactivate_suspended()
+        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        #
+        # print("Active projects can be terminated... they will be BACK")
+        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        # self.assertTrue(p.can_terminate())
+        # p.terminate()
+        # self.assertEqual(p.status, Project.STATUS_TERMINATED)
+        # p.reactivate_terminated()
+        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        #
+        # print("Active projects can be force-choked and resuscitated")
+        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
+        # p.force_complete()
+        # self.assertEqual(p.status, Project.STATUS_COMPLETED)
+        # p.reactivate()
+        # self.assertEqual(p.status, Project.STATUS_ACTIVE)
 
     def test_scienceproject_update(self):
         """Test the update workflow of a ScienceProject."""
@@ -509,7 +509,7 @@ class ScienceProjectModelTests(BaseTestCase):
             self.project.documents.instance_of(ProgressReport).count(), 0)
 
     def test_scienceproject_closure(self):
-        """Test the closure workflow of a ScienceProject."""
+        """Test the default closure workflow of a ScienceProject."""
         self.project.status = Project.STATUS_ACTIVE
         self.project.save()
 
@@ -560,6 +560,100 @@ class ScienceProjectModelTests(BaseTestCase):
         print("Approving final update completes project")
         self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
         print("Full ScienceProject test walkthrough successfully completed.")
+
+    def test_scienceproject_force_closure(self):
+        """Test the force-closure workflow of a ScienceProject."""
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save()
+
+        print("Request closure with goal closure without process")
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+        self.project.request_closure()
+        self.project.save()
+        print("Project should be in CLOSURE_REQUESTED")
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
+        print("Check for ProjectClosure document")
+        self.assertEqual(
+            self.project.documents.instance_of(ProjectClosure).count(), 1)
+        pc = self.project.documents.instance_of(ProjectClosure).get()
+        self.assertEqual(pc.status, Document.STATUS_NEW)
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
+        # Set project to force_closure
+        pc.goal = ProjectClosure.STATUS_FORCE_COMPLETED
+        pc.save()
+        print("Fast-track ProjectClosure document through review and approval")
+        pc.seek_review()
+        pc.seek_approval()
+        pc.approve()
+        print("Check that {0} is approved".format(pc.debugname))
+        self.assertEqual(pc.status, Document.STATUS_APPROVED)
+        self.project = pc.project    # NOTE pc.project has latest change
+        self.project.save()          # NOTE sync to db
+        print("Project must be in STATUS_COMPLETED")
+        self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
+
+    def test_scienceproject_suspend(self):
+        """Test the suspending workflow of a ScienceProject."""
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save()
+
+        print("Request closure with goal suspended")
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+        self.project.request_closure()
+        self.project.save()
+        print("Project should be in CLOSURE_REQUESTED")
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
+        print("Check for ProjectClosure document")
+        self.assertEqual(
+            self.project.documents.instance_of(ProjectClosure).count(), 1)
+        pc = self.project.documents.instance_of(ProjectClosure).get()
+        self.assertEqual(pc.status, Document.STATUS_NEW)
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
+        # Set project to force_closure
+        pc.goal = ProjectClosure.STATUS_SUSPENDED
+        pc.save()
+        print("Fast-track ProjectClosure document through review and approval")
+        pc.seek_review()
+        pc.seek_approval()
+        pc.approve()
+        print("Check that {0} is approved".format(pc.debugname))
+        self.assertEqual(pc.status, Document.STATUS_APPROVED)
+        self.project = pc.project    # NOTE pc.project has latest change
+        self.project.save()          # NOTE sync to db
+        print("Project must be in STATUS_COMPLETED")
+        self.assertEqual(self.project.status, Project.STATUS_SUSPENDED)
+
+    def test_scienceproject_terminate(self):
+        """Test the termination workflow of a ScienceProject."""
+        self.project.status = Project.STATUS_ACTIVE
+        self.project.save()
+
+        print("Request closure with goal terminated")
+        self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
+        self.project.request_closure()
+        self.project.save()
+        print("Project should be in CLOSURE_REQUESTED")
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
+        print("Check for ProjectClosure document")
+        self.assertEqual(
+            self.project.documents.instance_of(ProjectClosure).count(), 1)
+        pc = self.project.documents.instance_of(ProjectClosure).get()
+        self.assertEqual(pc.status, Document.STATUS_NEW)
+        self.assertEqual(self.project.status, Project.STATUS_CLOSURE_REQUESTED)
+        # Set project to force_closure
+        pc.goal = ProjectClosure.STATUS_TERMINATED
+        pc.save()
+        print("Fast-track ProjectClosure document through review and approval")
+        pc.seek_review()
+        pc.seek_approval()
+        pc.approve()
+        print("Check that {0} is approved".format(pc.debugname))
+        self.assertEqual(pc.status, Document.STATUS_APPROVED)
+        self.project = pc.project    # NOTE pc.project has latest change
+        self.project.save()          # NOTE sync to db
+        print("Project must be in STATUS_COMPLETED")
+        self.assertEqual(self.project.status, Project.STATUS_TERMINATED)
+
 
     def test_reset_conceptplan_on_pending_scienceproject(self):
         """Resetting an approved SCP resets SCP and project to NEW."""
@@ -753,7 +847,7 @@ class CollaborationProjectModelTests(TestCase):
         print("Run complete on {0}".format(self.project.debugname))
         self.project.complete()
         self.project.save()
-        print("{0} should be COMLETED".format(self.project.debugname))
+        print("{0} should be COMPLETED".format(self.project.debugname))
         self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
 
 
@@ -862,7 +956,7 @@ class StudentProjectModelTests(TestCase):
         print("Run force_closure on {0}".format(self.project.debugname))
         self.project.force_closure()
         self.project.save()
-        print("{0} should be COMLETED".format(self.project.debugname))
+        print("{0} should be COMPLETED".format(self.project.debugname))
         self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
         print("There should be zero ProgressReports")
         self.assertEqual(
@@ -884,7 +978,7 @@ class StudentProjectModelTests(TestCase):
         print("Run complete on {0}".format(self.project.debugname))
         self.project.complete()
         self.project.save()
-        print("{0} should be COMLETED".format(self.project.debugname))
+        print("{0} should be COMPLETED".format(self.project.debugname))
         self.assertEqual(self.project.status, Project.STATUS_COMPLETED)
 
 
