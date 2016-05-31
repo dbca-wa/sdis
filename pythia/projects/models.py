@@ -132,6 +132,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     ACTIVE = (STATUS_NEW, STATUS_PENDING, STATUS_ACTIVE, STATUS_UPDATE,
               STATUS_CLOSURE_REQUESTED, STATUS_CLOSING, STATUS_FINAL_UPDATE)
+    CLOSED = (STATUS_COMPLETED, STATUS_TERMINATED, STATUS_SUSPENDED)
 
     STATUS_CHOICES = (
         (STATUS_NEW, _("New project, pending concept plan approval")),
@@ -1363,7 +1364,7 @@ class StudentProject(Project):
     def reactivate(self):
         """Transition to move the project to its ACTIVE state."""
         return
-        
+
     @property
     def progressreport(self):
         """Return the latest progress report.

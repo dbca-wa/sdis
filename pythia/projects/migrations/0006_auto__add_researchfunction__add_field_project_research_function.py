@@ -98,7 +98,7 @@ class Migration(SchemaMigration):
             'research_function': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['projects.ResearchFunction']", 'null': 'True', 'blank': 'True'}),
             'site_custodian': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'pythia_project_site_custodian'", 'null': 'True', 'to': u"orm['pythia.User']"}),
             'start_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'status': ('django_fsm.db.fields.fsmfield.FSMField', [], {'default': "u'new'", 'max_length': '50'}),
+            'status': ('django_fsm.FSMField', [], {'default': "u'new'", 'max_length': '50'}),
             'supervising_scientist_list_plain': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'tagline': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
             'team_list_plain': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),

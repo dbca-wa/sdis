@@ -1401,6 +1401,25 @@ class ProjectClosure(Document):
     template = "admin/pythia/ararreport/includes/projectclosure.html"
     template_tex = "latex/includes/projectclosure.tex"
 
+    GOAL_CHOICES = (
+        ('completed', _("Completed with final update")),
+        ('force_completed', _("Completed without final update")),
+        ('suspended', _("Suspended")),
+        ('terminated', _("Terminated"))
+        )
+
+    goal = models.CharField(
+        max_length=300,
+        verbose_name=_("Closure goal"),
+        blank=True, null=True,
+        default='completed',
+        choices=GOAL_CHOICES,
+        help_text=_("The intended project status outcome of this closure."))
+    reason = models.TextField(
+        verbose_name=_("Closure reason"),
+        blank=True, null=True,
+        help_text=_("Reason for closure, provided by project team and/or"
+                    " program leader."))
     scientific_outputs = models.TextField(
         verbose_name=_("Key publications and documents"),
         blank=True, null=True,

@@ -8,34 +8,14 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'ProjectPlan.operating_budget_external'
-        db.add_column(u'documents_projectplan', 'operating_budget_external',
-                      self.gf('pythia.fields.PythiaArrayField')(default='[["Source", "Year 1", "Year 2", "Year 3"], ["Salaries, Wages, OVertime", "", "", ""], ["Overheads", "", "", ""], ["Equipment", "", "", ""], ["Vehicle", "", "", ""], ["Travel", "", "", ""], ["Other", "", "", ""], ["Total", "", "", ""]]', null=True, blank=True),
-                      keep_default=False)
 
-
-        # Changing field 'ProjectPlan.operating_budget'
-        db.alter_column(u'documents_projectplan', 'operating_budget', self.gf('pythia.fields.PythiaArrayField')(null=True))
-
-        # Changing field 'ConceptPlan.budget'
-        db.alter_column(u'documents_conceptplan', 'budget', self.gf('pythia.fields.PythiaArrayField')(null=True))
-
-        # Changing field 'ConceptPlan.staff'
-        db.alter_column(u'documents_conceptplan', 'staff', self.gf('pythia.fields.PythiaArrayField')(null=True))
+        # Changing field 'ProjectClosure.goal'
+        db.alter_column(u'documents_projectclosure', 'goal', self.gf('django.db.models.fields.CharField')(max_length=300, null=True))
 
     def backwards(self, orm):
-        # Deleting field 'ProjectPlan.operating_budget_external'
-        db.delete_column(u'documents_projectplan', 'operating_budget_external')
 
-
-        # Changing field 'ProjectPlan.operating_budget'
-        db.alter_column(u'documents_projectplan', 'operating_budget', self.gf('django.db.models.fields.TextField')(null=True))
-
-        # Changing field 'ConceptPlan.budget'
-        db.alter_column(u'documents_conceptplan', 'budget', self.gf('django.db.models.fields.TextField')(null=True))
-
-        # Changing field 'ConceptPlan.staff'
-        db.alter_column(u'documents_conceptplan', 'staff', self.gf('django.db.models.fields.TextField')(null=True))
+        # Changing field 'ProjectClosure.goal'
+        db.alter_column(u'documents_projectclosure', 'goal', self.gf('django.db.models.fields.TextField')(null=True))
 
     models = {
         u'auth.group': {
@@ -92,15 +72,17 @@ class Migration(SchemaMigration):
             'is_final_report': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'progress': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'report': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['pythia.ARARReport']", 'null': 'True', 'blank': 'True'}),
-            'year': ('django.db.models.fields.PositiveIntegerField', [], {'default': '2015'})
+            'year': ('django.db.models.fields.PositiveIntegerField', [], {'default': '2016'})
         },
         u'documents.projectclosure': {
             'Meta': {'object_name': 'ProjectClosure', '_ormbases': [u'documents.Document']},
             'backup_location': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'data_location': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             u'document_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['documents.Document']", 'unique': 'True', 'primary_key': 'True'}),
+            'goal': ('django.db.models.fields.CharField', [], {'default': "u'completed'", 'max_length': '300', 'null': 'True', 'blank': 'True'}),
             'hardcopy_location': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'knowledge_transfer': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'reason': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'scientific_outputs': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'})
         },
         u'documents.projectplan': {
@@ -119,7 +101,7 @@ class Migration(SchemaMigration):
             'methodology': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'no_specimens': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'operating_budget': ('pythia.fields.PythiaArrayField', [], {'default': '\'[["Source", "Year 1", "Year 2", "Year 3"], ["FTE Scientist", "", "", ""], ["FTE Technical", "", "", ""], ["Equipment", "", "", ""], ["Vehicle", "", "", ""], ["Travel", "", "", ""], ["Other", "", "", ""], ["Total", "", "", ""]]\'', 'null': 'True', 'blank': 'True'}),
-            'operating_budget_external': ('pythia.fields.PythiaArrayField', [], {'default': '\'[["Source", "Year 1", "Year 2", "Year 3"], ["Salaries, Wages, OVertime", "", "", ""], ["Overheads", "", "", ""], ["Equipment", "", "", ""], ["Vehicle", "", "", ""], ["Travel", "", "", ""], ["Other", "", "", ""], ["Total", "", "", ""]]\'', 'null': 'True', 'blank': 'True'}),
+            'operating_budget_external': ('pythia.fields.PythiaArrayField', [], {'default': '\'[["Source", "Year 1", "Year 2", "Year 3"], ["Salaries, Wages, Overtime", "", "", ""], ["Overheads", "", "", ""], ["Equipment", "", "", ""], ["Vehicle", "", "", ""], ["Travel", "", "", ""], ["Other", "", "", ""], ["Total", "", "", ""]]\'', 'null': 'True', 'blank': 'True'}),
             'outcome': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'project_tasks': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'references': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
@@ -144,7 +126,7 @@ class Migration(SchemaMigration):
             u'document_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['documents.Document']", 'unique': 'True', 'primary_key': 'True'}),
             'progress_report': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'report': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['pythia.ARARReport']", 'null': 'True', 'blank': 'True'}),
-            'year': ('django.db.models.fields.PositiveIntegerField', [], {'default': '2015'})
+            'year': ('django.db.models.fields.PositiveIntegerField', [], {'default': '2016'})
         },
         u'projects.project': {
             'Meta': {'ordering': "[u'position', u'-year', u'-number']", 'unique_together': "((u'year', u'number'),)", 'object_name': 'Project'},
@@ -153,7 +135,7 @@ class Migration(SchemaMigration):
             'area_list_ibra_imcra_region': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'area_list_nrm_region': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'areas': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['pythia.Area']", 'symmetrical': 'False', 'blank': 'True'}),
-            'comments': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
+            'comments': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'projects_project_created'", 'to': u"orm['pythia.User']"}),
             'data_custodian': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'pythia_project_data_custodian'", 'null': 'True', 'to': u"orm['pythia.User']"}),
@@ -171,16 +153,17 @@ class Migration(SchemaMigration):
             'position': ('django.db.models.fields.IntegerField', [], {'default': '1000', 'null': 'True', 'blank': 'True'}),
             'program': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['pythia.Program']", 'null': 'True', 'blank': 'True'}),
             'project_owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'pythia_project_owner'", 'to': u"orm['pythia.User']"}),
+            'research_function': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['projects.ResearchFunction']", 'null': 'True', 'blank': 'True'}),
             'site_custodian': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'pythia_project_site_custodian'", 'null': 'True', 'to': u"orm['pythia.User']"}),
             'start_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'status': ('django_fsm.FSMField', [], {'default': "u'new'", 'max_length': '50'}),
             'supervising_scientist_list_plain': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'tagline': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
+            'tagline': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'team_list_plain': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'title': ('pythia.fields.Html2TextField', [], {}),
+            'title': ('django.db.models.fields.TextField', [], {}),
             'type': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0'}),
             'web_resources': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['pythia.WebResource']", 'symmetrical': 'False', 'blank': 'True'}),
-            'year': ('django.db.models.fields.PositiveIntegerField', [], {'default': '2015'})
+            'year': ('django.db.models.fields.PositiveIntegerField', [], {'default': '2016'})
         },
         u'projects.projectmembership': {
             'Meta': {'ordering': "[u'position']", 'object_name': 'ProjectMembership'},
@@ -191,6 +174,21 @@ class Migration(SchemaMigration):
             'role': ('django.db.models.fields.PositiveSmallIntegerField', [], {}),
             'time_allocation': ('django.db.models.fields.FloatField', [], {'default': '0', 'null': 'True', 'blank': 'True'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['pythia.User']"})
+        },
+        u'projects.researchfunction': {
+            'Meta': {'object_name': 'ResearchFunction'},
+            'association': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'projects_researchfunction_created'", 'to': u"orm['pythia.User']"}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'effective_from': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'effective_to': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'leader': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'pythia_researchfunction_leader'", 'null': 'True', 'to': u"orm['pythia.User']"}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'modifier': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'projects_researchfunction_modified'", 'to': u"orm['pythia.User']"}),
+            'name': ('django.db.models.fields.TextField', [], {}),
+            'polymorphic_ctype': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'polymorphic_projects.researchfunction_set'", 'null': 'True', 'to': u"orm['contenttypes.ContentType']"})
         },
         u'pythia.address': {
             'Meta': {'object_name': 'Address'},
@@ -215,13 +213,13 @@ class Migration(SchemaMigration):
             'date_closed': ('django.db.models.fields.DateField', [], {}),
             'date_open': ('django.db.models.fields.DateField', [], {}),
             'dm': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'focus': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'modifier': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'pythia_ararreport_modified'", 'to': u"orm['pythia.User']"}),
             'pub': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'role': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
-            'vision': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'research_intro': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'sds_intro': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'student_intro': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'year': ('django.db.models.fields.PositiveIntegerField', [], {'unique': 'True'})
         },
         u'pythia.area': {
@@ -247,7 +245,7 @@ class Migration(SchemaMigration):
             'region': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['pythia.Region']"})
         },
         u'pythia.division': {
-            'Meta': {'object_name': 'Division'},
+            'Meta': {'ordering': "[u'slug', u'name']", 'object_name': 'Division'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'pythia_division_created'", 'to': u"orm['pythia.User']"}),
             'director': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'leads_divisions'", 'null': 'True', 'to': u"orm['pythia.User']"}),
@@ -268,9 +266,9 @@ class Migration(SchemaMigration):
             'effective_from': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'effective_to': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'finance_admin': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'finance_admin_on_programs'", 'null': 'True', 'to': u"orm['pythia.User']"}),
-            'focus': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
+            'focus': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'introduction': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
+            'introduction': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'modifier': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'pythia_program_modified'", 'to': u"orm['pythia.User']"}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '320'}),
@@ -301,10 +299,10 @@ class Migration(SchemaMigration):
             'affiliation': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'agreed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'author_code': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
-            'curriculum_vitae': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
+            'curriculum_vitae': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'null': 'True', 'blank': 'True'}),
-            'expertise': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
+            'expertise': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'fax': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'group_name': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
@@ -322,11 +320,11 @@ class Migration(SchemaMigration):
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'phone': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
             'phone_alt': ('django.db.models.fields.CharField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'}),
-            'profile_text': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
+            'profile_text': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'program': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['pythia.Program']", 'null': 'True', 'blank': 'True'}),
-            'projects': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
-            'publications_other': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
-            'publications_staff': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
+            'projects': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'publications_other': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'publications_staff': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '30', 'null': 'True', 'blank': 'True'}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),

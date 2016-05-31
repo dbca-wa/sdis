@@ -27,14 +27,14 @@ class Migration(SchemaMigration):
 
         # User chose to not deal with backwards NULL issues for 'ResearchFunction.description'
         raise RuntimeError("Cannot reverse this migration. 'ResearchFunction.description' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration
         # Changing field 'ResearchFunction.description'
         db.alter_column(u'projects_researchfunction', 'description', self.gf('pythia.fields.Html2TextField')())
 
         # User chose to not deal with backwards NULL issues for 'ResearchFunction.leader'
         raise RuntimeError("Cannot reverse this migration. 'ResearchFunction.leader' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration
         # Changing field 'ResearchFunction.leader'
         db.alter_column(u'projects_researchfunction', 'leader_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['pythia.User']))
@@ -99,7 +99,7 @@ class Migration(SchemaMigration):
             'research_function': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['projects.ResearchFunction']", 'null': 'True', 'blank': 'True'}),
             'site_custodian': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'pythia_project_site_custodian'", 'null': 'True', 'to': u"orm['pythia.User']"}),
             'start_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            'status': ('django_fsm.db.fields.fsmfield.FSMField', [], {'default': "u'new'", 'max_length': '50'}),
+            'status': ('django_fsm.FSMField', [], {'default': "u'new'", 'max_length': '50'}),
             'supervising_scientist_list_plain': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'tagline': ('pythia.fields.Html2TextField', [], {'null': 'True', 'blank': 'True'}),
             'team_list_plain': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
