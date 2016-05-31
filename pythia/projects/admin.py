@@ -1,5 +1,5 @@
 from __future__ import unicode_literals, absolute_import
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.admin.util import unquote
 from django.core.exceptions import PermissionDenied
@@ -12,9 +12,9 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect, Http404
 
-from pythia.admin import BaseAdmin, Breadcrumb, DetailAdmin, DownloadAdminMixin
+from pythia.admin import BaseAdmin, Breadcrumb, DownloadAdminMixin
 from pythia.projects.models import PROJECT_CLASS_MAP
-from pythia.templatetags.pythia_base import pythia_urlname
+# from pythia.templatetags.pythia_base import pythia_urlname
 from pythia.utils import snitch
 from pythia.widgets import AreasWidgetWrapper
 from mail_templated import send_mail
@@ -37,11 +37,11 @@ class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
         Override the base breadcrumbs to add the research function list to
         the trail.
         """
-        return (
-            Breadcrumb(_('Home'), reverse('admin:index')),
-            Breadcrumb(_('Research Functions'),
-                       reverse('admin:projects_researchfunction_changelist'))
-        )
+        return (Breadcrumb(_('Home'), reverse('admin:index')),
+                Breadcrumb(_('Research Functions'),
+                           reverse(
+                               'admin:projects_researchfunction_changelist'))
+                )
 
 
 class ProjectMembershipAdmin(BaseAdmin):

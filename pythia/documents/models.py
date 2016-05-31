@@ -355,9 +355,11 @@ class Document(PolymorphicModel, Audit):
         This audience is the widest audience to have write permissions.
         """
         return self.project.all_permitted
+
     # -------------------------------------------------------------------------#
     # Author actions
     #
+
     def can_seek_review(self):
         """Return true if this document can be passed to the review stage."""
         return True
@@ -1400,19 +1402,23 @@ class ProjectClosure(Document):
 
     template = "admin/pythia/ararreport/includes/projectclosure.html"
     template_tex = "latex/includes/projectclosure.tex"
+    STATUS_COMPLETED = 'completed'
+    STATUS_FORCE_COMPLETED = 'force_completed'
+    STATUS_TERMINATED = 'terminated'
+    STATUS_SUSPENDED = 'suspended'
 
     GOAL_CHOICES = (
-        ('completed', _("Completed with final update")),
-        ('force_completed', _("Completed without final update")),
-        ('suspended', _("Suspended")),
-        ('terminated', _("Terminated"))
+        (STATUS_COMPLETED, _("Completed with final update")),
+        (STATUS_FORCE_COMPLETED, _("Completed without final update")),
+        (STATUS_SUSPENDED, _("Suspended")),
+        (STATUS_TERMINATED, _("Terminated"))
         )
 
     goal = models.CharField(
         max_length=300,
         verbose_name=_("Closure goal"),
         blank=True, null=True,
-        default='completed',
+        default=STATUS_COMPLETED,
         choices=GOAL_CHOICES,
         help_text=_("The intended project status outcome of this closure."))
     reason = models.TextField(
@@ -1465,9 +1471,23 @@ class ProjectClosure(Document):
             notify=True,)
         )
     def approve(self):
-        """Auto-advance the project to CLOSING."""
+        """Auto-advance the project to CLOSING stated depending on goal.
+
+        * Approving force complete will complete the project immediately.
+        * Approving suspension or termination will suspend or terminate the
+        project immediately.
+        * All other cases (failsafe! there's only refular completion left) will
+        set the project to pending final update.
+        """
         from pythia.projects.models import Project
-        self.project.status = Project.STATUS_CLOSING
+        if self.goal == ProjectClosure.STATUS_FORCE_COMPLETED:
+            self.project.status = Project.STATUS_COMPLETED
+        elif self.goal == ProjectClosure.STATUS_TERMINATED:
+            self.project.status = Project.STATUS_TERMINATED
+        elif self.goal == ProjectClosure.STATUS_SUSPENDED:
+            self.project.status = Project.STATUS_SUSPENDED
+        else:
+            self.project.status = Project.STATUS_CLOSING
         self.project.save(update_fields=['status', ])
 
     @transition(
