@@ -407,7 +407,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
         Default: project team members.
         """
-        return list(set(self.members.all()))  # reduce some duplication
+        return list(set(self.members.filter(is_external=False)))
 
     @property
     def reviewers(self):
@@ -423,7 +423,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             smt, created = Group.objects.get_or_create(name='SMT')
             return smt.user_set.all()
         except:
-            print("reviewers not found")
+            snitch("ERROR reviewers not found for {0}".format(self.debugname))
             return set()
 
     @property
