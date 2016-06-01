@@ -86,7 +86,7 @@ class ProjectMembershipAdmin(BaseAdmin):
 
 
 class ProjectAdmin(BaseAdmin):
-    list_display = ('project_id', 'project_title', 'type', 'year', 'number',
+    list_display = ('project_id', 'type', 'year', 'number', 'project_title',
                     'project_owner_name', 'program', 'research_function',
                     'status', 'fm_start_date', 'fm_end_date')
     list_per_page = 1000    # whoooa
@@ -120,7 +120,7 @@ class ProjectAdmin(BaseAdmin):
 
     def project_id(self, obj):
         return obj.project_year_number
-    project_id.short_description = 'ID'
+    project_id.short_description = 'Year-Number'
 
     def project_title(self, obj):
         return obj.project_title_html
