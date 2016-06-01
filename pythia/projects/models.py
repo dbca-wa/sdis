@@ -658,6 +658,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return '{0} {1}-{2}'.format(
             Project.PROJECT_ABBREVIATIONS[t], y, str(n).zfill(3))
 
+    @classmethod
+    def clsm_project_ckantag(cls, t, y, n):
+        """Generate dash-separated project type - year - number."""
+        return '{0}-{1}-{2}'.format(
+            Project.PROJECT_ABBREVIATIONS[t], y, str(n).zfill(3))
+
     # Project name = "TYPE YEAR-NUMBER TITLE"
     @classmethod
     def clsm_project_type_year_number_name(cls, t, y, n, na):
@@ -669,6 +675,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     def project_type_year_number(self):
         """Return project type - year - number."""
         return Project.clsm_project_type_year_number(
+            self.type, self.year, self.number)
+
+    @property
+    def project_ckantag(self):
+        """Return dash-separated project type - year - number."""
+        return Project.clsm_project_ckantag(
             self.type, self.year, self.number)
 
     @property

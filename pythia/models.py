@@ -266,12 +266,14 @@ class Audit(geo_models.Model):
     changed_data = property(_get_changed_data)
 
     def save(self, *args, **kwargs):
-        """
-        This falls back on using an admin user if a thread request object
-        wasn't found.
+        """Set creator and modifier to current user or superuser.
+
+        This method uses pythia.middleware.get_current_user to retrieve either
+        the request.user from thread local storage (as injected by
+        pythia.middleware.ThreadLocals) or the superuser in case the thread
+        was not a request (e.g. run through shell or unit tests).
         """
         user = get_current_user()
-        # print("Audit saving {0} for {1}".format(self.__str__(), user))
 
         # If saving a new model, set the creator.
         if not self.pk:

@@ -1,18 +1,18 @@
 (function(pythia) {
-  $.ajaxSetup({
-    beforeSend: function() {
-      if (typeof(tinyMCE) != "undefined") {
-        pythia.activeEdColour = $(tinyMCE.activeEditor.getContainer()).css('border-color');
-        $(tinyMCE.activeEditor.getContainer()).css('border-color', '#bb0000');
-      }
-    },
-    complete: function() {
-      if (typeof(tinyMCE) != "undefined") {
-        $(tinyMCE.activeEditor.getContainer()).css('border-color', pythia.activeEdColour);
-        hasChanged = false; // hasChanged defined in "admin/change_form.html"
-      }
-    }
-  });
+  // $.ajaxSetup({
+  //   beforeSend: function() {
+  //     if (typeof(tinyMCE) != "undefined") {
+  //       pythia.activeEdColour = $(tinyMCE.activeEditor.getContainer()).css('border-color');
+  //       $(tinyMCE.activeEditor.getContainer()).css('border-color', '#bb0000');
+  //     }
+  //   },
+  //   complete: function() {
+  //     if (typeof(tinyMCE) != "undefined") {
+  //       $(tinyMCE.activeEditor.getContainer()).css('border-color', pythia.activeEdColour);
+  //       hasChanged = false; // hasChanged defined in "admin/change_form.html"
+  //     }
+  //   }
+  // });
 
   pythia.inlineEditUrls = new Object();
 
