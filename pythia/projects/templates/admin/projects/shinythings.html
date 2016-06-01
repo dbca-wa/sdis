@@ -37,25 +37,6 @@
   </div>
 </p>
 
-<!-- Get datasets from CKAN data catalogue -->
-<script type="text/javascript">
-var ckan = "http://internal-data.dpaw.wa.gov.au/"
-var api_url = ckan + "api/3/action/package_search?fq=tags:{{project.project_ckantag}}"
-$.ajax({
-        url: api_url
-    }).done(function(data) {
-        console.log(data.result.results);
-        console.log(api_url);
-        $.each(data.result.results, function (index, p) {
-            $('#datasets').append(
-                '<div><a href="' + ckan + 'dataset/' + p.id + '">' +
-                p.title + '</a></div>');
-        });
-    }).fail(function() {
-        console.log("Failed to fetch CKAN datasets from " + api_url)
-});
-</script>
-
 
 <!-- hide the submit row when the form is inactive -->
 <script type="text/javascript">

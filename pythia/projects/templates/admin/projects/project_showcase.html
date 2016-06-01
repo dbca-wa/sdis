@@ -26,6 +26,49 @@
         tagged with keyword <strong>{{project.project_ckantag}}</strong>:
         </span>
     </div>
+    <!-- <div id="wikipages">
+        <span class="text-muted">Project pages on the
+        <a href="https://confluence.dpaw.wa.gov.au/display/sd/">SCD Wiki</a>
+        tagged with keyword <strong>{{project.project_ckantag}}</strong>:
+        </span>
+    </div> -->
 
 </div><!-- /.col -->
 </div><!--/.row -->
+
+<!-- Get datasets from CKAN data catalogue -->
+<script type="text/javascript">
+var keyword = "{{project.project_ckantag}}"
+var ckan = "http://internal-data.dpaw.wa.gov.au/"
+var ckan_api = ckan + "api/3/action/package_search?fq=tags:"
+var wiki = "https://confluence.dpaw.wa.gov.au/"
+var wiki_api = wiki + "rest/api/search?cql=label=" // doesn't work
+
+$.ajax({
+        url: ckan_api + keyword
+    }).done(function(data) {
+        console.log(data.result.results);
+        console.log(ckan_api + keyword);
+        $.each(data.result.results, function (index, p) {
+            $('#datasets').append(
+                '<div><a href="' + ckan + 'dataset/' + p.id + '">' +
+                p.title + '</a></div>');
+        });
+    }).fail(function() {
+        console.log("Failed to access " + ckan)
+    });
+
+// $.ajax({
+//     url: wiki_api + keyword
+// }).done(function(data) {
+//     console.log(data.results);
+//     console.log(wiki_api + keyword);
+//     $.each(data.results, function (index, p) {
+//         $('#wikipages').append(
+//             '<div><a href="' + wiki + p._links.webui + '">' +
+//             p.title + '</a></div>');
+//     });
+// }).fail(function() {
+//     console.log("Failed to access " + wiki)
+// });
+</script>
