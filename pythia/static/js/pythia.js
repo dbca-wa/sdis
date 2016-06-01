@@ -75,16 +75,18 @@
     $(function() {
       tinyMCE.init({
         menubar: false,
-        toolbar: 'undo redo | bold italic underline subscript superscript | removeformat | bullist numlist | link charmap paste | table | spellchecker | code',
+        toolbar: 'undo redo | bold italic underline subscript superscript | bullist numlist | link charmap paste | table | removeformat code',
+        //spellchecker in toolbar and plugins
         contextmenu: "paste link inserttable | cell row column deletetable",
         selector: '#' + id,
         plugins: [
           'advlist autolink lists link charmap print preview anchor',
           'searchreplace visualblocks code fullscreen autoresize',
-          'insertdatetime contextmenu paste wordcount spellchecker table paste'
+          'insertdatetime contextmenu paste wordcount table paste'
         ],
-        spellchecker_languages : "+English=en-au",
-        spellchecker_rpc_url: '/spillchuck/',
+        // spellchecker_languages : "+English=en-au",
+        browser_spellcheck: true,
+        // spellchecker_rpc_url: '/spillchuck/',
         setup: pythia.tinyMCEinit
       });
     });

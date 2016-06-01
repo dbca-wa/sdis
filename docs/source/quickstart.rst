@@ -189,16 +189,16 @@ from any active ARAR.
 Interaction with the Data Catalogue
 ===================================
 The Project Closure document will want to know where the data and digital artefacts
-are. The place for them is the `data catalogue<http://internal-data.dpaw.wa.gov.au/>`_.
+are. The place for them is the `data catalogue <http://internal-data.dpaw.wa.gov.au/>`_.
 
 A semi-official "what goes where" guide, including instructions for the data catalogue,
-can be found on the `Marine Science Wiki<https://confluence.dpaw.wa.gov.au/display/MSIM/Home>`_.
+can be found on the `Marine Science Wiki <https://confluence.dpaw.wa.gov.au/display/MSIM/Home>`_.
 
 Please note that every researcher is still (as per divisional guidelines)
 responsible to **backup their data in two separate places**, and put a
 **third copy** on the data catalogue.
 
-Our `data catalogue<http://internal-data.dpaw.wa.gov.au/>`_ is a warehouse of
+Our `data catalogue <http://internal-data.dpaw.wa.gov.au/>`_ is a warehouse of
 metadata ( = a phone book for datasets) which holds links to, or (third!) copies of, departmental datasets.
 The catalogue is **not a complete backup for data** and - although the server
 and the database are backed up, and there are fail safes in place - with enough

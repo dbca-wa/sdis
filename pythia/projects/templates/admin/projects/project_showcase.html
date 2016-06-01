@@ -46,8 +46,8 @@ var wiki_api = wiki + "rest/api/search?cql=label={{project.project_ckantag}}" //
 $.ajax({
         url: ckan_api
     }).done(function(data) {
-        console.log(data.result.results);
-        console.log(ckan_api);
+        // console.log(data.result.results);
+        // console.log(ckan_api);
         $.each(data.result.results, function (index, p) {
             $('#datasets').append(
                 '<div><a href="' + ckan + 'dataset/' + p.id + '">' +
