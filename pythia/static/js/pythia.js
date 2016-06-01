@@ -76,7 +76,7 @@
       tinyMCE.init({
         menubar: false,
         toolbar: 'undo redo | bold italic underline subscript superscript | bullist numlist | link charmap paste | table | removeformat code',
-        //spellchecker in toolbar and plugins
+        //spellchecker removed from toolbar and plugins
         contextmenu: "paste link inserttable | cell row column deletetable",
         selector: '#' + id,
         plugins: [
@@ -209,7 +209,7 @@
       var div = parent_select.parent('div');
 
       parent_select.hide();
-      div.next('p').hide();  // the annoying help text
+      div.next('p').hide();  // hide help text
 
       var groups = {};
       var type = null;
@@ -226,14 +226,14 @@
         // prepare the new select
         var select_id = 'id_pythia_areasWidgetWrapper_' + type;
         var select = $('<select id="' + select_id +
-                       //'" multiple="multiple" style="width: auto; float:right !important;" size="'+
-                       '" multiple class="form-control" style="width: auto; float:right !important;" size="'+
+                       '" multiple class="form-control" style="width: auto; ' +
+                       'float:right !important;" size="'+
                        groups[type].length + '"/>');
         // add onChange handler
         select.change(function() {
           $(this).find('option').each(function(i, option) {
-            var parent_option = parent_select.find('option[value=' +
-                                                   option.value + ']');
+            var parent_option = parent_select.find(
+                'option[value=' + option.value + ']');
             if ($(option).is(':selected'))
               parent_option.attr('selected', 'selected');
             else
@@ -254,10 +254,9 @@
         }
 
         // add the new select
-        var p = $('<div class="row"><div class="col-md-12"><div class="areasWidgetWrapper areasWidgetWrapper-' +
-                  type.replace(' ', '_') + '"></div></div></div>');
-        //var p = $('<div class="col-xs-4"><div class="areasWidgetWrapper areasWidgetWrapper-' +
-        //          type.replace(' ', '_') + '"></div></div>');
+        var p = $('<div class="row"><div class="col-md-12">' +
+            '<div class="areasWidgetWrapper areasWidgetWrapper-' +
+            type.replace(' ', '_') + '"></div></div></div>');
         p.append('<label for="' + select_id + '">' + type + '</label');
         p.append(select);
         div.append(p);

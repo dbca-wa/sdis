@@ -16,6 +16,8 @@ from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
 # check superuser fields are ro
 # Test user updates own profile, all but superuser fields are ro
 
+# TEST: ProgramAdminTest(BaseTestCase) - only editable to SMT + SCD
+
 class ConceptPlanAdminTests(BaseTestCase):
     """ConceptPlan view tests."""
 

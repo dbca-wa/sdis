@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from collections import namedtuple
 from functools import update_wrapper, partial
+from itertools import chain
 import logging
 import os
 import subprocess
@@ -19,6 +20,7 @@ from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.contrib.admin.util import flatten_fieldsets, unquote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.forms.models import modelformset_factory
@@ -682,8 +684,38 @@ class ProgramAdmin(BaseAdmin, DetailAdmin):
 
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__', 'cost_center', 'published', 'position',
-                    'program_leader', 'finance_admin', 'data_custodian')
+                    'program_leader_name', 'finance_admin_name',
+                    'data_custodian_name')
 
+    def get_readonly_fields(self, request, obj=None):
+        """Determine which fields a User can edit, depending on role and group.
+
+        SCD and SMT can update, everyone else is read-only.
+        """
+        rof = super(ProgramAdmin, self).get_readonly_fields(request, obj)
+        scd = Group.objects.get_or_create(name='SCD')[0].user_set.all()
+        smt = Group.objects.get_or_create(name='SCD')[0].user_set.all()
+        editors = list(set(chain(scd, smt)))
+        if not request.user.is_superuser or request.user in editors:
+            rof += ('effective_to', 'effective_from', 'cost_center',
+                    'published', 'position', 'program_leader', 'finance_admin',
+                    'data_custodian')
+        return rof
+
+    def program_leader_name(self, obj):
+        return obj.program_leader.__str__()
+    program_leader_name.short_description = 'Program Leader'
+    program_leader_name.admin_order_field = 'program_leader__last_name'
+
+    def finance_admin_name(self, obj):
+        return obj.finance_admin.__str__()
+    finance_admin_name.short_description = 'Finance Admin'
+    finance_admin_name.admin_order_field = 'finance_admin__last_name'
+
+    def data_custodian_name(self, obj):
+        return obj.data_custodian.__str__()
+    data_custodian_name.short_description = 'Data Custodian'
+    data_custodian_name.admin_order_field = 'data_custodian__last_name'
 
 class WorkCenterAdmin(BaseAdmin, DetailAdmin):
     """Custom WorkCenterAdmin."""
