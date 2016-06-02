@@ -8,11 +8,12 @@ from __future__ import (division, print_function, unicode_literals,
 
 from collections import OrderedDict as OD
 from datetime import date
+from itertools import chain
 import logging
 import json
 from polymorphic import PolymorphicModel, PolymorphicManager
 
-# from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group
 from django.db.models import signals
 import django.db.models.options as options
 from django.utils.encoding import python_2_unicode_compatible
@@ -1045,9 +1046,22 @@ class ProjectPlan(Document):
             # no animals, no endorsement, all good
             return True
 
-    # -------------------------------------------------------------------------#
+    # Custom reviewer audience includes special roles ------------------------#
+    @property
+    def reviewer(self):
+        """Return document reviewers PL, BM, plus if neede AE and HC."""
+        bm = Group.objects.get_or_create(name='BM')[0].user_set.all()
+        ae = Group.objects.get_or_create(name='AE')[0].user_set.all()
+        hc = Group.objects.get_or_create(name='HC')[0].user_set.all()
+        AE = ae if not self.cleared_ae else set()
+        HC = hc if not self.cleared_hc else set()
+        reviewers = list(set(chain(self.project.reviewer, bm, AE, HC)))
+
+        return reviewers
+
+    # ------------------------------------------------------------------------#
     # custom endorsements
-    #
+
     @property
     def bm_endorsement_status(self):
         """The biometrician's endorsement css class and status as string.

@@ -1,6 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n admin_static staticfiles %}
-{% load pythia_base %}
+{% load i18n admin_static staticfiles pythia_base documents projects %}
 {% block title %}SDIS{% endblock %}
 {% block extrastyle %}
 {{ block.super }}
@@ -28,7 +27,15 @@ favicon.badge({{ my_tasklist.count }});
 {% block contentwrapper %}
 <div class="jumbotron">
     <h1>Science Directorate Information System</h1>
-    <p>Hello, {% firstof request.user.first_name request.user.username %}! This is SDIS, our one-stop shop for project approval and reporting.</p>
+    <p>Hello, {% firstof request.user.first_name request.user.username %}!
+        This is SDIS, our one-stop shop for project approval and reporting.</p>
+    <small>
+        Please update and submit (when ready) all documents awaiting your attention in "My Tasks",
+        update project details and team lists of "My Projects" and "My Collaborations",
+        create new projects and initiate closure of old projects as appropriate.
+        If you need help, our all new
+        <a href="http://sdis.readthedocs.io/">Documentation</a> is here to help!
+    </small>
 </div>
 {% with my_tasklist=request.user.tasklist my_portfolio=request.user.portfolio %}
 <div class="row">
@@ -39,7 +46,7 @@ favicon.badge({{ my_tasklist.count }});
                     <a data-toggle="collapse"
                         data-parent="#panel-tasks"
                         href="#collapseTasks"
-                        title="Click to collapse / expand the list of documents requiring your attention">My Tasks
+                        title="These documents require your attention!">My Tasks
                         <span class="pull-right {% if my_tasklist.count > 0 %}text-danger{% endif %}">
                             <i class="glyphicon{% if my_tasklist.count == 0 %} glyphicon-ok{% else %} glyphicon-flag{% endif %}"></i>
                             {{ my_tasklist.count }}
@@ -54,8 +61,9 @@ favicon.badge({{ my_tasklist.count }});
                 {% for doc in my_tasklist.approvals %}
                 <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}"
                     class="list-group-item portfolio"
-                    title="This document requires your attention: read, discuss with your team, update, and submit as appropriate"><span
-                        class="glyphicon glyphicon-flag text-danger"></span>
+                    title="This document requires your attention: read, discuss with your team, update, and submit as appropriate">
+                    <span class="glyphicon glyphicon-flag text-danger"></span>
+                    <span class="pull-right">{% document_status_label doc %}</span>
                     {{ doc.fullname|safe }}
                 </a>
                 {% endfor %}
@@ -64,6 +72,7 @@ favicon.badge({{ my_tasklist.count }});
                     class="list-group-item portfolio"
                     title="This document requires your endorsement as Biometrician, Herbarium Curator, or Animal Ethics representative">
                     <span class="glyphicon glyphicon-thumbs-up"></span>
+                    <span class="pull-right">{% document_status_label doc %}</span>
                     {{ doc.fullname|safe }}
                 </a>
                 {% endfor %}
@@ -79,7 +88,7 @@ favicon.badge({{ my_tasklist.count }});
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#panel-stuck"
                         href="#collapseStuck"
-                        title="Click to collapse / expand projects that have been stuck in approval for more than two months">
+                        title="These projects have been stuck in approval for more than two months">
                         Stuck projects
                         <span class="pull-right">
                             <i class="glyphicon glyphicon-time"></i>
@@ -95,6 +104,7 @@ favicon.badge({{ my_tasklist.count }});
                          class="list-group-item portfolio"
                          title="This project has been idle for more than two months">
                          <span class="glyphicon glyphicon-time"></span>
+                         <span class="pull-right">{% project_status_label proj %}</span>
                          {{ proj.project_name_html|safe }}
                      </a>
                      {% endfor %}
@@ -108,7 +118,7 @@ favicon.badge({{ my_tasklist.count }});
                     <a data-toggle="collapse"
                         data-parent="#panel-projects"
                         href="#collapseProjects"
-                        title="Click to collapse / expand your Science Projects and Core Functions">
+                        title="These are the Science Projects and Core Functions you lead (full star) or participate in (hollow star)">
                         My Projects
                         {% if my_portfolio.projects %}
                         <span class="pull-right">
@@ -129,6 +139,7 @@ favicon.badge({{ my_tasklist.count }});
                     class="list-group-item portfolio"
                     title="This project's details list you as project owner">
                     <span class="glyphicon glyphicon-star"></span>
+                    <span class="pull-right">{% project_status_label proj %}</span>
                     {{ proj.project_name_html|safe }}
                 </a>
                 {% endfor %}
@@ -137,6 +148,7 @@ favicon.badge({{ my_tasklist.count }});
                     class="list-group-item portfolio"
                     title="You are on the team list of this project">
                     <span class="glyphicon glyphicon-star-empty"></span>
+                    <span class="pull-right">{% project_status_label proj %}</span>
                     {{ proj.project_name_html|safe }}
                 </a>
                 {% endfor %}
@@ -153,7 +165,7 @@ favicon.badge({{ my_tasklist.count }});
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#panel-collaborations"
                         href="#collapseCollaborations"
-                        title="Click to collapse / expand your Student Projects and External Partnerships">
+                        title="These are the Student Projects and External Partnerships you lead (full star) or participate in (hollow star)">
                         My Collaborations
                         {% if my_portfolio.collabs %}
                         <span class="pull-right">
@@ -174,6 +186,7 @@ favicon.badge({{ my_tasklist.count }});
                     class="list-group-item portfolio"
                     title="You are listed as the project owner in this project's details">
                     <span class="glyphicon glyphicon-star"></span>
+                    <span class="pull-right">{% project_status_label proj %}</span>
                     {{ proj.project_name_html|safe }}
                 </a>
                 {% endfor %}
@@ -182,6 +195,7 @@ favicon.badge({{ my_tasklist.count }});
                     class="list-group-item portfolio"
                     title="You are on this project's team list">
                     <span class="glyphicon glyphicon-star-empty"></span>
+                    <span class="pull-right">{% project_status_label proj %}</span>
                     {{ proj.project_name_html|safe }}
                 </a>
                 {% endfor %}
@@ -204,7 +218,6 @@ favicon.badge({{ my_tasklist.count }});
             </div>
             <div class="col-md-6">
                 <h2>Reports</h2>
-                {% load documents %}
                 {% get_current_arar as current_arar %}
                 {% if current_arar %}
                 <a class="btn btn-success btn-block" href="{% url 'admin:arar_dashboard' %}"
