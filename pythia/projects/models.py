@@ -1253,6 +1253,7 @@ class StudentProject(Project):
         Creates ProjectClosure as required for SPP and CF,
         requires override to fast-track STP and COL to STATUS_COMPLETED.
         """
+        return
 
     @transition(
         field='status',
@@ -1294,6 +1295,7 @@ class StudentProject(Project):
         )
     def complete(self):
         """StudentProjects can complete without closure process."""
+        return
 
     @transition(
         field='status',

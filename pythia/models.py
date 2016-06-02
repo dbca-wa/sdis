@@ -1174,6 +1174,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         approvals = set()
 
+        # documents in review need PL attention
         program_list = self.leads_programs.all()
         # program -> projects is a reverse foreign key lookup,
         # we can't batch this, so do one query per program
@@ -1191,17 +1192,13 @@ class User(AbstractBaseUser, PermissionsMixin):
             approvals.update(member.project.documents.filter(
                 status=Document.STATUS_NEW).select_related('project'))
 
+        # documents in approval need SCD attention
         if is_scd:
             documents = Document.objects.filter(
-                    status=Document.STATUS_INREVIEW).select_related('project')
-            # right now the can_approve method of most document classes is
-            # just True.
-            # if there's any logic that does heavy lookups, it may pay to
-            # add more prefetch arguments to the above query
-            documents = set([d for d in documents if d.can_approve()])
+                status=Document.STATUS_INAPPROVAL).select_related('project')
             approvals.update(documents)
 
-        #  remove all the endorsements from the approvals pool
+        #  deduplicate approvals pool with endorsements
         approvals.difference_update(excludes)
 
         # TODO: presort the output lists by descending project ID
@@ -1212,8 +1209,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def portfolio(self):
         """
-        Returns projects of various types which current user supervises or
-        participates in.
+        Return projects supervised or participated in by current user.
 
         Required for index.html's My Tasks/Projects/Collaborations.
         If it's just for index.html (a template) consider making it a template
@@ -1225,22 +1221,25 @@ class User(AbstractBaseUser, PermissionsMixin):
         from pythia.documents.models import (ConceptPlan, ProjectPlan)
         from datetime import datetime, timedelta
 
+        groups = [g.name for g in self.groups.all()]
+        is_scd = u'SCD' in groups
+
         # Fun fact: Django polymorphism casts the returned items from a
         # Project.objects query into the highest subclass, but does not
         # rig it for private key lookups. This is why we need to hit the
         # database again with pm_list to fetch the correctly casted object.
 
-        best_before = datetime.now() - timedelta(days=30)
+        best_before = datetime.now() - timedelta(days=60)
         pm_list = ProjectMembership.objects.select_related("project").order_by(
                     "-project__year", "-project__number").filter(
                 user=self, project__status__in=Project.ACTIVE)
         projects = Project.objects.order_by("-year", "-number").filter(
             project_owner=self)
         own_list = projects.filter(status__in=Project.ACTIVE)
-        stuck_new = projects.filter(
-            status__in=Project.STATUS_NEW, created__lt=best_before)
-        stuck_pending = projects.filter(
-            status__in=Project.STATUS_PENDING, created__lt=best_before)
+        stuck_new = projects.filter(status__in=Project.STATUS_NEW,
+                                    created__lt=best_before)
+        stuck_pending = projects.filter(status__in=Project.STATUS_PENDING,
+                                        created__lt=best_before)
         result = {"projects": {}, "collabs": {}, "stuck": {}}
         proj_result = {"super": [], "regular": []}
         collab_result = {"super": [], "regular": []}
@@ -1297,7 +1296,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         if collab_result["super"] or collab_result["regular"]:
             result["collabs"] = collab_result
 
-        if stuck_result["new"] or stuck_result["pending"]:
+        # Only SCD should worry about stuck projects
+        if (stuck_result["new"] or stuck_result["pending"]) and is_scd:
             result["stuck"] = stuck_result
 
         return result
