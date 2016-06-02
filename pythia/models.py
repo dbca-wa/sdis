@@ -1282,13 +1282,12 @@ class User(AbstractBaseUser, PermissionsMixin):
             else:
                 continue
 
-            if x.role == ProjectMembership.ROLE_SUPERVISING_SCIENTIST:
-                if proj in res["super"]:
-                    continue
-                else:
+            if not (proj in res["super"]):
+                if x.role in [ProjectMembership.ROLE_SUPERVISING_SCIENTIST,
+                              ProjectMembership.ROLE_ACADEMIC_SUPERVISOR]:
                     res["super"].append(proj)
-            else:
-                res["regular"].append(proj)
+                else:
+                    res["regular"].append(proj)
 
         if proj_result["super"] or proj_result["regular"]:
             result["projects"] = proj_result
