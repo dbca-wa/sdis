@@ -45,7 +45,8 @@ def avail_tx(u, tx, obj):
 #         """
 #         print("TODO")
 #         pass  # TODO
-
+# TODO portfolio: make projects to fall into/out of each category of
+# tasklist/portfolio for users of each role
 
 class ProjectModelTests(BaseTestCase):
     """Base project tests."""

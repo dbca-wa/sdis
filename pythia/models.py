@@ -412,7 +412,7 @@ class Area(Audit):  # , models.PolygonModelMixin):
     class Meta:
         verbose_name = _("area")
         verbose_name_plural = _("areas")
-        ordering = ['area_type','-northern_extent']
+        ordering = ['area_type', '-northern_extent']
 
     def save(self, *args, **kwargs):
         if self.get_northern_extent() is not None:
