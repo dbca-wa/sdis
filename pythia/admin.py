@@ -559,7 +559,7 @@ class DownloadAdminMixin(ModelAdmin):
         filename = template + ".pdf"
         now = timezone.localtime(timezone.now())
         # timestamp = now.isoformat().rsplit(".")[0].replace(":", "")[:-2]
-        downloadname = filename.replace(' ', '_')
+        downloadname = obj.__str__()
         context = {
             'original': obj,
             'embed': request.GET.get("embed", True),
