@@ -1,6 +1,5 @@
 {% extends "admin/base.html" %}
 {% load pythia_base static %}
-
 {% block content %}
 {# original is an instance of ARARReport #}
 
@@ -10,9 +9,8 @@
 
 <div class="col-md-9" role="main">
     <div id="top"></div>
-    <div class="row">
+    <div class="row"><!-- Download buttons -->
         <div class="col-md-12">
-
             <!-- Public: PDF -->
             <a href="{% url 'admin:pythia_ararreport_download_pdf' original.pk %}"
                 target="_"
@@ -39,9 +37,6 @@
         {% endif %}
         </div>
     </div>
-
-    {# include "admin/pythia/ararreport/includes/overview.html" with reports=original.progress_reports sr=original.student_reports #}
-
     {% as_html original 'dm' 'h1' %}
     {% as_html original 'sds_intro' 'h1' %}
     {% include "admin/pythia/ararreport/includes/programs.html" with reports=original.progress_reports original=original %}
@@ -59,9 +54,7 @@
 {{ media }}
 <style>
 /* ARAR report sidebar affix CSS */
-.body {
-  position: relative;
-}
+.body {position: relative;}
 .affix {
   width: inherit; /* keep the content the same size on fluid layouts */
   position: fixed;
@@ -84,20 +77,9 @@
 }
 
 /* TOC L2 - science programs, student reports */
-.sidebar > ul > li > ul > li > a {
-    color: #AAA;
-    padding: 4px 30px; /* TOC item spacing */
-}
+.sidebar > ul > li > ul > li > a {color: #BBB; padding: 4px 40px;}
 
-.sidebar > ul > li > ul > li > a {
-    color: #BBB;
-    padding: 4px 40px; /* TOC item spacing */
-}
-
-.sidebar > ul> li> ul > li > ul > li > a {
-    color: #CCC;
-    padding: 4px 50px; /* TOC item spacing */
-}
+.sidebar > ul> li> ul > li > ul > li > a {color: #CCC; padding: 4px 50px;}
 
 .sidebar>ul>li>a:hover, .sidebar>ul>li>a:focus,
 .sidebar>ul>li>ul>li>a:hover, .sidebar>ul>li>ul>li>a:focus,
@@ -110,44 +92,4 @@
     border-left: 1px solid #563d7c;
 }
 </style>
-
-<!--link rel="stylesheet" type="text/css" href="{% static 'css/docs.min.css' %}"-->
-<!--script type="text/javascript" src="{% static 'js/docs.min.js' %}"></script-->
-<!--script>
-/* FIXME this is not loading */
-
-! function (a){
-    a(function () {
-        if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-            var b = document.createElement("style");
-            b.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}")),
-            document.querySelector("head").appendChild(b)
-        } {
-            var c = a(window),
-                d = a(document.body);
-            a("#main-navbar").outerHeight(!0) + 10
-        }
-        d.scrollspy({ target: "#sidebar" }),
-        c.on("load", function () {  d.scrollspy("refresh") }),
-        a("#page-content [href=#]").click(function (a) { a.preventDefault() }),
-        setTimeout(function () {
-            var b = a("#sidebar");
-            b.affix({
-                offset: {
-                    top: function () {
-                        var c = b.offset().top,
-                            d = parseInt(b.children(0).css("margin-top"), 10),
-                            e = a("#main-navbar").height();
-                        return this.top = c - e - d
-                    },
-                    bottom: function () {
-                        return this.bottom = a("#footer").outerHeight(!0)
-                    }
-                }
-            })
-        }, 100),
-        setTimeout(function () { a(".bs-top").affix() }, 100),
-    });
-}(jquery);
-</script-->
 {% endblock %}
