@@ -44,12 +44,12 @@
 
     {% as_html original 'dm' 'h1' %}
     {% as_html original 'sds_intro' 'h1' %}
-    {% as_html original 'pub' 'h1' %}
-    {% include "admin/pythia/ararreport/includes/student_projects.html" with reports=original.student_reports %}
-    {% include "admin/pythia/ararreport/includes/collaboration_projects.html" with projects=original.collaboration_projects %}
-    {% include "admin/pythia/ararreport/includes/science_projects.html" with reports=original.progress_reports %}
     {% include "admin/pythia/ararreport/includes/programs.html" with reports=original.progress_reports original=original %}
+    {% include "admin/pythia/ararreport/includes/collaboration_projects.html" with projects=original.collaboration_projects %}
     {% include "admin/pythia/ararreport/includes/student_reports.html" with reports=original.student_reports original=original %}
+    {% as_html original 'pub' 'h1' %}
+    {% include "admin/pythia/ararreport/includes/science_projects.html" with reports=original.progress_reports %}
+    {% include "admin/pythia/ararreport/includes/student_projects.html" with reports=original.student_reports %}
 </div>
 
 {% endblock %}
