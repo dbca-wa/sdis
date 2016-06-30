@@ -1,5 +1,5 @@
 {% block toc %}
-{% regroup original.progress_reports|dictsort:"project.program.position" by project.program as report_list %} 
+{% regroup original.progress_reports|dictsort:"project.program.position" by project.program as report_list %}
 <div id="sidebar" class="sidebar"
     data-spy="affix" data-offset-top="80" data-offset-bottom="100"
     role="complementary">
@@ -14,49 +14,26 @@
         </ul>
         </li>
 
-        <li><a href="#{{ original.opts.module_name }}:{{ original.pk }}.pub">Overview tables</a>
-        <ul class="nav">
-            <li><a href="#{{ original.opts.module_name }}:{{ original.pk }}.pub">Publications and Reports</a>
-            <li><a href="#student_projects_summary">Current Collaboration with Academia</a></li>
-            <li><a href="#collaboration_projects_summary">External Partnerships</a></li>
-            <li><a href="#science_projects_summary">Summary of Research Projects</a></li>
-        </ul>
-        </li>
-
         <li><a href="#research_activities">Progress Reports</a>
             <ul class="nav">
                 {% for program_reports in report_list %}
                 <li>
-                {% with program_reports.grouper as program %}
-                <a href="#{{ program.opts.module_name }}:{{ program.pk }}">{{ program }}</a>
-                {% endwith %}
-                <!--ul class="nav"-->
-                {# for report in program_reports.list #}
-                <!--li>
-                        <a href="#{{ report.project.opts.module_name }}:{{ report.project.pk }}"
-                        class="text-{{ report.status_label }}"
-                        title="Jump to {{ report.project.project_title }}"
-                        >{{ report.project.project_type_year_number }}</a>
-                        </li-->
-                {# endfor #}
-                <!--/ul-->
+                    {% with program_reports.grouper as program %}
+                    <a href="#{{ program.opts.module_name }}:{{ program.pk }}">{{ program }}</a>
+                    {% endwith %}
                 </li>
                 {% endfor %}
                 <li><a href="#student_projects">Student Projects</a>
+                <li><a href="#collaboration_projects_summary">External Partnerships</a></li>
             </ul>
         </li>
-        <!--li><a href="#student_projects">Student Projects</a-->
-            <!--ul class="nav">
-                { for project in original.student_projects }
-                <li>
-                <a href="#{ project.opts.module_name }:{ project.pk }"
-                    class="text-{ project.progressreport.status_label }"
-                    title="Jump to { project.project_name_html|safe}"
-                    >{ project.project_type_year_number }</a>
-                </li>
-                { endfor }
-            </ul-->
-        <!--/li-->
+        <li><a href="#{{ original.opts.module_name }}:{{ original.pk }}.pub">Appendix</a>
+        <ul class="nav">
+            <li><a href="#{{ original.opts.module_name }}:{{ original.pk }}.pub">Publications and Reports</a>
+            <li><a href="#science_projects_summary">Summary of Research Projects</a></li>
+            <li><a href="#student_projects_summary">Current Collaboration with Academia</a></li>
+        </ul>
+        </li>
     </ul>
 </div>
 {% endblock toc %}
