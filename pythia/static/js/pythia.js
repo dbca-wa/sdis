@@ -75,7 +75,8 @@
     $(function() {
       tinyMCE.init({
         menubar: false,
-        toolbar: 'undo redo | bold italic underline subscript superscript | bullist numlist | link charmap paste | table | removeformat code',
+        toolbar: 'undo redo | bold italic underline subscript superscript | ' +
+                 'bullist numlist | link charmap paste | table | removeformat code',
         //spellchecker removed from toolbar and plugins
         contextmenu: "paste link inserttable | cell row column deletetable",
         selector: '#' + id,

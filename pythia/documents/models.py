@@ -802,7 +802,7 @@ class ProjectPlan(Document):
     related_projects = models.TextField(
         verbose_name=_("Related Science Projects"),
         blank=True, null=True,
-        editable=False,
+        editable=True,
         help_text=_("Name related SPPs and the extent you have consulted with "
                     "their project leaders (SPP A6)."))
 
@@ -907,7 +907,7 @@ class ProjectPlan(Document):
             choices=Document.ENDORSEMENT_NULL_CHOICES,
             help_text=_("The Data Manager's endorsement of the project's "
                         "data management. The DM will help to set up Wiki"
-                        "pages, data catalog permissions, scientific sites, "
+                        "pages, data catalogue permissions, scientific sites, "
                         "and advise on metadata creation."))
 
     operating_budget = PythiaArrayField(

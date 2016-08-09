@@ -696,7 +696,7 @@ class ProgramAdmin(BaseAdmin, DetailAdmin):
         scd = Group.objects.get_or_create(name='SCD')[0].user_set.all()
         smt = Group.objects.get_or_create(name='SCD')[0].user_set.all()
         editors = list(set(chain(scd, smt)))
-        if not request.user.is_superuser or request.user in editors:
+        if not (request.user.is_superuser or request.user in editors):
             rof += ('effective_to', 'effective_from', 'cost_center',
                     'published', 'position', 'program_leader', 'finance_admin',
                     'data_custodian')
