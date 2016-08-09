@@ -173,7 +173,10 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         help_text=_("The project type determines the approval and "
                     "documentation requirements during the project's "
                     "life span. Choose wisely - you will not be able"
-                    " to change the project type later."))
+                    " to change the project type later."
+                    "If you get it wrong, create a new project of the"
+                    "correct type and tell admins to delete the duplicate "
+                    "project of the incorrect type."))
 
     status = FSMField(
         default=STATUS_NEW,
