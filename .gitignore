@@ -20,3 +20,9 @@ production/
 production.tar.gz
 npm-debug*
 logs/
+
+# Database/fixture dumps
+*.pgdump
+*.dump
+*.db
+*.sqlite3
