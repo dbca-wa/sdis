@@ -118,6 +118,7 @@ def test():
     local('coverage run --source="." manage.py test --ipdb '
           '--settings=sdis.test_settings && coverage report -m',
           shell='/bin/bash')
+    local('honcho run coveralls')
     print(green("Completed running tests."))
 
 
