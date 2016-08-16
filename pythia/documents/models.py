@@ -428,6 +428,21 @@ class Document(PolymorphicModel, Audit):
 
     @transition(
         field=status,
+        source=STATUS_INAPPROVAL,
+        target=STATUS_INREVIEW,
+        conditions=[can_seek_approval],
+        permission=lambda instance, user: user in instance.reviewers,
+        custom=dict(
+            verbose="Recall from approval",
+            explanation=("Recall the document from approval by the "
+                         "Directorate, e.g. in order to update the content."),
+            notify=True,)
+        )
+    def recall_approval(self):
+        """Transition this document from in approval to be in review again."""
+
+    @transition(
+        field=status,
         source=STATUS_INREVIEW,
         target=STATUS_NEW,
         conditions=[can_seek_approval],
