@@ -35,8 +35,8 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../../'))  # must be top level of project
 os.environ['DJANGO_SETTINGS_MODULE'] = "sdis.settings"
-from sdis import settings as sdis_settings
-settings.configure(default_settings=sdis_settings)
+# from sdis import settings as sdis_settings
+# settings.configure(default_settings=sdis_settings)
 # django.setup()
 
 # -- General configuration ------------------------------------------------
