@@ -15,8 +15,8 @@
 import os
 import sys
 from mock import Mock as MagicMock
-from django_select2 import urls
-
+import django
+from django.conf import settings
 import confy
 confy.read_environment_file()
 
@@ -34,7 +34,10 @@ sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../../'))  # must be top level of project
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sdis.settings")
+os.environ['DJANGO_SETTINGS_MODULE'] = "sdis.settings"
+from sdis import settings as sdis_settings
+settings.configure(default_settings=sdis_settings)
+# django.setup()
 
 # -- General configuration ------------------------------------------------
 

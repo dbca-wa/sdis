@@ -131,6 +131,7 @@ object fresh from the database. It will appear as the transitions had no effect.
 
 To synchronise db and memory, the reference to the project has to be saved to db.
 ::
+    
     p = ScienceProjectFactory.create()
     d = p.documents.instance_of(ConceptPlan).get()
     d.first_transition()
