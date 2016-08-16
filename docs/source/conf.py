@@ -42,13 +42,14 @@ print("The Sphinx conf.py now also discovers python modules "
 os.environ['DJANGO_SETTINGS_MODULE'] = 'sdis.settings'
 
 # 3. Setup the Django app, so that autodoc will find the modules this help references
+# Patch settings with missing keys
 from sdis import settings as sdis_settings
 settings.configure(default_settings=sdis_settings,
                    DEFAULT_INDEX_TABLESPACE=None,
                    DEFAULT_TABLESPACE=None,
                    TRANSACTIONS_MANAGED=True,
                    )
-# django.setup()
+# django.setup() # alternative for higher Django versions (e.g. 1.9)
 print("Now the Django settings are loaded, e.g. installed apps are:"
       "{0}".format(", ".join([app for app in settings.INSTALLED_APPS])))
 
