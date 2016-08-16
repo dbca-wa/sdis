@@ -131,7 +131,7 @@ object fresh from the database. It will appear as the transitions had no effect.
 
 To synchronise db and memory, the reference to the project has to be saved to db.
 ::
-    
+
     p = ScienceProjectFactory.create()
     d = p.documents.instance_of(ConceptPlan).get()
     d.first_transition()
@@ -175,15 +175,6 @@ This chapter links automatically extracted code documentation with the source co
 pythia Package
 ==============
 
-
-:mod:`pythia` Package
----------------------
-
-.. automodule:: pythia.__init__
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`models` Module
 --------------------
 
@@ -203,14 +194,6 @@ projects Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`forms` Module
--------------------
-
-.. automodule:: pythia.projects.forms
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`models` Module
 --------------------
 
@@ -222,6 +205,15 @@ projects Package
 documents Package
 =================
 
+:mod:`models` Module
+--------------------
+
+.. automodule:: pythia.documents.models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 :mod:`admin` Module
 -------------------
 
@@ -230,21 +222,6 @@ documents Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`forms` Module
--------------------
-
-.. automodule:: pythia.documents.forms
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`models` Module
---------------------
-
-.. automodule:: pythia.documents.models
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 :mod:`utils` Module
 -------------------
@@ -254,45 +231,45 @@ documents Package
     :undoc-members:
     :show-inheritance:
 
-tests Package
-=============
+.. tests Package
+.. =============
+..
+.. :mod:`base` Module
+.. ------------------
+..
+.. .. automodule:: pythia.tests.base
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:
 
-:mod:`base` Module
-------------------
+.. :mod:`test_functional` Module
+.. -----------------------------
+..
+.. .. automodule:: pythia.tests.test_functional
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:
+..
+.. :mod:`test_models` Module
+.. -------------------------
+..
+.. .. automodule:: pythia.tests.test_models
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:
+..
+.. :mod:`test_unit` Module
+.. -----------------------
+..
+.. .. automodule:: pythia.tests.test_unit
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:
 
-.. automodule:: pythia.tests.base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`test_functional` Module
------------------------------
-
-.. automodule:: pythia.tests.test_functional
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`test_models` Module
--------------------------
-
-.. automodule:: pythia.tests.test_models
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`test_unit` Module
------------------------
-
-.. automodule:: pythia.tests.test_unit
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`test_views` Module
-------------------------
-
-.. automodule:: pythia.tests.test_views
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. :mod:`test_views` Module
+.. ------------------------
+..
+.. .. automodule:: pythia.tests.test_views
+..     :members:
+..     :undoc-members:
+..     :show-inheritance:

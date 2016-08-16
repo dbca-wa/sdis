@@ -15,10 +15,7 @@
 import os
 import sys
 from mock import Mock as MagicMock
-import django
 from django.conf import settings
-import confy
-confy.read_environment_file()
 
 
 class Mock(MagicMock):
@@ -30,14 +27,31 @@ MOCK_MODULES = ['ldap', 'django_auth_ldap', 'django_auth_ldap.config', ]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../../'))  # must be top level of project
-os.environ['DJANGO_SETTINGS_MODULE'] = "sdis.settings"
-# from sdis import settings as sdis_settings
-# settings.configure(default_settings=sdis_settings)
+# -- Django configuration -------------------------------------------------
+# To debug this section, enable the print commands and run
+# python docs/source/conf.py
+
+# 1. Add Django ROOT_DIR to sys.path, so conf.py can discover django settings
+sys.path.insert(0, os.path.abspath('../../'))
+print("The Sphinx conf.py now also discovers python modules "
+      "relative to the Django root dir {0}".format(sys.path[0]))
+
+# 2. Set env var pointing to our Django settings module, so django.setup() knows
+# which settings to use
+# IMPORTANT: use SINGLE quotes for the settings module
+os.environ['DJANGO_SETTINGS_MODULE'] = 'sdis.settings'
+
+# 3. Setup the Django app, so that autodoc will find the modules this help references
+from sdis import settings as sdis_settings
+settings.configure(default_settings=sdis_settings,
+                   DEFAULT_INDEX_TABLESPACE=None,
+                   DEFAULT_TABLESPACE=None,
+                   TRANSACTIONS_MANAGED=True,
+                   )
 # django.setup()
+print("Now the Django settings are loaded, e.g. installed apps are:"
+      "{0}".format(", ".join([app for app in settings.INSTALLED_APPS])))
+
 
 # -- General configuration ------------------------------------------------
 
