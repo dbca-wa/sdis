@@ -221,11 +221,13 @@ class ScienceProjectModelTests(BaseTestCase):
 
         self.assertEqual(
             [tx.name for tx in
-             self.scp.get_available_user_status_transitions(self.steven)], [])
+             self.scp.get_available_user_status_transitions(self.steven)],
+            ['recall_approval'])
 
         self.assertEqual(
             [tx.name for tx in
-             self.scp.get_available_user_status_transitions(self.fran)], [])
+             self.scp.get_available_user_status_transitions(self.fran)],
+            ['recall_approval'])
 
         self.assertEqual(
             [tx.name for tx in
