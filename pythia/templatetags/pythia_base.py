@@ -61,11 +61,13 @@ def doccontext(fieldset):
             'field': field_,
             'help_text': help_text}
 
+
 @register.inclusion_tag('admin/google_analytics.html', takes_context=True)
 def google_analytics(context):
     """Return the GA tracking code JS snippet with a key from settings."""
     context['GOOGLE_ANALYTICS_KEY'] = settings.GOOGLE_ANALYTICS_KEY
     return context
+
 
 @register.simple_tag
 def google_analytics_key():
@@ -83,19 +85,20 @@ def submit_widgets(context):
 
     ctx = {
         'opts': opts,
-        'show_delete_link': (not is_popup and context['has_delete_permission']
-                             and change and context.get('show_delete', True)),
+        'show_delete_link': (not is_popup and
+                             context['has_delete_permission'] and
+                             change and context.get('show_delete', True)),
         'show_save_as_new': not is_popup and change and save_as,
         'show_save_and_add_another': context['has_add_permission'] and
-                not is_popup and (not save_as or context['add']),
-        'show_save_and_continue': not is_popup and
-                context['has_change_permission'],
+        not is_popup and (not save_as or context['add']),
+        'show_save_and_continue': (not is_popup and
+                                   context['has_change_permission']),
         'is_popup': is_popup,
         'show_save': True,
         'preserved_filters': context.get('preserved_filters'),
         'current': context.get('current'),
         'title': context.get('title'),
-    }
+        }
     if context.get('original') is not None:
         ctx['original'] = context['original']
     return ctx
@@ -111,9 +114,8 @@ def as_html(original, field, tag='h1'):
         'heading': heading,
         'opts': original._meta,
         'tag': tag,
-        'anchor': "{0}:{1}.{2}".format(original.opts.module_name,
-                                       original.pk, field)
-    }
+        'anchor': "{0}:{1}.{2}".format(
+            original.opts.module_name, original.pk, field), }
 
 
 @register.simple_tag
@@ -121,8 +123,7 @@ def get_version_info():
     return "SDIS %(version)s (%(commit)s), Django %(django)s" % {
         'version': pythia.get_version(),
         'commit': get_revision_hash(),
-        'django': django.get_version()
-    }
+        'django': django.get_version(), }
 
 
 @register.inclusion_tag('latex/includes/as_latex.tex')
@@ -134,8 +135,8 @@ def as_latex(original, field, tag='section'):
         'text': text,
         'heading': heading,
         'opts': original._meta,
-        'tag': tag
-    }
+        'tag': tag, }
+
 
 @register.inclusion_tag('latex/includes/as_latex_table.tex')
 def as_latex_table(original, field, tag='section'):
@@ -151,5 +152,20 @@ def as_latex_table(original, field, tag='section'):
         'heading': heading,
         'opts': original._meta,
         'tag': tag,
-        'col': col
-    }
+        'col': col, }
+
+
+@register.inclusion_tag('users/portfolio.html')
+def user_portfolio(usr, personalise=False):
+    """A templatetag to render a Tasks / Portfolio list for a given User.
+
+    The tag requires the outputs of the workhorse functions ``User.tasklist()``
+    and ``User.portfolio()`` which run optimised db queries to retrieve tasks
+    (documents requiring the User's attention) and portfolio (projects in which
+    the User participates).
+    """
+    return {'my_tasklist': usr.tasklist,
+            'my_portfolio': usr.portfolio,
+            'personalised': personalise,
+            'my_name': "{0}'s".format(usr.first_name) if personalise else "My",
+            }

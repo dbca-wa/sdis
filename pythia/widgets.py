@@ -76,29 +76,23 @@ class AreasWidgetWrapper(widgets.Widget):
 
 
 class InlineEditWidgetWrapper(widgets.Widget):
-    # adapted from django.contrib.admin.widgets.RelatedFieldWidgetWrapper
-    # TODO: this will need to be a little bit refactored in order to support
-    # widgets other than TinyMCE
-    # I suppose we could have a map of widgets to wrappers (wrapping js)?
-    # we'll probably want to use different code for SelectWidgets, TextWidgets,
-    # TextInputs, etc.
-    # this should be fairly robust in order to work across all the widgets
+    """Custom InlineEditWidgetWrapper.
 
-    # make this a tuple so that we can go from more specific to more general
-    # having Widget last to catch anything without fit
+    Adapted from ``django.contrib.admin.widgets.RelatedFieldWidgetWrapper``.
 
+    Changes 2014: We reverted to store HTML, not Markdown in
+    ``pythia.fields.Html2TextField``.
 
-    # Changes 2014: We reverted to store HTML, not Markdown in
-    # pythia.fields.Html2TextField
-    # Enable lines with "MARKDOWN" comments to convert HTML edited in the
-    # widget to Markdown in the db field.
+    Enable lines with "MARKDOWN" comments to convert HTML edited in the
+    widget to Markdown in the db field.
+    """
     widget_overrides = (
         (ArrayFieldWidget, 'pythia.handsontable("%s", "%s");'),
         (widgets.TextInput, 'pythia.inlineEditTextInput("%s", "%s");'),
         (widgets.Textarea, 'pythia.inlineEditTextarea("%s", "%s");'),
         (widgets.Select, 'pythia.inlineEditSelect("%s", "%s");'),
         (widgets.Widget, 'pythia.inlineEditWidget("%s", "%s");'),
-    )
+        )
 
     def __init__(self, widget):
         self.widget = widget
@@ -106,12 +100,13 @@ class InlineEditWidgetWrapper(widgets.Widget):
 
     @property
     def media(self):
+        """Load custom static assets depending on widget class."""
         if isinstance(self.widget, widgets.Textarea):
             cdn = 'https://static.dpaw.wa.gov.au/static/libs/'
             return forms.Media(
                 js=[cdn + 'tinymce/4.3.12/tinymce.min.js',
                     cdn + 'tinymce/4.3.12/jquery.tinymce.min.js'
-            ]) + self.widget.media
+                    ]) + self.widget.media
         else:
             return self.widget.media
 
@@ -123,6 +118,14 @@ class InlineEditWidgetWrapper(widgets.Widget):
         return obj
 
     def render(self, name, value, *args, **kwargs):
+        """Custom render method.
+
+        If the form has not been injected to the widget, failover to the
+        original widget.
+
+        ``url`` refers to the ``POST`` location used by TinyMCE's AJAX save
+        function. If we're on an add page, we don't want to POST save anything.
+        """
         if not hasattr(self, 'form'):
             # the form has not been injected to the widget, failover to the
             # original widget
@@ -133,8 +136,8 @@ class InlineEditWidgetWrapper(widgets.Widget):
         # If we're on an add page, we don't want to POST save anything.
         url = None
         if self.form.instance.pk:
-            url = reverse('admin:%s_%s_change' % (opts.app_label,
-                                                  opts.model_name),
+            url = reverse('admin:%s_%s_change' % (
+                opts.app_label, opts.model_name),
                           args=(quote(self.form.instance.pk),))
 
         output = [self.widget.render(name, value, *args, **kwargs)]

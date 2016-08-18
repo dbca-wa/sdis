@@ -1133,9 +1133,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def tasklist(self):
-        """
-        Returns documents which require input from the current user.
-        """
+        """Return documents which require input from the current user."""
         from pythia.projects.models import Project, ProjectMembership
         from pythia.documents.models import Document, ProjectPlan
 
@@ -1156,22 +1154,20 @@ class User(AbstractBaseUser, PermissionsMixin):
                     excludes.add(doc)
 
         endorsements = set()
+        needed = Document.ENDORSEMENT_REQUIRED
 
         if is_bm:
             print(type(pplan_list))
             endorsements.update(pplan_list.filter(
-                bm_endorsement=Document.ENDORSEMENT_REQUIRED
-            ).select_related('project'))
+                bm_endorsement=needed).select_related('project'))
 
         if is_hc:
             endorsements.update(pplan_list.filter(
-                hc_endorsement=Document.ENDORSEMENT_REQUIRED
-            ).select_related('project'))
+                hc_endorsement=needed).select_related('project'))
 
         if is_ae:
             endorsements.update(pplan_list.filter(
-                ae_endorsement=Document.ENDORSEMENT_REQUIRED
-            ).select_related('project'))
+                ae_endorsement=needed).select_related('project'))
 
         approvals = set()
 
@@ -1183,8 +1179,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             projects = prog.project_set.prefetch_related('documents')
             for proj in projects:
                 approvals.update(proj.documents.filter(
-                    status=Document.STATUS_INREVIEW
-                    ).select_related('project'))
+                    status=Document.STATUS_INREVIEW).select_related('project'))
 
         member_list = ProjectMembership.objects.prefetch_related(
                 'project', 'project__documents').filter(user=self)

@@ -18,6 +18,11 @@
 
 {% block content %}
 {% with render_document_fields=True %}
-{{ block.super }}
+<div class="col-md-4">
+    {% user_portfolio original personalise=True %}
+</div>
+<div class="col-md-8">
+    {{ block.super }}
+</div>
 {% endwith %}
 {% endblock %}

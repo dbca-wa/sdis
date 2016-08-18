@@ -172,6 +172,10 @@ Technical Documentation
 
 This chapter links automatically extracted code documentation with the source code.
 
+**NOTE** Until SDIS is upgraded to Django 1.8, autodocs will fail to extract
+docstrings from modules using Django image fields and django-fsm state fields.
+Refer directly to the docstrings inside code if they don't show up below.
+
 pythia Package
 ==============
 
@@ -179,6 +183,48 @@ pythia Package
 ---------------------------------------
 
 .. automodule:: pythia.widgets
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+:mod:`pythia.models` Module
+---------------------------
+
+Custom User model
+^^^^^^^^^^^^^^^^^
+A custom User model provides
+
+.. autoclass:: pythia.models.User
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Custom model mixins and managers
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Coming soon.
+
+
+:mod:`pythia.documents.models` Module
+---------------------------------------
+
+.. automodule:: pythia.documents.models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`pythia.documents.admin` Module
+---------------------------------------
+
+.. automodule:: pythia.documents.admin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`pythia.documents.templatetags.documents` Module
+-----------------------------------------------------
+
+.. automodule:: pythia.documents.templatetags.documents
     :members:
     :undoc-members:
     :show-inheritance:
