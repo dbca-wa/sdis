@@ -190,7 +190,8 @@ class UserForm(forms.ModelForm):
         fields = ('is_active', 'groups')
 
 
-# shim around django-admin forms broken by custom user object, see django ticket #19353
+# shim around django-admin forms broken by custom user object
+# see django ticket #19353
 class PythiaUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
@@ -202,6 +203,7 @@ class PythiaUserCreationForm(UserCreationForm):
         except self.Meta.model.DoesNotExist:
             return username
         raise forms.ValidationError(self.error_messages['duplicate_username'])
+
 
 class PythiaUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):

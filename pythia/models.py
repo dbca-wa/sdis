@@ -32,6 +32,7 @@ from pythia.middleware import get_current_user
 
 logger = logging.getLogger(__name__)
 
+
 class ActiveQuerySet(QuerySet):
     def __init__(self, model, query=None, using=None):
         # the model needs to be defined so that we can construct our custom
@@ -146,8 +147,8 @@ class ActiveModel(models.Model):
         current date and time and then calls save() instead.
         '''
         # see django.db.models.deletion.Collection.delete
-        using = kwargs.get('using', router.db_for_write(self.__class__,
-                                                        instance=self))
+        using = kwargs.get('using',
+                           router.db_for_write(self.__class__, instance=self))
         cannot_be_deleted_assert = ("""%s object can't be deleted because its
                                     %s attribute is set to None.""" %
                                     (self._meta.object_name,
@@ -162,8 +163,7 @@ class ActiveModel(models.Model):
             for model, obj in collector.instances_with_model():
                 if not model._meta.auto_created:
                     signals.pre_delete.send(
-                        sender=model, instance=obj, using=using
-                    )
+                        sender=model, instance=obj, using=using)
 
             # be compatible with django 1.4.x
             if hasattr(collector, 'fast_deletes'):
@@ -189,8 +189,7 @@ class ActiveModel(models.Model):
             for model, obj in collector.instances_with_model():
                 if not model._meta.auto_created:
                     signals.post_delete.send(
-                        sender=model, instance=obj, using=using
-                    )
+                        sender=model, instance=obj, using=using)
 
         # another django>=1.6 thing
         try:
@@ -208,6 +207,7 @@ class ActiveModel(models.Model):
 
 
 class ActiveGeoModel(ActiveModel):
+
     objects = ActiveGeoModelManager()
     # Return all objects, including deleted ones, the default manager.
     objects_all = geo_models.GeoManager()
@@ -223,6 +223,7 @@ class ActiveGeoModel(ActiveModel):
 
     class Meta:
         abstract = True
+
 
 @python_2_unicode_compatible
 class Audit(geo_models.Model):
@@ -330,6 +331,7 @@ class Audit(geo_models.Model):
         if errors:
             raise ValidationError(errors)
 # end swingers models
+
 
 # -----------------------------------------------------------------------------#
 # Report Parts
@@ -625,14 +627,13 @@ class Program(Audit, ActiveModel):
         return self.name
 
     def save(self, *args, **kw):
-        '''Generate slug from name if not set.'''
+        """Generate slug from name if not set."""
         if not self.slug:
             self.slug = slugify(self.name)
         super(Program, self).save(*args, **kw)
 
     def parts(self, part_class):
         # TODO: we probably only want projects that are on the current ARAR
-        # here
         # TODO: :) iterators?
 
         # self.project_set.all() should not hit the db as it is prefetched from
@@ -642,9 +643,7 @@ class Program(Audit, ActiveModel):
         Project = self.project_set.model
         projects = self.project_set.filter(
             type__in=[Project.SCIENCE_PROJECT,
-                      Project.CORE_PROJECT]).prefetch_related(
-                          'progressreport',
-                      )
+                      Project.CORE_PROJECT]).prefetch_related('progressreport')
 
         return [part_class(project, 'project', lambda x: x)
                 for project in projects]
@@ -678,11 +677,11 @@ def set_smt_to_pl(sender, instance, created, **kwargs):
     If clobber==True, drop all SMT members beforehand.
     """
     smt, created = Group.objects.get_or_create(name='SMT')
-    if kwargs.has_key("clobber") and kwargs["clobber"]:
-        dropped = [smt.user_set.remove(x) for x in smt.user_set.all()]
-        logger.info("Removed all {0} current SMT members.".format(len(dropped)))
+    if "clobber" in kwargs and kwargs["clobber"]:
+        gone = [smt.user_set.remove(x) for x in smt.user_set.all()]
+        logger.info("Removed all {0} current SMT members.".format(len(gone)))
     added = [smt.user_set.add(x.program_leader) for x in Program.objects.all()]
-    logger.info("Added all {0} current Program Leaders to SMT.".format(len(added)))
+    logger.info("Added all {0} current PLs to SMT.".format(len(added)))
 
 # By default, let a Program add its program leader to SMT without removing others
 # from it
@@ -1026,7 +1025,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_middle_initials(self):
         i = self.middle_initials if self.middle_initials else ""
         if len(i) > 1:
-            return i[1:]
+            return " {0}".format(i[1:])
         else:
             return ""
 
@@ -1045,11 +1044,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         """
         Returns the first_name plus the last_name, with a space in between.
+
+        Middle initials bring their own prefixed whitespace.
         """
         if self.is_group:
             full_name = "{0} {1}".format(self.group_name, self.get_affiliation())
         else:
-            full_name = "{0} {1} {2} {3} {4}".format(
+            full_name = "{0}{1} {2} {3} {4}".format(
                 self.get_title(),
                 self.first_name,
                 self.get_middle_initials(),

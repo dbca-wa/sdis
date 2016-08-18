@@ -1,4 +1,5 @@
-Django==1.6.5
+Django==1.6.5       # rq.filter: >=1.6,<1.7
+#Django==1.7.11
 
 # DPaW custom
 https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
@@ -10,11 +11,17 @@ https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
 
 # Database, models
 django-contrib-postgres
-django-model-utils==2.0.3
+django-model-utils
+#==2.0.3
 django-polymorphic==0.5.3
-djorm-pgarray==1.0
-djorm-ext-pgarray==0.10
+djorm-pgarray==1.2
+
+djorm-ext-pgarray
+#==0.10
+
 South==0.8.4
+#-e git://github.com/lukesneeringer/django-pgfields.git#egg=django-pgfields
+
 
 diff-match-patch==20110725.1
 django-appconf==0.6
@@ -99,7 +106,7 @@ pipdeptree
 # Werkzeug>=0.10.4
 
 # Docs
-Sphinx==1.2.2
+Sphinx
 pycallgraph==1.0.1
 graphviz>=0.4
 mock
@@ -108,13 +115,13 @@ pydot==1.0.2
 pyparsing==1.5.7
 
 # Testing and Debugging
-django-debug-toolbar==1.0.1
-django-dtpanel-htmltidy==0.1.1
-django-nose==1.2
+django-debug-toolbar==1.1
+django-dtpanel-htmltidy
+django-nose
 django-pdb
 python-coveralls
-mixer==5.1.2
-selenium==2.45.0
+mixer
+selenium
 ipdbplugin
 
 # Linters

@@ -1,8 +1,6 @@
 """Custom pythia views."""
-try:
-    import json
-except ImportError:
-    from django.utils import simplejson as json
+
+import json
 
 from django.conf import settings
 from django.contrib import messages

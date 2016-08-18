@@ -48,6 +48,8 @@ settings.configure(default_settings=sdis_settings,
                    DEFAULT_INDEX_TABLESPACE=None,
                    DEFAULT_TABLESPACE=None,
                    TRANSACTIONS_MANAGED=True,
+                   LOCALE_PATHS='',
+                   FORMAT_MODULE_PATH='',
                    )
 # django.setup() # alternative for higher Django versions (e.g. 1.9)
 print("Now the Django settings are loaded, e.g. installed apps are:"
