@@ -175,101 +175,10 @@ This chapter links automatically extracted code documentation with the source co
 pythia Package
 ==============
 
-:mod:`models` Module
---------------------
+:mod:`pythia.widgets` Module
+---------------------------------------
 
-.. automodule:: pythia.models
+.. automodule:: pythia.widgets
     :members:
     :undoc-members:
     :show-inheritance:
-
-projects Package
-================
-
-:mod:`admin` Module
--------------------
-
-.. automodule:: pythia.projects.admin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`models` Module
---------------------
-
-.. automodule:: pythia.projects.models
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-documents Package
-=================
-
-:mod:`models` Module
---------------------
-
-.. automodule:: pythia.documents.models
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-:mod:`admin` Module
--------------------
-
-.. automodule:: pythia.documents.admin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-:mod:`utils` Module
--------------------
-
-.. automodule:: pythia.documents.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. tests Package
-.. =============
-..
-.. :mod:`base` Module
-.. ------------------
-..
-.. .. automodule:: pythia.tests.base
-..     :members:
-..     :undoc-members:
-..     :show-inheritance:
-
-.. :mod:`test_functional` Module
-.. -----------------------------
-..
-.. .. automodule:: pythia.tests.test_functional
-..     :members:
-..     :undoc-members:
-..     :show-inheritance:
-..
-.. :mod:`test_models` Module
-.. -------------------------
-..
-.. .. automodule:: pythia.tests.test_models
-..     :members:
-..     :undoc-members:
-..     :show-inheritance:
-..
-.. :mod:`test_unit` Module
-.. -----------------------
-..
-.. .. automodule:: pythia.tests.test_unit
-..     :members:
-..     :undoc-members:
-..     :show-inheritance:
-
-.. :mod:`test_views` Module
-.. ------------------------
-..
-.. .. automodule:: pythia.tests.test_views
-..     :members:
-..     :undoc-members:
-..     :show-inheritance:
