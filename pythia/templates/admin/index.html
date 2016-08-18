@@ -37,7 +37,7 @@ favicon.badge({{ my_tasklist.count }});
 </div>
 <div class="row">
     <div class="col-md-4">
-        {% user_portfolio request.user %}
+        {% user_portfolio request.user personalise=True %}
     </div>
 
     <div class="col-md-8">

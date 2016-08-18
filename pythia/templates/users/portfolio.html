@@ -5,7 +5,7 @@
             <a data-toggle="collapse"
                 data-parent="#panel-tasks"
                 href="#collapseTasks"
-                title="These documents require your attention!">{{ my_name }} Tasks
+                title="These documents require {{ your }} attention!">{{ my|title }} Tasks
                 <span class="pull-right {% if my_tasklist.count > 0 %}text-danger{% endif %}">
                     <i class="glyphicon{% if my_tasklist.count == 0 %} glyphicon-ok{% else %} glyphicon-flag{% endif %}"></i>
                     {{ my_tasklist.count }}
@@ -20,7 +20,7 @@
         {% for doc in my_tasklist.approvals %}
         <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}"
             class="list-group-item portfolio"
-            title="This document requires your attention: read, discuss with your team, update, and submit as appropriate">
+            title="This document requires {{ your }} attention: read, discuss with {{ your }} team, update, and submit as appropriate">
             <span class="glyphicon glyphicon-flag text-danger"></span>
             <span class="pull-right">{% document_status_label doc %}</span>
             {{ doc.fullname|safe }}
@@ -29,7 +29,7 @@
         {% for doc in my_tasklist.endorsements %}
         <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}"
             class="list-group-item portfolio"
-            title="This document requires your endorsement as Biometrician, Herbarium Curator, or Animal Ethics representative">
+            title="This document requires {{ your }} endorsement as Biometrician, Herbarium Curator, or Animal Ethics representative">
             <span class="glyphicon glyphicon-thumbs-up"></span>
             <span class="pull-right">{% document_status_label doc %}</span>
             {{ doc.fullname|safe }}
@@ -77,8 +77,8 @@
             <a data-toggle="collapse"
                 data-parent="#panel-projects"
                 href="#collapseProjects"
-                title="These are the Science Projects and Core Functions you lead (full star) or participate in (hollow star)">
-                {{ my_name }} Projects
+                title="These are the Science Projects and Core Functions {{ you }} lead{{ s }} (full star) or participate{{ s }} in (hollow star)">
+                {{ my|title }} Projects
                 {% if my_portfolio.projects %}
                 <span class="pull-right">
                     <i class="glyphicon glyphicon-star"></i>&nbsp;
@@ -96,7 +96,7 @@
         {% for proj in my_portfolio.projects.super %}
         <a href="{% url proj.opts|pythia_urlname:'change' proj.pk %}"
             class="list-group-item portfolio"
-            title="This project's details list you as project owner">
+            title="This project's details list {{you}} as project owner">
             <span class="glyphicon glyphicon-star"></span>
             <span class="pull-right">{% project_status_label proj %}</span>
             {{ proj.project_name_html|safe }}
@@ -105,7 +105,7 @@
         {% for proj in my_portfolio.projects.regular %}
         <a href="{% url proj.opts|pythia_urlname:'change' proj.pk %}"
             class="list-group-item portfolio"
-            title="You are on the team list of this project">
+            title="{{ you|title }} {{ are }} on the team list of this project">
             <span class="glyphicon glyphicon-star-empty"></span>
             <span class="pull-right">{% project_status_label proj %}</span>
             {{ proj.project_name_html|safe }}
@@ -113,8 +113,7 @@
         {% endfor %}
         {% else %}
         <div class="list-group-item">
-            {% if personalised %}{{ my_name }} is {% else %} You are {% endif %}
-            currently not associated with any projects.
+            {{ you|title }} {{ are }} currently not associated with any projects.
         </div>
         {% endif %}
     </div>
@@ -125,8 +124,8 @@
         <h4 class="panel-title">
             <a data-toggle="collapse" data-parent="#panel-collaborations"
                 href="#collapseCollaborations"
-                title="These are the Student Projects and External Partnerships you lead (full star) or participate in (hollow star)">
-                {{ my_name }} Collaborations
+                title="These are the Student Projects and External Partnerships {{ you }} lead{{ s }} (full star) or participate{{ s }} in (hollow star)">
+                {{ my|title }} Collaborations
                 {% if my_portfolio.collabs %}
                 <span class="pull-right">
                     <i class="glyphicon glyphicon-star"></i>
@@ -144,7 +143,7 @@
         {% for proj in my_portfolio.collabs.super %}
         <a  href="{% url proj.opts|pythia_urlname:'change' proj.pk %}"
             class="list-group-item portfolio"
-            title="You are listed as the project owner in this project's details">
+            title="{{ you|title }} {{ are }} listed as the project owner in this project's details">
             <span class="glyphicon glyphicon-star"></span>
             <span class="pull-right">{% project_status_label proj %}</span>
             {{ proj.project_name_html|safe }}
@@ -153,7 +152,7 @@
         {% for proj in my_portfolio.collabs.regular %}
         <a  href="{% url proj.opts|pythia_urlname:'change' proj.pk %}"
             class="list-group-item portfolio"
-            title="You are on this project's team list">
+            title="{{ you|title }} {{ are }} on this project's team list">
             <span class="glyphicon glyphicon-star-empty"></span>
             <span class="pull-right">{% project_status_label proj %}</span>
             {{ proj.project_name_html|safe }}
@@ -161,8 +160,7 @@
         {% endfor %}
         {% else %}
         <div class="list-group-item">
-            {% if personalised %}{{ my_name }} is {% else %} You are {% endif %}
-            currently not associated with any collaborations.
+            {{ you|title }} {{ are }} currently not associated with any collaborations.
         </div>
         {% endif %}
     </div>

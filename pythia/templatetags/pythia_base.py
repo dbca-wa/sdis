@@ -156,16 +156,23 @@ def as_latex_table(original, field, tag='section'):
 
 
 @register.inclusion_tag('users/portfolio.html')
-def user_portfolio(usr, personalise=False):
+def user_portfolio(usr, personalise=True):
     """A templatetag to render a Tasks / Portfolio list for a given User.
 
     The tag requires the outputs of the workhorse functions ``User.tasklist()``
     and ``User.portfolio()`` which run optimised db queries to retrieve tasks
     (documents requiring the User's attention) and portfolio (projects in which
     the User participates).
+
+    The template can be personalised to address the user directly as "You", "My",
+    etc. or render the user's first name.
     """
     return {'my_tasklist': usr.tasklist,
             'my_portfolio': usr.portfolio,
-            'personalised': personalise,
-            'my_name': "{0}'s".format(usr.first_name) if personalise else "My",
+            'my_name': usr.first_name,
+            'my': "my" if personalise else "{0}'s".format(usr.first_name),
+            'you': "you" if personalise else usr.first_name ,
+            's': "" if personalise else "s",
+            'are': "are" if personalise else "is",
+            'your': "your" if personalise else "{0}'s".format(usr.first_name),
             }
