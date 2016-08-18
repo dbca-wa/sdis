@@ -6,7 +6,6 @@ Many questions will be covered by the instructions in :doc:`quickstart`.
 
 Where are my projects?
 ======================
-
 The `SDIS home page <https://sdis.dpaw.wa.gov.au/>`_ will display projects
 you supervise or participate in under "My Projects".
 
@@ -24,15 +23,23 @@ You can type to filter the dropdown menus!
 
 "Browse all Projects" is also available in the top menu bar under "Projects".
 
-Is there anything SDIS wants me to do?
-======================================
+Which projects will be discussed at the next SCMT meeting?
+==========================================================
+On the `SDIS home page <https://sdis.dpaw.wa.gov.au/>`_, in the "Projects" section,
+click "View xxx projects awaiting SCMT approval" to expand a list of project
+documents (Concept Plans and Project Closures) awaiting SCMT approval.
 
+This selection is of particular interest to SCMT members as pre-read for the SCMT meeting.
+
+Is there anything SDIS wants *me* to do?
+======================================
 If there are any documents awaiting your input, and possibly any approval actions,
 they will be shown on the `SDIS home page <https://sdis.dpaw.wa.gov.au/>`_ under
 "My Tasks". Click each link, update the content as appropriate, save the changes,
 and if appropriate, execute any approval steps shown under "Actions".
 
 Note: Save your changes to documents before leaving the page or executing any actions.
+Make sure you leave the active fields by clicking outside before saving!
 
 Why can't I submit my project's related documents for review, or request project closure?
 =========================================================================================
@@ -65,11 +72,11 @@ Likely there's some invisible markup in at least one of the document's fields.
 This can happen if the content has been copy-pasted from MS Word, EndNote, or
 web pages.
 
-Cut and paste the content into a text exitor like Notepad and back to remove
-this invisible markup. Do not use "clever" text processors like MS Word, as they
-understand and preserve the invisible markup we want to get rid of. Do use simple
-text editors like Notepad, which don't understand, and discard, the invisible markup.
-
+Cut and paste the content into a simple text exitor like Notepad, then back into
+SDIS to remove this invisible markup.
+*Do not* use "clever" text processors like MS Word, as they
+"understand" and preserve the invisible markup we want to get rid of.
+*Do* use simple text editors like Notepad, which actively discard invisible markup.
 
 What will happen when a new ARAR is kicked off?
 ===============================================
