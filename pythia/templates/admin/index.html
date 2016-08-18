@@ -47,12 +47,13 @@ favicon.badge({{ my_tasklist.count }});
                 <a class="btn btn-primary btn-block"
                     href="{% url 'admin:projects_project_changelist' %}">
                     Browse all Projects</a>
-                <a class="btn btn-default btn-block"
+                <!-- <a class="btn btn-default btn-block"
                     href="export/projects.Project/">
-                    Download all Projects (XLS)</a>
+                    Download all Projects (XLS)</a> -->
                 <a class="btn btn-default btn-block"
                     href="{% url 'admin:projects_project_add' %}">
                     Create new Project</a>
+                {% scmt_preread %}
             </div>
             <div class="col-md-6">
                 <h2>Reports</h2>
@@ -92,6 +93,13 @@ favicon.badge({{ my_tasklist.count }});
                     target="_"
                     title="Browse the Scientific Site Register (new tab)">
                     Scientific Site Register</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+            <h2>SCMT approval</h2>
+
             </div>
         </div>
 

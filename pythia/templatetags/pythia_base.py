@@ -164,15 +164,28 @@ def user_portfolio(usr, personalise=True):
     (documents requiring the User's attention) and portfolio (projects in which
     the User participates).
 
-    The template can be personalised to address the user directly as "You", "My",
-    etc. or render the user's first name.
+    The template can be personalised to address the user directly as "You",
+    "My", etc. or render the user's first name.
     """
     return {'my_tasklist': usr.tasklist,
             'my_portfolio': usr.portfolio,
-            'my_name': usr.first_name,
             'my': "my" if personalise else "{0}'s".format(usr.first_name),
-            'you': "you" if personalise else usr.first_name ,
+            'you': "you" if personalise else usr.first_name,
             's': "" if personalise else "s",
             'are': "are" if personalise else "is",
-            'your': "your" if personalise else "{0}'s".format(usr.first_name),
-            }
+            'your': "your" if personalise else "{0}'s".format(usr.first_name), }
+
+
+@register.inclusion_tag('frontpage/scmt_preread.html')
+def scmt_preread():
+    """Render all documents that will be discussed at the next SCMT meeting.
+
+    Relevant documents are ConceptPlans and ProjectClosures "in approval".
+    """
+    from pythia.documents.models import (Document, ConceptPlan, ProjectClosure)
+    # SCP, PCF "in approval"
+    scp = ConceptPlan.objects.filter(status=Document.STATUS_INAPPROVAL)
+    pcf = ProjectClosure.objects.filter(status=Document.STATUS_INAPPROVAL)
+    return {"conceptplans": list(scp),
+            "projectclosures": list(pcf),
+            "length": len(scp) + len(pcf), }

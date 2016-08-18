@@ -1,0 +1,45 @@
+{% load pythia_base documents projects %}
+{% if length > 0 %}
+<!-- panel panel-primary -->
+<div class="panel" id="panel-preread">
+    <!-- <div class="panel-heading"> -->
+        <!-- <h4 class="panel-title"> -->
+            <a data-toggle="collapse"
+                data-parent="#panel-preread"
+                href="#collapsePreread"
+                class="btn btn-primary btn-block"
+                title="These documents are up for discussion at SCMT">
+                View {{ length }} projects awaiting SCMT approval
+                <!-- <span class="pull-right {% if my_tasklist.count > 0 %}text-danger{% endif %}">
+                    <i class="glyphicon{% if my_tasklist.count == 0 %} glyphicon-ok{% else %} glyphicon-flag{% endif %}"></i>
+                    {{ length }}
+                </span> -->
+            </a>
+        <!-- </h4> -->
+    <!-- </div> -->
+    <div class="panel-collapse list-group collapse" id="collapsePreread">
+        {% if conceptplans.count == 0 %}
+        <a href="#" class="list-group-item"><span class="glyphicon glyphicon-ok"></span>All done!</a>
+        {% else %}
+        {% for doc in conceptplans %}
+        <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}"
+            class="list-group-item portfolio"
+            title="This concept plan will be discussed at the next SCMT meeting.">
+            <span class="glyphicon glyphicon-flag text-danger"></span>
+            <span class="pull-right">{% document_status_label doc %}</span>
+            {{ doc.fullname|safe }}
+        </a>
+        {% endfor %}
+        {% for doc in projectclosures %}
+        <a href="{% url doc.opts|pythia_urlname:'change' doc.pk %}"
+            class="list-group-item portfolio"
+            title="This project closure will be discussed at the next SCMT meeting.">
+            <span class="glyphicon glyphicon-thumbs-up"></span>
+            <span class="pull-right">{% document_status_label doc %}</span>
+            {{ doc.fullname|safe }}
+        </a>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div><!-- /#panel-preread -->
+{% endif %}
