@@ -252,8 +252,6 @@ COMPRESS_ENABLED = True
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 DEBUG_TOOLBAR_CONFIG = {
-    'HIDE_DJANGO_SQL': False,
-    'INTERCEPT_REDIRECTS': False,
     'SHOW_TOOLBAR_CALLBACK': 'sdis.utils.show_toolbar'
     }
 
