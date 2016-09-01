@@ -71,7 +71,7 @@ humanize==0.5
 # Static files
 #static==1.0.2
 dj-static
-django-compressor==2.1
+django-compressor==1.6
 django-htmlmin==0.7.0
 unipath>=1.1
 
