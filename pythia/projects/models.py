@@ -451,6 +451,28 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         # return Group.objects.get(name='SCD').user_set.all()
 
     @property
+    def special_roles(self):
+        """Return a deduplicated list of special roles.
+
+        Special roles are:
+
+        * Biometrician
+        * Herbarium Curator
+        * Animal Ethics representative
+        * Data Manager
+
+        """
+        bm, created = Group.objects.get_or_create(name='BM')
+        hc, created = Group.objects.get_or_create(name='HC')
+        ae, created = Group.objects.get_or_create(name='AE')
+        dm, created = Group.objects.get_or_create(name='DM')
+
+        return list(set(chain(bm.user_set.all(),
+                              hc.user_set.all(),
+                              ae.user_set.all(),
+                              dm.user_set.all())))
+
+    @property
     def reviewer_approvers(self):
         """Return a deduplicated list of program leader and approvers."""
         return list(set(chain(self.reviewer, self.approvers)))
@@ -462,15 +484,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     @property
     def all_involved(self):
-        """Return a list of submitters, program leader, approvers."""
-        return list(set(chain(
-            self.submitters, self.reviewer, self.approvers)))
+        """Return a list of submitters, program leader, approvers and special
+        roles."""
+        return list(set(chain(self.submitters, self.reviewer, self.approvers)))
 
     @property
     def all_permitted(self):
         """Return a deduplicated list of submitters, reviewers, approvers."""
-        return list(set(chain(
-            self.submitters, self.reviewers, self.approvers)))
+        return list(set(chain(self.submitters, self.reviewers, self.approvers)))
 
     # -------------------------------------------------------------------------#
     # Project approval

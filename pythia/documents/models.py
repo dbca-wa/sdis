@@ -579,6 +579,7 @@ class Document(PolymorphicModel, Audit):
         * STATUS_INREVIEW: all PLs + Directorate
         * STATUS_INAPPROVAL: Directorate
         * STATUS_APPROVED: None (empty set), but Directorate can reset status
+
         """
         permitted = set()
         if self.status == Document.STATUS_NEW:
@@ -590,8 +591,8 @@ class Document(PolymorphicModel, Audit):
         elif self.status == Document.STATUS_APPROVED:
             permitted = set()
 
-        # snitch("Permitted to change {0}: {1}".format(
-        #     self.debugname, ", ".join([p.fullname for p in permitted])))
+        snitch("Permitted to change {0}: {1}".format(
+             self.debugname, ", ".join([p.fullname for p in permitted])))
         return permitted
 
 

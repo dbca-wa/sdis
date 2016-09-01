@@ -43,13 +43,34 @@ def update_document_permissions(document):
         document.__str__()))
 
     for action in ["submit", "change"]:
-        codename = "{0}.{1}_{2}".format(
-            opts.app_label, action, opts.model_name)
+        perm = "{0}.{1}_{2}".format(opts.app_label, action, opts.model_name)
 
         for user in document.project.members.all():
-            snitch("Assigning user {0} permission {1}".format(
-                user.username, codename))
-            assign_perm(codename, user, document)
+            snitch("Giving {0} permission {1}".format(user.username, perm))
+            assign_perm(perm, user, document)
+
+
+def grant_special_role_permissions():
+    """Give special roles permission to change project plans.
+
+    This is required so these roles can edit the endorsement fields.
+    """
+    from django.contrib.auth.models import Group
+
+    p = Permission.objects.get(codename="change_projectplan")
+
+    # special roles
+    bm, created = Group.objects.get_or_create(name='BM')
+    hc, created = Group.objects.get_or_create(name='HC')
+    ae, created = Group.objects.get_or_create(name='AE')
+    dm, created = Group.objects.get_or_create(name='DM')
+
+    # special roles can "change" all projectplans
+    bm.permissions.add(p)
+    hc.permissions.add(p)
+    ae.permissions.add(p)
+    dm.permissions.add(p)
+    snitch("Granted {0} to special roles".format(p))
 
 
 def add_document_permissions(sender, **kwargs):
@@ -92,9 +113,9 @@ def add_document_permissions(sender, **kwargs):
 
 
 def setup_user_permissions(sender, **kwargs):
-    """
-    Set up the default user's permissions. This allows a standard user the
-    ability to create projects.
+    """Set up the default user's permissions.
+
+    This gives a standard user the ability to create projects.
     """
     from django.contrib.auth.models import Group
 
@@ -216,11 +237,7 @@ def migrate_documents_to_html(debug=False):
             action = "Skipping"
 
         # Common actions
-        msg = "{0} {1}".format(action, d)
-        if debug:
-            print(msg)
-        logger.info(msg)
-
+        snitch("{0} {1}".format(action, d))
 
 
 def html_table_to_array(html_string):

@@ -64,6 +64,12 @@ def update_cache(request):
         "Missing initials guessed from first name for {0} users".format(
             no_users))
 
+    from pythia.documents.utils import grant_special_role_permissions
+    grant_special_role_permissions()
+    messages.success(
+        request,
+        "Granted projectplan edit privileges to special roles.")
+
     return HttpResponseRedirect("/")
 
 

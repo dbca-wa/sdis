@@ -132,8 +132,8 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
             "",
             url(r'^(.+)/transition/$', wrap(self.transition_view),
                 name='%s_%s_transition' % info),
-            url(r'^(.+)/endorsement/$', wrap(self.endorsement_view),
-                name='%s_%s_endorsement' % info),
+            # url(r'^(.+)/endorsement/$', wrap(self.endorsement_view),
+            #     name='%s_%s_endorsement' % info),
             url("^([^/]+)/history/([^/]+)/diff$", wrap(self.diff_view),
                 name='%s_%s_diff' % info),)
         return extra_urls + super(BaseAdmin, self).get_urls()
@@ -220,38 +220,38 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
             "admin/%s/transition.html" % opts.app_label
             ], context, current_app=self.admin_site.name)
 
-    def endorsement_view(self, request, object_id, extra_context=None):
-        """Handle adding an endorsement to a document.
-
-        For an endorsement to be added, the document must be in review.
-        An endorsement indicates that a review is happy with the state of the
-        document as written.
-        """
-        model = self.model
-        opts = model._meta
-
-        obj = self.get_object(request, unquote(object_id))
-
-        if obj is None:
-            raise Http404(_('%(name)s object with primary key %(key)r does '
-                            'not exist.') % {
-                                'name': force_text(opts.verbose_name),
-                                'key': escape(object_id)})
-
-        context = dict(
-            title=_('Add endorsement: %s') % force_text(obj),
-            breadcrumbs=self.get_breadcrumbs(request, obj),
-            model_name=capfirst(force_text(opts.verbose_name_plural)),
-            object=obj,
-            opts=opts,
-            )
-        context.update(extra_context or {})
-        return TemplateResponse(request, [
-            "admin/%s/%s/endorsement.html" % (
-                opts.app_label, opts.model_name),
-            "admin/%s/endorsement.html" % opts.app_label,
-            "admin/endorsement.html"
-            ], context, current_app=self.admin_site.name)
+    # def endorsement_view(self, request, object_id, extra_context=None):
+    #     """Handle adding an endorsement to a document.
+    #
+    #     For an endorsement to be added, the document must be in review.
+    #     An endorsement indicates that a review is happy with the state of the
+    #     document as written.
+    #     """
+    #     model = self.model
+    #     opts = model._meta
+    #
+    #     obj = self.get_object(request, unquote(object_id))
+    #
+    #     if obj is None:
+    #         raise Http404(_('%(name)s object with primary key %(key)r does '
+    #                         'not exist.') % {
+    #                             'name': force_text(opts.verbose_name),
+    #                             'key': escape(object_id)})
+    #
+    #     context = dict(
+    #         title=_('Add endorsement: %s') % force_text(obj),
+    #         breadcrumbs=self.get_breadcrumbs(request, obj),
+    #         model_name=capfirst(force_text(opts.verbose_name_plural)),
+    #         object=obj,
+    #         opts=opts,
+    #         )
+    #     context.update(extra_context or {})
+    #     return TemplateResponse(request, [
+    #         "admin/%s/%s/endorsement.html" % (
+    #             opts.app_label, opts.model_name),
+    #         "admin/%s/endorsement.html" % opts.app_label,
+    #         "admin/endorsement.html"
+    #         ], context, current_app=self.admin_site.name)
 
     def history_view(self, request, object_id, extra_context=None):
         """History view."""
@@ -312,32 +312,55 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
 
 
 class ConceptPlanAdmin(DocumentAdmin):
+    """Custom ConceptPlan Admin."""
+
     def summary(self, obj):
+        """Experiment: mark field `summary` safe for HTML content."""
         return mark_safe(obj.summary)
     summary.allow_tags = True
 
 
 class ProjectPlanAdmin(DocumentAdmin):
-    def get_readonly_fields(self, request, obj=None):
-        """
-        Lock the document after approval. Allow super-users to edit it after
-        clicking a link that sets a GET variable. If a super user makes a POST
-        request, it should be allowed.
-        """
+    """Custom ProjectPlan Admin.
 
-        if (obj and not obj.is_approved and not (request.user.is_superuser or
-            request.user in Group.objects.get(name='SMT').user_set.all() or
-            request.user in Group.objects.get(name='SCD').user_set.all() or
-            request.user in Group.objects.get(name='BM').user_set.all() or
-            request.user in Group.objects.get(name='HC').user_set.all() or
-            request.user in Group.objects.get(name='AE').user_set.all() or
-            request.user in Group.objects.get(name='DM').user_set.all())):
+    Editing of endorsement fields is restricted to special roles.
+    """
+
+    def get_readonly_fields(self, request, obj=None):
+        """Custon logic to toggle editing of ProjectPlan fields.
+
+        Logic in sequential order:
+
+        * Superusers and special roles can always edit.
+        * If document is not approved yet, and users has change permission,
+          then the user can edit all fields except endorsements.
+        * Approved SPPs are read-only.
+        * All other cases, e.g. users without change permissions,
+          default to DocumentAdmin.get_readonly_fields.
+
+        """
+        special_user = obj and request.user and (
+            request.user.is_superuser or
+            request.user in obj.project.special_roles)
+
+        if special_user:
+            # Superusers and special roles can always edit SPPs
+            # snitch("ProjectPlan admin: editable for special user.")
+            return ()
+
+        elif (obj and not obj.is_approved and request.user and
+              request.user in obj.get_users_with_change_permissions()):
+            # Normal users can edit doc if not approved except endorsements
+            # snitch("ProjectPlan admin: non approved = editable except "
+                #    "endorsements for team member.")
             return ('bm_endorsement', 'hc_endorsement', 'ae_endorsement')
 
-        # if is_approved: all readonly except for superuser
-        elif (obj and obj.is_approved and not request.user.is_superuser):
+        # if is_approved: all readonly
+        elif (obj and obj.is_approved):
+            # snitch("ProjectPlan admin: approved = read-only for normal user.")
             return fields_for_model(obj, exclude=self.exclude).keys()
 
         else:
+            # snitch("ProjectPlan admin: defaulting to DocumentAdmin.")
             return super(ProjectPlanAdmin, self).get_readonly_fields(
                 request, obj)

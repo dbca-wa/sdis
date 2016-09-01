@@ -68,6 +68,39 @@ Directorate permissions are global (for all projects and documents).
 **Only explicitly nominated representatives of the Directorate are notified** when
 actions from the Directorate is required.
 
+
+Special Roles
+-------------
+Project Plans require endorsement of the Biometrician (mandatory),
+the Herbarium Curator (if plants are collected), an Animal Ethics
+representative (if animals are involved), and (soon) the Data Manager (to setup
+the project's data management).
+
+Special Roles will find Project Plans requiring their endorsement in their Tasks,
+and will receive an email when a new Project Plan requires their attention.
+
+For each Project Plan, the following should happen:
+
+* SDIS sends an email when the Project Plan is created
+* BM reads the "Methodology" section, discusses with team as required
+* HV reads the "No. specimens" section, discusses with team as required
+* Soon: DM trains team to create datasets on the
+  [Internal Data Catalogue](http://internal-data.dpaw.wa.gov.au), sets them up
+  with a high performance computing (HPC) environment if required, and points out
+  [documentation on data management](https://confluence.dpaw.wa.gov.au/display/MSIM/Home).
+* The Program Leader enters AE endorsement as per (external to SDIS) communication
+  with the Animal Ethics Committee.
+* Endorsement is granted or denied by setting the respective "endorsement" fields
+  in the Project Plan to "granted" or "denied", respectively, and saving the document.
+  This action is logged in the document history.
+* The Project Plan can only proceed in its life cycle once all required endorsements
+  are granted.
+
+**Note** Special Roles are granted the privilege to edit Project Plans even after
+these have been approved, in order to facilitate their adding of endorsements where
+required.
+
+
 Project Life Cycles
 ===================
 
