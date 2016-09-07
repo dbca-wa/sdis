@@ -612,22 +612,25 @@ class ConceptPlan(Document):
     template_tex = "latex/includes/conceptplan.tex"
 
     # summary = PythiaTextField(
+    background = models.TextField(
+        verbose_name=_("Background"), blank=True, null=True,
+        help_text=_("Provide background in up to 500 words."))
     summary = models.TextField(
-        verbose_name=_("Background and Aims"), blank=True, null=True,
-        help_text=_("Summarise the project in up to 500 words."))
+        verbose_name=_("Aims"), blank=True, null=True,
+        help_text=_("List the aims in up to 500 words."))
     outcome = models.TextField(
         verbose_name=_("Expected outcome"), blank=True, null=True,
-        help_text=_("Summarise the expected outcome in up to 500 words."))
+        help_text=_("Summarise expected outcome in up to 500 words."))
     collaborations = models.TextField(
         verbose_name=_("Expected collaborations"), blank=True, null=True,
         help_text=_("List expected collaborations in up to 500 words."))
     strategic = models.TextField(
         verbose_name=_("Strategic context"), blank=True, null=True,
-        help_text=_("Describe the strategic context and management "
+        help_text=_("Describe strategic context and management "
                     "implications in up to 500 words."))
     staff = PythiaArrayField(
         verbose_name=_("Staff time allocation"), blank=True, null=True,
-        help_text=_("Summarise the staff time allocation by role for the "
+        help_text=_("Summarise staff time allocation by role for the "
                     "first three years, or for a time span appropriate for "
                     "the Project's life time."),
         # default = '<table style="width:400px;" border="1" cellpadding="2">'
