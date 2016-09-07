@@ -42,6 +42,7 @@
       var save = function() {
         ed.pythiaText.html(ed.getContent());
         data = $(ed.getElement()).parents("form").serialize()
+        // console.log("tinyMCEinit save")
         if (pythia.inlineEditUrls[ed.id])
            pythia.inlineSave(pythia.inlineEditUrls[ed.id], data);
       };
@@ -49,7 +50,10 @@
       // attach events for AJAX save
       ed.on('change', function(args) { save(); });
 
-      ed.on('blur', function() { save(); pythia.inlineHideTinyMCE(ed); });
+      ed.on('blur', function() {
+          save();
+          pythia.inlineHideTinyMCE(ed); 
+      });
     });
   });
 
