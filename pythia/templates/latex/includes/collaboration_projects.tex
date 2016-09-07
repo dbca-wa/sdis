@@ -8,24 +8,23 @@
 
 \hline
 \rowcolor{infobg}
-\textbf{Partnership} &
+\textbf{Partners} &
 \textbf{Project Title} &
 \textbf{External Funding} &
-\textbf{DPaW Involvement} \\
+\textbf{Parks and Wildlife Involvement} \\
 \hline
 \endhead
 
-{% for project in projects %}
+{% for project in projects|dictsort:"name" %}
     {{ project.name|html2latex }} &
     {{ project.title|html2latex }} &
     {{ project.budget|html2latex }} &
     {{ project.staff_list_plain|html2latex }} \\
     \hline
 {% empty %}
-    No projects. \\ 
+    No projects. \\
     \hline
 {% endfor %}
 
 \end{longtabu}
 % End ARAR Table External Partnerships
-

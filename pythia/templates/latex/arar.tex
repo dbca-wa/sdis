@@ -4,10 +4,10 @@
 
 %-----------------------------------------------------------------------------%
 % Headers and Footers
-\automark{section}
-\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}}}
+%\automark{section}
+%\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}}}
 %\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}} % center header TODO ONLINE ONLY
-\ohead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{\includegraphics[scale=0.4]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
+%\ohead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{\includegraphics[scale=0.4]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
 %\ifoot{} % inner footer
 %\cfoot{} % center footer
 \ofoot{\pagemark} % outer footer
@@ -48,13 +48,13 @@
 {% include "latex/includes/sds.tex" with original=original %}
 {% include "latex/includes/programs.tex" with arar=original reports=original.progress_reports %}
 {% include "latex/includes/collaboration_projects.tex" with projects=original.collaboration_projects %}
+{% include "latex/includes/student_projects.tex" with reports=original.student_reports %}
 {% include "latex/includes/student_reports.tex" with arar=original reports=original.student_reports %}
 {% include "latex/includes/publications.tex" with original=original %}
 {% include "latex/includes/science_projects.tex" with reports=original.progress_reports %}
-{% include "latex/includes/student_projects.tex" with reports=original.student_reports %}
 %-----------------------------------------------------------------------------%
 % Back matter
 \backmatter
-{% include "latex/includes/appendix1.tex" %}
+{# include "latex/includes/appendix1.tex" #}
 \end{document}
 %-----------------------------------------------------------------------------%

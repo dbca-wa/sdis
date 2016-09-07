@@ -4,19 +4,19 @@
 \addcontentsline{toc}{chapter}{Summary of Research Projects}
 
 {# requires reports to be sorted by program, done in ARARReport.progressreports #}
-{% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+{% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
 
 {% for program_reports in report_list %}
 \section*{ {{ program_reports.grouper|html2latex }} }
 
-\begin{longtabu} to \linewidth { X X X p{5cm} r{0.4cm} }
+\begin{longtabu} to \linewidth { l l l p{5cm} r{0.4cm} }
 \hline
 \hline
 \rowcolor{infobg}
-\textbf{DPaW Region} & 
-\textbf{IBRA/IMCRA} & 
-\textbf{NRM Region} & 
-\textbf{Project Title} & 
+\textbf{Parks and Wildlife Region} &
+\textbf{IBRA/IMCRA} &
+\textbf{NRM Region} &
+\textbf{Project Title} &
 \textbf{Page} \\
 \hline
 \endhead
@@ -36,4 +36,3 @@
 {% endfor %}
 
 % End ARAR Table Science Projects
-
