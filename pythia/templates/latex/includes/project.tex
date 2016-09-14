@@ -1,10 +1,11 @@
 {% load texify %}
 \HRule
-\subsection*{% templatetag openbrace %}{{ project.project_type_year_number }} {{ project.title|html2latex }}}
+\subsection*{% templatetag openbrace %}{{ project.title|html2latex }}}
 \addcontentsline{toc}{section}{% templatetag openbrace %}{{ project.title|html2latex }}}
 \label{sec:{{ project.project_year_number }}}
+
+{{ project.project_type_year_number }}
 
 {% if project.progressreport %}
   {% include project.progressreport.template_tex with progressreport=project.progressreport %}
 {% endif %}
-

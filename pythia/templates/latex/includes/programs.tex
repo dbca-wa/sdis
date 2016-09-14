@@ -1,11 +1,11 @@
 {% load texify %}
-\chapter*{Research Activities}
-\addcontentsline{toc}{chapter}{Research Activities}
+\chapter*{Report on research activities}
+\addcontentsline{toc}{chapter}{Report on research activities}
 
 {{ arar.research_intro|html2latex }}
 
 {# requires reports to be sorted by program, done in ARARReport.progressreports #}
-{% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+{% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
 {% for program_reports in report_list %}
   {% with program_reports.grouper as program %}
     \section*{% templatetag openbrace %}{{ program.name|html2latex }}}
@@ -17,6 +17,6 @@
     {% for report in program_reports.list %}
       {% include "latex/includes/project.tex" with project=report.project %}
     {% endfor %}
+    \newpage
   {% endwith %}
 {% endfor %}
-

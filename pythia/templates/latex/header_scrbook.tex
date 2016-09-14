@@ -13,8 +13,8 @@
     toc=chapterentrywithdots % Table of Contents style
 ]{scrbook}
 \usepackage{typearea}
-\usepackage[automark,headsepline%,footsepline
-]{scrlayer-scrpage} % Headers and footers
+\usepackage[%automark,
+headsepline,footsepline]{scrlayer-scrpage} % Headers and footers
 
 %%
 %% Fonts, encoding, spacing, indentation
@@ -26,11 +26,8 @@
 \usepackage[utf8]{inputenc}
 
 % Chapter and section headings
-%\renewcommand{\raggedchapter}{\centering}
-%\addtokomafont{chapter}{\Huge\scshape} % Chapter headings in smallcaps
-%\addtokomafont{chapterentry}{\scshape} % Chapter headings in smallcaps
-%\addtokomafont{section}{\centering\Large\scshape} % Chapter headings in smallcaps
-%\addtokomafont{sectionentry}{\scshape} % Chapter headings in smallcaps
+\let\raggedchapter\centering
+\addtokomafont{section}{\center}
 
 % Paragraph spacing
 %\usepackage{parskip}    % Paragraph spacing
@@ -110,9 +107,6 @@
 \g@addto@macro{\UrlBreaks}{\UrlOrds}
 \makeatother
 
-%%
-%% Custom macros
-%%
 %%
 %% Custom macros
 %%
