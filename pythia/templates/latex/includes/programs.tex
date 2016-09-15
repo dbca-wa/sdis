@@ -11,7 +11,7 @@
     \section*{% templatetag openbrace %}{{ program.name|html2latex }}}
     \addcontentsline{toc}{chapter}{% templatetag openbrace %}{{ program.name|html2latex }}}
 
-    \subsubsection*{Program Leader: {{ program.program_leader.get_full_name|html2latex }}}
+    \subsubsection*{Program Leader: {{ program.program_leader.get_full_name|html2latex }}{% if program.name == "Biogeography" %} and Lesley Gibson{% endif %}}
     {{ program.introduction|html2latex }}
 
     {% for report in program_reports.list %}
