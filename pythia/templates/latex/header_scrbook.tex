@@ -13,7 +13,16 @@
     toc=chapterentrywithdots % Table of Contents style
 ]{scrbook}
 \usepackage{typearea}
-%\usepackage[automark,headsepline,footsepline]{scrlayer-scrpage} % Headers and footers
+
+%
+% Headers and footers
+%
+\usepackage[automark,headsepline,footsepline]{scrlayer-scrpage} 
+\renewcommand*{\chapterpagestyle}{empty}
+\clearpairofpagestyles
+\ihead{}
+\ohead[]{}
+\automark[]{}
 
 %%
 %% Fonts, encoding, spacing, indentation
