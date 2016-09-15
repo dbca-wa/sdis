@@ -17,7 +17,7 @@
 %
 % Headers and footers
 %
-\usepackage[automark,headsepline,footsepline]{scrlayer-scrpage} 
+\usepackage[automark,headsepline,footsepline]{scrlayer-scrpage}
 \renewcommand*{\chapterpagestyle}{empty}
 \clearpairofpagestyles
 \ihead{}
@@ -35,6 +35,7 @@
 
 % Chapter and section headings
 \let\raggedchapter\centering
+\addtokomafont{chapter}{\center}
 \addtokomafont{section}{\center}
 
 % Paragraph spacing
