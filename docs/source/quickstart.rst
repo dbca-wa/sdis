@@ -107,6 +107,9 @@ Register an external colleague
 * On the second screen, enter as many user details as you can and click Save Changes.
 * External colleagues can be natural persons or groups/organisations. Choose to
   "Show as Group" accordingly.
+* External colleagues will not show up on the team list in the ARAR or on the
+  project overview page. They are however useful to list on the project, as
+  they are real persons interacting directly with the project.
 
 Now the new user can be added to project teams or project roles.
 
