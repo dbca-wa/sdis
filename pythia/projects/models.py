@@ -741,11 +741,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     # Team members
     #
     def get_team_list_plain(self):
-        """Return a plain text version of the team list."""
+        """Return a plain text version of the team list, DPAW staff only."""
         return ", ".join([
             m.user.abbreviated_name for m in
-            self.projectmembership_set.select_related('user').all().order_by(
-                "position", "user__last_name", "user__first_name")])
+            self.projectmembership_set.select_related('user'
+                ).filter(role__in=ProjectMembership.ROLES_STAFF
+                ).order_by("position", "user__last_name", "user__first_name")])
 
     def get_supervising_scientist_list_plain(self):
         """Return a string of Supervising Scientist names."""
@@ -1410,6 +1411,12 @@ class ProjectMembership(models.Model):
         (ROLE_EXTERNAL_PEER, "External Peer"),
         (ROLE_CONSULTED_PEER, "Consulted Peer"),
         (ROLE_GROUP, "Involved Group")
+        )
+
+    ROLES_STAFF = (
+        ROLE_SUPERVISING_SCIENTIST,
+        ROLE_RESEARCH_SCIENTIST,
+        ROLE_TECHNICAL_OFFICER
         )
 
     project = models.ForeignKey(
