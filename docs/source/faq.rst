@@ -64,8 +64,8 @@ The admins can delete a project:
 * Delete the (child-)project on the detail page, then
 * delete the (parent-)project on the overview page.
 
-SDIS requires this two-step process due to a
-[known bug](https://github.com/django-polymorphic/django-polymorphic/issues/34)
+SDIS requires this two-step deletion process due to a
+`known bug <https://github.com/django-polymorphic/django-polymorphic/issues/34>`_
 in one of its third party libraries.
 
 Why can't I update my project or edit documents?
