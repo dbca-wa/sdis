@@ -561,8 +561,6 @@ class Division(Audit, ActiveModel):
         verbose_name_plural = _("Departmental Services")
         ordering = ['slug','name']
 
-
-
     def __str__(self):
         return 'Service {0}: {1}'.format(self.slug, self.name)
 
@@ -1263,27 +1261,31 @@ class User(AbstractBaseUser, PermissionsMixin):
             res = None
             proj = None
 
-            if x.project.type == Project.SCIENCE_PROJECT:
-                res = proj_result
-                proj = ScienceProject.objects.get(pk=x.project.pk)
-            elif x.project.type == Project.CORE_PROJECT:
-                res = proj_result
-                proj = CoreFunctionProject.objects.get(pk=x.project.pk)
-            elif x.project.type == Project.COLLABORATION_PROJECT:
-                res = collab_result
-                proj = CollaborationProject.objects.get(pk=x.project.pk)
-            elif x.project.type == Project.STUDENT_PROJECT:
-                res = collab_result
-                proj = StudentProject.objects.get(pk=x.project.pk)
-            else:
-                continue
-
-            if not (proj in res["super"]):
-                if x.role in [ProjectMembership.ROLE_SUPERVISING_SCIENTIST,
-                              ProjectMembership.ROLE_ACADEMIC_SUPERVISOR]:
-                    res["super"].append(proj)
+            try:
+                if x.project.type == Project.SCIENCE_PROJECT:
+                    res = proj_result
+                    proj = ScienceProject.objects.get(pk=x.project.pk)
+                elif x.project.type == Project.CORE_PROJECT:
+                    res = proj_result
+                    proj = CoreFunctionProject.objects.get(pk=x.project.pk)
+                elif x.project.type == Project.COLLABORATION_PROJECT:
+                    res = collab_result
+                    proj = CollaborationProject.objects.get(pk=x.project.pk)
+                elif x.project.type == Project.STUDENT_PROJECT:
+                    res = collab_result
+                    proj = StudentProject.objects.get(pk=x.project.pk)
                 else:
-                    res["regular"].append(proj)
+                    continue
+
+                if not (proj in res["super"]):
+                    if x.role in [ProjectMembership.ROLE_SUPERVISING_SCIENTIST,
+                                  ProjectMembership.ROLE_ACADEMIC_SUPERVISOR]:
+                        res["super"].append(proj)
+                    else:
+                        res["regular"].append(proj)
+                        
+            except:
+                print("Project lookup failed: " + str(x))
 
         if proj_result["super"] or proj_result["regular"]:
             result["projects"] = proj_result
