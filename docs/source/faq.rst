@@ -50,13 +50,11 @@ team.
 
 How can I change the project type?
 ==================================
-Oh no! I've created a project which turned out to be of a different type.
-The project creation form said "the project type cnanot be changed later on" but
-this is what I need to do now.
-
-Behind the scenes, SDIS projects are quite different, and SDIS creates a few
-different items when a project is created. Therefore, it is not possible to
-change project types later on. If you still need to change a project type:
+Behind the scenes, SDIS creates different items when a project is created.
+It is not possible to migrate the content of the different fields and documents
+without the risk of data loss.
+Therefore, SDIS does not allow to change project types after their creation.
+If you still need to change a project type, please do:
 
 * Create new project with the correct type. Copy/paste or re-type relevant fields.
 * Ask the admins to delete the old project of incorrect type.
