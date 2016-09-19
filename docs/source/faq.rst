@@ -48,6 +48,23 @@ feel you should be able to, an existing project team member has to add you to th
 team.
 
 
+How can I change the project type?
+==================================
+Oh no! I created a project with the wrong type on the forms that says "you will
+not be able to change the project type later". How can this be fixed? Like so:
+
+* Create new project with the correct type. Copy/paste or re-type relevant fields.
+* Ask the admins to delete the old project of incorrect type.
+
+The admins can delete a project:
+
+* Delete the (child-)project on the detail page, then
+* delete the (parent-)project on the overview page.
+
+SDIS requires this two-step process due to a
+[known bug](https://github.com/django-polymorphic/django-polymorphic/issues/34)
+in one of its third party libraries.
+
 Why can't I update my project or edit documents?
 ================================================
 You need to be on the project team to have write permission to the project or
