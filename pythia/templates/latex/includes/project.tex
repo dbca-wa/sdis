@@ -1,10 +1,12 @@
 {% load texify %}
+\begin{absolutelynopagebreak}
 \HRule
 \subsection*{% templatetag openbrace %}{{ project.title|html2latex }}}
 \addcontentsline{toc}{section}{% templatetag openbrace %}{{ project.title|html2latex }}}
 \label{sec:{{ project.project_year_number }}}
 
 {{ project.project_type_year_number }}
+\end{absolutelynopagebreak}
 
 {% if project.progressreport %}
   {% include project.progressreport.template_tex with progressreport=project.progressreport %}

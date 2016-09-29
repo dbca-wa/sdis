@@ -108,10 +108,10 @@
 %% Links, URLs
 %%
 \usepackage[
-    colorlinks=true,
+    %colorlinks=true,
     linktoc=all,
-    linkcolor=RedFire,
-    urlcolor=ParksWildlife,
+    %linkcolor=RedFire,
+    %urlcolor=ParksWildlife,
     pdftitle={{ downloadname|html2latex }}]{hyperref}
 
 % Black magic to linebreak URLs
@@ -128,3 +128,8 @@
 
 % Custom Tikz node for SDS diagram
 \newcommand\mynode[6][]{\node[#1] (#2){\parbox{#3\relax}{\begin{center}\textbf{#4}\\#5\\\footnotesize{#6}\end{center}}};}
+
+% no-pagebreaks-environment
+\newenvironment{absolutelynopagebreak}
+  {\par\nobreak\vfil\penalty0\vfilneg\vtop\bgroup}
+  {\par\xdef\tpd{\the\prevdepth}\egroup\prevdepth=\tpd}
