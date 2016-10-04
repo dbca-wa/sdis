@@ -1167,18 +1167,23 @@ class ProjectPlan(Document):
                 ]
 
     def can_seek_approval(self):
-        """
-        Return true if this document can seek approval.
+        """Hide the third approval tier - reviewers approve directly."""
+        return False
 
-        Insert here any restrictions (originating from project status etc)
-        which could prevent an INREVIEW document from being
-        submitted for approval by users with permission "review" (=SMT, PL).
-
-        Gate check for endorsements: Biometrician mandatory, Herbarium optional
-
-        Permission "review" restricts seek_approval to SMT already
-        """
-        return self.cleared_bm and self.cleared_hc
+    @transition(
+        field='status',
+        source=Document.STATUS_INREVIEW,
+        target=Document.STATUS_INAPPROVAL,
+        conditions=[can_seek_approval],
+        permission=lambda instance, user: user in instance.reviewers_approvers,
+        custom=dict(
+            verbose="Submit for approval",
+            explanation=("This transition is disabled for project plans!"),
+            notify=True,)
+        )
+    def seek_approval(self):
+        """Transition this document to be in approval. Disabled here."""
+        return
 
     def can_approve(self):
         """
@@ -1188,17 +1193,16 @@ class ProjectPlan(Document):
         which could prevent an INAPPROVAL document from being approved
         by users with the permission "approve".
 
-        Gate check for endorsements: AEC only if required.
+        Gate check for endorsements: AEC and HC only if required, BM mandatory.
         """
-        # doc permission "approve" restricts approve to SCD already
-        return self.cleared_ae
+        return self.cleared_bm and self.cleared_hc and self.cleared_ae
 
     @transition(
         field='status',
-        source=Document.STATUS_INAPPROVAL,
-        target=Document.STATUS_APPROVED,
+        source=Document.STATUS_INREVIEW,
+        target=Document.STATUS_APPROVED,  # faaaaast track
         conditions=[can_approve],
-        permission=lambda instance, user: user in instance.approvers,
+        permission=lambda instance, user: user in instance.reviewers,
         custom=dict(
             verbose="Approve",
             explanation=("Approving the ProjectPlan activates the Project."
@@ -1217,7 +1221,7 @@ class ProjectPlan(Document):
         source=Document.STATUS_APPROVED,
         target=Document.STATUS_NEW,
         # conditions=[can_reset],
-        permission=lambda instance, user: user in instance.approvers,
+        permission=lambda instance, user: user in instance.reviewers,
         custom=dict(
             verbose="Reset approval status",
             explanation=("Revoking the approval of a ProjectPlan will "

@@ -328,7 +328,10 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertEqual(spp.status, Document.STATUS_NEW)
 
     def test_scienceproject_approval(self):
-        """Test ScienceProject approval workflow."""
+        """Test ScienceProject approval workflow.
+
+        Team > reviewers (endorsements) > approved.
+        """
         project = ScienceProjectFactory.create(
             creator=self.bob,
             modifier=self.bob,
@@ -357,22 +360,27 @@ class ScienceProjectModelTests(BaseTestCase):
         spp.seek_review()
         self.assertEqual(spp.status, Document.STATUS_INREVIEW)
 
+        print("  SPP skips third approval tier INAPPROVAL.")
+        self.assertFalse(avail_tx(self.steven, 'seek_approval', spp))
+        self.assertFalse(avail_tx(self.fran, 'seek_approval', spp))
+        self.assertFalse(avail_tx(self.marge, 'seek_approval', spp))
+
         print("  BM has change permission to add endorsenemt to SPP")
         self.assertTrue(self.matt.has_perm("documents.change_projectplan"))
 
         print("  HC has change permission to add endorsenemt to SPP")
         self.assertTrue(self.kevin.has_perm("documents.change_projectplan"))
-        
+
         print("  AE has change permission to add endorsenemt to SPP")
         self.assertTrue(self.annie.has_perm("documents.change_projectplan"))
 
         print("  DM has change permission to add endorsenemt to SPP")
         self.assertTrue(self.flo.has_perm("documents.change_projectplan"))
 
-        print("  SPP cannot seek approval without BM and HC endorsement.")
-        self.assertFalse(spp.can_seek_approval())
+        print("  SPP cannot be approved without required endorsement.")
+        self.assertFalse(spp.can_approve())
 
-        print("  SPP needs Biometrician's endorsement.")
+        print("  SPP in review cannot be approved without BM endorsement.")
         self.assertTrue(spp.bm_endorsement, Document.ENDORSEMENT_REQUIRED)
         self.assertFalse(spp.cleared_bm)
         spp.bm_endorsement = Document.ENDORSEMENT_GRANTED
@@ -380,45 +388,36 @@ class ScienceProjectModelTests(BaseTestCase):
         self.assertTrue(spp.bm_endorsement, Document.ENDORSEMENT_GRANTED)
         self.assertTrue(spp.cleared_bm)
 
-        print("  SPP needs Herbarium Curator's endorsement"
-              "  only if plants are involved.")
+        print("  SPP in review not involving plants can be approved without HC endorsement.")
         self.assertFalse(spp.involves_plants)
         self.assertTrue(spp.cleared_hc)
 
-        print("  SPP involves plants, HC endorsement required")
+        print("  SPP in review involving plants can not be approved without HC endorsement.")
         spp.involves_plants = True
         spp.save()
         self.assertTrue(spp.involves_plants)
         self.assertFalse(spp.cleared_hc)
         self.assertTrue(spp.hc_endorsement, Document.ENDORSEMENT_REQUIRED)
 
-        print("  HC endorses SPP")
+        print("  SPP in review involving plants can be approved after HC endorsement.")
         spp.hc_endorsement = Document.ENDORSEMENT_GRANTED
         spp.save()
         self.assertTrue(spp.hc_endorsement, Document.ENDORSEMENT_GRANTED)
         self.assertTrue(spp.cleared_hc)
 
-        print("  SPP with BM and HC endorsement can seek approval")
-        self.assertTrue(spp.can_seek_approval())
-        spp.seek_approval()
-        self.assertEqual(spp.status, Document.STATUS_INAPPROVAL)
-
-        print("  SPP needs AE's endorsement only if animals are involved.")
-        print("  SPP in approval not involving animals can be approved")
-        self.assertEqual(spp.status, Document.STATUS_INAPPROVAL)
+        print("  SPP in review not involving animals can be approved without AE endorsement.")
+        self.assertEqual(spp.status, Document.STATUS_INREVIEW)
         self.assertFalse(spp.involves_animals)
         self.assertTrue(spp.cleared_ae)
 
-        print("  SPP in approval involving animals can not be approved "
-              "  without AE endorsement")
+        print("  SPP in review involving animals can not be approved without AE endorsement.")
         spp.involves_animals = True
         spp.save()
         self.assertTrue(spp.involves_animals)
+        self.assertTrue(spp.ae_endorsement, Document.ENDORSEMENT_REQUIRED)
         self.assertFalse(spp.cleared_ae)
 
-        self.assertTrue(spp.ae_endorsement, Document.ENDORSEMENT_REQUIRED)
-
-        print("  AE endorses SPP, SPP can be approved")
+        print("  SPP in review involving animals can be approved after AE endorsement.")
         spp.ae_endorsement = Document.ENDORSEMENT_GRANTED
         spp.save()
         self.assertEqual(spp.ae_endorsement, Document.ENDORSEMENT_GRANTED)
