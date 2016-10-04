@@ -744,9 +744,13 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """Return a plain text version of the team list, DPAW staff only."""
         return ", ".join([
             m.user.abbreviated_name for m in
-            self.projectmembership_set.select_related('user'
-                ).filter(role__in=ProjectMembership.ROLES_STAFF
-                ).order_by("position", "user__last_name", "user__first_name")])
+            self.projectmembership_set.select_related(
+                    'user'
+                ).filter(
+                    role__in=ProjectMembership.ROLES_STAFF
+                ).order_by(
+                    "position", "user__last_name", "user__first_name"
+                )])
 
     def get_supervising_scientist_list_plain(self):
         """Return a string of Supervising Scientist names."""
@@ -767,16 +771,21 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     @property
     def team_list(self):
         """
-        Return a list of lists of project team memberships.
+        Return a list of lists of project team memberships of staff roles only.
 
         The list contains:
         * the human-readable role,
         * the team member's full name,
         * the time allocation.
         """
-        return[[m.get_role_display(),
-                m.user.fullname,
-                m.time_allocation] for m in self.projectmembership_set.all()]
+        return[[m.get_role_display(), m.user.fullname, m.time_allocation] for m
+               in self.projectmembership_set.select_related(
+                        'user'
+                    ).filter(
+                        role__in=ProjectMembership.ROLES_STAFF
+                    ).order_by(
+                        "position", "user__last_name", "user__first_name"
+                    )]
 
     # -------------------------------------------------------------------------#
     # Areas

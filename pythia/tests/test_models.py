@@ -132,6 +132,23 @@ class ScienceProjectModelTests(BaseTestCase):
         self.flo.groups.add(self.dm)
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
+        # Team roles
+        self.techo = UserFactory.create(
+            username='techo', first_name='Technical', last_name='Officer')
+
+        self.external_peer = UserFactory.create(
+            username='externalpeer', first_name='External', last_name='Peer')
+        self.consulted_peer = UserFactory.create(
+            username='consultedpeer', first_name='Consulted', last_name='Peer')
+        self.academic = UserFactory.create(
+            username='academic', first_name='Anonymous', last_name='Academic')
+        self.student = UserFactory.create(
+            username='student', first_name='Supervised', last_name='Student')
+        self.collaborator = UserFactory.create(
+            username='collab', first_name='External', last_name='Collaborator')
+        self.group = UserFactory.create(
+            username='group', first_name='External', last_name='Group',
+            is_group=True, group_name='Group Name')
 
         self.program = ProgramFactory.create(
             creator=self.marge, program_leader=self.steven)
@@ -142,10 +159,51 @@ class ScienceProjectModelTests(BaseTestCase):
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
 
+        # Bob should automatically be a team member
+
+        # John will join as ROLE_RESEARCH_SCIENTIST later in a test method
+
         ProjectMembership.objects.create(
             project=self.project,
-            user=self.bob,
-            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+            user=self.techo,
+            position=300,
+            role=ProjectMembership.ROLE_TECHNICAL_OFFICER)
+
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.external_peer,
+            position=400,
+            role=ProjectMembership.ROLE_EXTERNAL_PEER)
+
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.consulted_peer,
+            position=500,
+            role=ProjectMembership.ROLE_CONSULTED_PEER)
+
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.academic,
+            position=600,
+            role=ProjectMembership.ROLE_ACADEMIC_SUPERVISOR)
+
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.student,
+            position=700,
+            role=ProjectMembership.ROLE_SUPERVISED_STUDENT)
+
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.collaborator,
+            position=800,
+            role=ProjectMembership.ROLE_EXTERNAL_COLLABORATOR)
+
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.group,
+            position=900,
+            role=ProjectMembership.ROLE_GROUP)
 
         self.scp = self.project.documents.instance_of(ConceptPlan).get()
 
@@ -165,8 +223,56 @@ class ScienceProjectModelTests(BaseTestCase):
         self.peter.delete()
         self.program.delete()
 
+    def test_team_lists(self):
+        """Test Project team lists order and membership."""
+        tlp = self.project.team_list_plain
+        print("\n  Team list plain shall only show staff: {0}".format(tlp))
+        self.assertTrue(self.bob.last_name in tlp)
+        self.assertTrue(self.techo.last_name in tlp)
+        self.assertFalse(self.external_peer.last_name in tlp)
+        self.assertFalse(self.consulted_peer.last_name in tlp)
+        self.assertFalse(self.academic.last_name in tlp)
+        self.assertFalse(self.student.last_name in tlp)
+        self.assertFalse(self.collaborator.last_name in tlp)
+        self.assertFalse(self.group.group_name in tlp)
+
+        sslp = self.project.get_supervising_scientist_list_plain()
+        print("  Sup Sci list plain shall only show Sup Sci: {0}".format(sslp))
+        self.assertTrue(self.bob.last_name in sslp)
+        self.assertFalse(self.techo.last_name in sslp)
+        self.assertFalse(self.external_peer.last_name in sslp)
+        self.assertFalse(self.consulted_peer.last_name in sslp)
+        self.assertFalse(self.academic.last_name in sslp)
+        self.assertFalse(self.student.last_name in sslp)
+        self.assertFalse(self.collaborator.last_name in sslp)
+        self.assertFalse(self.group.group_name in sslp)
+
+        ts = self.project.team_students
+        print("  Team Students shall only show Students: {0}".format(ts))
+        self.assertFalse(self.bob.last_name in ts)
+        self.assertFalse(self.techo.last_name in ts)
+        self.assertFalse(self.external_peer.last_name in ts)
+        self.assertFalse(self.consulted_peer.last_name in ts)
+        self.assertFalse(self.academic.last_name in ts)
+        self.assertTrue(self.student.last_name in ts)
+        self.assertFalse(self.collaborator.last_name in ts)
+        self.assertFalse(self.group.group_name in ts)
+
+        tl = self.project.team_list
+        tln = ", ".join([x[1] for x in tl])
+        # m.get_role_display(), m.user.fullname, m.time_allocation
+        print("  Team list shall only contain staff roles: {0}".format(tln))
+        self.assertTrue(self.bob.last_name in tln)
+        self.assertTrue(self.techo.last_name in tln)
+        self.assertFalse(self.external_peer.last_name in tln)
+        self.assertFalse(self.consulted_peer.last_name in tln)
+        self.assertFalse(self.academic.last_name in tln)
+        self.assertFalse(self.student.last_name in tln)
+        self.assertFalse(self.collaborator.last_name in tln)
+        self.assertFalse(self.group.group_name in tln)
+
     def test_everyone_can_view_conceptplan(self):
-        """Test that everyone can view the ConceptPlan"""
+        """Test that everyone can view the ConceptPlan."""
         # get ConceptPlan detail
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -175,7 +281,7 @@ class ScienceProjectModelTests(BaseTestCase):
         """A new ScienceProject has one new ConceptPlan and only setup tx."""
         p = self.project
 
-        print("  A new ScienceProject must be of STATUS_NEW.")
+        print("\n  A new ScienceProject must be of STATUS_NEW.")
         self.assertEqual(p.status, Project.STATUS_NEW)
 
         print("  A new SP has exactly one document, a ConceptPlan.")
@@ -195,7 +301,7 @@ class ScienceProjectModelTests(BaseTestCase):
         * Only SMT members should be able to review.
         * Only SCD members should be able to approve.
         """
-        print("  Only project team members like Bob, reviewers and approvers "
+        print("\n  Only project team members like Bob, reviewers and approvers "
               "can submit the ConceptPlan.")
         self.assertTrue(avail_tx(self.bob, 'seek_review', self.scp))
         self.assertTrue(avail_tx(self.steven, 'seek_review', self.scp))
@@ -278,7 +384,7 @@ class ScienceProjectModelTests(BaseTestCase):
         Focus on objects being created, gate checks.
         Ignoring user permissions.
         """
-        print("  The ConceptPlan is new and ready to be submitted.")
+        print("\n  The ConceptPlan is new and ready to be submitted.")
         scp = self.project.documents.instance_of(ConceptPlan).get()
         self.assertTrue(scp.status == Document.STATUS_NEW)
         self.assertTrue(scp.can_seek_review())
@@ -350,7 +456,7 @@ class ScienceProjectModelTests(BaseTestCase):
         scp.approve()
         project = scp.project
         self.assertEqual(project.status, Project.STATUS_PENDING)
-        print("  Endorsing the Project creates a ProjectPlan (SPP).")
+        print("\n  Endorsing the Project creates a ProjectPlan (SPP).")
         self.assertEqual(project.documents.instance_of(ProjectPlan).count(), 1)
         spp = project.documents.instance_of(ProjectPlan).get()
         self.assertEqual(spp.status, Document.STATUS_NEW)
@@ -439,7 +545,7 @@ class ScienceProjectModelTests(BaseTestCase):
         self.project.status = Project.STATUS_ACTIVE
         self.project.save()
 
-        print("  Request update")
+        print("\n  Request update")
         from datetime import datetime
         n = datetime.now()
         r = ARARReport.objects.create(
@@ -467,7 +573,7 @@ class ScienceProjectModelTests(BaseTestCase):
         self.project.status = Project.STATUS_ACTIVE
         self.project.save()
 
-        print("  Request update")
+        print("\n  Request update")
         from datetime import datetime
         n = datetime.now()
         r = ARARReport.objects.create(
@@ -510,7 +616,7 @@ class ScienceProjectModelTests(BaseTestCase):
         self.project.status = Project.STATUS_ACTIVE
         self.project.save()
 
-        print("  Request closure")
+        print("\n  Request closure")
         self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
         self.project.request_closure()
         self.project.save()
@@ -563,7 +669,7 @@ class ScienceProjectModelTests(BaseTestCase):
         self.project.status = Project.STATUS_ACTIVE
         self.project.save()
 
-        print("  Request closure with goal closure without process")
+        print("\n  Request closure with goal closure without process")
         self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
         self.project.request_closure()
         self.project.save()
@@ -594,7 +700,7 @@ class ScienceProjectModelTests(BaseTestCase):
         self.project.status = Project.STATUS_ACTIVE
         self.project.save()
 
-        print("  Request closure with goal suspended")
+        print("\n  Request closure with goal suspended")
         self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
         self.project.request_closure()
         self.project.save()
@@ -625,7 +731,7 @@ class ScienceProjectModelTests(BaseTestCase):
         self.project.status = Project.STATUS_ACTIVE
         self.project.save()
 
-        print("  Request closure with goal terminated")
+        print("\n  Request closure with goal terminated")
         self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
         self.project.request_closure()
         self.project.save()
@@ -653,7 +759,7 @@ class ScienceProjectModelTests(BaseTestCase):
 
     def test_reset_conceptplan_on_pending_scienceproject(self):
         """Resetting an approved SCP resets SCP and project to NEW."""
-        print("  Fast-forward SP to pending.")
+        print("\n  Fast-forward SP to pending.")
         scp = self.project.documents.instance_of(ConceptPlan).get()
         scp.seek_review()
         scp.seek_approval()
@@ -936,7 +1042,7 @@ class StudentProjectModelTests(TestCase):
         n = datetime.now()
         r = ARARReport.objects.create(
             year=self.project.year, date_open=n, date_closed=n)
-        print("  Created {0}".format(r.__str__()))
+        print("\n  Created {0}".format(r.__str__()))
         print("  Request update")
         self.project.request_update()
         self.project.save()
@@ -965,7 +1071,7 @@ class StudentProjectModelTests(TestCase):
         """Test complete of an active StudentProject."""
         self.assertEqual(self.project.status, Project.STATUS_ACTIVE)
 
-        print("  complete is available to all_involved")
+        print("\n  complete is available to all_involved")
         self.assertTrue(avail_tx(self.marge, 'complete', self.project))
         self.assertTrue(avail_tx(self.steven, 'complete', self.project))
         self.assertTrue(avail_tx(self.fran, 'complete', self.project))
@@ -1068,7 +1174,7 @@ class ARARReportModelTests(TestCase):
 
     def test_new_arar(self):
         """Test new ARAR creates updates and changes project status."""
-        print("  Fast-track {0} to active".format(self.sp.debugname))
+        print("\n  Fast-track {0} to active".format(self.sp.debugname))
         self.assertEqual(self.sp.status, Project.STATUS_NEW)
         self.sp.status = Project.STATUS_ACTIVE
         self.sp.save()
