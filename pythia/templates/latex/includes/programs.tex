@@ -8,10 +8,10 @@
 {% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
 {% for program_reports in report_list %}
   {% with program_reports.grouper as program %}
-    \section*{% templatetag openbrace %}{{ program.name|html2latex }}}
-    \addcontentsline{toc}{chapter}{% templatetag openbrace %}{{ program.name|html2latex }}}
+    \section*{% templatetag openbrace %}{{ program.name|striptags }}}
+    \addcontentsline{toc}{chapter}{% templatetag openbrace %}{{ program.name|striptags }}}
 
-    \subsubsection*{Program Leader: {% if program.name == "Biogeography" %}Lesley Gibson and {% endif %}{{ program.program_leader.get_full_name|html2latex }}}
+    \subsubsection*{Program Leader: {% if program.name == "Biogeography" %}Lesley Gibson and {% endif %}{{ program.program_leader.get_full_name|striptags }}}
     {{ program.introduction|html2latex }}
 
     {% for report in program_reports.list %}
