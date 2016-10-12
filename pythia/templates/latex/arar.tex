@@ -36,13 +36,15 @@
 % Front matter
 \frontmatter
 \maketitle
+\begin{absolutelynopagebreak}
 {% include "latex/includes/dm.tex" with original=original %}
+\end{absolutelynopagebreak}
 \tableofcontents
 
 %-----------------------------------------------------------------------------%
 % Main matter
 \mainmatter
-\raggedbottom
+\flushbottom
 {% include "latex/includes/sds.tex" with original=original %}
 {% include "latex/includes/programs.tex" with arar=original reports=original.progress_reports %}
 {% include "latex/includes/collaboration_projects.tex" with projects=original.collaboration_projects %}
