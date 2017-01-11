@@ -12,8 +12,7 @@ from pythia.projects.models import (
 
 
 @override_settings(
-    AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend',),
-)
+    AUTHENTICATION_BACKENDS=('django.contrib.auth.backends.ModelBackend',),)
 class BaseTestCase(TestCase):
     pass
 
@@ -58,7 +57,7 @@ class ProgramFactory(factory.django.DjangoModelFactory):
 class ProjectFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Project
 
-    year = 2016
+    year = 2017
     title = "Test Project"
     type = 0
     project_owner = factory.SubFactory(UserFactory)
