@@ -176,9 +176,19 @@ $(function() {
       {% if has_add_permission %}
       <div class="object-tools pull-right">
           {% block object-tools-items %}
-          <a class="btn btn-small btn-info" href="export/projects.Project/">
-              <i class="glyphicon glyphicon-save glyphicon-white"></i> Download as XLS
-          </a>
+          <a class="btn btn-small btn-info"
+            href="/export/projects.Project/"
+            title="Download as XLS">
+              <i class="glyphicon glyphicon-save glyphicon-white"></i> Projects</a>
+          <a class="btn btn-small btn-info"
+            href="/export/projects.ProjectMembership/"
+            title="Download as XLS">
+              <i class="glyphicon glyphicon-save glyphicon-white"></i> Project Memberships</a>
+          <a class="btn btn-small btn-info"
+            href="/export/pythia.User/"
+            title="Download as XLS">
+              <i class="glyphicon glyphicon-save glyphicon-white"></i> Users</a>
+
           <a class="btn btn-small btn-info"
 href="{% if current %}{% url cl.opts|pythia_urlname:'add' current.id %}{% else %}{% url cl.opts|pythia_urlname:'add' %}{% endif %}{% if is_popup %}?_popup=1{% endif %}">
           <i class="glyphicon glyphicon-plus glyphicon-white"></i>

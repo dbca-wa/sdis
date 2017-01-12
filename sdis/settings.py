@@ -229,8 +229,14 @@ AUTH_LDAP_USER_ATTR_MAP = {
 # Django-tablib CSV export
 TABLIB_MODELS = {
     'projects.Project': {},
-    'pythia.User': {},
-    }
+    'projects.ProjectMembership': {},
+    'pythia.User': {"id", "is_superuser", "username",
+                    "title", "first_name", "middle_initials", "last_name",
+                    "is_staff", "is_active", "is_external",
+                    "is_group", "group_name", "affiliation", "image", "email",
+                    "program_id", "work_center_id",
+                    "agreed", "date_joined", "last_login", },
+}
 
 # Django-Restframework
 REST_FRAMEWORK = {

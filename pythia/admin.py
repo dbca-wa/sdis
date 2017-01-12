@@ -391,12 +391,6 @@ class UserAdmin(DjangoUserAdmin, TablibAdmin):
     form = PythiaUserChangeForm
     add_form = PythiaUserCreationForm
     formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
-    headers = ["id", "is_superuser", "username",
-               "title", "first_name", "middle_initials", "last_name",
-               "is_staff", "is_active", "is_external",
-               "is_group", "group_name", "affiliation", "image", "email",
-               "program_id", "work_center_id",
-               "agreed", "date_joined", "last_login", ]
 
     fieldsets = (
         ('Name', {

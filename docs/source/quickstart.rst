@@ -31,10 +31,10 @@ Find a Project
 ==============
 On the `"Browse all Projects" page <https://sdis.dpaw.wa.gov.au/projects/project/>`_
 you can filter and search for projects.
-On the start page, the big "Download all Projects (XLS)" button will download all
-projects as an Excel spreadsheet. Please note that this is a rapidly outdating
-snapshot. **Do not** update this spreadsheet - do update projects directly in
-SDIS instead.
+On the "Browse all projects" page, the big buttons "Projects", "Project Memberships"
+and "Users" will download all projects, memberships and users as an Excel spreadsheet.
+Please note that this is a rapidly outdating snapshot.
+**Do not** update this spreadsheet - do update projects directly in SDIS instead.
 
 Project Life Cycles
 ===================
