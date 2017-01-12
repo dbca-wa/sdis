@@ -31,6 +31,9 @@ Find a Project
 ==============
 On the `"Browse all Projects" page <https://sdis.dpaw.wa.gov.au/projects/project/>`_
 you can filter and search for projects.
+
+Download a data snapshot
+========================
 On the "Browse all projects" page, the big buttons "Projects", "Project Memberships"
 and "Users" will download all projects, memberships and users as an Excel spreadsheet.
 Please note that this is a rapidly outdating snapshot.
