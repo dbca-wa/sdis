@@ -749,11 +749,4 @@ class DistrictAdmin(DetailAdmin):
 
     list_display = ('__str__', 'region', 'northern_extent')
     formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
-
-
-class ProjectMembershipAdmin(BaseAdmin, DetailAdmin, TablibAdmin):
-    """Custom ProjectMembershipAdmin."""
-
-    list_display = (
-        'project', 'user__first_name', 'user__last_name', 'role')
-    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
+    

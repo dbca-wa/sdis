@@ -138,7 +138,7 @@ class PythiaSite(AuditSite):
                 update_cache,
                 name="update_cache"),
 
-            url(r'^batch_approve_progressreports',
+            url(r'^action/batch_approve_progressreports/$',
                 batch_approve_progressreports,
                 name="batch_approve_progressreports"),
 

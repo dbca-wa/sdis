@@ -11,7 +11,7 @@ from django.utils.html import escape
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect, Http404
-
+from django_tablib.admin import TablibAdmin
 from pythia.admin import BaseAdmin, Breadcrumb, DownloadAdminMixin
 from pythia.projects.models import PROJECT_CLASS_MAP
 # from pythia.templatetags.pythia_base import pythia_urlname
@@ -44,10 +44,21 @@ class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
                 )
 
 
-class ProjectMembershipAdmin(BaseAdmin):
+class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
     list_display = ('project', 'user', 'role')
     raw_id_fields = ()
     change_form_template = 'admin/projects/change_form_projectmembership.html'
+    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
+
+    def get_breadcrumbs(self, request, obj=None, add=False):
+        """
+        Override the base breadcrumbs to add the projectmembership list to
+        the trail.
+        """
+        return (Breadcrumb(_('Home'), reverse('admin:index')),
+                Breadcrumb(_('Project Memberships'),
+                           reverse(
+                               'admin:projects_projectmembership_changelist')))
 
     def get_readonly_fields(self, request, obj=None):
         """Project is read-only in popup forms, as Membership initialises with the
