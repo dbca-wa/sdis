@@ -31,7 +31,7 @@ django-bootstrap-pagination==1.5.0
 django-contrib-comments==1.5
 django-cors-headers==0.12
 django-extra-views==0.6.4
-django-filter==0.7
+
 django-guardian==1.2.0
 django-immutablemodel==0.3.4
 django-mail-templated==2.6.2
@@ -51,6 +51,7 @@ django-fsm-log
 # API
 djangorestframework==2.3.13
 django-rest-swagger==0.1.14
+django-filter==0.7
 
 # Export to CSV
 django_tablib

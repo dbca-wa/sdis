@@ -161,7 +161,7 @@ $(function() {
           <a class="btn btn-small btn-info"
               href="{% if current %}{% url cl.opts|pythia_urlname:'add' current.id %}{% else %}{% url cl.opts|pythia_urlname:'add' %}{% endif %}{% if is_popup %}?_popup=1{% endif %}">
           <i class="glyphicon-plus glyphicon-white"></i>
-          {% blocktrans with cl.opts.verbose_name as name %}Create {{ name }}{% endblocktrans %}
+          {% blocktrans %}Create {{ cl.opts.verbose_name }}{% endblocktrans %}
           </a>
           {% endblock %}
       </div>
@@ -214,6 +214,6 @@ $(function() {
 </div>
 {% endif %}
 {% endblock %}
-
+<!-- template pythia/templates/admin/pythia/user/change_list.html -->
 </div>
 {% endblock %}

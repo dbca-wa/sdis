@@ -81,7 +81,11 @@ INSTALLED_APPS = (
 
     'mail_templated',
     'reversion',
-    'rest_framework',
+    'rest_framework',           # API
+    # 'rest_framework.authtoken', # API auth via token
+    # 'rest_framework_gis',       # API spatial fields
+    # 'rest_framework_swagger',   # API docs
+    # 'rest_framework_latex',     # API latex renderer
 
     'leaflet',
     'south',
@@ -225,6 +229,7 @@ AUTH_LDAP_USER_ATTR_MAP = {
 # Django-tablib CSV export
 TABLIB_MODELS = {
     'projects.Project': {},
+    'pythia.User': {},
     }
 
 # Django-Restframework

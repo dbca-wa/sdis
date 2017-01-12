@@ -148,7 +148,11 @@
   {% endif %}
   <div class="{% if cl.has_filters %}filtered{% endif %}" id="changelist">
     <div id="toolbar" class="toolbar-list-pre">
-      {% block object-tools %}
+
+        <!-- object tools contains the add user link and tablib export links -->
+        <!-- hidden because users get added via staff > register external
+        or staff login, and tablib items are duplicated from "action" menu -->
+      <!-- {% block object-tools %}
       {% if has_add_permission %}
       <div class="object-tools pull-right">
           {% block object-tools-items %}
@@ -160,7 +164,7 @@
           {% endblock %}
       </div>
       {% endif %}
-      {% endblock %}
+      {% endblock %} -->
 
       {% block search %}{% search_form cl %}{% endblock %}
       {% block date_hierarchy %}{% date_hierarchy cl %}{% endblock %}
@@ -208,6 +212,6 @@
 </div>
 {% endif %}
 {% endblock %}
-
+<!-- template pythia/templates/admin/pythia/change_list.html -->
 </div>
 {% endblock %}

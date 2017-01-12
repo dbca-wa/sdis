@@ -156,7 +156,7 @@ class DetailAdmin(ModelAdmin):
             )
 
 
-class AuditAdmin(VersionAdmin, GuardedModelAdmin, TablibAdmin, ModelAdmin):
+class AuditAdmin(VersionAdmin, GuardedModelAdmin, ModelAdmin):
     """AuditAdmin for Audit model.
 
     Mixins: Versions, permissions, spreadsheet export.
@@ -167,7 +167,6 @@ class AuditAdmin(VersionAdmin, GuardedModelAdmin, TablibAdmin, ModelAdmin):
     list_display = ['__unicode__', 'creator', 'modifier', 'created',
                     'modified']
     raw_id_fields = ['creator', 'modifier']
-    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
     change_list_template = None
 
     def get_list_display(self, request):
@@ -255,7 +254,7 @@ class FormfieldOverridesMixin(object):
         return formfield
 
 
-class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
+class BaseAdmin(FormfieldOverridesMixin, AuditAdmin, TablibAdmin):
     """BaseAdmin combines custom forms and AuditAdmin.
 
     Custom Breadcrumbs start from admin home.
@@ -267,6 +266,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
     change_form_template = None
     form = BaseInlineEditForm
     formfield_overrides = {PythiaArrayField: {'widget': ArrayFieldWidget}, }
+    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
 
     def get_breadcrumbs(self, request, obj=None, add=False):
         """Create a list of breadcrumbs.
@@ -379,7 +379,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin):
         return result
 
 
-class UserAdmin(DjangoUserAdmin):
+class UserAdmin(DjangoUserAdmin, TablibAdmin):
     """Custom UserAdmin."""
     list_display = ('username', 'fullname', 'email', 'program', 'work_center')
     list_per_page = 1000    # sod pagination
@@ -390,6 +390,8 @@ class UserAdmin(DjangoUserAdmin):
 
     form = PythiaUserChangeForm
     add_form = PythiaUserCreationForm
+    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
+
 
     fieldsets = (
         ('Name', {
@@ -717,28 +719,41 @@ class ProgramAdmin(BaseAdmin, DetailAdmin):
     data_custodian_name.short_description = 'Data Custodian'
     data_custodian_name.admin_order_field = 'data_custodian__last_name'
 
-class WorkCenterAdmin(BaseAdmin, DetailAdmin):
+
+class WorkCenterAdmin(DetailAdmin):
     """Custom WorkCenterAdmin."""
 
     exclude = ('effective_to', 'effective_from')
     _skip_relatedFieldWidget = False
     list_display = ('__str__', 'district', 'physical_address')
+    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
 
 
-class AreaAdmin(BaseAdmin, DetailAdmin):
+class AreaAdmin(DetailAdmin):
     """Custom AreaAdmin."""
 
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__', 'area_type')
+    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
 
 
 class RegionAdmin(DetailAdmin):
     """Custom RegionAdmin."""
 
     list_display = ('__str__', 'northern_extent')
+    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
 
 
 class DistrictAdmin(DetailAdmin):
     """Custom DistrictAdmin."""
 
     list_display = ('__str__', 'region', 'northern_extent')
+    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
+
+
+class ProjectMembershipAdmin(BaseAdmin, DetailAdmin, TablibAdmin):
+    """Custom ProjectMembershipAdmin."""
+
+    list_display = (
+        'project', 'user__first_name', 'user__last_name', 'role')
+    formats = ['xls', 'json', 'yaml', 'csv', 'html', ]

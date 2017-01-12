@@ -97,6 +97,7 @@
 {% url 'admin:pythia_address_changelist' as list_address %}
 {% url 'admin:pythia_region_changelist' as list_region %}
 {% url 'admin:pythia_district_changelist' as list_district %}
+{% url 'admin:projects_projectmembership_changelist' as list_projectmembership %}
 {% url 'admin:documents_conceptplan_changelist' as list_conceptplan %}
 {% url 'admin:documents_projectplan_changelist' as list_projectplan %}
 {% url 'admin:documents_progressreport_changelist' as list_progressreport %}
@@ -264,6 +265,10 @@
                     title="List and create Science and Conservation Division Programs">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Divisional Programs</span></a></li>
+                <li><a href="{{ list_projectmembership }}" id="nav-projectmembership-list"
+                    title="List Project Memberships">
+                    <span class="glyphicon glyphicon-file text-info"></span>&nbsp;
+                    <span class="text-info">Project Memberships</span></a></li>
                 <li class="divider"></li>
                 <li class="dropdown-header">Documents</li>
                 <li><a href="{{ list_conceptplan }}" id="nav-conceptplan-list"
@@ -467,6 +472,7 @@
 {% endblock %}
 
 {% endblock %}
+<!-- template pythia/templates/admin/pythia/base.html -->
 </body>
 
 
