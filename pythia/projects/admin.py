@@ -96,7 +96,7 @@ class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
     #    return result
 
 
-class ProjectAdmin(BaseAdmin, TablibAdmin):
+class ProjectAdmin(BaseAdmin):
     list_display = ('project_id', 'type', 'year', 'number', 'project_title',
                     'project_owner_name', 'program', 'research_function',
                     'status', 'fm_start_date', 'fm_end_date')

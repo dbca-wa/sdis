@@ -228,11 +228,46 @@ AUTH_LDAP_USER_ATTR_MAP = {
 
 # Django-tablib CSV export
 TABLIB_MODELS = {
-    'projects.Project': {},
-    'projects.ScienceProject': {},
-    'projects.CoreFunctionProject': {},
-    'projects.CollaborationProject': {},
-    'projects.StudentProject': {},
+    'projects.Project': {
+        # "id", "type", "status", "year", "number", "position",
+        # "title", "title_plain", "tagline", "comments",
+        # "start_date", "end_date", "effective_from", "effective_to",
+        # "creator", "modifier", "created", "modified",
+        # "program", "output_program", "research_function",
+        # "project_owner", "data_custodian", "site_custodian",
+        # "team_list_plain", "supervising_scientist_list_plain",
+        # "area_list_dpaw_region", "area_list_dpaw_district",
+        # "area_list_ibra_imcra_region", "area_list_nrm_region",
+        },
+
+    'projects.CollaborationProject': {
+        # "id", "type", "status", "year", "number", "position",
+        # "title", "title_plain", "tagline", "comments",
+        # "start_date", "end_date", "effective_from", "effective_to",
+        # "creator", "modifier", "created", "modified",
+        # "program", "output_program", "research_function",
+        # "project_owner", "data_custodian", "site_custodian",
+        # "team_list_plain", "supervising_scientist_list_plain",
+        # "area_list_dpaw_region", "area_list_dpaw_district",
+        # "area_list_ibra_imcra_region", "area_list_nrm_region",
+        # "name", "budget", "staff_list_plain",
+        },
+
+    'projects.StudentProject': {
+        # "id", "type", "status", "year", "number", "position",
+        # "title", "title_plain", "tagline", "comments",
+        # "start_date", "end_date", "effective_from", "effective_to",
+        # "creator", "modifier", "created", "modified",
+        # "program", "output_program", "research_function",
+        # "project_owner", "data_custodian", "site_custodian",
+        # "team_list_plain", "supervising_scientist_list_plain",
+        # "area_list_dpaw_region", "area_list_dpaw_district",
+        # "area_list_ibra_imcra_region", "area_list_nrm_region",
+        # "level", "organisation", "student_list_plain", "academic_list_plain",
+        # "academic_list_plain_no_affiliation", 
+        },
+
+
     'projects.ProjectMembership': {},
     'pythia.User': {"id", "is_superuser", "username",
                     "title", "first_name", "middle_initials", "last_name",
