@@ -176,15 +176,31 @@ $(function() {
       {% if has_add_permission %}
       <div class="object-tools pull-right">
           {% block object-tools-items %}
-          <a class="btn btn-small btn-info"
+          <a class="btn btn-xs btn-info"
             href="/export/projects.Project/"
             title="Download as XLS">
               <i class="glyphicon glyphicon-save glyphicon-white"></i> Projects</a>
-          <a class="btn btn-small btn-info"
+          <a class="btn btn-xs btn-info"
+            href="/export/projects.ScienceProject/"
+            title="Download as XLS">
+              <i class="glyphicon glyphicon-save glyphicon-white"></i> SP</a>
+          <a class="btn btn-xs btn-info"
+            href="/export/projects.CoreFunctionProject/"
+            title="Download as XLS">
+              <i class="glyphicon glyphicon-save glyphicon-white"></i> CF</a>
+          <a class="btn btn-xs btn-info"
+            href="/export/projects.CollaborationProject/"
+            title="Download as XLS">
+              <i class="glyphicon glyphicon-save glyphicon-white"></i> EXT</a>
+          <a class="btn btn-xs btn-info"
+            href="/export/projects.StudentProject/"
+            title="Download as XLS">
+              <i class="glyphicon glyphicon-save glyphicon-white"></i> STP</a>
+          <a class="btn btn-xs btn-info"
             href="/export/projects.ProjectMembership/"
             title="Download as XLS">
-              <i class="glyphicon glyphicon-save glyphicon-white"></i> Project Memberships</a>
-          <a class="btn btn-small btn-info"
+              <i class="glyphicon glyphicon-save glyphicon-white"></i> Teams</a>
+          <a class="btn btn-xs btn-info"
             href="/export/pythia.User/"
             title="Download as XLS">
               <i class="glyphicon glyphicon-save glyphicon-white"></i> Users</a>
