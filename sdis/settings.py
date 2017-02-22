@@ -264,7 +264,7 @@ TABLIB_MODELS = {
         # "area_list_dpaw_region", "area_list_dpaw_district",
         # "area_list_ibra_imcra_region", "area_list_nrm_region",
         # "level", "organisation", "student_list_plain", "academic_list_plain",
-        # "academic_list_plain_no_affiliation", 
+        # "academic_list_plain_no_affiliation",
         },
 
 

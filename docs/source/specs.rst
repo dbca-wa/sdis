@@ -190,3 +190,108 @@ Document approval will often advance their project to a new stage.
 Revoking document approval will return the project into the previous stage.
 
 The individual documents differ only in the actions caused by their approval.
+
+Publication approval
+====================
+
+Publication types
+-----------------
+Definition: Media released publicly or internally with a defined approval process
+
+
+* peer reviewed journal articles
+* reports
+* conference abstracts
+* posters
+* info sheets
+* fact sheets
+* book chapters
+* all endnote publication types?
+* social media posts (involves Zoran and Margaret)
+* Threatened fauna and flora recovery plans
+* Translocation proposals
+
+
+step 1: review by PL
+step 2: review by A/Dir
+
+
+Publication life cycle
+----------------------
+
+
+
+Recovery plans
+--------------
+RP are a tool to identify actions needed to improve the conservation status of
+exactly one species (fauna or flora).
+State RPs cover 10 years, interim RPs cover 5 years.
+
+The review and approval process exists to ensure and audit that the plan:
+
+* is achievable,
+* is correct from the reviewing role's perspective, and
+* conforms to relevant corporate policy.
+
+Model fields
+^^^^^^^^^^^^
+* document - file
+* for each role: involves_X (y/n), determines whether role needs to review
+* for each role: endorsed by role Y, editable only to members of role
+* citation metadata as required
+* authors - either plain text or SDIS user list
+
+Life cycle
+^^^^^^^^^^
+
+* RP is prepared by staff member who keeps working version on their desk.
+* RP is uploaded to SDIS as read-only PDF copy.
+* User provides criteria which determine required review roles.
+* SDIS shows document as "draft".
+* User submits document for review and approval.
+* SDIS shows document status as "in review".
+* SDIS notifies each involved role by email containing instructions and URL.
+* Each role can follow URL in email to RP and read the plan.
+* Each role can choose to provide feedback, which opens an email to author allowing
+  the reviewer to provide private, direct feedback to author.
+* Prompted by reviewer feedback or by own volition, authors can update the document
+  and (during saving) opt in to notify reviewers pending endorsement.
+* Any reviewer content with document can endorse
+* Certain reviewer roles will only be notified by email once other roles have
+  endorsed the document:
+* In parallel: district, regional staff, spec & comm branch, pricipal zoologist
+  or botanist),
+* then Manager Species and Comm Ken Atkins
+* then A/Dir Conservation
+* If nationally threteaned species in other (interstate) jurisdictions, the
+  document is sent (external to SDIS) to Commonwealth who have their separate process.
+* If Commonwealth agencies are involved, their feedback is handled by (TODO insert role here).
+* Once all reviewers have endorsed, email notification for approval is sent to Dir SCD.
+* SDIS shows document as "in approval".
+* Dir SCD can either provide feedback via email, or approve.
+* SDIS turns record read-only to prevent tampering and shows document as "approved".
+* SDIS notified librarian of approval, sending URL, citation and document.
+* Document is filed and released to public (both external to SDIS).
+
+Questions
+^^^^^^^^^
+
+* Where is the point of truth for the approved document?
+* SDIS should rename "PL" to accommodate "Branch Manager", eg. "PL or BM"
+
+Translocation proposals
+-----------------------
+
+* written by staff, staff and external person, rarely only external
+* endorsement process depends on origin and destination of animal to be translocated
+* endorsed by principal zoologist or senior botanist
+* endorsed by animal ethics committee (Manda Page will know)
+* endorsed by Manager Species and Comm Ken Atkins
+* endorsed by A/Dir Conservation
+* approved by Dir SCD
+* publication to intranet (?) and filing
+
+Roles
+-----
+
+* TODO: fill from above
