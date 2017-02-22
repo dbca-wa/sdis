@@ -84,11 +84,11 @@ jinja2>=2.7.3
 webtemplate-dpaw==0.3
 
 # Latex, Markdown, JSON, XML, YAML
-lxml==3.3.5
-beautifulsoup4==4.3.2
+lxml
+beautifulsoup4
 django-tinymce==1.5.2
-html2text==2014.4.5
-html5lib==0.999
-pyenchant==1.6.5
-pypandoc==0.9.7
-Unidecode==0.04.16
+html2text
+html5lib
+pyenchant
+pypandoc
+Unidecode
