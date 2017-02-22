@@ -61,7 +61,7 @@ django_tablib
 django-crispy-forms==1.4.0
 django-leaflet==0.13.2
 Django-Select2==4.2.2
-django-smart-selects==1.0.9
+django-smart-selects
 django-uni-form==0.9.0
 humanize==0.5
 
