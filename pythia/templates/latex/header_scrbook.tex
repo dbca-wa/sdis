@@ -1,7 +1,7 @@
 \documentclass[version=last,
     paper=a4, % paper size
     10pt, % default font size
-    %usenames,
+    usenames,
     dvipsnames,
     twoside, % PRINT Binding Correction
     % oneside, % ONLINE
@@ -14,20 +14,15 @@
 ]{scrbook}
 \usepackage{typearea}
 
-%
 % Headers and footers
-%
-\usepackage[automark %,headsepline,footsepline
-]{scrlayer-scrpage}
+\usepackage[automark,headsepline,footsepline]{scrlayer-scrpage}
 \renewcommand*{\chapterpagestyle}{empty}
 \clearpairofpagestyles
 \ihead{}
 \ohead[]{}
 \automark[]{}
 
-%%
-%% Fonts, encoding, spacing, indentation
-%%
+% Fonts, encoding, spacing, indentation
 \usepackage{txfonts}
 \renewcommand{\familydefault}{\sfdefault} % Default to Sans Serif font
 \usepackage[english]{babel}
@@ -57,9 +52,7 @@
 \usepackage{etoolbox}
 \AtBeginEnvironment{longtabu}{\footnotesize}{}{}
 
-%%
-%% Tables, columns, layout
-%%
+% Tables, columns, layout
 \usepackage{multicol}   % 2 col publications
 \usepackage{pdflscape}  % Landscape pages
 \usepackage{pdfpages}   % Include PDFs
@@ -72,9 +65,7 @@
 \usepackage{tabu}       %
 \setlength{\tabulinesep}{1.5mm} % Consistent vertical spacing in tabu
 
-%%
-%% Graphics, images, colours
-%%
+% Graphics, images, colours
 \usepackage{graphicx} % embedded images
 \usepackage{eso-pic} %
 \usepackage{colortbl} % define custom named colours
@@ -104,14 +95,12 @@
 \usepackage{tikz} % Drawing
 \usetikzlibrary{arrows,shapes,positioning,shadows,trees}
 
-%%
-%% Links, URLs
-%%
+% Links, URLs
 \usepackage[
-    %colorlinks=true,
+    colorlinks=true,
     linktoc=all,
-    %linkcolor=RedFire,
-    %urlcolor=ParksWildlife,
+    linkcolor=RedFire,
+    urlcolor=ParksWildlife,
     pdftitle={{ downloadname|html2latex }}]{hyperref}
 
 % Black magic to linebreak URLs
@@ -120,11 +109,14 @@
 \g@addto@macro{\UrlBreaks}{\UrlOrds}
 \makeatother
 
-%%
-%% Custom macros
-%%
 % Thick Horizontal rule
-\newcommand{\HRule}{\vspace{8mm}\\\noindent\rule{\linewidth}{0.1pt}}
+\newcommand{\HRule}{\vspace{8mm}\noindent\rule{\linewidth}{0.1pt}}
+
+% Fix latex error
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% copy-pasted HTML <span> in SDIS fields becomes \text{} in tex source, throws luatex error
+\providecommand{\text}{}
 
 % Custom Tikz node for SDS diagram
 \newcommand\mynode[6][]{\node[#1] (#2){\parbox{#3\relax}{\begin{center}\textbf{#4}\\#5\\\footnotesize{#6}\end{center}}};}

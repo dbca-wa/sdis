@@ -2,59 +2,43 @@
 {% include "latex/header_scrbook.tex" with print=false %}
 {% url original.opts|pythia_urlname:"change" original.pk as original_change %}
 
-%-----------------------------------------------------------------------------%
-% Headers and Footers
-%\automark{section}
-%\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}}}
-%\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}} % center header TODO ONLINE ONLY
-%\ohead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{\includegraphics[scale=0.4]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
-%\ifoot{} % inner footer
-%\cfoot{} % center footer
+% Headers and Footers ---------------------------------------------------------%
+\automark{section}
+\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}}}
+\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}} % center header TODO ONLINE ONLY
+\ohead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{\includegraphics[scale=0.4]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
+\ifoot{} % inner footer
+\cfoot{} % center footer
 \ofoot{\pagemark} % outer footer
 \pagestyle{scrheadings}
 \setkomafont{pageheadfoot}{\normalfont}
-
-%-----------------------------------------------------------------------------%
 \begin{document}
 \raggedbottom
 
-%-----------------------------------------------------------------------------%
-% Title page
+% Title page ------------------------------------------------------------------%
 \subject{% templatetag openbrace %}{{ original.year|add:"-1" }}--{{ original.year }}}
 \title{Annual Research Report}
 \author{Science and Conservation Division}
 \publishers{Department of Parks and Wildlife}
-%\uppertitleback{Upper title back}
-%\lowertitleback{
-%    \begin{center}
-%    \textbf{Printed}~{{ timestamp|date:'r' }}
-%    \end{center}
-%}
+\uppertitleback{Upper title back placeholder text}
+\lowertitleback{\begin{center}\textbf{Printed}~{{ timestamp|date:'r' }}\end{center}}
 \date{}
 
-%-----------------------------------------------------------------------------%
-% Front matter
-\frontmatter
+\frontmatter %-----------------------------------------------------------------%
 \maketitle
 \begin{absolutelynopagebreak}
 {% include "latex/includes/dm.tex" with original=original %}
 \end{absolutelynopagebreak}
 \tableofcontents
-
-%-----------------------------------------------------------------------------%
-% Main matter
-\mainmatter
+\mainmatter %------------------------------------------------------------------%
 \flushbottom
 {% include "latex/includes/sds.tex" with original=original %}
-{% include "latex/includes/programs.tex" with arar=original reports=original.progress_reports %}
+{% include "latex/includes/programs.tex"               with arar=original reports=original.progress_reports %}
 {% include "latex/includes/collaboration_projects.tex" with projects=original.collaboration_projects %}
-{% include "latex/includes/student_projects.tex" with reports=original.student_reports %}
-{% include "latex/includes/student_reports.tex" with arar=original reports=original.student_reports %}
-{% include "latex/includes/publications.tex" with original=original %}
-{% include "latex/includes/science_projects.tex" with reports=original.progress_reports %}
-%-----------------------------------------------------------------------------%
-% Back matter
-%\backmatter
+{% include "latex/includes/student_projects.tex"       with reports=original.student_reports %}
+{% include "latex/includes/student_reports.tex"        with arar=original reports=original.student_reports %}
+{% include "latex/includes/publications.tex"           with original=original %}
+{% include "latex/includes/science_projects.tex"       with reports=original.progress_reports %}
+%\backmatter %-----------------------------------------------------------------%
 %{# include "latex/includes/appendix1.tex" #}
 \end{document}
-%-----------------------------------------------------------------------------%

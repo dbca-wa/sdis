@@ -216,9 +216,63 @@ step 1: review by PL
 step 2: review by A/Dir
 
 
-Publication life cycle
-----------------------
+Publication
+-----------
+External, possibly peer-reviewed, publication:
 
+* Peer-reviewed paper
+* Report
+
+Commonality: Public document written in the affiliation of DPaW.
+
+* Author compiles draft
+* Author discovers publication approval guideline
+* Author reads publication approval guideline
+* Guideline requests author to seek informal feedback from Project leader
+* Publication may link to SPP
+* Author starts online publication approval process (creates form):
+    * manuscript ID (auto) MS-YYYY-NNN
+    * title
+    * synopsis (plain english)
+    * management implications (text)
+    * author team (text, not User)
+    * manuscript (file)
+    * attachments (file) x n
+    * related projects (text): SDIS projects, non-SDIS projects
+    * formatted citation
+    * RIS (text)
+    * DOI
+* Author submits form ("in review"), which opens checkbox: notify (depending on required roles)
+  PL, BM, HerbC (if plants)
+  but not Fauna folks (if fauna), plus possibly other roles.
+* Approval roles:
+    * PL
+    * BM
+    * HC (if "involves plant taxonomy")
+    * possible other roles
+* Approval roles may choose to litigate feedback from higher roles via "send email"
+* Approval roles see open publications in "My Tasks"
+* "Seek external feedback" creates email with blank recipients and attaches whole manuscript and attachments
+* "Seek internal feedback" creates email with blank recipients with only a link to pub approval detail page
+* "Seek author feedback" creates email to author with link
+* Author can update manuscript any time while "in review"
+* Author can "re-submit" the publication, which sends an email notification to
+  reviewers pending endorsement
+* Reviewer roles other than PL endorse, which sets flag and sends notification to other roles
+* PL approves (status "approved")
+* Once all approvals are given, author gets notified to submit manuscript
+* Author and PL can "retract" at any time (status "retracted")
+* Authors can "delete"
+* Author goes through publication process with publisher
+* If successful, author attaches final manuscript, DOI, citation and presses "published"
+* "published" notifies librarian with citation
+* ARAR builds publication list from "published"
+
+REQ Publication guideline must be discoverable
+REQ Updated guidelines relevant to SDIS need to be published
+REQ Publication has authors
+
+TODO should we retain deleted forms?
 
 
 Recovery plans
