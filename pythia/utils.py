@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 
 import datetime
 from itertools import chain
+import json
 import logging
 import os
 import subprocess
@@ -232,3 +233,54 @@ def get_revision_hash():
 #     # TODO extract all tags
 #     # TODO convert only md tables, keep the rest
 #     print("Not implemented: pythia.utils.convert_md_tables")
+
+
+def symlink_one_resource(t_dir, rj):
+    """Symlink photographs of a resource JSON ``rj`` to a temp dir ``t_dir``."""
+    if "photographs" in rj and len(rj["photographs"]) > 0:
+        # Once per encounter, create temp_dir/media_path
+        media_path = os.path.split(rj["photographs"][0]["attachment"])[0]
+        print("pre_latex symlinking {0}".format(media_path))
+        dest_dir = os.path.join(t_dir, "tex", media_path)
+        os.makedirs(dest_dir)
+        print("pre_latex created {0}".format(str(dest_dir)))
+
+        for photo in rj["photographs"]:
+            # Once per photo, symlink file to temp_dir
+            src = photo["filepath"]
+            rel_src = photo["attachment"]
+            dest = os.path.join(t_dir, "tex", rel_src)
+            if os.path.lexists(dest):
+                # emulate ln -sf
+                os.remove(dest)
+            os.symlink(src, dest)
+    else:
+        print("No photographs found.")
+
+
+def symlink_resources(t_dir, data):
+    """Symlink photographs from an OrderedDict ``data`` of Encounters to a temp dir.
+
+    ``data`` can be an OrderedDict of either:
+    - a GeoJSON FeatureCollection of Encounters (rest_framework.gis serializer)
+    - a GeoJSON Feature of one Encounter
+    - a JSON list of Encounters (rest_framework model serializer)
+    - a JSON dict of one Encounter
+    """
+    d = json.loads(json.dumps(data))
+    if "type" in d.keys():
+
+        if d["type"] == "FeatureCollection":
+            snitch("Symlinking photographs of a GeoJSON FeatureCollection")
+            [symlink_one_resource(t_dir, f["properties"]) for f in d["features"]]
+
+        elif d["type"] == "Feature":
+            snitch("Symlinking photographs of a GeoJSON Feature")
+            symlink_one_resource(t_dir, d["properties"])
+
+    elif "photographs" in d.keys():
+        snitch("Symlinking photographs of a JSON object")
+        symlink_one_resource(t_dir, d)
+    else:
+        snitch("Symlinking photographs of a list of JSON objects")
+        [symlink_one_resource(t_dir, enc) for enc in d]

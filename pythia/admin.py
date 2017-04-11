@@ -587,6 +587,8 @@ class DownloadAdminMixin(ModelAdmin):
             "latex/" + template + ".tex", context,
             context_instance=RequestContext(request))
 
+        # symlink_resources()
+
         directory = os.path.join(settings.MEDIA_ROOT, "reports", str(obj.id))
         if not os.path.exists(directory):
             os.makedirs(directory)

@@ -1,12 +1,30 @@
-{% load texify %}
+{% load texify pythia_base %}
+{% url project.opts|pythia_urlname:'change' project.pk|pythia_urlquote as project_change %}
 
-%\begin{absolutelynopagebreak}
-\HRule
+%% Project showcase -----------------------------------------------------------%
+\HRule                              % insert horizontal rule
+\newline                            % insert line break after HRule
+\begin{minipage}{.3\textwidth}      % begin column 30% width
+{% if project.image %}              % insert project image or link to add one
+\includegraphics[width=0.9\linewidth]{% templatetag openbrace %}../..{{ project.image.url }}}
+{% else %}
+\href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}{Add thumbnail}
+{% endif %}
+\end{minipage}                      % end column 30% width
+\begin{minipage}{0.7\textwidth}     % begin column 70% width
+\begin{flushleft}                   % begin justify left
+\raggedbottom                       % align top
+\vspace{3 mm}                       % vertical space after HRule
 \subsection*{% templatetag openbrace %}{{ project.title|html2latex }}}
 \addcontentsline{toc}{section}{% templatetag openbrace %}{{ project.title|html2latex }}}
-\label{sec:{{ project.project_year_number }}}
-
 {{ project.project_type_year_number }}
+\newline
+{{ project.team_list_plain|html2latex }}
+\flushbottom                        % restore flushbottom
+\end{flushleft}                     % end justify left
+\end{minipage}                      % end column 70%
+\vspace{3 mm}                       % vertical space after showcase
+%% End project showcase -------------------------------------------------------%
 
 {% if project.progressreport %}
 {% include project.progressreport.template_tex with progressreport=project.progressreport %}
