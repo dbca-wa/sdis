@@ -17,19 +17,19 @@
 \textbf{IBRA/IMCRA} &
 \textbf{NRM Region} &
 \textbf{Project Title} &
-\textbf{Page} \\
+\textbf{Page}\\
 \hline
 \endhead
 
 {% for report in program_reports.list|dictsort:"project.title" %}
-    {{ report.project.area_list_dpaw_region|html2latex }} &
-    {{ report.project.area_list_ibra_imcra_region|html2latex }} &
-    {{ report.project.area_list_nrm_region|html2latex }} &
-    {{ report.project.title|html2latex }} &
-    \pageref{sec:{{ report.project.project_year_number }}} \\
-    \hline
+{{ report.project.area_list_dpaw_region|html2latex }} &
+{{ report.project.area_list_ibra_imcra_region|html2latex }} &
+{{ report.project.area_list_nrm_region|html2latex }} &
+{{ report.project.title|html2latex }} &
+\pageref{sec:{{ report.project.project_year_number }}} \\
+\hline
 {% empty %}
-    No projects. \\
+No projects.\\
 {% endfor %}
 \end{longtabu}
 

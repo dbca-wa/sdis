@@ -18,15 +18,15 @@
 \endhead
 
 {% for report in reports %}
-    {{ report.project.supervising_scientist_list_plain|html2latex }} &
-    {{ report.project.student_list_plain|html2latex }} ({{ report.project.get_level_display|striptags }}) &
-    {{ report.project.academic_list_plain|safe|html2latex }} &
-    {{ report.project.title|html2latex }} &
-    {{ report.project.start_date|date:"Y" }} -- {{ report.project.end_date|date:"Y" }} &
-    \pageref{sec:{{ report.project.project_year_number }}} \\
-    \hline
+{{ report.project.supervising_scientist_list_plain|html2latex }} &
+{{ report.project.student_list_plain|html2latex }} ({{ report.project.get_level_display|striptags }}) &
+{{ report.project.academic_list_plain|safe|html2latex }} &
+{{ report.project.title|html2latex }} &
+{{ report.project.start_date|date:"Y" }} -- {{ report.project.end_date|date:"Y" }} &
+\pageref{sec:{{ report.project.project_year_number }}} \\
+\hline
 {% empty %}
-    No projects. \\
+No projects. \\
 {% endfor %}
 
 \end{longtabu}

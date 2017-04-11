@@ -16,14 +16,13 @@
 \endhead
 
 {% for project in projects|dictsort:"name" %}
-    {{ project.name|html2latex }} &
-    {{ project.title|html2latex }} &
-    {{ project.budget|html2latex }} &
-    {{ project.staff_list_plain|html2latex }} \\
-    \hline
+{{ project.name|html2latex }} &
+{{ project.title|html2latex }} &
+{{ project.budget|html2latex }} &
+{{ project.staff_list_plain|html2latex }} \\
+\hline
 {% empty %}
-    No projects. \\
-    \hline
+No projects. \\
 {% endfor %}
 
 \end{longtabu}
