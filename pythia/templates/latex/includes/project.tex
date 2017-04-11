@@ -6,7 +6,8 @@
 \newline                            % insert line break after HRule
 \begin{minipage}{.3\textwidth}      % begin column 30% width
 {% if project.image %}              % insert project image or link to add one
-\includegraphics[width=0.9\linewidth]{% templatetag openbrace %}../../..{{ project.image.url }}}
+%% we are depending on MEDIA_ROOT being symlinked to the report directory
+\includegraphics[width=0.9\linewidth]{% templatetag openbrace %}.{{ project.image.url }}}
 {% else %}
 \href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}{Add thumbnail}
 {% endif %}

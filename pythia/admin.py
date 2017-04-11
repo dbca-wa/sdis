@@ -587,11 +587,15 @@ class DownloadAdminMixin(ModelAdmin):
             "latex/" + template + ".tex", context,
             context_instance=RequestContext(request))
 
-        # symlink_resources()
-
         directory = os.path.join(settings.MEDIA_ROOT, "reports", str(obj.id))
         if not os.path.exists(directory):
             os.makedirs(directory)
+
+        # symlink MEDIA_ROOT so that relative project image paths work from
+        # within the PDF directory
+        virtual_media_root = os.path.join(directory, 'media')
+        if not os.path.lexists(virtual_media_root):
+            os.symlink(settings.MEDIA_ROOT, virtual_media_root)
 
         if os.path.exists(filename):
             # if outdated then remove all pdfs
