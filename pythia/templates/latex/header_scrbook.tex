@@ -14,7 +14,9 @@
 ]{scrbook}
 \usepackage{typearea}
 
+%------------------------------------------------------------------------------%
 % Headers and footers
+%------------------------------------------------------------------------------%
 \usepackage[automark,headsepline,footsepline]{scrlayer-scrpage}
 \renewcommand*{\chapterpagestyle}{empty}
 \clearpairofpagestyles
@@ -22,25 +24,29 @@
 \ohead[]{}
 \automark[]{}
 
-% Fonts, encoding, spacing, indentation
+%------------------------------------------------------------------------------%
+% Fonts, encoding
+%------------------------------------------------------------------------------%
+%\usepackage{avant} % Use the Avantgarde font for headings
 \usepackage{txfonts}
+\usepackage{mathptmx}
 \renewcommand{\familydefault}{\sfdefault} % Default to Sans Serif font
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
 \usepackage[english]{babel}
-\usepackage[utf8]{luainputenc}
-\usepackage[T1]{fontenc}
+\usepackage[utf8]{luainputenc} % Required for including letters with accents
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
 \usepackage{textcomp}
+\usepackage{titlesec} % Allows customisation of titles
 
 %\DeclareUnicodeCharacter{0080}{\textregistered}
 
+
+%------------------------------------------------------------------------------%
 % Chapter and section headings
+%------------------------------------------------------------------------------%
 \let\raggedchapter\centering
 \addtokomafont{chapter}{\center}
 \addtokomafont{section}{\center\LARGE}
-
-% Paragraph spacing
-%\usepackage{parskip}    % Paragraph spacing
-%\setlength{\parindent}{0em} % Don't indent paragraphs - ONLINE
-%\setlength{\parskip}{1.3 ex plus 0.5ex minus 0.3ex} % 1-1.8 ex vertical space between paragraphs - ONLINE
 
 % Spacing of headings
 % SDIS-1 spacing pending upgrade of texlive on aws-eco-001
@@ -48,11 +54,21 @@
 %\RedeclareSectionCommand[beforeskip=0cm]{subsection} % less space between HRule and project name
 %\RedeclareSectionCommand[afterskip=0.1\baselineskip]{subsubsection} % less space after progressreport subheadings
 
-% Table font size
-\usepackage{etoolbox}
-\AtBeginEnvironment{longtabu}{\footnotesize}{}{}
 
+%------------------------------------------------------------------------------%
+% Paragraph spacing
+%------------------------------------------------------------------------------%
+%\usepackage{parskip}    % Paragraph spacing
+%\setlength{\parindent}{0em} % Don't indent paragraphs - ONLINE
+%\setlength{\parskip}{1.3 ex plus 0.5ex minus 0.3ex} % 1-1.8 ex vertical space between paragraphs - ONLINE
+
+
+%------------------------------------------------------------------------------%
 % Tables, columns, layout
+%------------------------------------------------------------------------------%
+\usepackage{etoolbox}
+\AtBeginEnvironment{longtabu}{\footnotesize}{}{}  % Table font size
+\usepackage{booktabs} % Required for nicer horizontal rules in tables
 \usepackage{multicol}   % 2 col publications
 \usepackage{pdflscape}  % Landscape pages
 \usepackage{pdfpages}   % Include PDFs
@@ -64,16 +80,23 @@
 \usepackage{longtable}  % Multipage table
 \usepackage{tabu}       %
 \setlength{\tabulinesep}{1.5mm} % Consistent vertical spacing in tabu
+\newcommand{\HRule}{\vspace{8mm}\noindent\rule{\linewidth}{0.1pt}} % Thick Horizontal rule
 
+
+%------------------------------------------------------------------------------%
 % Graphics, images, colours
+%------------------------------------------------------------------------------%
 \usepackage{graphicx} % embedded images
 \usepackage{wrapfig}  % wrap figures in text
 \usepackage{caption}  % allow unnumbered captions
-\usepackage{eso-pic} %
+\usepackage{eso-pic} % Required for specifying an image background in the title page
 \usepackage{colortbl} % define custom named colours
+\usepackage{xstring} % Conditionals
+\usepackage{transparent} % Allow transparent images
 
 \definecolor{RedFire}{RGB}{146,25,28}
 \definecolor{ParksWildlife}{RGB}{0,85,144}
+\definecolor{ocre}{RGB}{243,102,25}
 
 \definecolor{successbg}{RGB}{223,240,216}
 \definecolor{errorbg}{RGB}{242,222,222}
@@ -97,7 +120,10 @@
 \usepackage{tikz} % Drawing
 \usetikzlibrary{arrows,shapes,positioning,shadows,trees}
 
+
+%------------------------------------------------------------------------------%
 % Links, URLs
+%------------------------------------------------------------------------------%
 \usepackage[
     colorlinks=true,
     linktoc=all,
@@ -105,25 +131,177 @@
     urlcolor=ParksWildlife,
     pdftitle={{ downloadname|html2latex }}]{hyperref}
 
+
+%------------------------------------------------------------------------------%
+% Hyperlinks
+%------------------------------------------------------------------------------%
+\usepackage{nameref}
+\usepackage{ifxetex,ifluatex}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{
+%   backref=true,
+%   pagebackref=true,
+%   hyperindex=true,
+  breaklinks=true,
+  urlcolor= ocre,
+%   bookmarks=true,
+  bookmarksopen=false,
+  pdfauthor={Science and Conservation Division, Dept Parks and Wildlife, WA},
+  pdftitle={{ downloadname|html2latex }},
+  colorlinks=true,
+  linkcolor=ocre,
+  pdfborder={0 0 0}}
+
+\urlstyle{same}  % don't use monospace font for urlstyle
+
+
+%------------------------------------------------------------------------------%
 % Black magic to linebreak URLs
+%------------------------------------------------------------------------------%
 \usepackage{url}
-\makeatletter
-\g@addto@macro{\UrlBreaks}{\UrlOrds}
-\makeatother
+\makeatletter\g@addto@macro{\UrlBreaks}{\UrlOrds}\makeatother
 
-% Thick Horizontal rule
-\newcommand{\HRule}{\vspace{8mm}\noindent\rule{\linewidth}{0.1pt}}
 
-% Fix latex error
+%------------------------------------------------------------------------------%
+% Fix latex errors
+%------------------------------------------------------------------------------%
 \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
 % copy-pasted HTML <span> in SDIS fields becomes \text{} in tex source, throws luatex error
 \providecommand{\text}{}
 
+%------------------------------------------------------------------------------%
 % Custom Tikz node for SDS diagram
+%------------------------------------------------------------------------------%
 \newcommand\mynode[6][]{\node[#1] (#2){\parbox{#3\relax}{\begin{center}\textbf{#4}\\#5\\\footnotesize{#6}\end{center}}};}
 
-% no-pagebreaks-environment
+
+%------------------------------------------------------------------------------%
+% Custom no-pagebreaks-environment
+%------------------------------------------------------------------------------%
 \newenvironment{absolutelynopagebreak}
   {\par\nobreak\vfil\penalty0\vfilneg\vtop\bgroup}
   {\par\xdef\tpd{\the\prevdepth}\egroup\prevdepth=\tpd}
+
+%------------------------------------------------------------------------------%
+% Remove the header from odd empty pages at the end of chapters
+%------------------------------------------------------------------------------%
+\makeatletter
+\renewcommand{\cleardoublepage}{
+\clearpage\ifodd\c@page\else
+\hbox{}
+\vspace*{\fill}
+\thispagestyle{empty}
+\newpage
+\fi}
+
+
+%----------------------------------------------------------------------------------------
+%  Page flow control
+%----------------------------------------------------------------------------------------
+%\widowpenalty=10000
+%\clubpenalty=10000
+%\vbadness=1200
+%\hbadness=11000
+
+
+%----------------------------------------------------------------------------------------
+%	CHAPTER HEADINGS
+%----------------------------------------------------------------------------------------
+\newcommand{\thechapterimage}{}
+\newcommand{\chapterimage}[1]{\renewcommand{\thechapterimage}{#1}}
+
+% Numbered chapters with mini tableofcontents
+\def\thechapter{\arabic{chapter}}
+\def\@makechapterhead#1{
+\thispagestyle{empty}
+{\centering \normalfont\sffamily
+\ifnum \c@secnumdepth >\m@ne
+\if@mainmatter
+\startcontents
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.north west)
+{\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=north west,inner sep=0pt] at (0,0) {
+\includegraphics[width=\paperwidth,height=0.5\paperwidth]{\thechapterimage}};
+%------------------------------------------------------------------------------%
+% Commenting the 2 macros below removes the small contents box in the chapter heading
+% Mini TOC background box
+%\fill[color=ocre!10!white,opacity=.2] (1cm,0) rectangle (
+%  3.5cm, % Mini TOC box width
+%  -3.5cm % Mini TOC box height
+%);
+% Mini TOC text content
+%\node[anchor=north west] at (1.1cm,.35cm) {
+%  \parbox[t][8cm][t]{6.5cm}{
+%    \huge\bfseries\flushleft
+%    \printcontents{l}{1}{
+%    \setcounter{tocdepth}{1} % Mini TOC level depth
+%    }
+% }
+%};
+%------------------------------------------------------------------------------%
+% Chapter heading
+\draw[anchor=west] (5cm,-9cm) node [
+rounded corners=20pt,
+fill=ocre!10!white,
+text opacity=1,
+draw=ocre,
+draw opacity=1,
+line width=1.5pt,
+fill opacity=.2,
+inner sep=12pt]{
+    \huge\sffamily\bfseries\textcolor{black}{\thechapter. #1\strut\makebox[22cm]{}
+}
+};
+\end{tikzpicture}};
+\end{tikzpicture}}
+\par\vspace*{240\p@} % was 230
+\fi
+\fi}
+
+%------------------------------------------------------------------------------%
+% Unnumbered chapters without mini tableofcontents
+%------------------------------------------------------------------------------%
+\def\@makeschapterhead#1{
+\thispagestyle{empty}
+{\centering \normalfont\sffamily
+\ifnum \c@secnumdepth >\m@ne
+\if@mainmatter
+\begin{tikzpicture}[remember picture,overlay]
+\node at (current page.north west)
+{\begin{tikzpicture}[remember picture,overlay]
+\node[anchor=north west,inner sep=0pt] at (0,0) {
+  \includegraphics[width=\paperwidth,height=0.5\paperwidth]{\thechapterimage}};
+% Mini TOC background box
+%\fill[color=ocre!10!white,opacity=.2] (1cm,0) rectangle (
+%  3.5cm, % Mini TOC box width
+%  -3.5cm % Mini TOC box height
+%);
+
+% Mini TOC text content
+%\node[anchor=north west] at (1.1cm,.35cm) {
+%  \parbox[t][8cm][t]{6.5cm}{
+%    \huge\bfseries\flushleft
+%    \printcontents{l}{1}{
+%    \setcounter{tocdepth}{1} % Mini TOC level depth
+%    }
+%}
+%};
+\draw[anchor=west] (5cm,-9cm) node [rounded corners=20pt,
+  fill=ocre!10!white,fill opacity=.6,inner sep=12pt,text opacity=1,
+  draw=ocre,draw opacity=1,line width=1.5pt]{
+  \huge\sffamily\bfseries\textcolor{black}{#1\strut\makebox[22cm]{}}};
+\end{tikzpicture}};
+\end{tikzpicture}}
+\par\vspace*{240\p@}
+\fi
+\fi
+}
+\makeatother

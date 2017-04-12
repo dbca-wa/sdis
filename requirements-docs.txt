@@ -92,3 +92,5 @@ html5lib
 pyenchant
 pypandoc
 Unidecode
+
+gunicorn

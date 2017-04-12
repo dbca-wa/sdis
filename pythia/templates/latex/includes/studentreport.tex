@@ -1,12 +1,2 @@
 {% load texify pythia_base %}
-\subsubsection*{Parks and Wildlife Scientist}
-{{ progressreport.project.supervising_scientist_list_plain|html2latex }}
-
-\subsubsection*{Student}
-{{ progressreport.project.student_list_plain|html2latex }} ({{ report.project.get_level_display|striptags }})
-
-\subsubsection*{University Academics}
-{{ progressreport.project.academic_list_plain|safe|html2latex }}
-%\end{absolutelynopagebreak}
-
 {% as_latex progressreport "progress_report" 'subsubsection' %}

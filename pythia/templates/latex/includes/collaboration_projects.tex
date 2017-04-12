@@ -1,11 +1,14 @@
 {% load texify %}
+%------------------------------------------------------------------------------%
 % Begin ARAR Table External Partnerships
+%------------------------------------------------------------------------------%
+\chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
 \chapter*{External Partnerships}
 \addcontentsline{toc}{chapter}{External Partnerships}
-
+%
 \begin{longtabu} to \linewidth { X X X X }
 \hline
-
+%
 \hline
 \rowcolor{infobg}
 \textbf{Partners} &
@@ -14,7 +17,7 @@
 \textbf{Parks and Wildlife Involvement} \\
 \hline
 \endhead
-
+%
 {% for project in projects|dictsort:"name" %}
 {{ project.name|html2latex }} &
 {{ project.title|html2latex }} &
@@ -24,6 +27,8 @@
 {% empty %}
 No projects. \\
 {% endfor %}
-
+%
 \end{longtabu}
+%------------------------------------------------------------------------------%
 % End ARAR Table External Partnerships
+%------------------------------------------------------------------------------%

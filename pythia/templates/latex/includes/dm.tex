@@ -1,7 +1,12 @@
 {% load texify %}
-\chapter*{Director's Message}
+%\chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
+%\chapter*{Director's Message}
+\begin{absolutelynopagebreak}
+\begin{flushleft}
 {{ original.dm|html2latex }}
 \vspace{1cm}
 \setlength{\parindent}{0cm}
 Dr Margaret Byrne\\Director Science and Conservation\\July 2016
 \setlength{\parindent}{0.5cm}
+\end{flushleft}
+\end{absolutelynopagebreak}
