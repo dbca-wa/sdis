@@ -1,9 +1,7 @@
 {% load pythia_base texify %}
 {% include "latex/header_scrbook.tex" with print=false %}
 {% url original.opts|pythia_urlname:"change" original.pk as original_change %}
-%------------------------------------------------------------------------------%
 % Headers and Footers ---------------------------------------------------------%
-%------------------------------------------------------------------------------%
 \automark{section}
 \ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}}}
 \chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}} % center header TODO ONLINE ONLY
@@ -15,26 +13,11 @@
 \pagestyle{scrheadings}
 \setkomafont{pageheadfoot}{\normalfont}
 \begin{document}
-%------------------------------------------------------------------------------%
-% Title page ------------------------------------------------------------------%
-%------------------------------------------------------------------------------%
-\subject{% templatetag openbrace %}{{ original.year|add:"-1" }}--{{ original.year }}}
-\title{Annual Research Report}
-\author{Science and Conservation Division}
-\publishers{Department of Parks and Wildlife}
-\uppertitleback{Upper title back placeholder text}
-\lowertitleback{\begin{center}\textbf{Compiled}~{{ timestamp|date:'r' }}\end{center}}
-\date{}
-%------------------------------------------------------------------------------%
 \frontmatter %-----------------------------------------------------------------%
-%------------------------------------------------------------------------------%
-\raggedbottom
-\maketitle
+{% include "latex/includes/titlepage.tex" with original=original %}
 {% include "latex/includes/dm.tex" with original=original %}
 \tableofcontents
-%------------------------------------------------------------------------------%
 \mainmatter %------------------------------------------------------------------%
-%------------------------------------------------------------------------------%
 \flushbottom
 {% include "latex/includes/story.tex" %}
 {% include "latex/includes/sds.tex"                    with original=original %}
@@ -44,8 +27,4 @@
 {% include "latex/includes/student_reports.tex"        with arar=original reports=original.student_reports %}
 {% include "latex/includes/publications.tex"           with original=original %}
 {% include "latex/includes/science_projects.tex"       with reports=original.progress_reports %}
-%------------------------------------------------------------------------------%
-%\backmatter %-----------------------------------------------------------------%
-%------------------------------------------------------------------------------%
-% include "latex/includes/appendix1.tex" %}
 \end{document}
