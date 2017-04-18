@@ -1,16 +1,15 @@
 \documentclass[version=last,
-    paper=a4, % paper size
-    10pt, % default font size
-    % usenames,
+    paper=a4,                               % paper size
+    10pt,                                   % default font size
     dvipsnames,
-    twoside, % PRINT Binding Correction
-    % oneside, % ONLINE
-    headings=openany, % open chapters on odd and even pages
-    BCOR=7mm, % PRINT Binding Correction
-    %DIV=13, % typearea 161.54 mm x 228.46 mm, top margin 22.85 mm, inner margin 16.15 mm
-    %DIV=14, % 165.00 233.36 21.21 15.00
-    DIV=15, % 168.00 237.60 19.80 14.00
-    % toc=chapterentrywithdots % Table of Contents style
+    twoside,                                % PRINT Binding Correction
+    % oneside,                              % ONLINE
+    headings=openany,                       % open chapters on odd and even pages
+    BCOR=7mm,                               % PRINT Binding Correction
+    %DIV=13,    % typearea 161.54mm x 228.46mm, top 22.85mm, inner 16.15mm
+    %DIV=14,    % 165.00 233.36 21.21 15.00
+    DIV=15,     % 168.00 237.60 19.80 14.00
+    % toc=chapterentrywithdots              % Table of Contents style
 ]{scrbook}
 \usepackage{typearea}
 
@@ -37,7 +36,6 @@
 \usepackage[T1]{fontenc}        % Use 8-bit encoding that has 256 glyphs
 \usepackage{textcomp}
 \usepackage{titlesec}           % Customise of titles
-
 %\DeclareUnicodeCharacter{0080}{\textregistered}
 
 
@@ -61,6 +59,7 @@
 %\setlength{\parindent}{0em}    % Don't indent paragraphs - ONLINE
 %\setlength{\parskip}{1.3 ex plus 0.5ex minus 0.3ex} % 1-1.8 ex vspace between paragraphs - ONLINE
 \usepackage{scrextend}          % Custom paragraph indentation
+
 
 %------------------------------------------------------------------------------%
 % Tables, columns, layout
@@ -94,9 +93,13 @@
 \usepackage{transparent} % Allow transparent images
 
 \definecolor{RedFire}{RGB}{146,25,28}
-\definecolor{ParksWildlife}{RGB}{0,85,144}
-\definecolor{ocre}{RGB}{243,102,25}
+% Following PICA branding guidelines
+% https://dpaw.sharepoint.com/Divisions/pica/Documents/Branding%20guidelines.pdf
+\definecolor{dpawblue}{RGB}{35,97,146}          % Pantone 647
+\definecolor{dpaworange}{RGB}{237,139,0}        % Pantone 144
+\definecolor{dpawgreen}{RGB}{116,170,80}        % Pantone 7489
 
+% bootstrap colours
 \definecolor{successbg}{RGB}{223,240,216}
 \definecolor{errorbg}{RGB}{242,222,222}
 \definecolor{warningbg}{RGB}{252,248,227}
@@ -107,14 +110,15 @@
 \definecolor{warning}{RGB}{192,152,83}
 \definecolor{info}{RGB}{58,135,173}
 
+% SDIS approval colours
 \definecolor{required}{RGB}{192,152,83}
 \definecolor{requiredbg}{RGB}{252,248,227}
 \definecolor{denied}{RGB}{185,74,72}
 \definecolor{deniedbg}{RGB}{242,222,222}
 \definecolor{granted}{RGB}{70,136,71}
 \definecolor{grantedbg}{RGB}{223,240,216}
-\definecolor{not reqiured}{RGB}{153,153,153}
-\definecolor{not reqiuredbg}{RGB}{255,255,255}
+\definecolor{notrequired}{RGB}{153,153,153}
+\definecolor{notrequiredbg}{RGB}{255,255,255}
 
 \usepackage{tikz} % Drawing
 \usetikzlibrary{arrows,shapes,positioning,shadows,trees}
@@ -126,8 +130,8 @@
 \usepackage[
     colorlinks=true,
     linktoc=all,
-    linkcolor=RedFire,
-    urlcolor=ParksWildlife,
+    linkcolor=dpawblue,
+    urlcolor=dpawblue,
     pdftitle={{ downloadname|html2latex }}]{hyperref}
 
 
@@ -137,8 +141,8 @@
 \usepackage{nameref}
 \usepackage{ifxetex,ifluatex}
 \ifxetex
-  \usepackage[setpagesize=false, % page size defined by xetex
-              unicode=false, % unicode breaks when used with xetex
+  \usepackage[setpagesize=false,        % page size defined by xetex
+              unicode=false,            % unicode breaks when used with xetex
               xetex]{hyperref}
 \else
   \usepackage[unicode=true]{hyperref}
@@ -148,16 +152,16 @@
   pagebackref=true,
   hyperindex=true,
   breaklinks=true,
-  urlcolor= ParksWildlife,
+  urlcolor=dpawblue,
   bookmarks=true,
   bookmarksopen=false,
   pdfauthor={Science and Conservation Division, Dept Parks and Wildlife, WA},
   pdftitle={{ downloadname|html2latex }},
   colorlinks=true,
-  linkcolor=ParksWildlife,
+  linkcolor=dpawblue,
   pdfborder={0 0 0}}
 
-\urlstyle{same}  % don't use monospace font for urlstyle
+\urlstyle{same}                         % don't use monospace font for urlstyle
 
 
 %------------------------------------------------------------------------------%
@@ -172,13 +176,21 @@
 %------------------------------------------------------------------------------%
 \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
-% copy-pasted HTML <span> in SDIS fields becomes \text{} in tex source, throws luatex error
+% copy-pasted HTML <span> in SDIS fields becomes \text{} in tex source
 \providecommand{\text}{}
 
 %------------------------------------------------------------------------------%
 % Custom Tikz node for SDS diagram
 %------------------------------------------------------------------------------%
-\newcommand\mynode[6][]{\node[#1] (#2){\parbox{#3\relax}{\begin{center}\textbf{#4}\\#5\\\footnotesize{#6}\end{center}}};}
+\newcommand\mynode[6][]{
+  \node[#1] (#2){
+    \parbox{#3\relax}{
+      \begin{center}
+      \textbf{#4}\\
+      #5\\
+      \footnotesize{#6}
+      \end{center}
+    }};}
 
 
 %------------------------------------------------------------------------------%
@@ -187,6 +199,7 @@
 \newenvironment{absolutelynopagebreak}
   {\par\nobreak\vfil\penalty0\vfilneg\vtop\bgroup}
   {\par\xdef\tpd{\the\prevdepth}\egroup\prevdepth=\tpd}
+
 
 %------------------------------------------------------------------------------%
 % Remove the header from odd empty pages at the end of chapters
@@ -219,7 +232,7 @@
 % Numbered chapters with mini tableofcontents
 \def\thechapter{\arabic{chapter}}
 \def\@makechapterhead#1{
-\thispagestyle{empty}
+\thispagestyle{plain}
 {\centering \normalfont\sffamily
 \ifnum \c@secnumdepth >\m@ne
 \if@mainmatter
@@ -230,9 +243,9 @@
 \node[anchor=north west,inner sep=0pt] at (0,0) {
 \includegraphics[width=\paperwidth,height=0.5\paperwidth]{\thechapterimage}};
 %------------------------------------------------------------------------------%
-% Commenting the 2 macros below removes the small contents box in the chapter heading
+% Small contents box in the chapter heading
 % Mini TOC background box
-%\fill[color=ParksWildlife!10!white,opacity=.2] (1cm,0) rectangle (
+%\fill[color=dpawblue!10!white,opacity=.2] (1cm,0) rectangle (
 %  3.5cm, % Mini TOC box width
 %  -3.5cm % Mini TOC box height
 %);
@@ -241,7 +254,7 @@
 %  \parbox[t][8cm][t]{6.5cm}{
 %    \huge\bfseries\flushleft
 %    \printcontents{l}{1}{
-%    \setcounter{tocdepth}{1} % Mini TOC level depth
+%    \setcounter{tocdepth}{1}                   % Mini TOC level depth
 %    }
 % }
 %};
@@ -249,19 +262,20 @@
 % Chapter heading
 \draw[anchor=west] (5cm,-9cm) node [
 rounded corners=20pt,
-fill=ParksWildlife!10!white,
+fill=dpawblue!10!white,
 text opacity=1,
-draw=ParksWildlife,
+draw=dpawblue,
 draw opacity=1,
 line width=1.5pt,
 fill opacity=.2,
 inner sep=12pt]{
-    \huge\sffamily\bfseries\textcolor{black}{\thechapter. #1\strut\makebox[22cm]{}
-}
+    \huge\sffamily\bfseries\textcolor{black}{
+      \thechapter. #1\strut\makebox[22cm]{}
+    }
 };
 \end{tikzpicture}};
 \end{tikzpicture}}
-\par\vspace*{240\p@} % was 230
+\par\vspace*{240\p@}                            % Push text below chapter image
 \fi
 \fi}
 
@@ -279,11 +293,10 @@ inner sep=12pt]{
 \node[anchor=north west,inner sep=0pt] at (0,0) {
   \includegraphics[width=\paperwidth,height=0.5\paperwidth]{\thechapterimage}};
 % Mini TOC background box
-%\fill[color=ParksWildlife!10!white,opacity=.2] (1cm,0) rectangle (
-%  3.5cm, % Mini TOC box width
-%  -3.5cm % Mini TOC box height
+%\fill[color=dpawblue!10!white,opacity=.2] (1cm,0) rectangle (
+%  3.5cm,                                       % Mini TOC box width
+%  -3.5cm                                       % Mini TOC box height
 %);
-
 % Mini TOC text content
 %\node[anchor=north west] at (1.1cm,.35cm) {
 %  \parbox[t][8cm][t]{6.5cm}{
@@ -294,8 +307,8 @@ inner sep=12pt]{
 %}
 %};
 \draw[anchor=west] (5cm,-9cm) node [rounded corners=20pt,
-  fill=ParksWildlife!10!white,fill opacity=.6,inner sep=12pt,text opacity=1,
-  draw=ParksWildlife,draw opacity=1,line width=1.5pt]{
+  fill=dpawblue!10!white,fill opacity=.6,inner sep=12pt,text opacity=1,
+  draw=dpawblue,draw opacity=1,line width=1.5pt]{
   \huge\sffamily\bfseries\textcolor{black}{#1\strut\makebox[22cm]{}}};
 \end{tikzpicture}};
 \end{tikzpicture}}
