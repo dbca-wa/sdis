@@ -14,17 +14,17 @@
 \setkomafont{pageheadfoot}{\normalfont}
 \begin{document}
 \frontmatter %-----------------------------------------------------------------%
-{% include "latex/includes/titlepage.tex" with original=original %}
-{% include "latex/includes/dm.tex" with original=original %}
+{% include "latex/includes/titlepage.tex"               with original=original %}
+{% include "latex/includes/dm.tex"                      with original=original %}
 \tableofcontents
 \mainmatter %------------------------------------------------------------------%
 \flushbottom
 {% include "latex/includes/story.tex" %}
-{% include "latex/includes/sds.tex"                    with original=original %}
-{% include "latex/includes/programs.tex"               with arar=original reports=original.progress_reports %}
-{% include "latex/includes/collaboration_projects.tex" with projects=original.collaboration_projects %}
-{% include "latex/includes/student_projects.tex"       with reports=original.student_reports %}
-{% include "latex/includes/student_reports.tex"        with arar=original reports=original.student_reports %}
-{% include "latex/includes/publications.tex"           with original=original %}
-{% include "latex/includes/science_projects.tex"       with reports=original.progress_reports %}
+{% include "latex/includes/sds.tex"                     with original=original %}
+{% include "latex/includes/programs.tex"                with arar=original reports=original.progress_reports %}
+{% include "latex/includes/collaboration_projects.tex"  with projects=original.collaboration_projects %}
+{% include "latex/includes/student_projects.tex"        with reports=original.student_reports %}
+{% include "latex/includes/student_reports.tex"         with arar=original reports=original.student_reports %}
+{% include "latex/includes/publications.tex"            with original=original %}
+{% include "latex/includes/science_projects.tex"        with reports=original.progress_reports %}
 \end{document}

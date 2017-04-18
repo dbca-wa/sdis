@@ -1,13 +1,18 @@
+%------------------------------------------------------------------------------%
+% Director's Message
+%------------------------------------------------------------------------------%
 {% load texify %}
-\thispagestyle{empty}
-%\chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
-%\chapter*{Director's Message}
-\begin{absolutelynopagebreak}
-\begin{flushleft}
+\thispagestyle{empty}                       % Suppress headers / footers
+\begin{absolutelynopagebreak}               % Force single page
+\null\vfil\vskip 60pt                       % 60 pt vspace
+{\huge\bfseries\centering Director's Message\par}   % Emulate heading (pre-TOC)
+\vskip 2em                                  % 2 em vspace post-heading
 {{ original.dm|html2latex }}
-\vspace{1cm}
+\vskip 1cm
 \setlength{\parindent}{0cm}
 Dr Margaret Byrne\\Director Science and Conservation\\July 2016
 \setlength{\parindent}{0.5cm}
-\end{flushleft}
 \end{absolutelynopagebreak}
+%------------------------------------------------------------------------------%
+% End Director's Message
+%------------------------------------------------------------------------------%
