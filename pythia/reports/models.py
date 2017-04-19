@@ -19,9 +19,9 @@ logger = logging.getLogger(__name__)
 
 class ARARReport(pythia_models.Audit):
     """
-    The Annual Research Activity Report.
+    The Annual Research Report.
 
-    There can only be one ARAR per year, enforced with a `unique` year.
+    There can only be one ARR per year, enforced with a `unique` year.
     """
 
     year = models.PositiveIntegerField(
@@ -70,12 +70,12 @@ class ARARReport(pythia_models.Audit):
     class Meta:
         app_label = 'pythia'
         get_latest_by = 'date_open'  # 'created'
-        verbose_name = 'ARAR'
-        verbose_name_plural = 'ARARs'
+        verbose_name = 'Annual Research Report'
+        verbose_name_plural = 'Annual Research Reports'
 
     def __str__(self):
         """The report name."""
-        return "ARAR {0}-{1}".format(self.year-1, self.year)
+        return "Annual Research Report {0}-{1}".format(self.year-1, self.year)
 
     @property
     def fullname(self):
@@ -85,7 +85,7 @@ class ARARReport(pythia_models.Audit):
     @property
     def download_title(self):
         """The PDF title."""
-        return 'Annual Research Activity Report'
+        return 'Annual Research Report'
 
     @property
     def download_subtitle(self):

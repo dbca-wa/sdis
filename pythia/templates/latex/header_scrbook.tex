@@ -16,12 +16,7 @@
 %------------------------------------------------------------------------------%
 % Headers and footers
 %------------------------------------------------------------------------------%
-\usepackage[automark,headsepline,footsepline]{scrlayer-scrpage}
-\renewcommand*{\chapterpagestyle}{empty}
-\clearpairofpagestyles
-\ihead{}
-\ohead[]{}
-\automark[]{}
+\usepackage[automark,headsepline,footsepline,plainfootsepline]{scrlayer-scrpage}
 
 %------------------------------------------------------------------------------%
 % Fonts, encoding
@@ -125,28 +120,19 @@
 
 
 %------------------------------------------------------------------------------%
-% Links, URLs
-%------------------------------------------------------------------------------%
-\usepackage[
-    colorlinks=true,
-    linktoc=all,
-    linkcolor=dpawblue,
-    urlcolor=dpawblue,
-    pdftitle={{ downloadname|html2latex }}]{hyperref}
-
-
-%------------------------------------------------------------------------------%
 % Hyperlinks
 %------------------------------------------------------------------------------%
 \usepackage{nameref}
 \usepackage{ifxetex,ifluatex}
 \ifxetex
-  \usepackage[setpagesize=false,        % page size defined by xetex
-              unicode=false,            % unicode breaks when used with xetex
-              xetex]{hyperref}
+  \usepackage[
+    setpagesize=false,        % page size defined by xetex
+    unicode=false,            % unicode breaks when used with xetex
+    xetex]{hyperref}
 \else
   \usepackage[unicode=true]{hyperref}
 \fi
+
 \hypersetup{
   backref=true,
   pagebackref=true,
@@ -232,7 +218,7 @@
 % Numbered chapters with mini tableofcontents
 \def\thechapter{\arabic{chapter}}
 \def\@makechapterhead#1{
-\thispagestyle{plain}
+%\thispagestyle{plain}
 {\centering \normalfont\sffamily
 \ifnum \c@secnumdepth >\m@ne
 \if@mainmatter
@@ -283,7 +269,7 @@ inner sep=12pt]{
 % Unnumbered chapters without mini tableofcontents
 %------------------------------------------------------------------------------%
 \def\@makeschapterhead#1{
-\thispagestyle{plain}
+%\thispagestyle{plain}
 {\centering \normalfont\sffamily
 \ifnum \c@secnumdepth >\m@ne
 \if@mainmatter

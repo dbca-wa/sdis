@@ -1,30 +1,25 @@
 {% load pythia_base texify %}
 {% include "latex/header_scrbook.tex" with print=false %}
 {% url original.opts|pythia_urlname:"change" original.pk as original_change %}
-% Headers and Footers ---------------------------------------------------------%
-\automark{section}
-\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}}}
-\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}} % center header TODO ONLINE ONLY
-\ohead{\href{https://www.dpaw.wa.gov.au/about-us/science-and-research}{
-\includegraphics[height=6mm, keepaspectratio]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
-\ifoot{} % inner footer
-\cfoot{} % center footer
-\ofoot{\pagemark} % outer footer
-\pagestyle{scrheadings}
-\setkomafont{pageheadfoot}{\normalfont}
+{% include "latex/includes/scrheadings.tex" %}
 \begin{document}
 \frontmatter %-----------------------------------------------------------------%
+\pagestyle{empty}
+\pagenumbering{roman}
 {% include "latex/includes/titlepage.tex"               with original=original %}
 {% include "latex/includes/dm.tex"                      with original=original %}
+\pagestyle{plain}
 \tableofcontents
 \mainmatter %------------------------------------------------------------------%
 \flushbottom
+\pagestyle{scrheadings}
+\pagenumbering{arabic}
 {% include "latex/includes/story.tex" %}
 {% include "latex/includes/sds.tex"                     with original=original %}
 {% include "latex/includes/programs.tex"                with arar=original reports=original.progress_reports %}
-% include "latex/includes/collaboration_projects.tex"  with projects=original.collaboration_projects %}
-% include "latex/includes/student_projects.tex"        with reports=original.student_reports %}
+{% include "latex/includes/collaboration_projects.tex"  with projects=original.collaboration_projects %}
+{% include "latex/includes/student_projects.tex"        with reports=original.student_reports %}
 {% include "latex/includes/student_reports.tex"         with arar=original reports=original.student_reports %}
-% include "latex/includes/publications.tex"            with original=original %}
-% include "latex/includes/science_projects.tex"        with reports=original.progress_reports %}
+{% include "latex/includes/publications.tex"            with original=original %}
+{% include "latex/includes/science_projects.tex"        with reports=original.progress_reports %}
 \end{document}
