@@ -1,7 +1,6 @@
 {% load pythia_base texify %}
 {% include "latex/header_scrbook.tex" with print=false %}
 {% url original.opts|pythia_urlname:"change" original.pk as original_change %}
-{% include "latex/includes/scrheadings.tex" %}
 \begin{document}
 \frontmatter %-----------------------------------------------------------------%
 \pagestyle{empty}
