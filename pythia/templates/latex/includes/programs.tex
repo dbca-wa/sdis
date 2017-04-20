@@ -1,6 +1,7 @@
 {% load texify %}
 \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
 \chapter*{Report on research activities}
+\phantomsection                         % fix pageref from TOC
 \addcontentsline{toc}{chapter}{Report on research activities}
 \chaptermark{Research Activities}
 
@@ -11,15 +12,16 @@
 {% for program_reports in report_list %}
   {% with program_reports.grouper as program %}
     \section*{% templatetag openbrace %}{{ program.name|striptags }}}
-    \addcontentsline{toc}{chapter}{% templatetag openbrace %}{{ program.name|striptags }}}
+    \phantomsection                         % fix pageref from TOC
+    \addcontentsline{toc}{section}{% templatetag openbrace %}{{ program.name|striptags }}}
     \sectionmark{% templatetag openbrace %}{{ program.name|striptags }}}
 
-    \subsubsection*{Program Leader: {% if program.name == "Biogeography" %}Lesley Gibson and {% endif %}{{ program.program_leader.get_full_name|striptags }}}
+    \subsubsection*{Program Leader: {{ program.program_leader.get_full_name|striptags }}}
     {\large {{ program.introduction|html2latex }}}
 
     {% for report in program_reports.list %}
       {% include "latex/includes/project.tex" with project=report.project %}
     {% endfor %}
-    \newpage
+    \newpage                                    % Page break after SCD programs
   {% endwith %}
 {% endfor %}

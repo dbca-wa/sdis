@@ -23,10 +23,12 @@
     \raggedbottom                           % align top
     %\vskip{3 mm}                           % vertical space after HRule
     \subsection*{% templatetag openbrace %}{{ project.title|html2latex }}}
-    \addcontentsline{toc}{section}%
+    \phantomsection                         % fix pageref from TOC
+    \addcontentsline{toc}{subsection}%
         {% templatetag openbrace %}{{ project.title|html2latex }}}
-    \label{sec:{{ report.project.project_year_number }}}
     {{ project.project_type_year_number }}
+    \label{sec:{{ report.project.project_year_number }}}
+    %% placing the label after some content sets the internal pageref correctly
     \newline
     {% if stp == "true" %}
     Parks and Wildlife Scientist:
