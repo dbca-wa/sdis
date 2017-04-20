@@ -2,31 +2,37 @@
 {% url project.opts|pythia_urlname:'change' project.pk|pythia_urlquote as project_change %}
 %% Project showcase -----------------------------------------------------------%
 \vskip 2em
-\adjustbox{valign=t}{\begin{minipage}{0.3\textwidth}      % begin column 30% width}
+\adjustbox{valign=t}{\begin{minipage}{0.3\textwidth} % begin column 30% width
     %\begin{flushleft}
     {% if project.image %}              % insert project image or link to add one
     %% we are depending on MEDIA_ROOT being symlinked to the report directory
-    \includegraphics[width=\linewidth]{% templatetag openbrace %}.{{ project.image.url }}}
+    \includegraphics[width=\linewidth]%
+        {% templatetag openbrace %}.{{ project.image.url }}}
     {% else %}
-    \includegraphics[width=\linewidth]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/intertidal.jpg}
-    \href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}{Change thumbnail}
+    \includegraphics[width=\linewidth]%
+        {% templatetag openbrace %}{{ STATIC_ROOT }}/img/intertidal.jpg}
+    \href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}%
+        {Change thumbnail}
     {% endif %}
     \vfill
     %\end{flushleft}
 \end{minipage}}%
 \hfill
 \adjustbox{valign=t}{\begin{minipage}[t]{0.65\linewidth}
-    \begin{flushleft}                   % begin justify left
-    \raggedbottom                       % align top
-    %\vspace{3 mm}                       % vertical space after HRule
+    \begin{flushleft}                       % begin justify left
+    \raggedbottom                           % align top
+    %\vskip{3 mm}                           % vertical space after HRule
     \subsection*{% templatetag openbrace %}{{ project.title|html2latex }}}
-    \addcontentsline{toc}{section}{% templatetag openbrace %}{{ project.title|html2latex }}}
+    \addcontentsline{toc}{section}%
+        {% templatetag openbrace %}{{ project.title|html2latex }}}
     \label{sec:{{ report.project.project_year_number }}}
     {{ project.project_type_year_number }}
     \newline
     {% if stp == "true" %}
-    Parks and Wildlife Scientist: {{ project.supervising_scientist_list_plain|html2latex }}\\
-    Student: {{ project.student_list_plain|html2latex }} ({{ project.get_level_display|striptags }})\\
+    Parks and Wildlife Scientist:
+    {{ project.supervising_scientist_list_plain|html2latex }}\\
+    Student: {{ project.student_list_plain|html2latex }}
+    ({{ project.get_level_display|striptags }})\\
     University Academics: {{ project.academic_list_plain|safe|html2latex }}
     %\end{absolutelynopagebreak}
     {% else %}

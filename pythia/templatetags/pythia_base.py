@@ -127,7 +127,8 @@ def get_version_info():
 
 
 @register.inclusion_tag('latex/includes/as_latex.tex')
-def as_latex(original, field, tag='section'):
+def as_latex(original, field, tag='section', show_heading=True):
+    """Render a text field as Latex paragraph with heading."""
     text = getattr(original, field)
     heading = force_str(original._meta.get_field(field).verbose_name)
     return {
@@ -135,7 +136,8 @@ def as_latex(original, field, tag='section'):
         'text': text,
         'heading': heading,
         'opts': original._meta,
-        'tag': tag, }
+        'tag': tag,
+        'show_heading': show_heading}
 
 
 @register.inclusion_tag('latex/includes/as_latex_table.tex')

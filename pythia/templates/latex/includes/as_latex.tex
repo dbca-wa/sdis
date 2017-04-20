@@ -1,3 +1,5 @@
 {% load texify %}
-\{{ tag }}*{% templatetag openbrace %}{{ heading|texify }}{% templatetag closebrace %}
+{% if show_heading %}
+\{{ tag }}*{% templatetag openbrace %}{{ heading|texify }}}
+{% endif %}
 {{ text|html2latex }}
