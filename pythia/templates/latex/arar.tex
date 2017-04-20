@@ -3,11 +3,10 @@
 {% url original.opts|pythia_urlname:"change" original.pk as original_change %}
 \begin{document}
 \frontmatter %-----------------------------------------------------------------%
-\pagestyle{empty}
+\pagestyle{plain}
 \pagenumbering{roman}
 {% include "latex/includes/titlepage.tex"               with original=original %}
 {% include "latex/includes/dm.tex"                      with original=original %}
-\pagestyle{plain}
 \tableofcontents
 \mainmatter %------------------------------------------------------------------%
 \flushbottom

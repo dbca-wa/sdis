@@ -5,6 +5,7 @@
     twoside,                                % PRINT Binding Correction
     % oneside,                              % ONLINE
     headings=openany,                       % open chapters on odd and even pages
+    open=any,
     BCOR=7mm,                               % PRINT Binding Correction
     %DIV=13,    % typearea 161.54mm x 228.46mm, top 22.85mm, inner 16.15mm
     %DIV=14,    % 165.00 233.36 21.21 15.00
@@ -17,20 +18,20 @@
 % Headers and footers
 %------------------------------------------------------------------------------%
 \usepackage[automark,headsepline,footsepline,plainfootsepline]{scrlayer-scrpage}
-\pagestyle{scrheadings}
-\clearscrheadfoot
 \automark*[section]{}
 \addtokomafont{pageheadfoot}{\normalfont\footnotesize\sffamily} % Don't italicise
 \renewcommand{\chaptermark}[1]{\markleft{#1}{}}     % Chapter: suppress numbering
 \renewcommand{\sectionmark}[1]{\markright{#1}{}}    % Section: suppress numbering
+
 % Header (inner, center, outer)
 \ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}}}
 %\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}}
 \ohead{\href{https://www.dpaw.wa.gov.au/about-us/science-and-research}{\includegraphics[height=6mm, keepaspectratio]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
+
 % Footer (inner, center, outer)
-\ifoot{\RaggedRight\leftmark}       % Chapter
-\cfoot{\RaggedLeft\rightmark}       % Section
-\ofoot{\bfseries\thepage}           % Page number
+\ifoot{\RaggedRight\leftmark}                       % Chapter
+\cfoot{\RaggedLeft\rightmark}                       % Section
+\ofoot[\bfseries\thepage]{\bfseries\thepage}        % Page number (also [plain])
 
 %------------------------------------------------------------------------------%
 % Fonts, encoding

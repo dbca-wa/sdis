@@ -2,10 +2,12 @@
 % Service Delivery Structure
 %------------------------------------------------------------------------------%
 {% load texify %}
+\chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
 \chapter*{Service Delivery Structure}
 \phantomsection                         % fix pageref from TOC
 \addcontentsline{toc}{chapter}{Service Delivery Structure}
 \chaptermark{Service Delivery Structure}
+\sectionmark{}
 
 %% http://tex.stackexchange.com/questions/170154/organisation-chart-in-latex-using-tikz
 \begin{tikzpicture}[every node/.style={draw, rounded corners=2pt, font=\sffamily, minimum height=2cm},>=latex]

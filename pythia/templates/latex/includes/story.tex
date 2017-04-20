@@ -1,10 +1,13 @@
+%------------------------------------------------------------------------------%
+% Story
+%------------------------------------------------------------------------------%
 {% load texify %}
 \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
 \chapter*{Students name and track Pilbara turtles}
+\phantomsection                         % fix pageref from TOC
 \addcontentsline{toc}{chapter}{Students name and track Pilbara turtles}
-\label{chap:story}
-\chaptermark{}
-
+\chaptermark{Story}
+\sectionmark{}
 
 LeBron and Sandy Shellington are just two of the creative names school students
 from Karratha and Ashburton have given a group of nesting marine turtles. The
@@ -49,3 +52,6 @@ Shellington, named by Paraburdoo Primary School, travelled from the Montebello
 Islands, to the western edge of the Dampier Archipelago, back to the Montes,
 across to above Cape Preston, back to the Montes before returning to the
 archipelago."
+%------------------------------------------------------------------------------%
+% End Story
+%------------------------------------------------------------------------------%
