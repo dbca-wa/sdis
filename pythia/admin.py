@@ -580,7 +580,7 @@ class DownloadAdminMixin(ModelAdmin):
             disposition = "attachment"
 
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = '{0}; filename="{1}"'.format(
+        response['Content-Disposition'] = '{0}; filename="{1}.pdf"'.format(
             disposition, downloadname)
 
         output = render_to_string(

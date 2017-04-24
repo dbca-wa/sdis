@@ -52,14 +52,14 @@
 %------------------------------------------------------------------------------%
 % Chapter and section headings
 %------------------------------------------------------------------------------%
-\let\raggedchapter\centering
-\addtokomafont{chapter}{\center}
-\addtokomafont{section}{\center\LARGE}
+%\let\raggedchapter\centering
+%\addtokomafont{chapter}{\center}
+\addtokomafont{section}{\LARGE} %\center
 
 % Spacing of headings
-%\RedeclareSectionCommand[afterskip=3pt]{section}       % less space after section
+\RedeclareSectionCommand[afterskip=4pt]{section}       % less space after section
 %\RedeclareSectionCommand[beforeskip=0cm]{subsection}   % less space between HRule and project name
-%\RedeclareSectionCommand[afterskip=0.1\baselineskip]{subsubsection} % less space after progressreport subheadings
+\RedeclareSectionCommand[afterskip=0.1\baselineskip]{subsubsection} % less space after progressreport subheadings
 
 
 %------------------------------------------------------------------------------%
@@ -108,6 +108,7 @@
 \definecolor{dpawblue}{RGB}{35,97,146}          % Pantone 647
 \definecolor{dpaworange}{RGB}{237,139,0}        % Pantone 144
 \definecolor{dpawgreen}{RGB}{116,170,80}        % Pantone 7489
+\definecolor{dpawred}{RGB}{124,46,44}           % Paul's suggestion
 
 % bootstrap colours
 \definecolor{successbg}{RGB}{223,240,216}
