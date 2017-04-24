@@ -6,10 +6,12 @@
 \adjustbox{valign=t}{\begin{minipage}{0.3\textwidth} % begin column 30% width
     {% if project.image %}            % insert project image or link to add one
     %% we are depending on MEDIA_ROOT being symlinked to the report directory
-    \includegraphics[width=\linewidth, frame]{.{{ project.image.url }}}
+    \href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}{%
+    \includegraphics[width=\linewidth, frame]{.{{ project.image.url }}}}
     {% else %}
-    \includegraphics[width=\linewidth, frame]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/intertidal.jpg}
-    \href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}{Change thumbnail}
+    \href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}{%
+    \includegraphics[width=\linewidth, frame]{% templatetag openbrace %}%
+    {{ STATIC_ROOT }}/img/intertidal.jpg}}
     {% endif %}
     \vfill
 \end{minipage}}%
@@ -19,11 +21,13 @@
     \raggedbottom                           % align top
     \subsection*{% templatetag openbrace %}{{ project.title|html2latex }}}
     \phantomsection                         % fix pageref from TOC
-    \addcontentsline{toc}{subsection}{% templatetag openbrace %}{{ project.title|html2latex }}}
+    \addcontentsline{toc}{subsection}{% templatetag openbrace %}%
+    {{ project.title|html2latex }}}
     {{ project.project_type_year_number }}
     \label{sec:{{ report.project.project_year_number }}}
     %% placing the label after some content sets the internal pageref correctly
     \newline
+    \vskip 3pt
     {% if stp == "true" %}                  % Minipage to center colons
     \adjustbox{valign=t}{\begin{minipage}{0.2\textwidth}
     \begin{flushright}
@@ -36,7 +40,8 @@
     \adjustbox{valign=t}{\begin{minipage}[t]{0.78\linewidth}
     \begin{flushleft}
     {{ project.supervising_scientist_list_plain|html2latex }}\\
-    {{ project.student_list_plain|html2latex }}~({{ project.get_level_display|striptags }})\\
+    {{ project.student_list_plain|html2latex }}~%
+    ({{ project.get_level_display|striptags }})\\
     {{ project.academic_list_plain|safe|html2latex }}
     \end{flushleft}
     \end{minipage}}
