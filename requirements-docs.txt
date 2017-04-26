@@ -94,3 +94,4 @@ pypandoc
 Unidecode
 
 gunicorn
+django-wsgiserver>=0.8.0rc1
