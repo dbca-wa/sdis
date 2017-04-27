@@ -70,7 +70,6 @@ Pillow
 pydot
 pyparsing
 sorl-thumbnail==12.3
-pgmagick==0.6.5
 
 # Forms and widgets
 django-crispy-forms==1.4.0
