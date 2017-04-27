@@ -127,8 +127,26 @@
               <div class="panel-body">
 
                 {% for report in original.student_reports %}
+                {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
                 <div class="panel panel-default">
                   <div class="panel-heading">
+                      <div class="row">
+                      <div class="col-sm-3">
+                          {% if report.project.image %}
+                          <img src="{{ report.project.image.url }}"
+                            class="media-object" alt="Project logo" width="100%">
+                          {% else %}
+                          <a onclick="return showAddAnotherPopup(this);"
+                            type="button"
+                            class="btn btn-primary btn-xs pull-right"
+                            href="{{ project_change }}"
+                            title="Edit team list or project title">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                            &nbsp;Add thumbnail image</a>
+                          {% endif %}
+                      </div>
+                      <div class="col-sm-9">
+
                     <span class="label label-{{ report.status_label }} pull-left">{{ report.get_status_display }}</span>
                     <h4 class="panel-title">
                       <a data-toggle="collapse" data-parent="#acc-stp"
@@ -136,11 +154,13 @@
                         <span class="text-{{ report.status_label }}">&nbsp;{{ report.project.project_name_html|safe }}</span>
                       </a>
                     </h4>
+                    </div>
+                    </div>
                   </div><!-- /.panel-heading -->
                   <div id="collapse-stp-{{ report.project.pk }}" class="panel-collapse collapse">
                     <div class="panel-body">
                     <div class="col-md-12">
-                      {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
+
 
                       <div class="row" id="ov-stp-prj{{report.project.pk}}-title">
                         <a onclick="return showAddAnotherPopup(this);"
