@@ -1,6 +1,4 @@
 Django==1.6.5       # rq.filter: >=1.6,<1.7
-#Django==1.7.11       # rq.filter: >=1.7,<1.8
-#Django>=1.8,<1.9
 
 # DPaW custom
 https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
@@ -13,20 +11,14 @@ https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
 # Database, models
 django-contrib-postgres
 django-model-utils
-#==2.0.3
-django-polymorphic==0.5.3
+django-polymorphic==1.1
 djorm-pgarray==1.2
-
 djorm-ext-pgarray
-#==0.10
-
 South==0.8.4
 #-e git://github.com/lukesneeringer/django-pgfields.git#egg=django-pgfields
 
-
 diff-match-patch==20110725.1
-django-appconf==0.6
-django-auth-ldap==1.2.0
+
 django-bootstrap-pagination==1.5.0
 django-contrib-comments==1.5
 django-cors-headers==0.12
@@ -35,7 +27,6 @@ django-extra-views==0.6.4
 django-guardian==1.2.0
 django-immutablemodel==0.3.4
 django-mail-templated==2.6.2
-django-markup-deprecated==0.0.3
 django-reversion==1.8.0
 django-taggit==0.12
 factory-boy==2.3.1
@@ -44,22 +35,40 @@ pystache==0.5.4
 python-magic==0.4.6
 semantic-version==2.3.0
 
-# Transitions
-django-fsm==2.3.0
-django-fsm-log
-
 # API
 djangorestframework==2.3.13
 django-rest-swagger==0.1.14
 django-filter==0.7
 
+# Auth
+django-auth-ldap==1.2.0
+
 # Export to CSV
-django_tablib
+django_tablib==3.2
 
 # Comments
 # django-disqus
 # provides:
 # six
+
+# DevOps
+argparse
+django-confy
+django-wsgiserver>=0.8.0rc1
+Fabric
+gunicorn
+wsgiref==0.1.2
+pipdeptree
+django-appconf==0.6
+
+# Docs
+Sphinx
+pycallgraph
+graphviz
+mock
+Pillow
+pydot
+pyparsing
 
 # Forms and widgets
 django-crispy-forms==1.4.0
@@ -68,6 +77,17 @@ Django-Select2==4.2.2
 django-smart-selects
 django-uni-form==0.9.0
 humanize==0.5
+
+# Latex, Markdown, JSON, XML, YAML
+django-markup-deprecated==0.0.3
+lxml==3.7.3
+beautifulsoup4==4.5.3
+django-tinymce==1.5.2
+html2text==2016.9.19
+html5lib==0.999999999
+pyenchant==1.6.8
+pypandoc==1.4
+Unidecode==0.04.16
 
 # Static files
 #static==1.0.2
@@ -87,34 +107,9 @@ django-braces>=1.8.0
 jinja2>=2.7.3
 webtemplate-dpaw==0.3
 
-# Latex, Markdown, JSON, XML, YAML
-lxml==3.3.5
-beautifulsoup4==4.3.2
-django-tinymce==1.5.2
-html2text==2014.4.5
-html5lib==0.999
-pyenchant==1.6.5
-pypandoc==0.9.7
-Unidecode==0.04.16
-
-# DevOps
-argparse==1.2.1
-django-confy>=1.0.4
-django-wsgiserver>=0.8.0rc1
-Fabric>=1.10.1
-gunicorn==18.0
-wsgiref==0.1.2
-pipdeptree
-# Werkzeug>=0.10.4
-
-# Docs
-Sphinx
-pycallgraph==1.0.1
-graphviz>=0.4
-mock
-Pillow==2.4.0
-pydot==1.0.2
-pyparsing
+# Transitions
+django-fsm==2.3.0
+django-fsm-log
 
 # Testing and Debugging
 django-debug-toolbar==1.1
