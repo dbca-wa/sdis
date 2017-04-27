@@ -109,6 +109,7 @@
 {% url 'admin:pythia_user_password_change' request.user.pk as change_password %}
 {% url 'admin:update_cache' as update_cache %}
 {% url 'admin:batch_approve_progressreports' as batch_approve_progressreports %}
+{% url 'admin:batch_resample_images' as batch_resample_images %}
 <!-- /Application navigation links -->
 
 {% block body %}
@@ -300,6 +301,12 @@
                     title="Approve all Progress Reports that are sitting with the Directorate.">
                     <span class="glyphicon glyphicon-refresh text-info"></span>&nbsp;
                     <span class="text-info">Batch approve all Progress Reports</span></a></li>
+                <li><a href="{{ batch_resample_images }}" id="nav-batch_resample"
+                    title="Resample all project images to sane sizes.">
+                    <span class="glyphicon glyphicon-refresh text-info"></span>&nbsp;
+                    <span class="text-info">Batch resample all Project images</span></a></li>
+
+
           </ul>
         </li>
         </li><!-- /li#nav-adminitems -->

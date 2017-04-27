@@ -1,5 +1,6 @@
 {% load texify pythia_base %}
 {% url project.opts|pythia_urlname:'change' project.pk|pythia_urlquote as project_change %}
+{% with project.title|html2latex as project_title %}
 %% Project showcase -----------------------------------------------------------%
 \vskip 2em
 \noindent
@@ -19,12 +20,11 @@
 \adjustbox{valign=t}{\begin{minipage}[t]{0.65\linewidth}
     \begin{flushleft}                       % begin justify left
     \raggedbottom                           % align top
-    \subsection*{% templatetag openbrace %}{{ project.title|html2latex }}}
+    \subsection*{% templatetag openbrace %}{{ project_title }}}
     \phantomsection                         % fix pageref from TOC
-    \addcontentsline{toc}{subsection}{% templatetag openbrace %}%
-    {{ project.title|html2latex }}}
+    \addcontentsline{toc}{subsection}{% templatetag openbrace %}{{ project_title }}}
     {{ project.project_type_year_number }}
-    \label{sec:{{ report.project.project_year_number }}}
+    \label{sec:{{ project.project_year_number }}}
     %% placing the label after some content sets the internal pageref correctly
     \newline
     \vskip 3pt
@@ -55,3 +55,4 @@
 {% if project.progressreport %}
 {% include project.progressreport.template_tex with progressreport=project.progressreport %}
 {% endif %}
+{% endwith %}

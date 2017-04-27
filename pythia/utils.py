@@ -77,6 +77,14 @@ def replace_resampled(image_path,
     return im_resized
 
 
+def resample_all_project_images():
+    """Replace_resampled all Project images."""
+    from pythia.projects.models import Project
+    ii = [replace_resampled(p.image.path)
+          for p in Project.objects.all() if p.image]
+    return ii
+
+
 # -----------------------------------------------------------------------------#
 # Logging
 def snitch(msg):

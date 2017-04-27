@@ -208,7 +208,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         blank=True, null=True,
         help_text="Upload an image which represents the meaning, shows"
                   " a photogenic detail, or the team of the project."
-                  "The image, if too large, will be resized to 600pt width."
+                  " The image, if too large, will be resized to 600pt width."
                   " The original aspect ratio will be preserved."
                   " Aim for an aspect ratio (width to height) of 1.5 to 1.")
     tagline = models.TextField(
