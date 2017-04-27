@@ -35,10 +35,28 @@
             <div class="panel-group" id="acc-{{ program.pk }}">
 
               {% for report in program_reports.list %}
+              {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
               <div class="panel panel-default">
                 <div class="panel-heading">
+                    <div class="row">
+                    <div class="col-sm-3">
+                        {% if report.project.image %}
+                        <img src="{{ report.project.image.url }}"
+                          class="media-object" alt="Project logo" width="100%">
+                        {% else %}
+                        <a onclick="return showAddAnotherPopup(this);"
+                          type="button"
+                          class="btn btn-primary btn-xs pull-right"
+                          href="{{ project_change }}"
+                          title="Edit team list or project title">
+                          <i class="glyphicon glyphicon-pencil"></i>
+                          &nbsp;Add thumbnail image</a>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-9">
+
                   <span class="label label-{{ report.status_label }} pull-left">{{ report.get_status_display }}</span>
-                  <span class="text-muted">
+                  <span class="text-muted pull-rirght">
                       <small>&nbsp;last updated {{ report.modified|naturaltime }} by {{ report.modifier.get_full_name }}</small>
                   </span>
                   <h4 class="panel-title">
@@ -47,12 +65,14 @@
                       <span class="text-{{ report.status_label }}">{{ report.project.project_name_html|safe }}</span>
                     </a>
                   </h4>
+                  </div>
+                  </div>
                 </div><!-- /.panel-heading -->
                 <div id="collapse-{{ program.pk }}-{{ report.project.pk }}" class="panel-collapse collapse">
                   <div class="panel-body">
 
                     <div class="col-md-12">
-                      {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
+
 
                       <div class="row" id="ov-prg{{program.pk}}-prj{{report.project.pk}}-title">
                         <a onclick="return showAddAnotherPopup(this);"
