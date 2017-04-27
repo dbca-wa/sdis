@@ -1,14 +1,7 @@
-{% load thumbnail %}
 <div class="row">
 <div class="col-xs-3">
     {% if project.image %}
     <a class="thumbnail" href="#">
-        <!--
-        {% thumbnail project.image "100x100" crop="center" as im %}
-        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"
-            class="media-object" alt="Project logo">
-        {% endthumbnail %}
-        -->
         <img src="{{ project.image.url }}" class="media-object" alt="Project logo">
     </a>
     {% else %}
