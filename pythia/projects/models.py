@@ -206,8 +206,11 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     image = models.ImageField(
         upload_to=projects_upload_to,
         blank=True, null=True,
-        help_text="Upload an image which represents the meaning, or shows"
-                  " a nice detail, or the team of the project.")
+        help_text="Upload an image which represents the meaning, shows"
+                  " a photogenic detail, or the team of the project."
+                  "The image, if too large, will be resized to 600pt width."
+                  " The original aspect ratio will be preserved."
+                  " Aim for an aspect ratio (width to height) of 1.5 to 1.")
     tagline = models.TextField(
         blank=True, null=True,
         help_text="Sell the project in one sentence to a wide audience.")
