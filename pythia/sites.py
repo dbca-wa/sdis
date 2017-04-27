@@ -35,7 +35,7 @@ from pythia.reports.admin import ARARReportAdmin
 from pythia.reports.models import ARARReport
 from pythia.views import (
     CommentUpdateView, comments_delete, comments_post, update_cache,
-    arar_dashboard, batch_approve_progressreports, batch_resample_images)
+    arar_dashboard, batch_approve_progressreports)
 
 
 class AuditSite(admin.AdminSite):
@@ -141,12 +141,6 @@ class PythiaSite(AuditSite):
             url(r'^action/batch-approve-progressreports/$',
                 batch_approve_progressreports,
                 name="batch_approve_progressreports"),
-
-
-            url(r'^action/batch-resample-images/$',
-                batch_resample_images,
-                name="batch_resample_images"),
-
 
             url(r'^arar_dashboard',
                 arar_dashboard,

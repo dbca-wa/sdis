@@ -100,27 +100,6 @@ def batch_approve_progressreports(request):
 
 
 @csrf_exempt
-def batch_resample_images(request):
-    """Batch resample project images.
-
-    This is handy to run before typesetting an ARAR document.
-    """
-    if not request.user.is_superuser:
-        messages.error(request,
-                       "Only superusers can batch-resample Project images!")
-        return HttpResponseRedirect("/")
-
-    from pythia.utils import resample_all_project_images
-    ii = resample_all_project_images()
-
-    messages.success(
-        request,
-        "Batch-resampled {0} Project images".format(len(ii)))
-
-    return HttpResponseRedirect("/")
-
-
-@csrf_exempt
 def spell_check(request):
     """Spellcheck view."""
     import enchant

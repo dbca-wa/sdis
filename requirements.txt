@@ -69,6 +69,7 @@ mock
 Pillow
 pydot
 pyparsing
+django-resized
 
 # Forms and widgets
 django-crispy-forms==1.4.0

@@ -3,7 +3,7 @@
 An environment variable `DEBUG` toggles dev and prod settings within this file.
 Tests run by `fab test` explicitly use `sdis/test_settings.py`.
 """
-from confy import env, database, cache
+from confy import env, database  # cache
 import ldap
 import os
 import sys
@@ -22,7 +22,8 @@ CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
 GOOGLE_ANALYTICS_KEY = env('GOOGLE_ANALYTICS_KEY', default='')
 
-CACHES = {'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', }}
+CACHES = {'default':
+          {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', }}
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -398,3 +399,7 @@ if DEBUG:
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
         )
+
+DJANGORESIZED_DEFAULT_SIZE = [600, 600]
+# DJANGORESIZED_DEFAULT_QUALITY = 75
+DJANGORESIZED_DEFAULT_KEEP_META = True

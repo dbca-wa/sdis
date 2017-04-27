@@ -30,6 +30,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.safestring import mark_safe
 
 from django_fsm import FSMField, transition
+from django_resized import ResizedImageField
 from polymorphic import PolymorphicModel, PolymorphicManager
 
 from pythia.documents.models import (
@@ -37,7 +38,7 @@ from pythia.documents.models import (
 from pythia.models import ActiveGeoModelManager, Audit, ActiveModel
 from pythia.models import Program, WebResource, Division, Area, User
 from pythia.reports.models import ARARReport
-from pythia.utils import snitch, replace_resampled
+from pythia.utils import snitch
 
 logger = logging.getLogger(__name__)
 
@@ -203,7 +204,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     title = models.TextField(
         verbose_name=_("Project title"),
         help_text=_("The project title with formatting if required."))
-    image = models.ImageField(
+    image = ResizedImageField(
         upload_to=projects_upload_to,
         blank=True, null=True,
         help_text="Upload an image which represents the meaning, shows"
@@ -366,10 +367,6 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         if not self.number:
             self.number = self.get_next_available_number()
         super(Project, self).save(*args, **kwargs)
-
-        if self.image:
-            i = replace_resampled(self.image.path, always=False)
-            snitch("Resampled image: {0}".format(str(i)))
 
         if created:
             self.setup()
