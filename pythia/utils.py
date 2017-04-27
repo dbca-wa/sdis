@@ -63,7 +63,7 @@ def replace_resampled(image_path,
     filepath, extension = os.path.splitext(image_path)
     im = Image.open(image_path)
 
-    if not(always) and im.width < width:
+    if not(always) and im.width <= width:
         return im
 
     if aspect_ratio:

@@ -37,7 +37,7 @@ from pythia.documents.models import (
 from pythia.models import ActiveGeoModelManager, Audit, ActiveModel
 from pythia.models import Program, WebResource, Division, Area, User
 from pythia.reports.models import ARARReport
-from pythia.utils import snitch
+from pythia.utils import snitch, replace_resampled
 
 logger = logging.getLogger(__name__)
 
@@ -364,6 +364,10 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             self.number = self.get_next_available_number()
         super(Project, self).save(*args, **kwargs)
 
+        if self.image:
+            i = replace_resampled(self.image.path, always=False)
+            snitch("Resampled image: {0}".format(str(i)))
+
         if created:
             self.setup()
 
@@ -667,6 +671,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             return self.submitters
         else:
             return set()
+
     # -------------------------------------------------------------------------#
     # Project labels and short codes
     #
