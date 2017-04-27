@@ -11,7 +11,7 @@ https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
 # Database, models
 django-contrib-postgres
 django-model-utils
-django-polymorphic==1.1
+django-polymorphic==0.5.3
 djorm-pgarray==1.2
 djorm-ext-pgarray
 South==0.8.4
@@ -61,7 +61,7 @@ wsgiref==0.1.2
 pipdeptree
 django-appconf==0.6
 
-# Docs
+# Docs, images, thumbnails
 Sphinx
 pycallgraph
 graphviz
@@ -69,6 +69,8 @@ mock
 Pillow
 pydot
 pyparsing
+sorl-thumbnail==12.3
+pgmagick==0.6.5
 
 # Forms and widgets
 django-crispy-forms==1.4.0

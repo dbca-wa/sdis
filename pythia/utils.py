@@ -28,9 +28,57 @@ from django.template import Context
 # from django.utils.safestring import mark_safe
 # from guardian.shortcuts import assign_perm
 
+from PIL import Image
+
 logger = logging.getLogger(__name__)
 
 
+# -----------------------------------------------------------------------------#
+# Image processing
+def replace_resampled(image_path,
+                      width=600,
+                      aspect_ratio=None,
+                      always=True):
+    """Resample an image to a JPEG of specified size (width in pt).
+
+    The width default of 600 pt will achieve a 300 dpi resolution for project
+    thumbnails in the annual report, which come out as about 5 cm wide.
+
+    If the aspect ratio is given, the image will be resized to it. Otherwise,
+    the original aspect ratio is preserved.
+
+    By default, all images, even those with an original width below the
+    requested width, are resized. With parameter `always=False`, only oversized
+    images are resized.
+
+    :param image_path: The path to an image, e.g. `p.image.path` for projects
+    :param width: The requested width in pt, default: 600 pt (ca 5 cm, 300 dpi)
+    :param aspect_ratio: The requested aspect ratio, optional. If not supplied,
+        the original aspect ratio will be preserved.
+    :pararm always: Whether to resample all (default: True) or only oversized
+        images (False).
+
+    :returns: Saves the resized image over original image, and returns resized.
+    """
+    filepath, extension = os.path.splitext(image_path)
+    im = Image.open(image_path)
+
+    if not(always) and im.width < width:
+        return im
+
+    if aspect_ratio:
+        target_width = int(round(float(width) / float(aspect_ratio)))
+    else:
+        original_width, original_height = map(float, im.size)
+        target_width = int(round(width / (original_width / original_height)))
+
+    im_resized = im.resize((width, target_width))
+    im_resized.save(image_path, "JPEG")
+    return im_resized
+
+
+# -----------------------------------------------------------------------------#
+# Logging
 def snitch(msg):
     """Write a message to INFO logger, if DEBUG to DEBUG logger and console."""
     if settings.DEBUG:
