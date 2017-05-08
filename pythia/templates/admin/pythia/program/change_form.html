@@ -1,0 +1,15 @@
+{% extends "admin/change_form.html" %}
+
+<!-- Project details, read-only, custom layout -->
+{% block shinythings %}
+{% if change %}
+  {% include "admin/pythia/program/shinythings.html" with program=original %}
+{% endif %}
+{% endblock shinythings %}
+
+{% block field_content_begin %}
+    <div{% if change %} class="colEditable collapse"{% endif %}>
+{% endblock %}
+{% block field_content_end %}
+    </div>
+{% endblock %}

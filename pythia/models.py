@@ -1,3 +1,4 @@
+"""Top level models for pythia."""
 from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 import copy
@@ -26,6 +27,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from pythia.middleware import get_current_user
+from django_resized import ResizedImageField
 
 # from south.modelsinspector import add_introspection_rules
 # add_introspection_rules([], ["^myapp\.stuff\.fields\.SomeNewField"])s
@@ -33,7 +35,14 @@ from pythia.middleware import get_current_user
 logger = logging.getLogger(__name__)
 
 
+def programs_upload_to(instance, filename):
+    """Create a custom upload location for user-submitted program files."""
+    return "programs/{0}/{1}".format(instance.slug, filename)
+
+
 class ActiveQuerySet(QuerySet):
+    """Cursom QuerySet."""
+
     def __init__(self, model, query=None, using=None):
         # the model needs to be defined so that we can construct our custom
         # query
@@ -77,6 +86,8 @@ class ActiveQuerySet(QuerySet):
 
 
 class ActiveGeoQuerySet(ActiveQuerySet, GeoQuerySet):
+    """Custom GeoQuerySet."""
+
     def __init__(self, model, query=None, using=None):
         # the model needs to be defined so that we can construct our custom
         # query
@@ -87,10 +98,10 @@ class ActiveGeoQuerySet(ActiveQuerySet, GeoQuerySet):
 
 
 class ActiveModelManager(models.Manager):
-    '''Exclude inactive ("deleted") objects from the query set.'''
+    """Exclude inactive ("deleted") objects from the query set."""
+
     def get_query_set(self):
-        '''Override the default queryset to filter out deleted objects.
-        '''
+        """Override the default queryset to filter out deleted objects."""
         return ActiveQuerySet(self.model)
 
     # __getattr__ borrowed from
@@ -109,14 +120,16 @@ class ActiveGeoModelManager(ActiveModelManager, geo_models.GeoManager):
 
 
 class ActiveModel(models.Model):
-    '''
+    """
+    Custom "don't really delete" Mixin.
+
     Model mixin to allow objects to be saved as 'non-current' or 'inactive',
     instead of deleting those objects.
     The standard model delete() method is overridden.
 
     "effective_from" allows 'past' and/or 'future' objects to be saved.
     "effective_to" is used to 'delete' objects (null==not deleted).
-    '''
+    """
     effective_from = models.DateTimeField(default=timezone.now)
     effective_to = models.DateTimeField(null=True, blank=True)
     objects = ActiveModelManager()
@@ -142,10 +155,10 @@ class ActiveModel(models.Model):
         return not self.is_active()
 
     def delete(self, *args, **kwargs):
-        '''
+        """
         Overides the standard model delete method; sets "effective_to" as the
         current date and time and then calls save() instead.
-        '''
+        """
         # see django.db.models.deletion.Collection.delete
         using = kwargs.get('using',
                            router.db_for_write(self.__class__, instance=self))
@@ -393,7 +406,7 @@ class Area(Audit):  # , models.PolygonModelMixin):
         (AREA_TYPE_IBRA_REGION, _("IBRA")),
         (AREA_TYPE_IMCRA_REGION, _("IMCRA")),
         (AREA_TYPE_NRM_REGION, _("Natural Resource Management Region"))
-    )
+        )
     area_type = models.PositiveSmallIntegerField(
         verbose_name=_("Area Type"), choices=AREA_TYPE_CHOICES,
         default=AREA_TYPE_RELEVANT)
@@ -426,6 +439,7 @@ class Area(Audit):  # , models.PolygonModelMixin):
 
     def get_northern_extent(self):
         return self.mpoly.extent[3] if self.mpoly else None
+
 
 class RegionManager(models.Manager):
     def get_by_natural_key(self, name):
@@ -559,7 +573,7 @@ class Division(Audit, ActiveModel):
     class Meta:
         verbose_name = _("Departmental Service")
         verbose_name_plural = _("Departmental Services")
-        ordering = ['slug','name']
+        ordering = ['slug', 'name']
 
     def __str__(self):
         return 'Service {0}: {1}'.format(self.slug, self.name)
@@ -610,12 +624,22 @@ class Program(Audit, ActiveModel):
     focus = models.TextField(
         verbose_name='Program focus',
         blank=True, null=True,
-        help_text="The program's focus as a semicolon-separated list of "
-        "key words.")
+        help_text="The program's focus as a semicolon-separated "
+        "list of keywords.")
     introduction = models.TextField(
         verbose_name='Program introduction',
         blank=True, null=True,
         help_text="The program's mission in about 150 to 300 words.")
+
+    image = ResizedImageField(
+        upload_to=programs_upload_to,
+        blank=True, null=True,
+        size=[2480, 1240],
+        help_text="Upload an image which represents the meaning, shows"
+                  " a photogenic detail, or the team of the program."
+                  " The image will be resized to 2480 (wt) x 1240 pt (ht)."
+                  " The original aspect ratio will be preserved."
+                  " Aim for an aspect ratio (width to height) of exactly 2:1.")
 
     class Meta:
         ordering = ['position', 'cost_center']
@@ -681,8 +705,8 @@ def set_smt_to_pl(sender, instance, created, **kwargs):
     added = [smt.user_set.add(x.program_leader) for x in Program.objects.all()]
     logger.info("Added all {0} current PLs to SMT.".format(len(added)))
 
-# By default, let a Program add its program leader to SMT without removing others
-# from it
+# By default, let a Program add its program leader to SMT without removing
+# others from it
 signals.post_save.connect(set_smt_to_pl, sender=Program)
 
 
@@ -728,7 +752,7 @@ class WebResourceDomain(Audit, ActiveModel):
     CATEGORY_CHOICES = (
         (CATEGORY_PROJECT, "Project related"),
         (CATEGORY_USER, "User related"),
-    )
+        )
 
     category = models.PositiveSmallIntegerField(
         max_length=200, choices=CATEGORY_CHOICES, default=CATEGORY_USER)
@@ -1021,6 +1045,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.title if (self.title and self.is_external) else ""
 
     def get_middle_initials(self):
+        """Return middle initials or an empty string."""
         i = self.middle_initials if self.middle_initials else ""
         if len(i) > 1:
             return " {0}".format(i[1:])
@@ -1028,10 +1053,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             return ""
 
     def guess_first_initial(self):
+        """Return first element of first name or an empty string."""
         return self.first_name[0] if self.first_name else ""
 
     def get_affiliation(self):
-        "Return the affiliation in parentheses if provided, or an empty string."
+        """Return the affiliation in parentheses or an empty string."""
         a = "({0})".format(self.affiliation) if self.affiliation else ""
         return a
 
@@ -1046,7 +1072,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         Middle initials bring their own prefixed whitespace.
         """
         if self.is_group:
-            full_name = "{0} {1}".format(self.group_name, self.get_affiliation())
+            full_name = "{0} {1}".format(
+                self.group_name, self.get_affiliation())
         else:
             full_name = "{0}{1} {2} {3} {4}".format(
                 self.get_title(),
@@ -1283,7 +1310,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                         res["super"].append(proj)
                     else:
                         res["regular"].append(proj)
-                        
+
             except:
                 print("Project lookup failed: " + str(x))
 

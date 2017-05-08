@@ -709,6 +709,16 @@ class ProgramAdmin(BaseAdmin, DetailAdmin):
                     'data_custodian')
         return rof
 
+    def get_breadcrumbs(self, request, obj=None, add=False):
+        """
+        Override the base breadcrumbs to add the research function list to
+        the trail.
+        """
+        return (Breadcrumb(_('Home'), reverse('admin:index')),
+                Breadcrumb(_('Divisional Programs'),
+                           reverse('admin:pythia_program_changelist'))
+                )
+
     def program_leader_name(self, obj):
         return obj.program_leader.__str__()
     program_leader_name.short_description = 'Program Leader'

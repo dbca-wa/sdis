@@ -1,0 +1,91 @@
+<div class="col-sm-12"
+    style="background: url('{% if program.image %}{{ program.image.url }}{% endif %}');
+    no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    opacity: 0.7;">
+
+    <div class="well" style="opacity: 0.7; margin-top: 20px;">
+
+        <h1 class="media-heading">{{ program|safe }}</h1>
+
+        <div>
+            <p>
+            <span class="glyphicon glyphicon-king" aria-hidden="true"></span>
+            {{ program.program_leader.fullname|striptags }}
+        </p>
+        </div>
+
+        <div>
+            <p>
+            <span class="glyphicon glyphicon-usd" aria-hidden="true"></span>
+            {{ program.finance_admin.fullname|striptags}}
+        </p>
+        </div>
+
+        <div>
+            <p>
+            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+            {{ program.data_custodian.fullname|striptags }}
+            </p>
+        </div>
+
+        <div>
+            {% if program.focus %}
+            <p>
+            <span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+            {{ program.focus|striptags }}
+            </p>
+            {% else %}This project needs some keywords!{% endif %}
+        </div>
+
+        <div>
+            {% if program.introduction %}
+            <p>
+            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+            {{ program.introduction|striptags }}
+            </p>
+            {% else %}This project needs an introduction{% endif %}
+
+        </div>
+
+    </div>
+
+</div><!--/.col-sm-12 -->
+
+<p class="row">
+  <div class="colEditable collapse in col-sm-offset-3 col-sm-6">
+      <button type="button"
+              class="btn btn-primary btn-block"
+              title="Update project details"
+              onclick="javascript:showEditable(this);">
+          <i class="glyphicon glyphicon-pencil"></i>
+          Edit program details
+      </button>
+  </div>
+</p>
+
+
+<!-- hide the submit row when the form is inactive -->
+<script type="text/javascript">
+function showEditable(el)
+{
+  $('div.colEditable').filter('.in').hide();
+  $('div.colEditable').not('.in').show();
+  $('div.navbar-fixed-bottom').show();
+}
+
+function hideEditable(el)
+{
+  $('div.colEditable').filter('.in').show();
+  $('div.colEditable').not('.in').hide();
+  $('div.navbar-fixed-bottom').hide();
+}
+
+$(function() {
+      $('div.colEditable').not('.in').hide();
+      $('div.navbar-fixed-bottom').hide();
+      });
+</script>
