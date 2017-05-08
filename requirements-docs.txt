@@ -1,12 +1,5 @@
 # Requirements for building hosted Sphinx builds
 # NOTE these requirements are duplicates of requirements.txt
-django-confy>=1.0.4
-Sphinx==1.5.5
-pycallgraph==1.0.1
-graphviz>=0.4
-Pillow==2.4.0
-pydot==1.0.2
-pyparsing==1.5.7
 mock
 
 # We'll skip libraries with dependencies on system packages not found on readthedocs.org's build environment
@@ -77,6 +70,14 @@ pipdeptree
 django-appconf==0.6
 
 # Docs, images, thumbnails
+django-resized
+Sphinx==1.5.5
+pycallgraph
+graphviz
+mock
+Pillow
+pydot
+pyparsing
 django-resized
 
 # Forms and widgets

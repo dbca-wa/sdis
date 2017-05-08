@@ -31,13 +31,9 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'sdis.dpaw.wa.gov.au',
-    'sdis.dpaw.wa.gov.au.',
     'sdis-dev.dpaw.wa.gov.au',
-    'sdis-dev.dpaw.wa.gov.au.',
     'sdis-test.dpaw.wa.gov.au',
-    'sdis-test.dpaw.wa.gov.au.',
     'sdis-uat.dpaw.wa.gov.au',
-    'sdis-uat.dpaw.wa.gov.au.',
     'static.dpaw.wa.gov.au'
     ]
 
