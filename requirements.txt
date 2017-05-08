@@ -62,7 +62,7 @@ pipdeptree
 django-appconf==0.6
 
 # Docs, images, thumbnails
-Sphinx
+Sphinx==1.5.5
 pycallgraph
 graphviz
 mock

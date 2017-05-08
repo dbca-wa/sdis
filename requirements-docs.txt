@@ -1,7 +1,7 @@
 # Requirements for building hosted Sphinx builds
 # NOTE these requirements are duplicates of requirements.txt
 django-confy>=1.0.4
-Sphinx==1.2.2
+Sphinx==1.5.5
 pycallgraph==1.0.1
 graphviz>=0.4
 Pillow==2.4.0
@@ -12,10 +12,11 @@ mock
 # We'll skip libraries with dependencies on system packages not found on readthedocs.org's build environment
 # django-auth-ldap==1.2.0
 
-Django==1.6.5
+
+Django==1.6.5       # rq.filter: >=1.6,<1.7
 
 # DPaW custom
-https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a4.tar.gz
+https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
 # provides:
 # django-confy>=1.0.4
 # django-extensions==1.3.7
@@ -24,24 +25,23 @@ https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a4.tar.gz
 
 # Database, models
 django-contrib-postgres
-django-model-utils==2.0.3
+django-model-utils
 django-polymorphic==0.5.3
-djorm-pgarray==1.0
-djorm-ext-pgarray==0.10
+djorm-pgarray==1.2
+djorm-ext-pgarray
 South==0.8.4
+#-e git://github.com/lukesneeringer/django-pgfields.git#egg=django-pgfields
 
 diff-match-patch==20110725.1
-django-appconf==0.6
+
 django-bootstrap-pagination==1.5.0
 django-contrib-comments==1.5
 django-cors-headers==0.12
 django-extra-views==0.6.4
-django-filter==0.7
-django-fsm==2.3.0
+
 django-guardian==1.2.0
 django-immutablemodel==0.3.4
-django-mail-templated==0.2.1
-django-markup-deprecated==0.0.3
+django-mail-templated==2.6.2
 django-reversion==1.8.0
 django-taggit==0.12
 factory-boy==2.3.1
@@ -53,9 +53,31 @@ semantic-version==2.3.0
 # API
 djangorestframework==2.3.13
 django-rest-swagger==0.1.14
+django-filter==0.7
+
+# Auth
+# django-auth-ldap==1.2.0
 
 # Export to CSV
-django_tablib
+django_tablib==3.2
+
+# Comments
+# django-disqus
+# provides:
+# six
+
+# DevOps
+argparse
+django-confy
+django-wsgiserver>=0.8.0rc1
+Fabric
+gunicorn
+wsgiref==0.1.2
+pipdeptree
+django-appconf==0.6
+
+# Docs, images, thumbnails
+django-resized
 
 # Forms and widgets
 django-crispy-forms==1.4.0
@@ -65,10 +87,21 @@ django-smart-selects
 django-uni-form==0.9.0
 humanize==0.5
 
+# Latex, Markdown, JSON, XML, YAML
+django-markup-deprecated==0.0.3
+lxml==3.7.3
+beautifulsoup4==4.5.3
+django-tinymce==1.5.2
+html2text==2016.9.19
+html5lib==0.999999999
+pyenchant==1.6.8
+pypandoc==1.4
+Unidecode==0.04.16
+
 # Static files
 #static==1.0.2
 dj-static
-django-compressor==1.3
+django-compressor==1.6
 django-htmlmin==0.7.0
 unipath>=1.1
 
@@ -83,15 +116,24 @@ django-braces>=1.8.0
 jinja2>=2.7.3
 webtemplate-dpaw==0.3
 
-# Latex, Markdown, JSON, XML, YAML
-lxml
-beautifulsoup4
-django-tinymce==1.5.2
-html2text
-html5lib
-pyenchant
-pypandoc
-Unidecode
+# Transitions
+django-fsm==2.3.0
+django-fsm-log
 
-gunicorn
-django-wsgiserver>=0.8.0rc1
+# Testing and Debugging
+django-debug-toolbar==1.1
+django-dtpanel-htmltidy
+django-nose==1.3
+django-pdb
+python-coveralls
+mixer
+selenium
+ipdbplugin
+
+# Linters
+flake8
+flake8-docstrings
+flake8_import_order
+flake8-todo
+pep8-naming
+radon
