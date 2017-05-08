@@ -349,6 +349,11 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False,
             },
+        'request': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True
+            },
         'sdis': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
@@ -383,6 +388,11 @@ if DEBUG:
             'propagate': True
             },
         'django.request': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True
+            },
+        'request': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
