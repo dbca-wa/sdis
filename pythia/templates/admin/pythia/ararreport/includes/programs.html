@@ -4,30 +4,65 @@
 {{ original.research_intro|safe }}
 
 {# requires reports to be sorted by program, done in ARARReport.progressreports #}
-{% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+{% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
 {% for program_reports in report_list %}
 {% with program_reports.grouper as program %}
-<div>
+<div class="row">
     {% url program.opts|pythia_urlname:'change' program.pk|pythia_urlquote as program_change %}
-    <h2 id="{{ program.opts.module_name }}:{{ program.pk }}">{{ program }}</h2>
-    <h3>Program Leader: {{ program.program_leader.get_full_name }}</h3>
-    <a href="{{ program_change }}" 
-        onclick="return showAddAnotherPopup(this);" 
-        type="button"
-        class="btn btn-primary btn-xs pull-right" 
-        title="Edit Program Leader's introduction"
-        ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit Pl's intro</a>
-        <span class="text-muted">
-          <small>last modified {{ program.modified|naturaltime }} by {{ program.modifier.get_full_name }}
-          </small>
-        </span>
-    <p>{{ program.introduction|safe }}</p>
+    <div class="col-sm-12"
+    style="background: url('{% if program.image %}{{ program.image.url }}{% endif %}');
+    background-size: cover; opacity: 1; margin-bottom: 20px;">
 
-    {% for report in program_reports.list %}
+    <div class="well" style="opacity: 0.7; margin-top: 20px;">
+
+        <h3 id="{{ program.opts.module_name }}:{{ program.pk }}"
+        class="media-heading">{{ program|safe }}
+        <a href="{{ program_change }}"
+        onclick="return showAddAnotherPopup(this);"
+        type="button"
+        class="btn btn-primary btn-xs pull-right"
+        title="Edit Program Leader's introduction"
+        ><i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit Program details</a>
+        <span class="text-muted">
+            <small>last modified {{ program.modified|naturaltime }} by {{ program.modifier.get_full_name }}
+            </small>
+        </span>
+    </h3>
+
     <div>
-        {% include "admin/pythia/ararreport/includes/project.html" with report=report %}
+        <p>
+            <span class="glyphicon glyphicon-king" aria-hidden="true"></span>
+            {{ program.program_leader.fullname|striptags }}
+        </p>
     </div>
-    {% endfor %}
+
+    <div>
+        {% if program.focus %}
+        <p>
+            <span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+            {{ program.focus|striptags }}
+        </p>
+        {% else %}This project needs some keywords!{% endif %}
+    </div>
+
+    <div>
+        {% if program.introduction %}
+        <p>
+            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+            {{ program.introduction|striptags }}
+        </p>
+        {% else %}This project needs an introduction{% endif %}
+
+    </div>
+
+</div>
+</div>
+
+{% for report in program_reports.list %}
+<div>
+    {% include "admin/pythia/ararreport/includes/project.html" with report=report %}
+</div>
+{% endfor %}
 </div>
 {% endwith %}
 {% endfor %}
