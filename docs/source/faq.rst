@@ -98,6 +98,47 @@ SDIS to remove this invisible markup.
 "understand" and preserve the invisible markup we want to get rid of.
 *Do* use simple text editors like Notepad, which actively discard invisible markup.
 
+
+How can I make my project stand out?
+====================================
+Provide a tagline, a description, and a nice thumbnail image!
+
+Tagline
+-------
+Can you sell your project in one sentence to a non-expert audience?
+
+Description
+-----------
+The description is the place to explain the project in up to three paragraphs to
+the interested reader, much like a publication's abstract.
+
+Project thumbnails
+------------------
+Project thumbnails are used as section thumbnails in the annual report
+and as thumbnails to represent the project online.
+
+* The aspect ratio should be 3:2 to 1:1 (width:height).
+* The horizontal resolution should be at least 600 pixels.
+* The vertical resolution should be at least 600 pixels.
+* Larger images will be resized automatically, preserving aspect ratio, to fit
+  a maximum width of 600 pixels and a maximum height of 600 pixels.
+* The image should not contain too much detail or too much contrast.
+
+Background images for divisional programs
+-----------------------------------------
+Program images could be used as page-width chapter images in the annual report,
+and as background images online.
+
+* The aspect ratio should be exactly 2:1 (width:height).
+* The horizontal resolution should be at least 2480 pixels.
+* The vertical resolution should be at least 1240 pixels.
+* Larger images will be resized automatically, preserving aspect ratio, to fit
+  a maximum width of 2480 pixels and a maximum height of 1240 pixels.
+* The horizon, if shown, should be as level as possible and in the middle or
+  top third - avoid the bottom third (this is where headings will be overlaid).
+* The image should not contain very dark (shady) or bright (sun glare) areas.
+
+
 What will happen when a new ARAR is kicked off?
 ===============================================
 A new Annual Research Actitivy Report (ARAR) is created every year. It will request
