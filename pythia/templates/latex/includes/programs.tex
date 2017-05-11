@@ -27,7 +27,7 @@
 
     %% RA = part, program = chapter
     {% if program.image %}
-    \chapterimage{.{{ program.image.url }}}}
+    \chapterimage{.{{ program.image.url }}}
     {% else %}
     \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
     {% endif %}
