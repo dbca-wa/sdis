@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 def programs_upload_to(instance, filename):
     """Create a custom upload location for user-submitted program files."""
-    return "programs/{0}/{1}".format(instance.slug, filename)
+    return "programs/{0}/{1}".format(instance.slug, filename.replace(" ", "_"))
 
 
 class ActiveQuerySet(QuerySet):
@@ -635,11 +635,11 @@ class Program(Audit, ActiveModel):
         upload_to=programs_upload_to,
         blank=True, null=True,
         size=[2480, 1240],
-        help_text="Upload an image which represents the meaning, shows"
-                  " a photogenic detail, or the team of the program."
-                  " The image will be resized to 2480 (wt) x 1240 pt (ht)."
-                  " The original aspect ratio will be preserved."
-                  " Aim for an aspect ratio (width to height) of exactly 2:1.")
+        help_text="Upload an image representative of the program."
+                  " Aim for a visually quiet, low contrast image."
+                  " The horizon, if shown, should be in the top third and level."
+                  " The aspect ratio (width to height) must be 2:1."
+                  " The image will be resized to max 2480 (wt) x 1240 pt (ht).")
 
     class Meta:
         ordering = ['position', 'cost_center']
