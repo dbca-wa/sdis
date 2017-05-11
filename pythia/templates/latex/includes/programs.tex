@@ -2,11 +2,18 @@
 % Science Project Reports
 %------------------------------------------------------------------------------%
 {% load texify %}
-\chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
-\chapter*{Report on research activities}
-\phantomsection                         % fix pageref from TOC
-\addcontentsline{toc}{chapter}{Report on research activities}
-\chaptermark{Research Activities}
+%% RA = chapter, program = section
+%\chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
+%\chapter*{Report on research activities}
+%\phantomsection                         % fix pageref from TOC
+%\addcontentsline{toc}{chapter}{Report on research activities}
+%\chaptermark{Research Activities}
+
+%% RA = part, program = chapter
+\part*{Report on research activities}
+\phantomsection
+\addcontentsline{toc}{part}{Report on research activities}
+
 
 {{ arar.research_intro|html2latex }}
 
@@ -14,13 +21,23 @@
 {% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
 {% for program_reports in report_list %}
   {% with program_reports.grouper as program %}
-    \section*{% templatetag openbrace %}{{ program.name|striptags }}}
+    %% RA = chapter, program = section
+    %\addcontentsline{toc}{section}{% templatetag openbrace %}{{ program.name|striptags }}}
+    %\sectionmark{% templatetag openbrace %}{{ program.name|striptags }}}
+
+    %% RA = part, program = chapter
+    {% if program.image %}
+    \chapterimage{.{{ program.image.url }}}}
+    {% else %}
+    \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
+    {% endif %}
+    \chapter*{% templatetag openbrace %}{{ program.name|striptags }}}
     \phantomsection                         % fix pageref from TOC
-    \addcontentsline{toc}{section}{% templatetag openbrace %}{{ program.name|striptags }}}
-    \sectionmark{% templatetag openbrace %}{{ program.name|striptags }}}
+    \addcontentsline{toc}{chapter}{% templatetag openbrace %}{{ program.name|striptags }}}
+    \chaptermark{% templatetag openbrace %}{{ program.name|striptags }}}
 
     \paragraph*{Program Leader: {{ program.program_leader.get_full_name|striptags }}}
-    {\small\color{dpawred} {{ program.introduction|html2latex }}}
+    {\small{{ program.introduction|html2latex }}}
 
     {% for report in program_reports.list %}
       {% include "latex/includes/project.tex" with project=report.project %}
