@@ -2,16 +2,23 @@
 {% include "latex/header_scrreprt.tex" %}
 {% url original.opts|pythia_urlname:"change" original.pk as original_change %}
 
-%-----------------------------------------------------------------------------%
-% Headers and Footers
-\automark{section}
-\ohead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ original|html2latex }}}}
-\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{SDIS}} % center header ONLINE
-\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{
-        \includegraphics[scale=0.4]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
+\usepackage[automark,headsepline,footsepline,plainfootsepline]{scrlayer-scrpage}
+\automark*[section]{}
+\addtokomafont{pageheadfoot}{\normalfont\footnotesize\sffamily} % Don't italicise
+\renewcommand{\chaptermark}[1]{\markleft{#1}{}}     % Chapter: suppress numbering
+\renewcommand{\sectionmark}[1]{\markright{#1}{}}    % Section: suppress numbering
+
+% Header (inner, center, outer)
+\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}}}
+%\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}}
+\ohead{\href{https://www.dpaw.wa.gov.au/about-us/science-and-research}{\includegraphics[height=6mm, keepaspectratio]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
+
+% Footer (inner, center, outer)
 \ifoot{\textbf{Printed}~{{ timestamp|date:'r' }}} % inner/left footer
-\cfoot{} % center footer
-\ofoot{\pagemark} % outer/right footer
+\cfoot{}
+\ofoot[\bfseries\thepage]{\bfseries\thepage}        % Page number (also [plain])
+
+
 \pagestyle{scrheadings}
 \setkomafont{pageheadfoot}{\normalfont}
 
@@ -43,4 +50,3 @@
 %\backmatter
 \end{document}
 %-----------------------------------------------------------------------------%
-
