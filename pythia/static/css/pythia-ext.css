@@ -90,6 +90,9 @@ margin-right: 0px; /* we need less negativity, especially in margins */
     cursor: pointer;
 }
 
+
+.handsontable table {width: 500px;}
+
 /* For non-TinyMCE fields using the same wrapper, remove the full-width formatting */
 .shrinkwrap {
     display: inline-block;
