@@ -373,10 +373,10 @@ class Document(PolymorphicModel, Audit):
         permission=lambda instance, user: user in instance.all_permitted,
         custom=dict(
             verbose="Submit for review",
-            explanation=("The Program Leader {0} will review and possibly "
-                         "update the document, then either request a revision "
-                         "from the project team or submit to the Directorate "
-                         "for approval."),
+            explanation=("The Program Leader and other involved roles ({0})"
+                         " will review and possibly update the document, then"
+                         " either request a revision from the project team"
+                         " or submit to the Directorate for approval."),
             notify=True,)
         )
     def seek_review(self):
