@@ -130,11 +130,16 @@ class ProjectAdmin(BaseAdmin):
             )
 
     def project_id(self, obj):
-        return obj.project_year_number
+        return "<a href={0}>{1}</a>".format(
+                obj.get_absolute_url(),
+                obj.project_year_number)
     project_id.short_description = 'Year-Number'
+    project_id.allow_tags = True
 
     def project_title(self, obj):
-        return obj.project_title_html
+        return "<a href={0}>{1}</a>".format(
+                obj.get_absolute_url(),
+                obj.project_title_html)
     project_title.short_description = 'Project name'
     project_title.admin_order_field = 'title'
     project_title.allow_tags = True

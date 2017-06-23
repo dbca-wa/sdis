@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.contrib.admin.tests import AdminSeleniumWebDriverTestCase
 from django.contrib.auth import BACKEND_SESSION_KEY, SESSION_KEY
-#from django.contrib.auth.models import Group
+# from django.contrib.auth.models import Group
 from guardian.models import Group
 from django.contrib.sessions.backends.db import SessionStore
 from django.core.urlresolvers import reverse
@@ -16,8 +16,8 @@ from selenium.webdriver.common.keys import Keys
 
 from pythia.projects.models import *
 from pythia.documents.models import *
-from pythia.tests.base import (SuperUserFactory, UserFactory,
-                               ScienceProjectFactory)
+from pythia.tests.base import (
+    SuperUserFactory, UserFactory, ScienceProjectFactory)
 
 import pdb
 
@@ -48,7 +48,7 @@ class BaseLiveServerTestCase(AdminSeleniumWebDriverTestCase):
             name=settings.SESSION_COOKIE_NAME,
             value=session.session_key,
             path='/',
-        ))
+            ))
 
     def switch_to_window(self, partial_title):
         """
@@ -72,8 +72,8 @@ class BaseLiveServerTestCase(AdminSeleniumWebDriverTestCase):
         from selenium.webdriver.support import expected_conditions as ec
         self.wait_until(
             ec.presence_of_element_located((By.CSS_SELECTOR, css_selector)),
-            timeout
-        )
+            timeout)
+
 
     # This is added in Django 1.7, we can remove it once we upgrade.
     def wait_for_text(self, css_selector, text, timeout=10):
@@ -86,8 +86,7 @@ class BaseLiveServerTestCase(AdminSeleniumWebDriverTestCase):
         self.wait_until(
             ec.text_to_be_present_in_element(
                 (By.CSS_SELECTOR, css_selector), text),
-            timeout
-        )
+            timeout)
 
 
 class LoginTests(BaseLiveServerTestCase):
@@ -119,8 +118,7 @@ class ProfileTests(BaseLiveServerTestCase):
     """
 
     def setUp(self):
-        """Create a User using the UserFactory.
-        """
+        """Create a User using the UserFactory."""
         self.user_a = UserFactory.create()
         self.user_b = UserFactory.create()
         self.superuser = SuperUserFactory.create()
@@ -133,7 +131,7 @@ class ProfileTests(BaseLiveServerTestCase):
 
         All other fields should be writeable.
         """
-        #self.user_a.login()
+        # self.user_a.login()
         # view own profile
         # assert readonly fields are readonly
         pass
@@ -149,6 +147,7 @@ class ProfileTests(BaseLiveServerTestCase):
         User profile.
         """
         pass
+
 
 class ProjectTests(BaseLiveServerTestCase):
     def test_create_project_enduser(self):
@@ -173,7 +172,7 @@ class ProjectTests(BaseLiveServerTestCase):
         # Project year and number should be hidden and auto-set
 
         # TODO add stuff
-        #self.fail("Finish this test")
+        # self.fail("Finish this test")
         pass
 
     def test_create_project_superuser(self):
@@ -194,7 +193,7 @@ class ProjectTests(BaseLiveServerTestCase):
         # Project number should be shown and auto-set to next available
         # within current year
 
-        #self.fail("Finish this test")
+        # self.fail("Finish this test")
         pass
 
 
@@ -236,8 +235,8 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
         self.steven.groups.add(self.smt)
 
         # Marge is the Divisional Director.
-        # As member of the Directorate, M is the highest instance of approval and has
-        # resurrection powers for projects.
+        # As member of the Directorate, M is the highest instance of approval
+        # and has resurrection powers for projects.
         self.marge = UserFactory.create(
             username='marge', first_name='Marge', last_name='Simpson')
         self.marge.groups.add(self.scd)
@@ -333,10 +332,13 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
 
     def test_project_add_teammember(self):
         # TODO Bob adds John to the team
-        ProjectMembership.objects.create(project = self.project, user=self.john,
-                role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.john,
+            role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
         self.assertEqual(
-                ProjectMembership.objects.filter(project=self.project).count(), 2)
+                ProjectMembership.objects.filter(project=self.project).count(),
+                2)
 
         # The new team member must have team permissions
         # TODO
