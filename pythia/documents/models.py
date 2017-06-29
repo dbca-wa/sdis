@@ -449,8 +449,8 @@ class Document(PolymorphicModel, Audit):
         permission=lambda instance, user: user in instance.reviewers_approvers,
         custom=dict(
             verbose="Request revision from authors",
-            explanation=("Request a substantial revision of the document from "
-                         " the project team."),
+            explanation=("Request a revision of the document "
+                         "from the project team."),
             notify=True,)
         )
     def request_revision_from_authors(self):
@@ -488,7 +488,7 @@ class Document(PolymorphicModel, Audit):
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(
             verbose="Request reviewer revision",
-            explanation=("Request a substantial revision of the document from "
+            explanation=("Request a revision of the document from "
                          " the Program Leader."),
             notify=True,)
         )
@@ -504,8 +504,8 @@ class Document(PolymorphicModel, Audit):
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(
             verbose="Request revision from authors",
-            explanation=("Request a substantial revision of the document from "
-                         " the project team."),
+            explanation=("Request a revision of the document from "
+                         " the project leader."),
             notify=True,)
         )
     def request_author_revision(self):
