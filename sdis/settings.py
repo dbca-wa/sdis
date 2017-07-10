@@ -290,9 +290,9 @@ REST_FRAMEWORK = {
 # Email
 EMAIL_HOST = env('EMAIL_HOST', default='email.host')
 EMAIL_PORT = env('EMAIL_PORT', default=25)
-ENVELOPE_EMAIL_RECIPIENTS = ['sdis@DPaW.wa.gov.au']
+ENVELOPE_EMAIL_RECIPIENTS = ['sdis@dbca.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True
-DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dpaw.wa.gov.au>'
+DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dbca.wa.gov.au>'
 
 
 COMPRESS_ENABLED = True
