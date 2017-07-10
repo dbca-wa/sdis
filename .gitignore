@@ -26,3 +26,7 @@ logs/
 *.dump
 *.db
 *.sqlite3
+
+# production server
+.texlive2016/
+hoit
