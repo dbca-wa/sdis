@@ -37,7 +37,7 @@ semantic-version==2.3.0
 
 # API
 djangorestframework==2.3.13
-django-rest-swagger==0.1.14
+django-rest-swagger==0.3.10
 django-filter==0.7
 
 # Auth
