@@ -52,7 +52,7 @@
 
       ed.on('blur', function() {
           save();
-          pythia.inlineHideTinyMCE(ed); 
+          pythia.inlineHideTinyMCE(ed);
       });
     });
   });

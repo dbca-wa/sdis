@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 
 from pythia.sites import site
 from pythia.views import TermsAndConditions, spell_check
+from pythia.api import router
 
 js_info_dict = {'packages': ('django.conf',), }
 
@@ -21,6 +22,7 @@ urlpatterns = patterns(
         TemplateView.as_view(template_name="admin/toc-agreed.html"),
         name='terms-and-conditions-agreed'),
 
+    url(r'^api/', include(router.urls)),
     url(r'^api-auth/',
         include('rest_framework.urls', namespace='rest_framework')),
 
