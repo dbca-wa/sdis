@@ -696,15 +696,20 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     # Project name = "TYPE YEAR-NUMBER TITLE"
     @classmethod
     def clsm_project_type_year_number_name(cls, t, y, n, na):
-        """Generate project type - year - number - name."""
+        """Generate project type - year - padded number - name."""
         return mark_safe('{0} {1}-{2} {3}'.format(
             Project.PROJECT_ABBREVIATIONS[t], y, str(n).zfill(3), na))
 
     @property
     def project_type_year_number(self):
-        """Return project type - year - number."""
+        """Return project type - year - padded number."""
         return Project.clsm_project_type_year_number(
             self.type, self.year, self.number)
+
+    @property
+    def project_type_year_number_plain(self):
+        """Return project type - year - padded number as plain text."""
+        return unicode(strip_tags(self.project_type_year_number)).strip()
 
     @property
     def project_ckantag(self):

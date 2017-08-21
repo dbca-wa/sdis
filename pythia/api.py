@@ -23,23 +23,46 @@ from pythia.reports.models import (ARARReport)
 # -----------------------------------------------------------------------------#
 # Serializers
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    """A User serializer."""
+
     class Meta:
+        """Class opts."""
+
         model = User
         fields = ('username', 'email', 'is_staff')
 
+
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
+    """A minimal Project serializer to build a filterable list."""
+
+    project_type_year_number_plain = serializers.Field()
     title_plain = serializers.Field()
     tagline_plain = serializers.Field()
     comments_plain = serializers.Field()
-    read_only_fields = ('type', 'year', 'number', 'status',)
+    team_list_plain = serializers.Field()
+    read_only_fields = ('type', 'year', 'number', 'status', 'team_list_plain')
 
     class Meta:
+        """Class opts."""
+
         model = Project
-        fields = ('id', 'type', 'year', 'number', 'status',
-                  'title_plain', 'tagline_plain', 'comments_plain', 'image')
+        fields = (
+            'id',
+            'project_type_year_number_plain',
+            'title_plain',
+            'status',
+            'tagline_plain',
+            'comments_plain',
+            'image',
+            'team_list_plain',
+            )
 
 
 class FullProjectSerializer(ProjectSerializer):
+    """A comprehensive Project serializer to view project details."""
+
+    project_type_year_number_plain = serializers.Field()
+    team_list_plain = serializers.Field()
     area_nrm_region = serializers.Field()
     area_dpaw_region = serializers.Field()
     area_dpaw_district = serializers.Field()
@@ -47,24 +70,41 @@ class FullProjectSerializer(ProjectSerializer):
     read_only_fields = ('type', 'year', 'number', 'status',)
 
     class Meta:
+        """Class opts."""
+
         model = Project
-        fields = ('id', 'type', 'year', 'number', 'status',
-                  'area_nrm_region',  'area_ibra_imcra_region',
-                  'area_dpaw_region', 'area_dpaw_district',
-                  )
+        fields = (
+            'id',
+            'type',
+            'year',
+            'number',
+            'status',
+            'project_type_year_number_plain',
+            'title_plain',
+            'team_list_plain',
+            'area_nrm_region',
+            'area_ibra_imcra_region',
+            'area_dpaw_region',
+            'area_dpaw_district',
+            )
 
 
 # -----------------------------------------------------------------------------#
 # Viewsets
 class UserViewSet(viewsets.ModelViewSet):
+    """A default User ViewSet."""
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
+    """A clever Project ViewSet that returns fast lists and full details."""
+
     queryset = Project.objects.all()
 
     def get_serializer_class(self):
+        """Toggle serializer: Minimal list, full details."""
         if self.action == 'list':
             return ProjectSerializer
         if self.action == 'retrieve':
