@@ -734,6 +734,16 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return unicode(strip_tags(self.title)).strip()
 
     @property
+    def tagline_plain(self):
+        """Return a plain text version of the project tagline."""
+        return unicode(strip_tags(self.tagline)).strip()
+
+    @property
+    def comments_plain(self):
+        """Return a plain text version of the project comments."""
+        return unicode(strip_tags(self.comments)).strip()
+
+    @property
     def progressreport(self, year):
         """
         Stub to return the progress report for a given year.

@@ -27,12 +27,31 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ('username', 'email', 'is_staff')
 
-
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
+    title_plain = serializers.Field()
+    tagline_plain = serializers.Field()
+    comments_plain = serializers.Field()
+    read_only_fields = ('type', 'year', 'number', 'status',)
+
     class Meta:
         model = Project
         fields = ('id', 'type', 'year', 'number', 'status',
-                  'title', 'tagline', 'image')
+                  'title_plain', 'tagline_plain', 'comments_plain', 'image')
+
+
+class FullProjectSerializer(ProjectSerializer):
+    area_nrm_region = serializers.Field()
+    area_dpaw_region = serializers.Field()
+    area_dpaw_district = serializers.Field()
+    area_ibra_imcra_region = serializers.Field()
+    read_only_fields = ('type', 'year', 'number', 'status',)
+
+    class Meta:
+        model = Project
+        fields = ('id', 'type', 'year', 'number', 'status',
+                  'area_nrm_region',  'area_ibra_imcra_region',
+                  'area_dpaw_region', 'area_dpaw_district',
+                  )
 
 
 # -----------------------------------------------------------------------------#
@@ -44,7 +63,14 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ProjectSerializer
+        if self.action == 'retrieve':
+            return FullProjectSerializer
+        return FullProjectSerializer
+
 
 # -----------------------------------------------------------------------------#
 # Routers
