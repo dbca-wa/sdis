@@ -757,6 +757,16 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         return None
 
+    @property
+    def status_display(self):
+        """Return the human-readable status."""
+        return self.get_status_display()
+
+    @property
+    def absolute_url(self):
+        """Return the absolute url."""
+        return self.get_absolute_url()
+
     # -------------------------------------------------------------------------#
     # Team members
     #

@@ -25,22 +25,78 @@ from pythia.reports.models import (ARARReport)
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     """A User serializer."""
 
+    fullname = serializers.Field()
+
     class Meta:
         """Class opts."""
 
         model = User
-        fields = ('username', 'email', 'is_staff')
+        fields = ('fullname', 'username', 'email', 'is_staff')
+
+
+class ProgramSerializer(serializers.HyperlinkedModelSerializer):
+    """A fast and simple Program serializer."""
+    program_leader = serializers.RelatedField()
+
+    class Meta:
+        """Class opts."""
+
+        model = Program
+        fields = (
+            'name',
+            'slug',
+            'published',
+            'position',
+            'cost_center',
+            'image',
+            'program_leader',
+            )
+
+
+class FullProgramSerializer(serializers.HyperlinkedModelSerializer):
+    """A comprehensive Program serializer."""
+    program_leader = UserSerializer()
+    finance_admin = UserSerializer()
+    data_custodian = UserSerializer()
+
+    class Meta:
+        """Class opts."""
+
+        model = Program
+        fields = (
+            'name',
+            'slug',
+            'published',
+            'position',
+            'cost_center',
+            'focus',
+            'introduction',
+            'image',
+            'program_leader',
+            'finance_admin',
+            'data_custodian')
 
 
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     """A minimal Project serializer to build a filterable list."""
 
+    status_display = serializers.Field()
     project_type_year_number_plain = serializers.Field()
     title_plain = serializers.Field()
     tagline_plain = serializers.Field()
     comments_plain = serializers.Field()
-    team_list_plain = serializers.Field()
-    read_only_fields = ('type', 'year', 'number', 'status', 'team_list_plain')
+    team_list_plain = serializers.Field
+    program = serializers.RelatedField()
+    absolute_url = serializers.Field()
+    read_only_fields = (
+        'type',
+        'year',
+        'number',
+        'status_display',
+        'team_list_plain',
+        'program',
+        'absolute_url',
+        )
 
     class Meta:
         """Class opts."""
@@ -48,26 +104,42 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         model = Project
         fields = (
             'id',
+            'absolute_url',
             'project_type_year_number_plain',
             'title_plain',
-            'status',
+            'status_display',
             'tagline_plain',
             'comments_plain',
             'image',
             'team_list_plain',
+            'program',
             )
 
 
 class FullProjectSerializer(ProjectSerializer):
     """A comprehensive Project serializer to view project details."""
 
+    status_display = serializers.Field()
     project_type_year_number_plain = serializers.Field()
     team_list_plain = serializers.Field()
     area_nrm_region = serializers.Field()
     area_dpaw_region = serializers.Field()
     area_dpaw_district = serializers.Field()
     area_ibra_imcra_region = serializers.Field()
-    read_only_fields = ('type', 'year', 'number', 'status',)
+    program = FullProgramSerializer()
+    absolute_url = serializers.Field()
+    read_only_fields = (
+        'id',
+        'absolute_url',
+        'type',
+        'year',
+        'number',
+        'status',
+        'program',
+        'area_nrm_region',
+        'area_ibra_imcra_region',
+        'area_dpaw_region',
+        'area_dpaw_district',)
 
     class Meta:
         """Class opts."""
@@ -75,13 +147,16 @@ class FullProjectSerializer(ProjectSerializer):
         model = Project
         fields = (
             'id',
+            'absolute_url',
             'type',
             'year',
             'number',
-            'status',
+            'status_display',
             'project_type_year_number_plain',
+            'title',
             'title_plain',
             'team_list_plain',
+            'program',
             'area_nrm_region',
             'area_ibra_imcra_region',
             'area_dpaw_region',
@@ -96,6 +171,20 @@ class UserViewSet(viewsets.ModelViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class ProgramViewSet(viewsets.ModelViewSet):
+    """A clever Program ViewSet that returns fast lists and full details."""
+
+    queryset = Program.objects.all()
+
+    def get_serializer_class(self):
+        """Toggle serializer: Minimal list, full details."""
+        if self.action == 'list':
+            return ProgramSerializer
+        if self.action == 'retrieve':
+            return FullProgramSerializer
+        return FullProgramSerializer
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -116,4 +205,5 @@ class ProjectViewSet(viewsets.ModelViewSet):
 # Routers
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
+router.register(r'programs', ProgramViewSet)
 router.register(r'projects', ProjectViewSet)
