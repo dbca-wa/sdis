@@ -84,7 +84,6 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     project_type_year_number_plain = serializers.Field()
     title_plain = serializers.Field()
     tagline_plain = serializers.Field()
-    comments_plain = serializers.Field()
     team_list_plain = serializers.Field
     program = serializers.RelatedField()
     absolute_url = serializers.Field()
@@ -109,7 +108,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             'title_plain',
             'status_display',
             'tagline_plain',
-            'comments_plain',
+            'comments',
             'image',
             'team_list_plain',
             'program',
@@ -135,6 +134,8 @@ class FullProjectSerializer(ProjectSerializer):
         'year',
         'number',
         'status',
+        'title_plain',
+        'tagline_plain',
         'program',
         'area_nrm_region',
         'area_ibra_imcra_region',
@@ -155,6 +156,8 @@ class FullProjectSerializer(ProjectSerializer):
             'project_type_year_number_plain',
             'title',
             'title_plain',
+            'tagline_plain',
+            'comments',
             'team_list_plain',
             'program',
             'area_nrm_region',
