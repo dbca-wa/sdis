@@ -440,6 +440,11 @@ class Area(Audit):  # , models.PolygonModelMixin):
     def get_northern_extent(self):
         return self.mpoly.extent[3] if self.mpoly else None
 
+    @property
+    def area_type_display(self):
+        """A human-readable label for the Area type."""
+        return self.get_area_type_display()
+
 
 class RegionManager(models.Manager):
     def get_by_natural_key(self, name):

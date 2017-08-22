@@ -22,6 +22,30 @@ from pythia.reports.models import (ARARReport)
 
 # -----------------------------------------------------------------------------#
 # Serializers
+class AreaSerializer(serializers.HyperlinkedModelSerializer):
+    """A simple Area serializer."""
+
+    area_type_display = serializers.Field()
+
+    class Meta:
+        """Class opts."""
+
+        model = Area
+        fields = ('name', 'area_type_display', 'northern_extent')
+
+
+class FullAreaSerializer(serializers.HyperlinkedModelSerializer):
+    """A comprehensive Area serializer."""
+
+    area_type_display = serializers.Field()
+
+    class Meta:
+        """Class opts."""
+
+        model = Area
+        fields = ('name', 'area_type_display', 'northern_extent', 'mpoly')
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     """A User serializer."""
 
@@ -36,6 +60,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 class ProgramSerializer(serializers.HyperlinkedModelSerializer):
     """A fast and simple Program serializer."""
+
     program_leader = serializers.RelatedField()
 
     class Meta:
@@ -170,6 +195,20 @@ class FullProjectSerializer(ProjectSerializer):
 
 # -----------------------------------------------------------------------------#
 # Viewsets
+class AreaViewSet(viewsets.ModelViewSet):
+    """A clever Area ViewSet that returns fast lists and full details."""
+
+    queryset = Area.objects.all()
+
+    def get_serializer_class(self):
+        """Toggle serializer: Minimal list, full details."""
+        if self.action == 'list':
+            return AreaSerializer
+        if self.action == 'retrieve':
+            return FullAreaSerializer
+        return FullAreaSerializer
+
+
 class UserViewSet(viewsets.ModelViewSet):
     """A default User ViewSet."""
 
@@ -208,6 +247,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 # -----------------------------------------------------------------------------#
 # Routers
 router = routers.DefaultRouter()
+router.register(r'areas', AreaViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'programs', ProgramViewSet)
 router.register(r'projects', ProjectViewSet)
