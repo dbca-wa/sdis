@@ -112,6 +112,10 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             'image',
             'team_list_plain',
             'program',
+            'area_list_nrm_region',
+            'area_list_ibra_imcra_region',
+            'area_list_dpaw_region',
+            'area_list_dpaw_district',
             )
 
 
@@ -121,10 +125,6 @@ class FullProjectSerializer(ProjectSerializer):
     status_display = serializers.Field()
     project_type_year_number_plain = serializers.Field()
     team_list_plain = serializers.Field()
-    area_nrm_region = serializers.Field()
-    area_dpaw_region = serializers.Field()
-    area_dpaw_district = serializers.Field()
-    area_ibra_imcra_region = serializers.Field()
     program = FullProgramSerializer()
     absolute_url = serializers.Field()
     read_only_fields = (
@@ -137,10 +137,11 @@ class FullProjectSerializer(ProjectSerializer):
         'title_plain',
         'tagline_plain',
         'program',
-        'area_nrm_region',
-        'area_ibra_imcra_region',
-        'area_dpaw_region',
-        'area_dpaw_district',)
+        'area_list_nrm_region',
+        'area_list_ibra_imcra_region',
+        'area_list_dpaw_region',
+        'area_list_dpaw_district',
+        )
 
     class Meta:
         """Class opts."""
