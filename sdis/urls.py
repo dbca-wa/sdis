@@ -22,10 +22,13 @@ urlpatterns = patterns(
         TemplateView.as_view(template_name="admin/toc-agreed.html"),
         name='terms-and-conditions-agreed'),
 
-    url(r'^api/', include(router.urls)),
+    url(r'^api/', include(router.urls), name='api'),
     url(r'^api-auth/',
         include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^api/docs/', include('rest_framework_swagger.urls')),
+
+    url(r'^api/docs/',
+        include('rest_framework_swagger.urls'),
+        name="api-docs"),
 
     url(r'^export/(?P<model_name>[^/]+)/$',
         "django_tablib.views.generic_export"),
