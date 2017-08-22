@@ -27,11 +27,18 @@ class AreaSerializer(serializers.HyperlinkedModelSerializer):
 
     area_type_display = serializers.Field()
 
+    read_only_fields = (
+        'area_type_display',
+        'northern_extent',)
+
     class Meta:
         """Class opts."""
 
         model = Area
-        fields = ('name', 'area_type_display', 'northern_extent')
+        fields = ('id',
+                  'name',
+                  'area_type_display',
+                  'northern_extent')
 
 
 class FullAreaSerializer(serializers.HyperlinkedModelSerializer):
@@ -39,11 +46,19 @@ class FullAreaSerializer(serializers.HyperlinkedModelSerializer):
 
     area_type_display = serializers.Field()
 
+    read_only_fields = (
+        'area_type_display',
+        'northern_extent',)
+
     class Meta:
         """Class opts."""
 
         model = Area
-        fields = ('name', 'area_type_display', 'northern_extent', 'mpoly')
+        fields = ('id',
+                  'name',
+                  'area_type_display',
+                  'northern_extent',
+                  'mpoly')
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -55,7 +70,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         """Class opts."""
 
         model = User
-        fields = ('fullname', 'username', 'email', 'is_staff')
+        fields = ('id',
+                  'fullname',
+                  'username',
+                  'email',
+                  'is_staff')
 
 
 class ProgramSerializer(serializers.HyperlinkedModelSerializer):
@@ -68,6 +87,7 @@ class ProgramSerializer(serializers.HyperlinkedModelSerializer):
 
         model = Program
         fields = (
+            'id',
             'name',
             'slug',
             'published',
@@ -89,6 +109,7 @@ class FullProgramSerializer(serializers.HyperlinkedModelSerializer):
 
         model = Program
         fields = (
+            'id',
             'name',
             'slug',
             'published',
