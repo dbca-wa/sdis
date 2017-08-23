@@ -227,6 +227,9 @@ class FullProjectSerializer(ProjectSerializer):
 class AreaViewSet(viewsets.ModelViewSet):
     """A clever Area ViewSet that returns fast lists and full details.
 
+    The detail page contains a GeoJSON geometry (MultiPolygon) for each area.
+    Example: "Avon Wheatbelt" `/api/areas/1/ </api/areas/1/>`_.
+
     Filter fields: area_type
 
     Area types
@@ -265,9 +268,22 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class ProgramViewSet(viewsets.ModelViewSet):
-    """A clever Program ViewSet that returns fast lists and full details."""
+    """A clever Program ViewSet that returns fast lists and full details.
+
+    The detail page provides more fields.
+    Example: `/api/programs/5/ </api/programs/5/>`_
+
+    Filter fields: published
+
+    * Published programs:
+      `/api/programs/?published=True </api/programs/?published=True>`_
+    * Retired or administrative programs:
+      `/api/programs/?published=False </api/programs/?published=False>`_
+    """
 
     queryset = Program.objects.all()
+
+    filter_fields = ("published", )
 
     def get_serializer_class(self):
         """Toggle serializer: Minimal list, full details."""
@@ -318,6 +334,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     `/api/projects/?area_list_dpaw_district=Moora
     </api/projects/?area_list_dpaw_district=Moora>`_ only returns projects with
     only Moora, but not projects with Moora and additional districts.
+
     * `/api/projects/?area_list_nrm_region=Rangelands
       </api/projects/?area_list_nrm_region=Rangelands>`_
     * area_list_nrm_region choices:
