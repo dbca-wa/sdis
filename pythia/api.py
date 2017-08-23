@@ -354,7 +354,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     Search fields
     -------------
     Fulltext search with partial, case-insensitive match works on
-    title, tagline, and all four `area` fields.
+    title, tagline, and all four area fields.
 
     * All projects with "adaptive" in title or tagline:
       `/api/projects/?search=adaptive </api/projects/?search=adaptive>`_
