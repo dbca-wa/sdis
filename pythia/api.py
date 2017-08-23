@@ -1,4 +1,4 @@
-from rest_framework import serializers, viewsets, routers
+from rest_framework import serializers, viewsets, routers, filters
 # from rest_framework.renderers import BrowsableAPIRenderer
 # from rest_framework_latex import renderers
 # from dynamic_rest import serializers as ds, viewsets as dv
@@ -139,6 +139,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         'year',
         'number',
         'status_display',
+        'title_plain',
         'team_list_plain',
         'program',
         'absolute_url',
@@ -156,9 +157,11 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'absolute_url',
             'project_type_year_number_plain',
+            'title',
             'title_plain',
             'status',
             'status_display',
+            'tagline',
             'tagline_plain',
             'comments',
             'image',
@@ -346,9 +349,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
       `/api/areas/?area_type=3 </api/areas/?area_type=3>`_
     * area_list_dpaw_district choices:
       `/api/areas/?area_type=4 </api/areas/?area_type=4>`_
+
+
+    Search fields
+    -------------
+    Fulltext search with partial, case-insensitive match works on
+    title, tagline, and all four `area` fields.
+
+    * All projects with "adaptive" in title or tagline:
+      `/api/projects/?search=adaptive </api/projects/?search=adaptive>`_
+    * All projects in (at least) DPaW District Moora:
+      `/api/projects/?search=Moora </api/projects/?search=Moora>`_
     """
 
     queryset = Project.published.all()
+    filter_backends = (filters.SearchFilter,)
     filter_fields = (
         'program__name',
         'status',
@@ -360,9 +375,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         'area_list_dpaw_district',
         )
     search_fields = (
-        'title_plain',
-        'tagline_plain',
-        'team_list_plain',
+        'title',
+        'tagline',
         'area_list_nrm_region',
         'area_list_ibra_imcra_region',
         'area_list_dpaw_region',
