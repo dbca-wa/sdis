@@ -141,6 +141,10 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         'team_list_plain',
         'program',
         'absolute_url',
+        'area_list_nrm_region',
+        'area_list_ibra_imcra_region',
+        'area_list_dpaw_region',
+        'area_list_dpaw_district',
         )
 
     class Meta:
@@ -207,10 +211,10 @@ class FullProjectSerializer(ProjectSerializer):
             'comments',
             'team_list_plain',
             'program',
-            'area_nrm_region',
-            'area_ibra_imcra_region',
-            'area_dpaw_region',
-            'area_dpaw_district',
+            'area_list_nrm_region',
+            'area_list_ibra_imcra_region',
+            'area_list_dpaw_region',
+            'area_list_dpaw_district',
             )
 
 
