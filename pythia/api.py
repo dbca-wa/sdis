@@ -1,7 +1,6 @@
 from rest_framework import serializers, viewsets, routers
 # from rest_framework.renderers import BrowsableAPIRenderer
 # from rest_framework_latex import renderers
-# import rest_framework_filters as filters
 # from dynamic_rest import serializers as ds, viewsets as dv
 # from django_filters.rest_framework import DjangoFilterBackend
 # from drf_extra_fields.geo_fields import PointField
@@ -37,6 +36,7 @@ class AreaSerializer(serializers.HyperlinkedModelSerializer):
         model = Area
         fields = ('id',
                   'name',
+                  'area_type',
                   'area_type_display',
                   'northern_extent')
 
@@ -56,6 +56,7 @@ class FullAreaSerializer(serializers.HyperlinkedModelSerializer):
         model = Area
         fields = ('id',
                   'name',
+                  'area_type',
                   'area_type_display',
                   'northern_extent',
                   'mpoly')
@@ -156,6 +157,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             'absolute_url',
             'project_type_year_number_plain',
             'title_plain',
+            'status',
             'status_display',
             'tagline_plain',
             'comments',
@@ -184,6 +186,7 @@ class FullProjectSerializer(ProjectSerializer):
         'year',
         'number',
         'status',
+        'status_display',
         'title_plain',
         'tagline_plain',
         'program',
@@ -203,6 +206,7 @@ class FullProjectSerializer(ProjectSerializer):
             'type',
             'year',
             'number',
+            'status',
             'status_display',
             'project_type_year_number_plain',
             'title',
@@ -221,9 +225,28 @@ class FullProjectSerializer(ProjectSerializer):
 # -----------------------------------------------------------------------------#
 # Viewsets
 class AreaViewSet(viewsets.ModelViewSet):
-    """A clever Area ViewSet that returns fast lists and full details."""
+    """A clever Area ViewSet that returns fast lists and full details.
+
+    Filter fields: area_type
+
+    Area types
+    ----------
+    * "Relevant Area Polygon"
+      `/api/areas/?area_type=1 </api/areas/?area_type=1>`_
+    * "Fieldwork Area Polygon"
+      `/api/areas/?area_type=2 </api/areas/?area_type=2>`_
+    * "DPaW Region" `/api/areas/?area_type=3 </api/areas/?area_type=3>`_
+    * "DPaW District" `/api/areas/?area_type=4 </api/areas/?area_type=4>`_
+    * "IBRA" `/api/areas/?area_type=5 </api/areas/?area_type=5>`_
+    * "IMCRA" `/api/areas/?area_type=6 </api/areas/?area_type=6>`_
+    * "Natural Resource Management Region"
+      `/api/areas/?area_type=7 </api/areas/?area_type=7>`_
+    """
 
     queryset = Area.objects.all()
+    filter_fields = (
+        'area_type',
+        )
 
     def get_serializer_class(self):
         """Toggle serializer: Minimal list, full details."""
@@ -256,9 +279,78 @@ class ProgramViewSet(viewsets.ModelViewSet):
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    """A clever Project ViewSet that returns fast lists and full details."""
+    """A list of publishable projects with more comprehensive detail views.
 
-    queryset = Project.objects.all()
+    Publishable are all approved or successfully completed projects.
+    Exempt from this list are new, not yet approved or terminated projects.
+
+    Filter fields: program name, year, number, status, area_list_nrm_region,
+    area_list_ibra_imcra_region, area_list_dpaw_region, area_list_dpaw_district
+
+    Program
+    -------
+
+    * `/api/projects/?program__name=Biogeography
+      </api/projects/?program__name=Biogeography>`_
+    * `/api/projects/?program__name=Ecosystem Science
+      </api/projects/?program__name=Ecosystem Science>`_
+    * Program choices: 'Biogeography', 'Animal Science',
+      'Plant Science and Herbarium', 'Ecosystem Science',
+      'Wetlands Conservation', 'Marine Science', 'Ecoinformatics'
+
+    Year
+    ----
+    * `/api/projects/?year=2016 </api/projects/?year=2016>`_
+
+    Number
+    ------
+    * `/api/projects/?number=12 </api/projects/?number=12>`_
+
+    Status
+    ------
+    * `/api/projects/?status=active </api/projects/?status=active>`_
+    * Status choices: 'active', 'updating', 'closure requested', 'closing',
+      'final update', 'completed'.
+
+    Location
+    --------
+    Note: no partial match, e.g.
+    `/api/projects/?area_list_dpaw_district=Moora
+    </api/projects/?area_list_dpaw_district=Moora>`_ only returns projects with
+    only Moora, but not projects with Moora and additional districts.
+    * `/api/projects/?area_list_nrm_region=Rangelands
+      </api/projects/?area_list_nrm_region=Rangelands>`_
+    * area_list_nrm_region choices:
+      `/api/areas/?area_type=7 </api/areas/?area_type=7>`_
+    * area_list_ibra_imcra_region choices:
+      `/api/areas/?area_type=5 </api/areas/?area_type=5>`_ and
+      `/api/areas/?area_type=6 </api/areas/?area_type=6>`_
+    * area_list_dpaw_region choices:
+      `/api/areas/?area_type=3 </api/areas/?area_type=3>`_
+    * area_list_dpaw_district choices:
+      `/api/areas/?area_type=4 </api/areas/?area_type=4>`_
+    """
+
+    queryset = Project.published.all()
+    filter_fields = (
+        'program__name',
+        'status',
+        'year',
+        'number',
+        'area_list_nrm_region',
+        'area_list_ibra_imcra_region',
+        'area_list_dpaw_region',
+        'area_list_dpaw_district',
+        )
+    search_fields = (
+        'title_plain',
+        'tagline_plain',
+        'team_list_plain',
+        'area_list_nrm_region',
+        'area_list_ibra_imcra_region',
+        'area_list_dpaw_region',
+        'area_list_dpaw_district',
+        )
 
     def get_serializer_class(self):
         """Toggle serializer: Minimal list, full details."""

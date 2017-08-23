@@ -61,6 +61,14 @@ class ProjectManager(PolymorphicManager, ActiveGeoModelManager):
     pass
 
 
+class PublishedProjectManager(PolymorphicManager, ActiveGeoModelManager):
+    """A custom Project Manager class for active projects."""
+
+    def get_queryset(self):
+        return super(PublishedProjectManager, self).get_queryset().filter(
+            status__in=Project.PUBLISHED)
+
+
 def get_next_available_number_for_year(year):
     """Return the lowest available project number for a given project year."""
     project_numbers = Project.objects.filter(year=year).values("number")
@@ -133,6 +141,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     ACTIVE = (STATUS_NEW, STATUS_PENDING, STATUS_ACTIVE, STATUS_UPDATE,
               STATUS_CLOSURE_REQUESTED, STATUS_CLOSING, STATUS_FINAL_UPDATE)
+    PUBLISHED = (STATUS_ACTIVE, STATUS_UPDATE, STATUS_CLOSURE_REQUESTED,
+                 STATUS_CLOSING, STATUS_FINAL_UPDATE, STATUS_COMPLETED)
     CLOSED = (STATUS_COMPLETED, STATUS_TERMINATED, STATUS_SUSPENDED)
 
     STATUS_CHOICES = (
@@ -322,6 +332,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     # -------------------------------------------------------------------------#
 
     objects = ProjectManager()
+    published = PublishedProjectManager()
 
     class Meta:
         """Model options."""

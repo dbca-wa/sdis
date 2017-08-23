@@ -290,7 +290,9 @@ REST_FRAMEWORK = {
         ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'],
 
     'VIEW_DESCRIPTION_FUNCTION':
-        'rest_framework_swagger.views.get_restructuredtext'
+        'rest_framework_swagger.views.get_restructuredtext',
+
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',)
     }
 
 
