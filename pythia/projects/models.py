@@ -49,7 +49,9 @@ options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('display_order',)
 def projects_upload_to(instance, filename):
     """Create a custom upload location for user-submitted files."""
     return "projects/{0}-{1}/{2}".format(
-        instance.year, instance.number, filename.replace(" ", "_"))
+        instance.year,
+        instance.number,
+        filename.replace(" ", "_").replace(".", "_"))
 
 NULL_CHOICES = ((None, _("Not applicable")), (False, _("Incomplete")),
                 (True, _("Complete")))

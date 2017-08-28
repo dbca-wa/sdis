@@ -37,7 +37,9 @@ logger = logging.getLogger(__name__)
 
 def programs_upload_to(instance, filename):
     """Create a custom upload location for user-submitted program files."""
-    return "programs/{0}/{1}".format(instance.slug, filename.replace(" ", "_"))
+    return "programs/{0}/{1}".format(
+        instance.slug,
+        filename.replace(" ", "_").replace(".", "_"))
 
 
 class ActiveQuerySet(QuerySet):
