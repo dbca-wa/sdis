@@ -4,6 +4,7 @@ from __future__ import (division, print_function, unicode_literals,
 import copy
 import logging
 import reversion
+import os
 
 from django.conf import settings
 from django.core import validators
@@ -37,9 +38,12 @@ logger = logging.getLogger(__name__)
 
 def programs_upload_to(instance, filename):
     """Create a custom upload location for user-submitted program files."""
-    return "programs/{0}/{1}".format(
+    fn, ext = os.path.splitext(filename)
+
+    return "programs/{0}/{1}{2}".format(
         instance.slug,
-        filename.replace(" ", "_").replace(".", "_"))
+        fn.replace(" ", "_").replace(".", "_"),
+        ext)
 
 
 class ActiveQuerySet(QuerySet):

@@ -7,11 +7,12 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.test import Client
 
-from pythia.models import Program
+from pythia.models import Program, programs_upload_to
 from pythia.documents.models import (
     Document, StudentReport, ConceptPlan, ProjectPlan,
     ProgressReport, ProjectClosure)
-from pythia.projects.models import (Project, ProjectMembership)
+from pythia.projects.models import (
+    Project, ProjectMembership, projects_upload_to)
 from pythia.reports.models import ARARReport
 from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
                    CoreFunctionProjectFactory, CollaborationProjectFactory,
@@ -47,6 +48,36 @@ def avail_tx(u, tx, obj):
 #         pass  # TODO
 # TODO portfolio: make projects to fall into/out of each category of
 # tasklist/portfolio for users of each role
+
+class ProgramModelTests(BaseTestCase):
+    "Base program tests."
+
+    def setUp(self):
+        """Create a Program."""
+        self.steven = UserFactory.create(
+            username='steven', first_name='Steven', last_name='Stevenson')
+        self.marge = UserFactory.create(
+            username='marge', first_name='Marge', last_name='Simpson')
+        self.program = ProgramFactory.create(
+            creator=self.marge, program_leader=self.steven)
+
+    def tearDown(self):
+        """Destroy test objects after a test."""
+        self.program.delete()
+        self.steven.delete()
+        self.marge.delete()
+
+    def test_programs_upload_to(self):
+        """Test that program image filename gets sanitised enough for Latex."""
+        filename_crazy = "some batshit.crazy.filename.jpg"
+        filename_sane = "some_batshit_crazy_filename.jpg"
+        upload_path_calculated = programs_upload_to(
+            self.program, filename_crazy)
+        upload_path_handbuilt = "programs/{0}/{1}".format(
+            self.program.slug,
+            filename_sane
+            )
+        self.assertEqual(upload_path_calculated, upload_path_handbuilt)
 
 class ProjectModelTests(BaseTestCase):
     """Base project tests."""
@@ -222,6 +253,19 @@ class ScienceProjectModelTests(BaseTestCase):
         self.marge.delete()
         self.peter.delete()
         self.program.delete()
+
+    def test_project_upload_to(self):
+        """Test that project image filename gets sanitised enough for Latex."""
+        filename_crazy = "some batshit.crazy.filename.jpg"
+        filename_sane = "some_batshit_crazy_filename.jpg"
+        upload_path_calculated = projects_upload_to(
+            self.project, filename_crazy)
+        upload_path_handbuilt = "projects/{0}-{1}/{2}".format(
+            self.project.year,
+            self.project.number,
+            filename_sane
+            )
+        self.assertEqual(upload_path_calculated, upload_path_handbuilt)
 
     def test_team_lists(self):
         """Test Project team lists order and membership."""

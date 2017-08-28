@@ -17,7 +17,7 @@ from __future__ import (division, print_function, unicode_literals,
 from datetime import date
 from itertools import chain
 import logging
-
+import os
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -48,13 +48,19 @@ options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('display_order',)
 
 def projects_upload_to(instance, filename):
     """Create a custom upload location for user-submitted files."""
-    return "projects/{0}-{1}/{2}".format(
+    fn, ext = os.path.splitext(filename)
+
+    return "projects/{0}-{1}/{2}{3}".format(
         instance.year,
         instance.number,
-        filename.replace(" ", "_").replace(".", "_"))
+        fn.replace(" ", "_").replace(".", "_"),
+        ext)
 
-NULL_CHOICES = ((None, _("Not applicable")), (False, _("Incomplete")),
-                (True, _("Complete")))
+NULL_CHOICES = (
+    (None, _("Not applicable")),
+    (False, _("Incomplete")),
+    (True, _("Complete"))
+    )
 
 
 class ProjectManager(PolymorphicManager, ActiveGeoModelManager):
