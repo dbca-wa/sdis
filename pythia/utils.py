@@ -32,6 +32,21 @@ logger = logging.getLogger(__name__)
 
 
 # -----------------------------------------------------------------------------#
+# String manipulation
+def texify_filename(filename):
+    """Convert a filename into a Latex-proof name.
+
+    Remove all non-alphanumeric characters, leave extension intact.
+    This function is essential to image filenames used in Latex templates,
+    as some non-alphanumeric characters have special meaning in Latex.
+    """
+    fn, ext = os.path.splitext(filename)
+    fn_clean = filter(str.isalnum, fn)
+
+    return "{0}{1}".format(fn_clean, ext)
+
+
+# -----------------------------------------------------------------------------#
 # Logging
 def snitch(msg):
     """Write a message to INFO logger, if DEBUG to DEBUG logger and console."""

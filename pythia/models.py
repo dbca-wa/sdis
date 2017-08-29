@@ -4,7 +4,6 @@ from __future__ import (division, print_function, unicode_literals,
 import copy
 import logging
 import reversion
-import os
 
 from django.conf import settings
 from django.core import validators
@@ -28,6 +27,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from pythia.middleware import get_current_user
+from pythia.utils import texify_filename
 from django_resized import ResizedImageField
 
 # from south.modelsinspector import add_introspection_rules
@@ -38,12 +38,10 @@ logger = logging.getLogger(__name__)
 
 def programs_upload_to(instance, filename):
     """Create a custom upload location for user-submitted program files."""
-    fn, ext = os.path.splitext(filename)
-
-    return "programs/{0}/{1}{2}".format(
+    return "programs/{0}/{1}".format(
         instance.slug,
-        fn.replace(" ", "_").replace(".", "_"),
-        ext)
+        texify_filename(filename)
+        )
 
 
 class ActiveQuerySet(QuerySet):

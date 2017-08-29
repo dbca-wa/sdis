@@ -70,7 +70,7 @@ class ProgramModelTests(BaseTestCase):
     def test_programs_upload_to(self):
         """Test that program image filename gets sanitised enough for Latex."""
         filename_crazy = "some batshit.crazy.filename.jpg"
-        filename_sane = "some_batshit_crazy_filename.jpg"
+        filename_sane = "somebatshitcrazyfilename.jpg"
         upload_path_calculated = programs_upload_to(
             self.program, filename_crazy)
         upload_path_handbuilt = "programs/{0}/{1}".format(
@@ -78,6 +78,7 @@ class ProgramModelTests(BaseTestCase):
             filename_sane
             )
         self.assertEqual(upload_path_calculated, upload_path_handbuilt)
+
 
 class ProjectModelTests(BaseTestCase):
     """Base project tests."""
@@ -256,8 +257,8 @@ class ScienceProjectModelTests(BaseTestCase):
 
     def test_project_upload_to(self):
         """Test that project image filename gets sanitised enough for Latex."""
-        filename_crazy = "some batshit.crazy.filename.jpg"
-        filename_sane = "some_batshit_crazy_filename.jpg"
+        filename_crazy = "some batshit.crazy.filename!@#$%^&*()-_=+.stuff.jpg"
+        filename_sane = "somebatshitcrazyfilenamestuff.jpg"
         upload_path_calculated = projects_upload_to(
             self.project, filename_crazy)
         upload_path_handbuilt = "projects/{0}-{1}/{2}".format(

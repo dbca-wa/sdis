@@ -17,7 +17,6 @@ from __future__ import (division, print_function, unicode_literals,
 from datetime import date
 from itertools import chain
 import logging
-import os
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -38,7 +37,7 @@ from pythia.documents.models import (
 from pythia.models import ActiveGeoModelManager, Audit, ActiveModel
 from pythia.models import Program, WebResource, Division, Area, User
 from pythia.reports.models import ARARReport
-from pythia.utils import snitch
+from pythia.utils import snitch, texify_filename
 
 logger = logging.getLogger(__name__)
 
@@ -48,13 +47,11 @@ options.DEFAULT_NAMES = options.DEFAULT_NAMES + ('display_order',)
 
 def projects_upload_to(instance, filename):
     """Create a custom upload location for user-submitted files."""
-    fn, ext = os.path.splitext(filename)
-
-    return "projects/{0}-{1}/{2}{3}".format(
+    return "projects/{0}-{1}/{2}".format(
         instance.year,
         instance.number,
-        fn.replace(" ", "_").replace(".", "_"),
-        ext)
+        texify_filename(filename)
+        )
 
 NULL_CHOICES = (
     (None, _("Not applicable")),
@@ -70,9 +67,10 @@ class ProjectManager(PolymorphicManager, ActiveGeoModelManager):
 
 
 class PublishedProjectManager(PolymorphicManager, ActiveGeoModelManager):
-    """A custom Project Manager class for active projects."""
+    """A custom Project Manager class for publishable projects."""
 
     def get_queryset(self):
+        """Default queryset: only publishable projects."""
         return super(PublishedProjectManager, self).get_queryset().filter(
             status__in=Project.PUBLISHED)
 

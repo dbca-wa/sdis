@@ -7,10 +7,12 @@ from pythia.documents.models import ConceptPlan
 from pythia.projects.models import (
     Project, ScienceProject, CoreFunctionProject, CollaborationProject,
     StudentProject, ProjectMembership)
+from pythia.utils import texify_filename
 
-from .base import (ProjectFactory, ScienceProjectFactory,
-                   CoreFunctionProjectFactory, CollaborationProjectFactory,
-                   StudentProjectFactory, UserFactory)
+from .base import (
+    ProjectFactory, ScienceProjectFactory, CoreFunctionProjectFactory,
+    CollaborationProjectFactory, StudentProjectFactory, UserFactory)
+
 
 class TemplateTagTests(TestCase):
     def setUp(self):
@@ -33,5 +35,15 @@ class TemplateTagTests(TestCase):
 
         output = get_transitions(context, plan)
         print output
-        #self.fail("blah")
+        # self.fail("blah")
         pass
+
+
+class PythiaUtilsTests(TestCase):
+    """Tests for pythia utils."""
+
+    def test_texify_filename(self):
+        """Test texify_filename."""
+        dirty = "test_string`~1!2@3#4$5%6^7&8*9(0)--=+;:'\|,<.>/?asdfqwer.jpg"
+        clean = "teststring1234567890asdfqwer.jpg"
+        self.assertEqual(texify_filename(dirty), clean)
