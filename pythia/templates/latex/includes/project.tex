@@ -7,10 +7,10 @@
     {% if project.image %}            % insert project image or link to add one
     %% we are depending on MEDIA_ROOT being symlinked to the report directory
     \href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}{%
-    \includegraphics[width=\linewidth, cfbox=black 1px 0pt]{.{{ project.image.url }}}}
+    \includegraphics[width=\linewidth, cfbox=black 0.5pt 0pt]{.{{ project.image.url }}}}
     {% else %}
     \href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}{%
-    \includegraphics[width=\linewidth, , cfbox=black 1px 0pt]{% templatetag openbrace %}%
+    \includegraphics[width=\linewidth, , cfbox=black 0.5pt 0pt]{% templatetag openbrace %}%
     {{ STATIC_ROOT }}/img/intertidal.jpg}}
     {% endif %}
     \vfill
