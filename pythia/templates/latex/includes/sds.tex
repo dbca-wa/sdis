@@ -2,13 +2,20 @@
 % Service Delivery Structure
 %------------------------------------------------------------------------------%
 {% load texify %}
+
+{% if original.sds_chapterimage %}
+\chapterimage{.{{ original.sds_chapterimage.url }}}
+{% else %}
 \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
+{% endif %}
+
 \chapter*{Service Delivery Structure}
 \phantomsection                         % fix pageref from TOC
 \addcontentsline{toc}{chapter}{Service Delivery Structure}
 \chaptermark{Service Delivery Structure}
 \sectionmark{}
 
+{% comment %}
 %% http://tex.stackexchange.com/questions/170154/organisation-chart-in-latex-using-tikz
 \begin{tikzpicture}[every node/.style={draw, rounded corners=2pt, font=\sffamily, minimum height=2cm},>=latex]
 \mynode[text width=8cm]{root}{8cm}{Science and Conservation Division}{Dr. Margaret Byrne}{Corporate management; strategic direction and leadership; divisional expenditure; science communication}
@@ -23,14 +30,13 @@
 \foreach \value in {1,3,5,7} \draw[->] (root.south) |- (c\value.east);
 \foreach \value in {2,4,6,8} \draw[->] (root.south) |- (c\value.west);
 \end{tikzpicture}
+{% endcomment %}
 
-{% comment %}
 \begin{figure}[!h]
     \centering
     \includegraphics[width=\textwidth]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/sds.png}
     \label{fig:sds}
 \end{figure}
-{% endcomment %}
 
 {{ original.sds_intro|html2latex }}
 %------------------------------------------------------------------------------%

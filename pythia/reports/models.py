@@ -17,6 +17,9 @@ from django_resized import ResizedImageField
 from pythia import models as pythia_models
 from pythia.utils import snitch, texify_filename
 
+from south.modelsinspector import add_introspection_rules
+add_introspection_rules([], ["^pythia\.reports\.models\.fields\.ResizedImageField"])
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,28 +50,28 @@ class ARARReport(pythia_models.Audit):
         blank=True, null=True,
         help_text=_("The Director's Message in less than 10 000 words."))
 
-    # sds_chapterimage = ResizedImageField(
-    #     upload_to=reports_upload_to,
-    #     blank=True, null=True,
-    #     size=[2480, 1240],
-    #     help_text=_(
-    #         "Upload a chapter image for the SDS chapter."
-    #         " Aim for a visually quiet, low contrast image."
-    #         " The horizon, if shown, should be in the top third and level."
-    #         " The aspect ratio (width to height) must be 2:1."
-    #         " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-    #         )
-    #     )
-    #
-    # sds_orgchart = ResizedImageField(
-    #     upload_to=reports_upload_to,
-    #     blank=True, null=True,
-    #     size=[2480, 2480],
-    #     help_text=_(
-    #         "Upload an org chart for the SDS chapter."
-    #         " The image will be resized to max 2480 (wt) x 2480 pt (ht)."
-    #         )
-    #     )
+    sds_chapterimage = ResizedImageField(
+        upload_to=reports_upload_to,
+        blank=True, null=True,
+        size=[2480, 1240],
+        help_text=_(
+            "Upload a chapter image for the SDS chapter."
+            " Aim for a visually quiet, low contrast image."
+            " The horizon, if shown, should be in the top third and level."
+            " The aspect ratio (width to height) must be 2:1."
+            " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
+            )
+        )
+
+    sds_orgchart = ResizedImageField(
+        upload_to=reports_upload_to,
+        blank=True, null=True,
+        size=[2480, 2480],
+        help_text=_(
+            "Upload an org chart for the SDS chapter."
+            " The image will be resized to max 2480 (wt) x 2480 pt (ht)."
+            )
+        )
 
     sds_intro = models.TextField(
         verbose_name=_("Service Delivery Structure"),
@@ -76,17 +79,69 @@ class ARARReport(pythia_models.Audit):
         help_text=_("Introduction paragraph for the Science Delivery Structure"
                     " section in the ARAR"))
 
+    research_chapterimage = ResizedImageField(
+        upload_to=reports_upload_to,
+        blank=True, null=True,
+        size=[2480, 1240],
+        help_text=_(
+            "Upload a chapter image for the Summary of Research projects."
+            " Aim for a visually quiet, low contrast image."
+            " The horizon, if shown, should be in the top third and level."
+            " The aspect ratio (width to height) must be 2:1."
+            " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
+            )
+        )
+
     research_intro = models.TextField(
         verbose_name=_("Research Activities Introduction"),
         blank=True, null=True,
         help_text=_("Introduction paragraph for the Research Activity section "
                     "in the ARAR"))
 
+    partnerships_chapterimage = ResizedImageField(
+        upload_to=reports_upload_to,
+        blank=True, null=True,
+        size=[2480, 1240],
+        help_text=_(
+            "Upload a chapter image for the External Partnerships chapter."
+            " Aim for a visually quiet, low contrast image."
+            " The horizon, if shown, should be in the top third and level."
+            " The aspect ratio (width to height) must be 2:1."
+            " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
+            )
+        )
+
+    studentprojects_chapterimage = ResizedImageField(
+        upload_to=reports_upload_to,
+        blank=True, null=True,
+        size=[2480, 1240],
+        help_text=_(
+            "Upload a chapter image for the Student Projects chapter."
+            " Aim for a visually quiet, low contrast image."
+            " The horizon, if shown, should be in the top third and level."
+            " The aspect ratio (width to height) must be 2:1."
+            " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
+            )
+        )
+
     student_intro = models.TextField(
         verbose_name=_("Student Projects Introduction"),
         blank=True, null=True,
         help_text=_("Introduction paragraph for the Student Projects section "
                     "in the ARAR"))
+
+    publications_chapterimage = ResizedImageField(
+        upload_to=reports_upload_to,
+        blank=True, null=True,
+        size=[2480, 1240],
+        help_text=_(
+            "Upload a chapter image for the Publications chapter."
+            " Aim for a visually quiet, low contrast image."
+            " The horizon, if shown, should be in the top third and level."
+            " The aspect ratio (width to height) must be 2:1."
+            " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
+            )
+        )
 
     pub = models.TextField(
         verbose_name=_("Publications and Reports"),
@@ -135,8 +190,10 @@ class ARARReport(pythia_models.Audit):
     def progress_reports(self):
         """A QuerySet of Science Projects with prefetched documents."""
         return self.progressreport_set.all().order_by(
-                "project__program", "project__position",
-                "-project__year", "-project__number"
+                "project__program",
+                "project__position",
+                "-project__year",
+                "-project__number"
             ).prefetch_related(
                 "project",
                 "modifier",
@@ -147,7 +204,10 @@ class ARARReport(pythia_models.Audit):
     def student_reports(self):
         """A QuerySet of StudentProjects with prefetched documents."""
         return self.studentreport_set.all().prefetch_related(
-                "project", "modifier", "project__project_owner").order_by(
+                "project",
+                "modifier",
+                "project__project_owner"
+                ).order_by(
                 "project__project_owner__last_name")
 
     @property
