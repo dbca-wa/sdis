@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Templatetags for Latex markup."""
 from django.template.defaultfilters import stringfilter, register
 from django.utils.safestring import mark_safe
@@ -13,6 +14,7 @@ REPLACEMENTS = {
     '>': r'\textgreater',
     '{': r'\{',
     '}': r'\}',
+    u'°': r'\textdegree',
     '~': r'\textasciitilde{}',
     '^': r'\textasciicircum',
     '\n': r'\newline ',

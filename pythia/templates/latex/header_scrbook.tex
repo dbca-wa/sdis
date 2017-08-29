@@ -41,15 +41,17 @@
 %\usepackage{avant}             % Use the Avantgarde font for headings
 \usepackage{txfonts}
 \usepackage{mathptmx}
+\usepackage{gensymb}            % provides \textdegree
 \renewcommand{\familydefault}{\sfdefault} % Default to Sans Serif font
 \usepackage{microtype}          % Slightly tweak font spacing for aesthetics
 \usepackage[english]{babel}
+\usepackage[utf8]{inputenc}  % Allow letters with accents
 \usepackage[utf8]{luainputenc}  % Allow letters with accents
 \usepackage[T1]{fontenc}        % Use 8-bit encoding that has 256 glyphs
 \usepackage{textcomp}
 \usepackage{titlesec}           % Customise of titles
 %\DeclareUnicodeCharacter{0080}{\textregistered}
-
+\DeclareUnicodeCharacter{00B0}{\textdegree}
 
 %------------------------------------------------------------------------------%
 % Chapter and section headings
