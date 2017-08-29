@@ -1,8 +1,14 @@
-{% load texify %}
 %------------------------------------------------------------------------------%
 % Begin ARAR Table Student Projects
 %------------------------------------------------------------------------------%
+{% load texify %}
+
+{% if original.studentprojects_chapterimage %}
+\chapterimage{.{{ original.studentprojects_chapterimage.url }}}
+{% else %}
 \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
+{% endif %}
+
 \chapter*{Current Collaboration with Academia}
 \addcontentsline{toc}{chapter}{Current Collaboration with Academia}
 \chaptermark{Collaboration with Academia}

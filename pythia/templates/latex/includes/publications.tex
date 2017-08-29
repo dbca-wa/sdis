@@ -1,8 +1,14 @@
-{% load texify %}
 %------------------------------------------------------------------------------%
 % Begin ARAR Chapter Publications
 %------------------------------------------------------------------------------%
+{% load texify %}
+
+{% if original.publications_chapterimage %}
+\chapterimage{.{{ original.publications_chapterimage.url }}}
+{% else %}
 \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
+{% endif %}
+
 \chapter*{Publications and Reports}
 \addcontentsline{toc}{chapter}{Publications and Reports}
 \chaptermark{Publications and Reports}

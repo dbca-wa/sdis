@@ -14,6 +14,7 @@
 ]{scrbook}
 \usepackage{typearea}
 
+
 %------------------------------------------------------------------------------%
 % Headers and footers
 %------------------------------------------------------------------------------%
@@ -32,6 +33,7 @@
 \ifoot{\RaggedRight\leftmark}                       % Chapter
 \cfoot{\RaggedLeft\rightmark}                       % Section
 \ofoot[\bfseries\thepage]{\bfseries\thepage}        % Page number (also [plain])
+
 
 %------------------------------------------------------------------------------%
 % Fonts, encoding
@@ -88,8 +90,9 @@
 \usepackage{longtable}          % Multipage table
 \usepackage{tabu}               %
 \setlength{\tabulinesep}{1.5mm} % Consistent vertical spacing in tabu
-\newcommand{\HRule}{\vspace{8mm}\noindent\rule{\linewidth}{0.1pt}} % Thick Horizontal rule
+\newcommand{\HRule}{\vspace{8mm}\noindent\rule{\linewidth}{0.1pt}}
 \usepackage[export]{adjustbox}  % minipage, image frame
+
 
 %------------------------------------------------------------------------------%
 % Graphics, images, colours
@@ -180,6 +183,7 @@
 
 % copy-pasted HTML <span> in SDIS fields becomes \text{} in tex source
 \providecommand{\text}{}
+
 
 %------------------------------------------------------------------------------%
 % Custom Tikz node for SDS diagram

@@ -41,7 +41,7 @@ def texify_filename(filename):
     as some non-alphanumeric characters have special meaning in Latex.
     """
     fn, ext = os.path.splitext(filename)
-    fn_clean = filter(str.isalnum, fn)
+    fn_clean = filter(str.isalnum, str(fn))
 
     return "{0}{1}".format(fn_clean, ext)
 

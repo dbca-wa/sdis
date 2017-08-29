@@ -1,8 +1,14 @@
-{% load texify %}
 %------------------------------------------------------------------------------%
 % Begin ARAR Table Science Projects
 %------------------------------------------------------------------------------%
+{% load texify %}
+
+{% if original.research_chapterimage %}
+\chapterimage{.{{ original.research_chapterimage.url }}}
+{% else %}
 \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
+{% endif %}
+
 \chapter*{Summary of Research Projects}
 \phantomsection
 \addcontentsline{toc}{chapter}{Summary of Research Projects}

@@ -2,6 +2,7 @@
 % Science Project Reports
 %------------------------------------------------------------------------------%
 {% load texify %}
+
 %% RA = chapter, program = section
 %\chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
 %\chapter*{Report on research activities}
@@ -13,7 +14,6 @@
 \part*{Report on research activities}
 \phantomsection
 \addcontentsline{toc}{part}{Report on research activities}
-
 
 {{ arar.research_intro|html2latex }}
 

@@ -1,8 +1,13 @@
-{% load texify %}
 %------------------------------------------------------------------------------%
 % Begin ARAR Table External Partnerships
 %------------------------------------------------------------------------------%
+{% load texify %}
+{% if original.partnerships_chapterimage %}
+\chapterimage{.{{ original.partnerships_chapterimage.url }}}
+{% else %}
 \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
+{% endif %}
+
 \chapter*{External Partnerships}
 \addcontentsline{toc}{chapter}{External Partnerships}
 \chaptermark{External Partnerships}
