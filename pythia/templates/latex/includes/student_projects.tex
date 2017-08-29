@@ -3,8 +3,8 @@
 %------------------------------------------------------------------------------%
 {% load texify %}
 
-{% if original.studentprojects_chapterimage %}
-\chapterimage{.{{ original.studentprojects_chapterimage.url }}}
+{% if original.collaboration_chapterimage %}
+\chapterimage{.{{ original.collaboration_chapterimage.url }}}
 {% else %}
 \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
 {% endif %}

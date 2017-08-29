@@ -1,4 +1,13 @@
+%------------------------------------------------------------------------------%
+% Begin ARAR Chapter Student Projects
+%------------------------------------------------------------------------------%
+
+{% if original.studentprojects_chapterimage %}
+\chapterimage{.{{ original.studentprojects_chapterimage.url }}}
+{% else %}
 \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
+{% endif %}
+
 \chapter*{Student Projects}
 \addcontentsline{toc}{chapter}{Student Projects}
 \chaptermark{Student Projects}
@@ -6,3 +15,6 @@
 {% for report in reports %}
     {% include 'latex/includes/project.tex' with project=report.project stp="true" %}
 {% endfor %}
+%------------------------------------------------------------------------------%
+% End ARAR Chapter Student Projects
+%------------------------------------------------------------------------------%

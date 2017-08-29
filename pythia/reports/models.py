@@ -111,6 +111,19 @@ class ARARReport(pythia_models.Audit):
             )
         )
 
+    collaboration_chapterimage = ResizedImageField(
+        upload_to=reports_upload_to,
+        blank=True, null=True,
+        size=[2480, 1240],
+        help_text=_(
+            "Upload a chapter image for the Collab with Academia summary."
+            " Aim for a visually quiet, low contrast image."
+            " The horizon, if shown, should be in the top third and level."
+            " The aspect ratio (width to height) must be 2:1."
+            " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
+            )
+        )
+
     studentprojects_chapterimage = ResizedImageField(
         upload_to=reports_upload_to,
         blank=True, null=True,
