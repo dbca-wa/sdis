@@ -10,11 +10,22 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import signals
 from django.core.validators import MinValueValidator
-from pythia import models as pythia_models
 from django.db import models
-from pythia.utils import snitch
+
+from django_resized import ResizedImageField
+
+from pythia import models as pythia_models
+from pythia.utils import snitch, texify_filename
 
 logger = logging.getLogger(__name__)
+
+
+def reports_upload_to(instance, filename):
+    """Create a custom upload location for user-submitted report images."""
+    return "reports/{0}/{1}".format(
+        instance.pk,
+        texify_filename(filename)
+        )
 
 
 class ARARReport(pythia_models.Audit):
@@ -35,6 +46,29 @@ class ARARReport(pythia_models.Audit):
         verbose_name=_("Director's Message"),
         blank=True, null=True,
         help_text=_("The Director's Message in less than 10 000 words."))
+
+    # sds_chapterimage = ResizedImageField(
+    #     upload_to=reports_upload_to,
+    #     blank=True, null=True,
+    #     size=[2480, 1240],
+    #     help_text=_(
+    #         "Upload a chapter image for the SDS chapter."
+    #         " Aim for a visually quiet, low contrast image."
+    #         " The horizon, if shown, should be in the top third and level."
+    #         " The aspect ratio (width to height) must be 2:1."
+    #         " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
+    #         )
+    #     )
+    #
+    # sds_orgchart = ResizedImageField(
+    #     upload_to=reports_upload_to,
+    #     blank=True, null=True,
+    #     size=[2480, 2480],
+    #     help_text=_(
+    #         "Upload an org chart for the SDS chapter."
+    #         " The image will be resized to max 2480 (wt) x 2480 pt (ht)."
+    #         )
+    #     )
 
     sds_intro = models.TextField(
         verbose_name=_("Service Delivery Structure"),
