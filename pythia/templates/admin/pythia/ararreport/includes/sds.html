@@ -1,0 +1,29 @@
+<div class="row" id="{{ original.opts.module_name }}:{{ original.pk }}.sds_intro">
+
+  <div class="col-sm-12"
+      style="background: url('{% if original.sds_chapterimage %}{{ original.sds_chapterimage.url }}{% endif %}');
+      background-size: cover; opacity: 1; margin-bottom: 20px;">
+
+      <div class="well" style="opacity: 0.7; margin-top: 20px;">
+          <h1 class="media-heading">
+            Service Delivery Structure
+            <a onclick="return showAddAnotherPopup(this);"
+              type="button"
+              class="btn btn-primary btn-xs pull-right"
+              href="{{ url_change }}"
+              title="Click to edit SDS chapter image, text and org chart">
+              <i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
+          </h1>
+          {{ original.sds_intro|safe }}
+      </div>
+
+  </div>
+
+  <div class="col-sm-12">
+    {% if original.sds_orgchart %}
+    <img src="{{ original.sds_orgchart.url }}"
+      class="media-object" alt="Org chart" width="100%">
+    {% endif %}
+  </div>
+
+</div>

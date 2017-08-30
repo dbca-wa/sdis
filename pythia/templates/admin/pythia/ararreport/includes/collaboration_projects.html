@@ -1,5 +1,25 @@
 {% load pythia_base %}
-<h1 id="collaboration_projects_summary">External Partnerships</h1>
+<div class="row" id="collaboration_projects_summary">
+
+  <div class="col-sm-12"
+      style="background: url('{% if original.partnerships_chapterimage %}{{ original.partnerships_chapterimage.url }}{% endif %}');
+      background-size: cover; opacity: 1; margin-bottom: 20px; margin-top:40px;">
+
+      <div class="well" style="opacity: 0.7; margin-top: 20px;">
+          <h2 class="media-heading">
+            External Partnerships
+            <a onclick="return showAddAnotherPopup(this);"
+              type="button"
+              class="btn btn-primary btn-xs pull-right"
+              href="{{ url_change }}"
+              title="Click to edit partnerships chapter image">
+              <i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
+          </h2>
+      </div>
+
+  </div>
+</div>
+
 <table class="table">
   <thead>
       <th>Partners</th>

@@ -1,0 +1,25 @@
+<div class="row" id="{{ original.opts.module_name }}:{{ original.pk }}.pub">
+
+  <div class="col-sm-12"
+      style="background: url('{% if original.publications_chapterimage %}{{ original.publications_chapterimage.url }}{% endif %}');
+      background-size: cover; opacity: 1; margin-bottom: 20px;">
+
+      <div class="well" style="opacity: 0.7; margin-top: 20px;">
+          <h1 class="media-heading">
+            Publications and Reports
+            <a onclick="return showAddAnotherPopup(this);"
+              type="button"
+              class="btn btn-primary btn-xs pull-right"
+              href="{{ url_change }}"
+              title="Click to edit Publications chapter image and text">
+              <i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
+          </h1>
+      </div>
+
+  </div>
+
+  <div class="col-sm-12">
+    {{ original.pub|safe }}
+  </div>
+
+</div>

@@ -242,7 +242,7 @@ class ProjectPlanAdminTests(BaseTestCase):
         self.spp = self.project.documents.instance_of(ProjectPlan).get()
 
     def test_everyone_can_view_projectplan(self):
-        """Test that everyone can view the ProjectPlan"""
+        """Test that everyone can view the ProjectPlan."""
         pass
 
     def test_only_team_can_change_projectplan(self):

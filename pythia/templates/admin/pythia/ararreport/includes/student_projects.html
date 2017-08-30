@@ -1,6 +1,27 @@
 {% load pythia_base humanize %}
 <!-- Table Student Projects -->
-<h1 id="student_projects_summary">Current Collaboration with Academia (Student Projects)</h1>
+
+<div class="row" id="student_projects_summary">
+
+  <div class="col-sm-12"
+      style="background: url('{% if original.collaboration_chapterimage %}{{ original.collaboration_chapterimage.url }}{% endif %}');
+      background-size: cover; opacity: 1; margin-bottom: 20px; margin-top:40px;">
+
+      <div class="well" style="opacity: 0.7; margin-top: 20px;">
+          <h2 class="media-heading">
+            Current Collaboration with Academia
+            <a onclick="return showAddAnotherPopup(this);"
+              type="button"
+              class="btn btn-primary btn-xs pull-right"
+              href="{{ url_change }}"
+              title="Click to edit student project summary chapter image">
+              <i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
+          </h2>
+      </div>
+
+  </div>
+</div>
+
 <table class="table">
   <thead>
       <th>DPaW Officer</th>
@@ -39,7 +60,7 @@
 
         <!-- Edit / Navigation Links -->
         <td>
-          <a onclick="return showAddAnotherPopup(this);" 
+          <a onclick="return showAddAnotherPopup(this);"
           type="button" class="btn btn-primary btn-xs"
           href="{{ project_change }}" title="Edit Project">
           <i class="glyphicon glyphicon-pencil"></i>&nbsp; Edit</a>&nbsp;
@@ -55,4 +76,3 @@
   </tbody>
 </table>
 <!-- /Table Student Projects -->
-

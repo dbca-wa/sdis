@@ -1,8 +1,29 @@
 {% load pythia_base humanize %}
-<h1 id="science_projects_summary">Summary of Research Project Locations by Programs</h1>
+
+<div class="row" id="science_projects_summary">
+
+  <div class="col-sm-12"
+      style="background: url('{% if original.research_chapterimage %}{{ original.research_chapterimage.url }}{% endif %}');
+      background-size: cover; opacity: 1; margin-bottom: 20px; margin-top:40px;">
+
+      <div class="well" style="opacity: 0.7; margin-top: 20px;">
+          <h1 class="media-heading">
+            Summary of Research Project Locations by Programs
+            <a onclick="return showAddAnotherPopup(this);"
+              type="button"
+              class="btn btn-primary btn-xs pull-right"
+              href="{{ url_change }}"
+              title="Click to edit research activities chapter image and intro">
+              <i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
+          </h1>
+      </div>
+
+  </div>
+</div>
+
 
 {# requires reports to be sorted by program, done in ARARReport.progressreports #}
-{% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+{% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
 
 {% for program_reports in report_list %}
 <h2>{{ program_reports.grouper }}</h2>
@@ -21,7 +42,7 @@
         <td>{{ report.project.area_list_dpaw_region }}</td>
         <td>{{ report.project.area_list_ibra_imcra_region }}</td>
         <td>{{ report.project.area_list_nrm_region }}</td>
-        <td><a onclick="return showAddAnotherPopup(this);" 
+        <td><a onclick="return showAddAnotherPopup(this);"
                 class="text-{{ report.status_label }}"
                 href="{{ project_change }}" title="Edit project">
                 {{ report.project.project_name_html|safe }}</a>
@@ -29,11 +50,11 @@
           <small>last modified {{ report.modified|naturaltime }} by {{ report.modifier.get_full_name }}
           </small>
         </span>
-        
-        </td> 
+
+        </td>
                 {# project_name_html includes type-year-number #}
         <td>
-            <a onclick="return showAddAnotherPopup(this);" 
+            <a onclick="return showAddAnotherPopup(this);"
                 type="button" class="btn btn-primary btn-xs"
                 href="{{ project_change }}" title="Edit Project">
                 <i class="glyphicon glyphicon-pencil"></i>&nbsp; Edit</a>&nbsp;

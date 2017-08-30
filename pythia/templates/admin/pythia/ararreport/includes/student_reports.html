@@ -1,6 +1,25 @@
 {% load pythia_base %}
-<h2 id="student_projects">Student Projects</h2>
-{{ original.student_intro|safe }}
+<div class="row" id="student_projects">
+
+  <div class="col-sm-12"
+      style="background: url('{% if original.studentprojects_chapterimage %}{{ original.studentprojects_chapterimage.url }}{% endif %}');
+      background-size: cover; opacity: 1; margin-bottom: 20px; margin-top:40px;">
+
+      <div class="well" style="opacity: 0.7; margin-top: 20px;">
+          <h2 class="media-heading">
+            Student Projects
+            <a onclick="return showAddAnotherPopup(this);"
+              type="button"
+              class="btn btn-primary btn-xs pull-right"
+              href="{{ url_change }}"
+              title="Click to edit student project reports chapter image">
+              <i class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
+          </h2>
+          {{ original.student_intro|safe }}
+      </div>
+
+  </div>
+</div>
 
 {% for report in reports %}
     {% include 'admin/pythia/ararreport/includes/studentproject.html' with report=report %}
