@@ -1,18 +1,17 @@
 {% load pythia_base texify %}
 {% include "latex/header_scrbook.tex" with print=false %}
-{% url original.opts|pythia_urlname:"change" original.pk as original_change %}
 \begin{document}
 \frontmatter %-----------------------------------------------------------------%
 \pagestyle{plain}
 \pagenumbering{roman}
 {% include "latex/includes/titlepage.tex"               with original=original %}
 {% include "latex/includes/dm.tex"                      with original=original %}
-\tableofcontents
+{\hypersetup{linkcolor=black}
+\tableofcontents}
 \mainmatter %------------------------------------------------------------------%
 \raggedbottom
 \pagestyle{scrheadings}
 \pagenumbering{arabic}
-{# include "latex/includes/story.tex" #}
 {% include "latex/includes/sds.tex"                     with original=original %}
 {% include "latex/includes/programs.tex"                with arar=original reports=original.progress_reports %}
 {% include "latex/includes/collaboration_projects.tex"  with projects=original.collaboration_projects %}
