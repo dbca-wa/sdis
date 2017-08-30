@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 def reports_upload_to(instance, filename):
     """Create a custom upload location for user-submitted report images."""
-    return "reports/{0}/{1}".format(
+    return "ararreports/{0}/{1}".format(
         instance.pk,
         texify_filename(filename)
         )
