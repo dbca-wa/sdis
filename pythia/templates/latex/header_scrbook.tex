@@ -25,13 +25,9 @@
 \renewcommand{\sectionmark}[1]{\markright{#1}{}}    % Section: suppress numbering
 
 % Header (inner, center, outer)
-\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{%
-\textbf{% templatetag openbrace %}{{ subtitle }}}}}
-%\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{%
-Science Directorate Information System}}
-\ohead{\href{https://www.dpaw.wa.gov.au/about-us/science-and-research}{%
-\includegraphics[height=8mm, keepaspectratio]{% templatetag openbrace %}%
-{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
+\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{\textbf{% templatetag openbrace %}{{ subtitle }}}}}
+%\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}}
+\ohead{\href{https://www.dpaw.wa.gov.au/about-us/science-and-research}{\includegraphics[height=8mm, keepaspectratio]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}}
 
 % Footer (inner, center, outer)
 \ifoot{\RaggedRight\leftmark}                       % Chapter
@@ -56,6 +52,7 @@ Science Directorate Information System}}
 \usepackage{titlesec}           % Customise of titles
 %\DeclareUnicodeCharacter{0080}{\textregistered}
 \DeclareUnicodeCharacter{00B0}{\textdegree}
+
 
 %------------------------------------------------------------------------------%
 % Chapter and section headings
