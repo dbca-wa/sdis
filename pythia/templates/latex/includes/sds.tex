@@ -2,18 +2,13 @@
 % Service Delivery Structure
 %------------------------------------------------------------------------------%
 {% load texify %}
-
-{% if original.sds_chapterimage %}
-\chapterimage{.{{ original.sds_chapterimage.url }}}
-{% else %}
-\chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
-{% endif %}
-
-\chapter*{Service Delivery Structure}
+\thispagestyle{empty}                       % Suppress headers / footers
+\begin{absolutelynopagebreak}               % Force single page
+\null\vfil\vskip 60pt                       % 60 pt vspace
+{\huge\bfseries\centering Service Delivery Structure\par}   % Emulate heading (pre-TOC)
 \phantomsection                         % fix pageref from TOC
 \addcontentsline{toc}{chapter}{Service Delivery Structure}
-\chaptermark{Service Delivery Structure}
-\sectionmark{}
+\vskip 2em                                  % 2 em vspace post-heading
 
 \begin{figure}[!h]
     \centering
@@ -41,6 +36,7 @@
 \end{figure}
 
 {{ original.sds_intro|html2latex }}
+\end{absolutelynopagebreak}
 %------------------------------------------------------------------------------%
 % End Service Delivery Structure
 %------------------------------------------------------------------------------%
