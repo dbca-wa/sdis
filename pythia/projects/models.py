@@ -1195,8 +1195,10 @@ class StudentProject(Project):
     LEVEL_4TH = 3
     LEVEL_3RD = 4
     LEVEL_UND = 5
+    LEVEL_PDC = 6
 
     LEVELS = (
+        (LEVEL_PDC, "Post-Doc"),
         (LEVEL_PHD, "PhD"),
         (LEVEL_MSC, "MSc"),
         (LEVEL_HON, "BSc (Honours)"),
