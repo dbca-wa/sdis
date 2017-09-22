@@ -221,7 +221,10 @@ class ARARReport(pythia_models.Audit):
                 "modifier",
                 "project__project_owner"
                 ).order_by(
-                "project__project_owner__last_name")
+                "project__position",
+                "project__project_owner__last_name",
+                "-project__year",
+                "-project__number")
 
     @property
     def collaboration_projects(self):
