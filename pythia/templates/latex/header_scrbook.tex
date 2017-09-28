@@ -49,7 +49,7 @@
 \usepackage[utf8]{luainputenc}  % Allow letters with accents
 \usepackage[T1]{fontenc}        % Use 8-bit encoding that has 256 glyphs
 \usepackage{textcomp}
-\usepackage{titlesec}           % Customise of titles
+\usepackage[explicit]{titlesec}           % Customise of titles
 %\DeclareUnicodeCharacter{0080}{\textregistered}
 \DeclareUnicodeCharacter{00B0}{\textdegree}
 
@@ -67,6 +67,9 @@
 \RedeclareSectionCommand[afterskip=0.1\baselineskip]{subsubsection} % less space
 % after progressreport subheadings
 \deftocheading{toc}{\huge\bfseries Contents\par\normalsize\mdseries}% TOC title
+
+% Hide a part heading
+\newcommand*\Hide{\titleformat{\part}{}{}{0pt}{}}
 
 
 %------------------------------------------------------------------------------%

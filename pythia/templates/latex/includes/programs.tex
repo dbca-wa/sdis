@@ -11,11 +11,14 @@
 %\chaptermark{Research Activities}
 
 %% RA = part, program = chapter
+{
+\Hide
 \part*{Report on research activities}
 \phantomsection
-\addcontentsline{toc}{part}{Report on research activities}
+% \addcontentsline{toc}{part}{Report on research activities}
+}
 
-{{ arar.research_intro|html2latex }}
+{# arar.research_intro|html2latex #}
 
 {# requires reports to be sorted by program, done in ARARReport.progressreports #}
 {% regroup reports|dictsort:"project.program.position" by project.program as report_list %}

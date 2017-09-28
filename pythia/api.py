@@ -221,7 +221,7 @@ class FullProjectSerializer(ProjectSerializer):
             'area_list_nrm_region',
             'area_list_ibra_imcra_region',
             'area_list_dpaw_region',
-            'area_list_dpaw_district',
+            'area_list_dpaw_district'
             )
 
 
