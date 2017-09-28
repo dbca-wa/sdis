@@ -79,7 +79,14 @@
 %\setlength{\parindent}{0em}    % Don't indent paragraphs - ONLINE
 %\setlength{\parskip}{1.3 ex plus 0.5ex minus 0.3ex} % 1-1.8 ex vspace btw pars
 \usepackage{scrextend}          % Custom paragraph indentation
-
+\usepackage{tocstyle}
+% \setcounter{tocdepth}{1}
+\newtocstyle{compact}{%
+  % \settocfeature[1]{entryhook}{\bfseries}%
+  \settocfeature[1]{entryvskip}{0pt plus 2pt}%
+  \settocfeature[1]{leaders}{\hfill}%
+}
+\usetocstyle{compact}
 
 %------------------------------------------------------------------------------%
 % Tables, columns, layout
