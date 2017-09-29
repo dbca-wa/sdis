@@ -8,9 +8,9 @@
 \chapterimage{% templatetag openbrace %}{{ STATIC_ROOT }}/img/80mile.jpg}
 {% endif %}
 
-\chapter*{Student Projects}
-\addcontentsline{toc}{chapter}{Student Projects}
-\chaptermark{Student Projects}
+\chapter*{Student Project Reports}
+\addcontentsline{toc}{chapter}{Student Project Reports}
+\chaptermark{Student Project Reports}
 \sectionmark{}
 {% for report in reports %}
     {% include 'latex/includes/project.tex' with project=report.project stp="true" %}
