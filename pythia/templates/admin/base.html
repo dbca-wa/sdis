@@ -454,12 +454,14 @@
 <!-- Footer -->
 <div id="footer">
     <div class="container">
-        <p class="text-muted credit">
-            {% block extra_footer %}
-            {% load pythia_base %}
+      <div class="row text-muted credit">
+          {% block extra_footer %}
+          <div class="col-lg-6 col-sm-12">
             <a href="https://github.com/parksandwildlife/sdis">
             {% get_version_info %}</a>
-            &copy; 2012&ndash;2016 Department of Parks and Wildlife&nbsp;
+            &copy; 2012&ndash;2017 DBCA&nbsp;
+          </div>
+          <div class="col-lg-6 col-sm-12">
             <a href="https://circleci.com/gh/parksandwildlife/sdis">
                 <img src="https://circleci.com/gh/parksandwildlife/sdis.svg?style=svg"
                 alt="Test Status" /></a>&nbsp;
@@ -475,9 +477,9 @@
             <a href='https://waffle.io/parksandwildlife/sdis'>
                 <img src='https://badge.waffle.io/parksandwildlife/sdis.svg?label=ready&title=Ready'
                 alt='Up next' /></a>
-
-            {% endblock %}
-        </p>
+          </div>
+          {% endblock %}
+      </div><!-- /.row -->    
     </div><!-- /.container -->
 </div><!-- /#footer -->
 <!-- /Footer -->
