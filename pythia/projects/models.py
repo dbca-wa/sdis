@@ -234,6 +234,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     comments = models.TextField(
         blank=True, null=True,
         help_text=_("Any additional comments on the project."))
+    keywords = models.TextField(
+        blank=True, null=True,
+        help_text="Add some keywords as comma separated list.")
 
     # -------------------------------------------------------------------------#
     # Time frame of project activity

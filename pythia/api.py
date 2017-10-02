@@ -1,3 +1,4 @@
+"""SDIS API."""
 from rest_framework import serializers, viewsets, routers, filters
 # from rest_framework.renderers import BrowsableAPIRenderer
 # from rest_framework_latex import renderers
@@ -164,6 +165,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             'tagline',
             'tagline_plain',
             'comments',
+            'keywords',
             'image',
             'team_list_plain',
             'program',
@@ -216,6 +218,7 @@ class FullProjectSerializer(ProjectSerializer):
             'title_plain',
             'tagline_plain',
             'comments',
+            'keywords',
             'team_list_plain',
             'program',
             'area_list_nrm_region',

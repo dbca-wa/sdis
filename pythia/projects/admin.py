@@ -1,3 +1,4 @@
+"""Project admin."""
 from __future__ import unicode_literals, absolute_import
 # from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
@@ -15,7 +16,7 @@ from django_tablib.admin import TablibAdmin
 from pythia.admin import BaseAdmin, Breadcrumb, DownloadAdminMixin
 from pythia.projects.models import PROJECT_CLASS_MAP
 # from pythia.templatetags.pythia_base import pythia_urlname
-from pythia.utils import snitch
+# from pythia.utils import snitch
 from pythia.widgets import AreasWidgetWrapper
 from mail_templated import send_mail
 from sdis import settings
@@ -126,7 +127,7 @@ class ProjectAdmin(BaseAdmin):
             ('Project display', {
                 'description': "Make your project stand out!",
                 'classes': ('collapse',),
-                'fields': ('image', 'tagline', 'comments', 'position'), })
+                'fields': ('image', 'tagline', 'comments', 'keywords', 'position'), })
             )
 
     def project_id(self, obj):
