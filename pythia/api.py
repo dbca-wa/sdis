@@ -1,4 +1,5 @@
 """SDIS API."""
+
 from rest_framework import serializers, viewsets, routers, filters
 # from rest_framework.renderers import BrowsableAPIRenderer
 # from rest_framework_latex import renderers
@@ -7,17 +8,28 @@ from rest_framework import serializers, viewsets, routers, filters
 # from drf_extra_fields.geo_fields import PointField
 # from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from rest_framework.authentication import (
-    SessionAuthentication, BasicAuthentication, TokenAuthentication)
+# from rest_framework.authentication import (
+# SessionAuthentication, BasicAuthentication, TokenAuthentication)
 
-from pythia.models import Program, WebResource, Division, Area, User
+from pythia.models import (
+    Program,
+    # WebResource, Division,
+    Area, User)
 from pythia.projects.models import (
-    Project, ScienceProject, CoreFunctionProject, CollaborationProject,
-    StudentProject)
-from pythia.documents.models import (
-    Document, ConceptPlan, ProjectPlan, ProgressReport, ProjectClosure,
-    StudentReport)
-from pythia.reports.models import (ARARReport)
+    Project,
+    # ScienceProject,
+    # CoreFunctionProject,
+    # CollaborationProject,
+    # StudentProject
+    )
+# from pythia.documents.models import (
+#     Document,
+#     ConceptPlan,
+#     ProjectPlan,
+#     ProgressReport,
+#     ProjectClosure,
+#     StudentReport)
+# from pythia.reports.models import (ARARReport)
 
 
 # -----------------------------------------------------------------------------#
@@ -102,6 +114,7 @@ class ProgramSerializer(serializers.HyperlinkedModelSerializer):
 
 class FullProgramSerializer(serializers.HyperlinkedModelSerializer):
     """A comprehensive Program serializer."""
+
     program_leader = UserSerializer()
     finance_admin = UserSerializer()
     data_custodian = UserSerializer()
@@ -147,8 +160,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         'area_list_nrm_region',
         'area_list_ibra_imcra_region',
         'area_list_dpaw_region',
-        'area_list_dpaw_district',
-        )
+        'area_list_dpaw_district',)
 
     class Meta:
         """Class opts."""
@@ -165,15 +177,14 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             'tagline',
             'tagline_plain',
             'comments',
-            'keywords',
+            'keywords_plain',
             'image',
             'team_list_plain',
             'program',
             'area_list_nrm_region',
             'area_list_ibra_imcra_region',
             'area_list_dpaw_region',
-            'area_list_dpaw_district',
-            )
+            'area_list_dpaw_district',)
 
 
 class FullProjectSerializer(ProjectSerializer):
@@ -218,7 +229,7 @@ class FullProjectSerializer(ProjectSerializer):
             'title_plain',
             'tagline_plain',
             'comments',
-            'keywords',
+            'keywords_plain',
             'team_list_plain',
             'program',
             'area_list_nrm_region',
