@@ -145,6 +145,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     project_type_year_number_plain = serializers.Field()
     title_plain = serializers.Field()
     tagline_plain = serializers.Field()
+    keywords_plain = serializers.Field()
     team_list_plain = serializers.Field
     program = serializers.RelatedField()
     absolute_url = serializers.Field()
@@ -155,6 +156,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
         'status_display',
         'title_plain',
         'team_list_plain',
+        'keywords_plain',
         'program',
         'absolute_url',
         'area_list_nrm_region',
@@ -205,6 +207,7 @@ class FullProjectSerializer(ProjectSerializer):
         'status_display',
         'title_plain',
         'tagline_plain',
+        'keywords_plain',
         'program',
         'area_list_nrm_region',
         'area_list_ibra_imcra_region',
@@ -368,7 +371,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     Search fields
     -------------
     Fulltext search with partial, case-insensitive match works on
-    title, tagline, and all four area fields.
+    title, tagline, keywords, and all four area fields.
 
     * All projects with "adaptive" in title or tagline:
       `/api/projects/?search=adaptive </api/projects/?search=adaptive>`_
@@ -391,6 +394,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     search_fields = (
         'title',
         'tagline',
+        'keywords_plain',
         'area_list_nrm_region',
         'area_list_ibra_imcra_region',
         'area_list_dpaw_region',

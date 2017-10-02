@@ -310,33 +310,33 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     # Dirty Hacks: lookups are read often, but change seldomly
     #
     team_list_plain = models.TextField(
-            verbose_name="Team list",
-            editable=False,
-            null=True, blank=True,
-            help_text=_("Team member names in order of membership rank."))
+        verbose_name="Team list",
+        editable=False,
+        null=True, blank=True,
+        help_text=_("Team member names in order of membership rank."))
     supervising_scientist_list_plain = models.TextField(
-            verbose_name="Supervising Scientists list",
-            editable=False,
-            null=True, blank=True,
-            help_text=_("Supervising Scientist names in order of membership"
-                        " rank. NOT the project owner, but all supervising "
-                        "scientists on the team."))
+        verbose_name="Supervising Scientists list",
+        editable=False,
+        null=True, blank=True,
+        help_text=_("Supervising Scientist names in order of membership"
+                    " rank. NOT the project owner, but all supervising "
+                    "scientists on the team."))
     area_list_dpaw_region = models.TextField(
-            verbose_name="DPaW Region List",
-            editable=False, null=True, blank=True,
-            help_text=_("DPaW Region names."))
+        verbose_name="DPaW Region List",
+        editable=False, null=True, blank=True,
+        help_text=_("DPaW Region names."))
     area_list_dpaw_district = models.TextField(
-            verbose_name="DPaW Region List",
-            editable=False, null=True, blank=True,
-            help_text=_("DPaW Region names."))
+        verbose_name="DPaW Region List",
+        editable=False, null=True, blank=True,
+        help_text=_("DPaW Region names."))
     area_list_ibra_imcra_region = models.TextField(
-            verbose_name="DPaW Region List",
-            editable=False, null=True, blank=True,
-            help_text=_("DPaW Region names."))
+        verbose_name="DPaW Region List",
+        editable=False, null=True, blank=True,
+        help_text=_("DPaW Region names."))
     area_list_nrm_region = models.TextField(
-            verbose_name="DPaW Region List",
-            editable=False, null=True, blank=True,
-            help_text=_("DPaW Region names."))
+        verbose_name="DPaW Region List",
+        editable=False, null=True, blank=True,
+        help_text=_("DPaW Region names."))
     # end dirty hacks
     # -------------------------------------------------------------------------#
 
@@ -400,7 +400,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     # -------------------------------------------------------------------------#
     # Project numbers
     @classmethod
-    def get_next_available_number_for_year(year):
+    def get_next_available_number_for_year(cls, year):
         """Return the lowest available project number for a given year."""
         numbers = list(Project.objects.filter(year=year).values("number"))
         if len(numbers) == 0:
@@ -413,8 +413,10 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """Return the lowest available project number in the project's year."""
         return Project.get_next_available_number_for_year(self.year)
 
-    """TODO: order field orders projects depending on type
-    distribute to individual project classes?"""
+    """
+    TODO: order field orders projects depending on type
+    distribute to individual project classes?
+    """
     # @property
     # def order_field(self):
     #    if self.project_type == 'COL':
@@ -508,14 +510,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
     @property
     def all_involved(self):
-        """Return a list of submitters, program leader, approvers and special
-        roles."""
+        """List of submitters, program leader, approvers and special roles."""
         return list(set(chain(self.submitters, self.reviewer, self.approvers)))
 
     @property
     def all_permitted(self):
         """Return a deduplicated list of submitters, reviewers, approvers."""
-        return list(set(chain(self.submitters, self.reviewers, self.approvers)))
+        return list(
+            set(chain(self.submitters, self.reviewers, self.approvers)))
 
     # -------------------------------------------------------------------------#
     # Project approval
@@ -542,14 +544,15 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         target=STATUS_UPDATE,
         conditions=[can_request_update],
         permission=lambda instance, user: user in instance.approvers,
-        custom=dict(verbose="Request update",
-                    explanation="The project team can update and submit the "
-                    "annual progress report. Once the progress report is "
-                    "approved, the project will become 'active' again. If the "
-                    "project should have been closed, the Directorate can "
-                    "fast-track the project into the correct work flow.",
-                    notify=True,)
-        )
+        custom=dict(
+            verbose="Request update",
+            explanation="The project team can update and submit the "
+            "annual progress report. Once the progress report is "
+            "approved, the project will become 'active' again. If the "
+            "project should have been closed, the Directorate can "
+            "fast-track the project into the correct work flow.",
+            notify=True,)
+    )
     def request_update(self, report=None):
         """
         Transition to move the project to STATUS_UPDATING.
@@ -771,7 +774,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     @property
     def keywords_plain(self):
         """Return a plain text version of the project keywords."""
-        return unicode(strip_tags(self.keywords)).strip()
+        return unicode(strip_tags(self.keywords)) if self.keywords else ""
 
     @property
     def progressreport(self, year):
@@ -799,13 +802,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """Return a plain text version of the team list, DPAW staff only."""
         return ", ".join([
             m.user.abbreviated_name for m in
-            self.projectmembership_set.select_related(
-                    'user'
-                ).filter(
-                    role__in=ProjectMembership.ROLES_STAFF
-                ).order_by(
-                    "position", "user__last_name", "user__first_name"
-                )])
+            self.projectmembership_set.select_related('user').filter(
+                role__in=ProjectMembership.ROLES_STAFF).order_by(
+                "position", "user__last_name", "user__first_name")])
 
     def get_supervising_scientist_list_plain(self):
         """Return a string of Supervising Scientist names."""
@@ -835,12 +834,11 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         return[[m.get_role_display(), m.user.fullname, m.time_allocation] for m
                in self.projectmembership_set.select_related(
-                        'user'
-                    ).filter(
-                        role__in=ProjectMembership.ROLES_STAFF
-                    ).order_by(
-                        "position", "user__last_name", "user__first_name"
-                    )]
+                    'user'
+                ).filter(
+                    role__in=ProjectMembership.ROLES_STAFF
+                ).order_by(
+                    "position", "user__last_name", "user__first_name")]
 
     # -------------------------------------------------------------------------#
     # Areas
@@ -947,13 +945,13 @@ class ScienceProject(Project):
         msg = "Creating ProgressReport for {0}".format(self.__str__())
         snitch(msg)
         p, created = ProgressReport.objects.get_or_create(
-                year=report.year, project=self)
+            year=report.year, project=self)
         p.report = report
         p.is_final_report = final
         if (created and ProgressReport.objects.filter(
-                project=self, year=report.year-1).exists()):
+                project=self, year=report.year - 1).exists()):
             # This can go wrong:
-            p0 = ProgressReport.objects.get(project=self, year=report.year-1)
+            p0 = ProgressReport.objects.get(project=self, year=report.year - 1)
             p.context = p0.context
             p.aims = p0.aims
             p.progress = p0.progress
@@ -1033,9 +1031,9 @@ class CoreFunctionProject(Project):
         p.report = report
         p.is_final_report = final
         if (created and ProgressReport.objects.filter(
-                project=self, year=report.year-1).exists()):
+                project=self, year=report.year - 1).exists()):
             # This can go wrong:
-            p0 = ProgressReport.objects.get(project=self, year=report.year-1)
+            p0 = ProgressReport.objects.get(project=self, year=report.year - 1)
             p.context = p0.context
             p.aims = p0.aims
             p.progress = p0.progress
@@ -1159,7 +1157,7 @@ class CollaborationProject(Project):
         """
 
     def can_force_closure(self):
-        """CollaborationProjects cannot force closure."""
+        """Prevent force closure for CollaborationProjects."""
         return False
 
     @transition(
@@ -1317,7 +1315,7 @@ class StudentProject(Project):
         return None
 
     def can_request_final_update(self):
-        """StudentProjects have no request final updates."""
+        """Prevent final updates for StudentProjects."""
         return False
 
     def can_request_closure(self):
@@ -1385,7 +1383,7 @@ class StudentProject(Project):
                     notify=False,)
         )
     def complete(self):
-        """StudentProjects can complete without closure process."""
+        """Allow StudentProjects to complete without closure process."""
         return
 
     @transition(
@@ -1436,8 +1434,8 @@ class StudentProject(Project):
                 year=report.year, project=self)
         p.report = report
         if (created and StudentReport.objects.filter(
-                project=self, year=report.year-1).exists()):
-            p0 = StudentReport.objects.get(project=self, year=report.year-1)
+                project=self, year=report.year - 1).exists()):
+            p0 = StudentReport.objects.get(project=self, year=report.year - 1)
             p.progress_report = p0.progress_report
         p.save()
         msg = "{0} Added StudentReport for year {1} in report {2}".format(
