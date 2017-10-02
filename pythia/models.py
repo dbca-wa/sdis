@@ -1072,11 +1072,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def fullname(self):
+        """Return a User's full name with title and affiliation."""
         return self.get_full_name()
 
     def get_full_name(self):
         """
-        Returns the first_name plus the last_name, with a space in between.
+        Return the first_name plus the last_name, with a space in between.
 
         Middle initials bring their own prefixed whitespace.
         """
@@ -1084,7 +1085,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             full_name = "{0} {1}".format(
                 self.group_name, self.get_affiliation())
         else:
-            full_name = "{0}{1} {2} {3} {4}".format(
+            full_name = "{0} {1} {2} {3} {4}".format(
                 self.get_title(),
                 self.first_name,
                 self.get_middle_initials(),
@@ -1117,7 +1118,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                     self.middle_initials,  # remember these are full initials
                     self.last_name,
                     self.get_affiliation())
-        return full_name.strip()
+        return full_name.replace("  ", " ")
 
     @property
     def abbreviated_name_no_affiliation(self):
