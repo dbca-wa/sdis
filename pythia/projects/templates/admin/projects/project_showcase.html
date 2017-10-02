@@ -14,6 +14,7 @@
             <i class="glyphicon glyphicon-wrench"></i>&nbsp;
             {{ project.get_status_display }}
         </span>
+        &nbsp;
         <span class="label label-default">
             <i class="glyphicon glyphicon-calendar"></i>&nbsp;
             {{ project.start_date|date:"Y" }} - {{ project.end_date|date:"Y" }}
@@ -26,15 +27,19 @@
     <h3 class="media-heading">{{ project.project_name_html|safe }}</h3>
     <h5><em>{{ project.team_list_plain|safe }}</em></h5>
     <div>
-        {% if project.tagline %}<i class="glyphicon glyphicon-comments"></i>&nbsp;{{ project.tagline|safe }}
+        {% if project.tagline %}<i class="glyphicon glyphicon-comments"></i>&nbsp;
+        {{ project.tagline|safe }}
         {% else %}This project needs a catchy tagline!{% endif %}
     </div>
     <div>
-        {% if project.keywords %}<i class="glyphicon glyphicon-tags"></i>&nbsp;{{ project.keywords_plain|safe }}
+        <i class="glyphicon glyphicon-tags"></i>&nbsp;
+        {% if project.keywords %}{{ project.keywords_plain|safe }}
         {% else %}This project needs some keywords!{% endif %}
     </div>
     
-    <div><i class="glyphicon glyphicon-comments"></i>&nbsp;<span class="text-muted">{{ project.comments|safe }}</span></div>
+    <div>
+        <i class="glyphicon glyphicon-comments"></i>&nbsp;
+        <span class="text-muted">{{ project.comments|safe }}</span></div>
 
     <div id="datasets">
         <i class="glyphicon glyphicon-qrcode"></i>&nbsp;<span class="text-muted">Datasets on the
