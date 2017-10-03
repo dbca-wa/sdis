@@ -1090,8 +1090,9 @@ class User(AbstractBaseUser, PermissionsMixin):
                 self.first_name,
                 self.get_middle_initials(),
                 self.last_name,
-                self.get_affiliation())
-        return full_name.strip().replace("  ", " ")
+                self.get_affiliation()
+                ).strip().replace("  ", " ")
+        return full_name
 
     @property
     def short_name(self):
