@@ -68,7 +68,11 @@
 % after progressreport subheadings
 
 \deftocheading{toc}{
-\huge\bfseries\centering Contents \vspace*{2cm}\par\normalsize\mdseries}% TOC title
+\huge\bfseries\centering
+\vspace*{3.2em}
+Contents
+\vspace*{0.8em}
+\par\normalsize\mdseries}% TOC title with 3em vspace
 
 % Hide a part heading
 \newcommand*\Hide{\titleformat{\part}{}{}{0pt}{}}
@@ -85,7 +89,7 @@
 % \setcounter{tocdepth}{1}
 \newtocstyle{compact}{%
   \settocfeature[1]{entryhook}{\bfseries}%
-  %\settocfeature[1]{entryvskip}{0pt plus 2pt}%
+  \settocfeature[1]{entryvskip}{2em plus 2pt}% spacing btw TOC heading and body
   \settocfeature[1]{leaders}{\hfill}%
 }
 \usetocstyle{compact}
