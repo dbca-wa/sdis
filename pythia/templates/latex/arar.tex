@@ -6,9 +6,12 @@
 \pagenumbering{roman}
 {% include "latex/includes/titlepage.tex"               with original=original %}
 {% include "latex/includes/dm.tex"                      with original=original %}
-{\hypersetup{linkcolor=black}
+{
+\hypersetup{linkcolor=black}
 \pagebreak
-\tableofcontents}
+\vskip 2em
+\tableofcontents
+}
 \mainmatter %------------------------------------------------------------------%
 \raggedbottom
 \pagestyle{scrheadings}

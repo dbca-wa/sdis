@@ -66,7 +66,12 @@
 %\RedeclareSectionCommand[beforeskip=0cm]{subsection} % tighten HRule to proj name
 \RedeclareSectionCommand[afterskip=0.1\baselineskip]{subsubsection} % less space
 % after progressreport subheadings
-\deftocheading{toc}{\huge\bfseries Contents\par\normalsize\mdseries}% TOC title
+
+\deftocheading{toc}{
+\huge\bfseries\centering
+Contents
+\vskip 1em
+\par\normalsize\mdseries}% TOC title
 
 % Hide a part heading
 \newcommand*\Hide{\titleformat{\part}{}{}{0pt}{}}
@@ -82,7 +87,7 @@
 \usepackage{tocstyle}
 % \setcounter{tocdepth}{1}
 \newtocstyle{compact}{%
-  % \settocfeature[1]{entryhook}{\bfseries}%
+  \settocfeature[1]{entryhook}{\bfseries}%
   \settocfeature[1]{entryvskip}{0pt plus 2pt}%
   \settocfeature[1]{leaders}{\hfill}%
 }
