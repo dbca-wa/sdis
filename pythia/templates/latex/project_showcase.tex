@@ -1,0 +1,27 @@
+{% load pythia_base texify %}
+{% include "latex/header_scrreprt.tex" with print=false %}
+\ofoot[]{}
+\begin{document}
+
+% %-----------------------------------------------------------------------------%
+% % Title page
+% \subject{% templatetag openbrace %}{% block subject %}Subject{% endblock %}}
+% \title{% templatetag openbrace %}{% block title %}Title{% endblock %}}
+% \subtitle{% templatetag openbrace %}{% block subtitle %}Subtitle{% endblock %}}
+% \author{% templatetag openbrace %}{% block author %}Author{% endblock %}}
+% \publishers{% templatetag openbrace %}\small{% block publishers %}Publishers{% endblock %}}
+% \uppertitleback{% templatetag openbrace %}{% block uppertitleback %}{% endblock %}}
+% \lowertitleback{% templatetag openbrace %}{% block lowertitleback %}{% endblock %}}
+% \date{}
+
+% %-----------------------------------------------------------------------------%
+% % Front matter
+% \frontmatter
+% \maketitle
+
+\mainmatter %------------------------------------------------------------------%
+\raggedbottom
+\pagestyle{scrheadings}
+\pagenumbering{arabic}
+{% include "latex/includes/project_details.tex"         with project=original %}
+\end{document}

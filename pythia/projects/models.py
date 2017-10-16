@@ -794,6 +794,18 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     def absolute_url(self):
         """Return the absolute url."""
         return self.get_absolute_url()
+    # -------------------------------------------------------------------------#
+    # Print
+    #
+    @property
+    def download_title(self):
+        """The PDF title."""
+        return 'Project'
+
+    @property
+    def download_subtitle(self):
+        """The PDF subtitle."""
+        return self.fullname
 
     # -------------------------------------------------------------------------#
     # Team members

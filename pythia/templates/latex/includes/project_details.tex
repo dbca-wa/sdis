@@ -1,0 +1,56 @@
+{% load texify pythia_base %}
+{% url project.opts|pythia_urlname:'change' project.pk|pythia_urlquote as project_change %}
+%% Project showcase -----------------------------------------------------------%
+\vskip 2em
+\noindent
+\adjustbox{valign=t}{\begin{minipage}{0.3\textwidth} % begin column 30% width
+    {% if project.image %}            % insert project image or link to add one
+    %% we are depending on MEDIA_ROOT being symlinked to the report directory
+    \href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}{%
+    \includegraphics[width=\linewidth, cfbox=black 0.5pt 0pt]{.{{ project.image.url }}}}
+    {% else %}
+    \href{% templatetag openbrace %}{{ baseurl|safe }}{{ project_change }}}{%
+    \includegraphics[width=\linewidth, , cfbox=black 0.5pt 0pt]{% templatetag openbrace %}%
+    {{ STATIC_ROOT }}/img/intertidal.jpg}}
+    {% endif %}
+    \vfill
+\end{minipage}}%
+\hfill
+\adjustbox{valign=t}{\begin{minipage}[t]{0.65\linewidth}
+    \begin{flushleft}                       % begin justify left
+    \raggedbottom                           % align top
+    \subsection*{% templatetag openbrace %}{{ project.title|html2latex }}}
+    \phantomsection                         % fix pageref from TOC
+    \addcontentsline{toc}{subsection}{% templatetag openbrace %}{{ project.title|html2latex }}}
+    {{ project.project_type_year_number }}
+    \label{sec:{{ project.project_year_number }}}
+    %% placing the label after some content sets the internal pageref correctly
+    \newline
+    \vskip 3pt
+    {% if stp == "true" %}                  % Minipage to center colons
+    \adjustbox{valign=t}{\begin{minipage}{0.2\textwidth}
+    \begin{flushright}
+    Scientist(s):\\
+    Student:\\
+    Academic(s):
+    \end{flushright}
+    \end{minipage}}%
+    \hfill
+    \adjustbox{valign=t}{\begin{minipage}[t]{0.78\linewidth}
+    \begin{flushleft}
+    {{ project.supervising_scientist_list_plain|html2latex }}\\
+    {{ project.student_list_plain|html2latex }}~%
+    ({{ project.get_level_display|striptags }})\\
+    {{ project.academic_list_plain|safe|html2latex }}
+    \end{flushleft}
+    \end{minipage}}
+    {% else %}
+    {{ project.team_list_plain|html2latex }}
+    {% endif %}
+    \flushbottom                            % restore flushbottom
+    \end{flushleft}                         % end justify left
+\end{minipage}}
+%% End project showcase -------------------------------------------------------%
+{% if project.comments %}
+{{ project.comments|html2latex }}
+{% endif %}

@@ -68,9 +68,6 @@ class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
         the correct project.
 
         User is read-only when changing, but can be set during adding.
-        This enables
-
-
         """
         rof = super(ProjectMembershipAdmin, self).get_readonly_fields(request,
                                                                       obj)
@@ -97,7 +94,7 @@ class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
     #    return result
 
 
-class ProjectAdmin(BaseAdmin):
+class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
     list_display = ('project_id', 'type', 'year', 'number', 'project_title',
                     'project_owner_name', 'program', 'research_function',
                     'status', 'fm_start_date', 'fm_end_date')
@@ -106,6 +103,7 @@ class ProjectAdmin(BaseAdmin):
     list_display_links = ('project_id', 'project_title')
     search_fields = ('title', 'year', 'number')
     list_filter = ('type', 'program', 'status')
+    download_template = "project_showcase"
 
     def get_fieldsets(self, request, obj=None):
         # print("project admin get fieldsets")
