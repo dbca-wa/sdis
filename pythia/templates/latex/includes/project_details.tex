@@ -22,31 +22,31 @@
     \subsection*{% templatetag openbrace %}{{ project.title|html2latex }}}
     \phantomsection                         % fix pageref from TOC
     \addcontentsline{toc}{subsection}{% templatetag openbrace %}{{ project.title|html2latex }}}
-    {{ project.project_type_year_number }}
-    \label{sec:{{ project.project_year_number }}}
-    %% placing the label after some content sets the internal pageref correctly
-    \newline
-    \vskip 3pt
-    {% if stp == "true" %}                  % Minipage to center colons
-    \adjustbox{valign=t}{\begin{minipage}{0.2\textwidth}
-    \begin{flushright}
-    Scientist(s):\\
-    Student:\\
-    Academic(s):
-    \end{flushright}
-    \end{minipage}}%
-    \hfill
-    \adjustbox{valign=t}{\begin{minipage}[t]{0.78\linewidth}
-    \begin{flushleft}
-    {{ project.supervising_scientist_list_plain|html2latex }}\\
-    {{ project.student_list_plain|html2latex }}~%
-    ({{ project.get_level_display|striptags }})\\
-    {{ project.academic_list_plain|safe|html2latex }}
-    \end{flushleft}
-    \end{minipage}}
-    {% else %}
-    {{ project.team_list_plain|html2latex }}
-    {% endif %}
+    % {{ project.project_type_year_number }}
+    % \label{sec:{{ project.project_year_number }}}
+    % %% placing the label after some content sets the internal pageref correctly
+    % \newline
+    % \vskip 3pt
+    % {% if stp == "true" %}                  % Minipage to center colons
+    % \adjustbox{valign=t}{\begin{minipage}{0.2\textwidth}
+    % \begin{flushright}
+    % Scientist(s):\\
+    % Student:\\
+    % Academic(s):
+    % \end{flushright}
+    % \end{minipage}}%
+    % \hfill
+    % \adjustbox{valign=t}{\begin{minipage}[t]{0.78\linewidth}
+    % \begin{flushleft}
+    % {{ project.supervising_scientist_list_plain|html2latex }}\\
+    % {{ project.student_list_plain|html2latex }}~%
+    % ({{ project.get_level_display|striptags }})\\
+    % {{ project.academic_list_plain|safe|html2latex }}
+    % \end{flushleft}
+    % \end{minipage}}
+    % {% else %}
+    % {{ project.team_list_plain|html2latex }}
+    % {% endif %}
     \flushbottom                            % restore flushbottom
     \end{flushleft}                         % end justify left
 \end{minipage}}
