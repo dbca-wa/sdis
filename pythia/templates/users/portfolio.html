@@ -125,7 +125,7 @@
             <a data-toggle="collapse" data-parent="#panel-collaborations"
                 href="#collapseCollaborations"
                 title="These are the Student Projects and External Partnerships {{ you }} lead{{ s }} (full star) or participate{{ s }} in (hollow star)">
-                {{ my|title }} Collaborations
+                {{ my|title }} Partnerships
                 {% if my_portfolio.collabs %}
                 <span class="pull-right">
                     <i class="glyphicon glyphicon-star"></i>
@@ -160,7 +160,7 @@
         {% endfor %}
         {% else %}
         <div class="list-group-item">
-            {{ you|title }} {{ are }} currently not associated with any collaborations.
+            {{ you|title }} {{ are }} currently not associated with any partnerships.
         </div>
         {% endif %}
     </div>
