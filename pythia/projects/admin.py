@@ -381,7 +381,7 @@ class CollaborationProjectAdmin(ProjectAdmin):
     """Admin for External Collaboration"""
     def get_fieldsets(self, request, obj=None):
         return (
-            ('Collaboration details', {
+            ('Partnership details', {
                 'classes': ('collapse in',),
                 'description': "Details for the overview table in the "
                 "Annual Research Activity Report",
