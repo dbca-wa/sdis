@@ -385,7 +385,7 @@ class CollaborationProjectAdmin(ProjectAdmin):
                 'classes': ('collapse in',),
                 'description': "Details for the overview table in the "
                 "Annual Research Activity Report",
-                'fields': ('name', 'budget',), }),
+                'fields': ('name', 'budget', 'aims', 'description'), }),
             ) + super(CollaborationProjectAdmin, self).get_fieldsets(
                 request, obj)
 

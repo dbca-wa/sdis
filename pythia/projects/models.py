@@ -1071,9 +1071,20 @@ class CollaborationProject(Project):
         max_length=2000,
         verbose_name=_("Collaboration name (with formatting)"),
         help_text=_("The collaboration name with formatting if required."))
+
     budget = models.TextField(
         verbose_name=_("Total Budget"),
         help_text=_("Specify the total financial and staff time budget."))
+
+    aims = models.TextField(
+        verbose_name=_("Project Aims"),
+        null=True, blank=True,
+        help_text=_("List the project aims."))
+
+    description = models.TextField(
+        verbose_name=_("Project Description"),
+        null=True, blank=True,
+        help_text=_("Describe the project in about one to three paragraphs."))
 
     staff_list_plain = models.TextField(
             verbose_name="DPaW Involvement",
