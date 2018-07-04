@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_text
 from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 from django.http import HttpResponseRedirect, Http404
@@ -24,45 +25,51 @@ from functools import update_wrapper
 
 
 class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
+    """Admin for ResearchFunction."""
 
-    list_display = ('__str__', 'association', 'active', 'function_leader')
+    list_display = ('__str__', 'description', 'association_safe',
+                    'active', 'function_leader')
     exclude = ('effective_from', 'effective_to', )
 
     def function_leader(self, obj):
+        """Render field function_leader."""
         return obj.leader.get_full_name() if obj.leader else ''
     function_leader.short_description = 'Research Function Leader'
     function_leader.admin_order_field = 'leader__last_name'
 
+    def association_safe(self, obj):
+        """Render field association."""
+        return mark_safe(obj.association) if obj.association else ''
+    association_safe.short_description = 'Association'
+
     def get_breadcrumbs(self, request, obj=None, add=False):
-        """
-        Override the base breadcrumbs to add the research function list to
-        the trail.
-        """
-        return (Breadcrumb(_('Home'), reverse('admin:index')),
-                Breadcrumb(_('Research Functions'),
-                           reverse(
-                               'admin:projects_researchfunction_changelist'))
-                )
+        """Override the base breadcrumbs."""
+        return (
+            Breadcrumb(_('Home'), reverse('admin:index')),
+            Breadcrumb(_('Research Functions'),
+                       reverse('admin:projects_researchfunction_changelist'))
+        )
 
 
 class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
+    """Admin for ProjectMembership."""
+
     list_display = ('project', 'user', 'role')
     raw_id_fields = ()
     change_form_template = 'admin/projects/change_form_projectmembership.html'
     formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
 
     def get_breadcrumbs(self, request, obj=None, add=False):
-        """
-        Override the base breadcrumbs to add the projectmembership list to
-        the trail.
-        """
+        """Override the base breadcrumbs."""
         return (Breadcrumb(_('Home'), reverse('admin:index')),
                 Breadcrumb(_('Project Memberships'),
                            reverse(
                                'admin:projects_projectmembership_changelist')))
 
     def get_readonly_fields(self, request, obj=None):
-        """Project is read-only in popup forms, as Membership initialises with the
+        """Control write permissions.
+
+        Project is read-only in popup forms, as Membership initialises with the
         Project it belongs to. To change the project of a membership,
         delete the incorrect one, and create the correct membership from
         the correct project.
@@ -89,12 +96,15 @@ class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
     #    """
     #    Inject additional fields for polymorphic project class
     #    """
-    #    result = super(ProjectMembershipAdmin, self).get_form(request, obj, **kwargs)
+    #    result = super(
+    #        ProjectMembershipAdmin, self).get_form(request, obj, **kwargs)
     #    result.base_fields['project'].initial = request.GET.get('project')
     #    return result
 
 
 class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
+    """Admin for Project."""
+
     list_display = ('project_id', 'type', 'year', 'number', 'project_title',
                     'project_owner_name', 'program', 'research_function',
                     'status', 'fm_start_date', 'fm_end_date')
@@ -106,6 +116,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
     download_template = "project_showcase"
 
     def get_fieldsets(self, request, obj=None):
+        """Override get_fieldsets."""
         # print("project admin get fieldsets")
         # fs = super(ProjectAdmin, self).get_fieldsets(request, obj)
         # return fs
@@ -125,10 +136,12 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
             ('Project display', {
                 'description': "Make your project stand out!",
                 'classes': ('collapse',),
-                'fields': ('image', 'tagline', 'comments', 'keywords', 'position'), })
+                'fields': ('image', 'tagline', 'comments',
+                           'keywords', 'position'), })
         )
 
     def project_id(self, obj):
+        """project_id."""
         return "<a href={0}>{1}</a>".format(
             obj.get_absolute_url(),
             obj.project_year_number)
@@ -136,6 +149,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
     project_id.allow_tags = True
 
     def project_title(self, obj):
+        """project_title."""
         return "<a href={0}>{1}</a>".format(
             obj.get_absolute_url(),
             obj.project_title_html)
@@ -144,22 +158,27 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
     project_title.allow_tags = True
 
     def project_owner_name(self, obj):
+        """project_owner_name."""
         return obj.project_owner.get_full_name()
     project_owner_name.short_description = 'Supervising Scientist'
     project_owner_name.admin_order_field = 'project_owner__last_name'
 
     def fm_start_date(self, obj):
+        """start_date."""
         return obj.start_date.strftime('%b %Y') if obj.start_date else '(None)'
     fm_start_date.short_description = 'Start date'
     fm_start_date.admin_order_field = 'start_date'
 
     def fm_end_date(self, obj):
+        """end_date."""
         return obj.end_date.strftime('%b %Y') if obj.end_date else '(None)'
     fm_end_date.short_description = 'End date'
     fm_end_date.admin_order_field = 'end_date'
 
     def get_changelist(self, request, **kwargs):
-        ChangeList = super(ProjectAdmin, self).get_changelist(request, **kwargs)
+        """Get changelist."""
+        ChangeList = super(ProjectAdmin,
+                           self).get_changelist(request, **kwargs)
 
         class ProjectChangeList(ChangeList):
 
@@ -193,10 +212,12 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
         return ProjectChangeList
 
     def get_queryset(self, request):
+        """Curtomise queryset."""
         return super(ProjectAdmin, self).queryset(request).select_related(
             'program', 'project_owner', 'modifier')
 
     def response_add(self, request, obj, post_url_continue=None):
+        """Customise response."""
         # if post_url_continue is None:
         #    post_url_continue = reverse(
         #        'admin:%s_%s_change' % (self.opts.app_label,
@@ -207,9 +228,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
                                                       post_url_continue)
 
     def get_breadcrumbs(self, request, obj=None, add=False):
-        """
-        Override the base breadcrumbs to add the project list to the trail.
-        """
+        """Override the base breadcrumbs."""
         return (
             Breadcrumb(_('Home'), reverse('admin:index')),
             Breadcrumb(_('All projects'),
@@ -237,6 +256,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
         return rof
 
     def get_urls(self):
+        """Config for Urls."""
         from django.conf.urls import patterns, url
 
         def wrap(view):
@@ -254,7 +274,8 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
         return extra_urls + super(BaseAdmin, self).get_urls()
 
     def transition_view(self, request, object_id, extra_context=None):
-        """
+        """Transition view.
+
         Transition a project through its lifecycle. Raise 403 forbidden if
         it is not possible to perform this action (lack of permission,
         transition not allowed).
@@ -332,6 +353,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
         ], context, current_app=self.admin_site.name)
 
     def history_view(self, request, object_id, extra_context=None):
+        """History view."""
         obj = get_object_or_404(self.model, pk=unquote(object_id))
 
         context = {'breadcrumbs': self.get_breadcrumbs(request, obj)}
@@ -340,7 +362,8 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
                                                       extra_context=context)
 
     def get_form(self, request, obj=None, **kwargs):
-        """
+        """Get form override.
+
         Inject additional fields for polymorphic project class
         """
         temp = self.model
@@ -355,7 +378,8 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
         return result
 
     def add_view(self, request, form_url='', extra_context=None):
-        """
+        """Add view wrapper.
+
         Wrapper for add_view that forces a surprise class override based on
         project type
         """
@@ -371,6 +395,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
         return result
 
     def formfield_for_dbfield(self, db_field, **kwargs):
+        """Inject AreasWidgetWrapper."""
         formfield = super(ProjectAdmin, self).formfield_for_dbfield(
             db_field, **kwargs)
         if db_field.name == "areas":
@@ -379,9 +404,10 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
 
 
 class CollaborationProjectAdmin(ProjectAdmin):
-    """Admin for External Collaboration"""
+    """Admin for External Collaboration."""
 
     def get_fieldsets(self, request, obj=None):
+        """Admin form layout."""
         return (
             ('Partnership details', {
                 'classes': ('collapse in',),
@@ -393,9 +419,10 @@ class CollaborationProjectAdmin(ProjectAdmin):
 
 
 class StudentProjectAdmin(ProjectAdmin):
-    """Admin for StudentProject"""
+    """Admin for StudentProject."""
 
     def get_fieldsets(self, request, obj=None):
+        """Admin form layout."""
         return (
             ('Student Project details', {
                 'classes': ('collapse in',),
