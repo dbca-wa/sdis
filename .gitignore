@@ -30,3 +30,6 @@ logs/
 # production server
 .texlive2016/
 hoit
+
+# downloads
+pythia/static/files/*
