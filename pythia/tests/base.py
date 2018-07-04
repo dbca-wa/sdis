@@ -58,6 +58,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Project
 
     year = 2017
+    number = factory.Sequence(lambda n: n)
     title = "Test Project"
     type = 0
     project_owner = factory.SubFactory(UserFactory)
@@ -127,6 +128,7 @@ class ProjectClosureFactory(factory.django.DjangoModelFactory):
 
     scientific_outputs = "scientific outputs"
     knowledge_transfer = "knowledge transfer"
+
 
 class StudentReportFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = StudentReport

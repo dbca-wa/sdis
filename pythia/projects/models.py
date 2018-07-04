@@ -51,13 +51,13 @@ def projects_upload_to(instance, filename):
         instance.year,
         instance.number,
         texify_filename(filename)
-        )
+    )
 
 NULL_CHOICES = (
     (None, _("Not applicable")),
     (False, _("Incomplete")),
     (True, _("Complete"))
-    )
+)
 
 
 class ProjectManager(PolymorphicManager, ActiveGeoModelManager):
@@ -109,11 +109,25 @@ class ResearchFunction(PolymorphicModel, Audit, ActiveModel):
         null=True, blank=True,
         help_text=_("The scientist in charge of the Research Function."))
 
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_("Is active"),
+        help_text=_("Whether this research function "
+                    "is current or deprecated."),)
+
     objects = ProjectManager()
+
+    class Meta:
+        """Class opts."""
+
+        ordering = ['-active', 'name']
 
     def __str__(self):
         """The name."""
-        return mark_safe(strip_tags(self.name))
+        return '{0} {1}'.format(
+            mark_safe(strip_tags(self.name)),
+            '' if self.active else ' (deprecated)'
+        )
 
 
 @python_2_unicode_compatible
@@ -163,7 +177,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         (STATUS_COMPLETED, _("Completed and closed")),
         (STATUS_TERMINATED, _("Terminated and closed")),
         (STATUS_SUSPENDED, _("Suspended")),
-        )
+    )
 
     SCIENCE_PROJECT = 0
     CORE_PROJECT = 1
@@ -174,14 +188,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         (CORE_PROJECT, _('Core Function')),
         (COLLABORATION_PROJECT, _('External Collaboration')),
         (STUDENT_PROJECT, _('Student Project')),
-        )
+    )
 
     PROJECT_ABBREVIATIONS = {
         SCIENCE_PROJECT: 'SP',
         CORE_PROJECT: 'CF',
         COLLABORATION_PROJECT: 'EXT',
         STUDENT_PROJECT: 'STP',
-        }
+    }
 
     type = models.PositiveSmallIntegerField(
         verbose_name=_("Project type"),
@@ -353,7 +367,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         get_latest_by = "start_date"
         permissions = (
             ('team', 'Contribute as team member'),
-            )
+        )
 
     def __str__(self):
         """The project name: Type, year-number, title."""
@@ -582,7 +596,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
                     "Alternatively, immediate closure, suspension, or "
                     "termination can be requested as closure goal.",
                     notify=True,)
-        )
+    )
     def request_closure(self):
         """Transition to move project to CLOSURE_REQUESTED.
 
@@ -612,7 +626,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
                     "final update (requested by the Directorate), the "
                     "approval of which completes the project successfully.",
                     notify=True,)
-        )
+    )
     def force_closure(self):
         """Transition to move project to CLOSURE_REQUESTED during UPDATING.
 
@@ -651,7 +665,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
                     "progress report is approved, the project is successfully"
                     " completed.",
                     notify=True,)
-        )
+    )
     def request_final_update(self, report=None):
         """Transition to move the project to STATUS_FINAL_UPDATE."""
         if report is None:
@@ -677,7 +691,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
                     explanation="The Directorate can reactivate a completed "
                     "project.",
                     notify=True,)
-        )
+    )
     def reactivate(self):
         """Transition to move the project to its ACTIVE state."""
         return
@@ -797,6 +811,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     # -------------------------------------------------------------------------#
     # Print
     #
+
     @property
     def download_title(self):
         """The PDF title."""
@@ -846,11 +861,11 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         return[[m.get_role_display(), m.user.fullname, m.time_allocation] for m
                in self.projectmembership_set.select_related(
-                    'user'
-                ).filter(
-                    role__in=ProjectMembership.ROLES_STAFF
-                ).order_by(
-                    "position", "user__last_name", "user__first_name")]
+            'user'
+        ).filter(
+            role__in=ProjectMembership.ROLES_STAFF
+        ).order_by(
+            "position", "user__last_name", "user__first_name")]
 
     # -------------------------------------------------------------------------#
     # Areas
@@ -1039,7 +1054,7 @@ class CoreFunctionProject(Project):
         if settings.DEBUG:
             print(msg)
         p, created = ProgressReport.objects.get_or_create(
-                year=report.year, project=self)
+            year=report.year, project=self)
         p.report = report
         p.is_final_report = final
         if (created and ProgressReport.objects.filter(
@@ -1087,11 +1102,11 @@ class CollaborationProject(Project):
         help_text=_("Describe the project in about one to three paragraphs."))
 
     staff_list_plain = models.TextField(
-            verbose_name="DPaW Involvement",
-            editable=False,
-            null=True, blank=True,
-            help_text=_("Staff names in order of membership rank."
-                        " Update by adding DPaW staff as team members."))
+        verbose_name="DPaW Involvement",
+        editable=False,
+        null=True, blank=True,
+        help_text=_("Staff names in order of membership rank."
+                    " Update by adding DPaW staff as team members."))
 
     class Meta:
         """Model options."""
@@ -1105,7 +1120,7 @@ class CollaborationProject(Project):
         target=Project.STATUS_ACTIVE,
         permission=lambda instance, user: user in instance.approvers,
         custom=dict(verbose="Setup Project", notify=False,)
-        )
+    )
     def setup(self):
         """A collaboration project is automatically approved and active."""
         self.status = Project.STATUS_ACTIVE
@@ -1120,8 +1135,8 @@ class CollaborationProject(Project):
                     ProjectMembership.ROLE_SUPERVISING_SCIENTIST,
                     ProjectMembership.ROLE_RESEARCH_SCIENTIST,
                     ProjectMembership.ROLE_TECHNICAL_OFFICER
-                    ])
-            ])
+                ])
+        ])
 
     # Forbid actions non applicable to this project type
     def can_request_update(self):
@@ -1145,7 +1160,7 @@ class CollaborationProject(Project):
                     "project should have been closed, the Directorate can "
                     "fast-track the project into the correct work flow.",
                     notify=True,)
-        )
+    )
     def request_update(self, report=None):
         """
         Transition to move the project to STATUS_UPDATING.
@@ -1171,7 +1186,7 @@ class CollaborationProject(Project):
                     "Alternatively, immediate closure, suspension, or "
                     "termination can be requested as closure goal.",
                     notify=True,)
-        )
+    )
     def request_closure(self):
         """Transition to move project to CLOSURE_REQUESTED.
 
@@ -1189,7 +1204,7 @@ class CollaborationProject(Project):
         target=Project.STATUS_COMPLETED,
         permission=lambda instance, user: user in instance.all_permitted,
         custom=dict(verbose="Close project", explanation="", notify=False,)
-        )
+    )
     def complete(self):
         """External CollaborationProjects complete without closure process."""
         return
@@ -1203,7 +1218,7 @@ class CollaborationProject(Project):
                     explanation="The project team can reactivate a completed "
                     "project.",
                     notify=True,)
-        )
+    )
     def reactivate(self):
         """Transition to move the project to its ACTIVE state."""
         return
@@ -1234,7 +1249,7 @@ class StudentProject(Project):
         (LEVEL_4TH, "Yr 4 intern"),
         (LEVEL_3RD, "3rd year"),
         (LEVEL_UND, "Undergraduate project"),
-        )
+    )
 
     level = models.PositiveSmallIntegerField(
         null=True, blank=True, choices=LEVELS, default=LEVEL_PHD,
@@ -1245,24 +1260,24 @@ class StudentProject(Project):
         help_text=_("The full name of the academic organisation."))
 
     student_list_plain = models.TextField(
-            verbose_name="Student list",
-            editable=False,
-            null=True, blank=True,
-            help_text=_("Student names in order of membership rank."))
+        verbose_name="Student list",
+        editable=False,
+        null=True, blank=True,
+        help_text=_("Student names in order of membership rank."))
     academic_list_plain = models.TextField(
-            verbose_name="Academic",
-            editable=False,
-            null=True, blank=True,
-            help_text=_("Academic supervisors in order of membership rank."
-                        " Update by adding team members as academic "
-                        "supervisors."))
+        verbose_name="Academic",
+        editable=False,
+        null=True, blank=True,
+        help_text=_("Academic supervisors in order of membership rank."
+                    " Update by adding team members as academic "
+                    "supervisors."))
     academic_list_plain_no_affiliation = models.TextField(
-            verbose_name="Academic without affiliation",
-            editable=False,
-            null=True, blank=True,
-            help_text=_("Academic supervisors without their affiliation "
-                        "in order of membership rank. Update by adding team "
-                        "members as academic supervisors."))
+        verbose_name="Academic without affiliation",
+        editable=False,
+        null=True, blank=True,
+        help_text=_("Academic supervisors without their affiliation "
+                    "in order of membership rank. Update by adding team "
+                    "members as academic supervisors."))
 
     class Meta:
         """Model options."""
@@ -1329,7 +1344,7 @@ class StudentProject(Project):
         # conditions=[can_request_update]
         permission="approve",
         custom=dict(verbose="Request update", explanation="", notify=True,)
-        )
+    )
     def request_update(self, report=None):
         """The Student Report replaces the Progress Report."""
         if report is None:
@@ -1358,7 +1373,7 @@ class StudentProject(Project):
                     "Alternatively, immediate closure, suspension, or "
                     "termination can be requested as closure goal.",
                     notify=True,)
-        )
+    )
     def request_closure(self):
         """Transition to move project to CLOSURE_REQUESTED.
 
@@ -1379,7 +1394,7 @@ class StudentProject(Project):
                     "the project without any further process. Doing so will"
                     "remove the unwanted progress report.",
                     notify=True,)
-        )
+    )
     def force_closure(self):
         """Transition to move project to COMPLETED during UPDATING.
 
@@ -1404,7 +1419,7 @@ class StudentProject(Project):
                     "can request the closure of an active StudentProject, "
                     "which immediately completes without any further process.",
                     notify=False,)
-        )
+    )
     def complete(self):
         """Allow StudentProjects to complete without closure process."""
         return
@@ -1419,7 +1434,7 @@ class StudentProject(Project):
                     explanation="The project team can reactivate a completed "
                     "project.",
                     notify=True,)
-        )
+    )
     def reactivate(self):
         """Transition to move the project to its ACTIVE state."""
         return
@@ -1454,7 +1469,7 @@ class StudentProject(Project):
         """
         logger.info("Creating ProgressReport for {0}".format(self.__str__()))
         p, created = StudentReport.objects.get_or_create(
-                year=report.year, project=self)
+            year=report.year, project=self)
         p.report = report
         if (created and StudentReport.objects.filter(
                 project=self, year=report.year - 1).exists()):
@@ -1471,7 +1486,7 @@ PROJECT_CLASS_MAP = {
     Project.CORE_PROJECT: CoreFunctionProject,
     Project.COLLABORATION_PROJECT: CollaborationProject,
     Project.STUDENT_PROJECT: StudentProject
-    }
+}
 
 
 @python_2_unicode_compatible
@@ -1498,13 +1513,13 @@ class ProjectMembership(models.Model):
         (ROLE_EXTERNAL_PEER, "External Peer"),
         (ROLE_CONSULTED_PEER, "Consulted Peer"),
         (ROLE_GROUP, "Involved Group")
-        )
+    )
 
     ROLES_STAFF = (
         ROLE_SUPERVISING_SCIENTIST,
         ROLE_RESEARCH_SCIENTIST,
         ROLE_TECHNICAL_OFFICER
-        )
+    )
 
     project = models.ForeignKey(
         Project, help_text=_("The project for the team membership."))
@@ -1557,12 +1572,12 @@ def refresh_project_cache(p):
     p.supervising_scientist_list_plain = \
         p.get_supervising_scientist_list_plain()
     p.save(update_fields=[
-            'area_list_dpaw_region',
-            'area_list_dpaw_district',
-            'area_list_ibra_imcra_region',
-            'area_list_nrm_region',
-            'team_list_plain',
-            'supervising_scientist_list_plain'])
+        'area_list_dpaw_region',
+        'area_list_dpaw_district',
+        'area_list_ibra_imcra_region',
+        'area_list_nrm_region',
+        'team_list_plain',
+        'supervising_scientist_list_plain'])
     if (p._meta.model_name == 'studentproject'):
         p.student_list_plain = p.get_student_list_plain()
         p.academic_list_plain = p.get_academic_list_plain()

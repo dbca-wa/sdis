@@ -25,11 +25,11 @@ from functools import update_wrapper
 
 class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
 
-    list_display = ('__str__', 'association')
-    exclude = ('effective_from', 'effective_to', 'leader')
+    list_display = ('__str__', 'association', 'active', 'function_leader')
+    exclude = ('effective_from', 'effective_to', )
 
     def function_leader(self, obj):
-        return obj.leader.get_full_name()
+        return obj.leader.get_full_name() if obj.leader else ''
     function_leader.short_description = 'Research Function Leader'
     function_leader.admin_order_field = 'leader__last_name'
 
@@ -85,7 +85,7 @@ class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
 
         return rof
 
-    #def get_form(self, request, obj=None, **kwargs):
+    # def get_form(self, request, obj=None, **kwargs):
     #    """
     #    Inject additional fields for polymorphic project class
     #    """
@@ -126,19 +126,19 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
                 'description': "Make your project stand out!",
                 'classes': ('collapse',),
                 'fields': ('image', 'tagline', 'comments', 'keywords', 'position'), })
-            )
+        )
 
     def project_id(self, obj):
         return "<a href={0}>{1}</a>".format(
-                obj.get_absolute_url(),
-                obj.project_year_number)
+            obj.get_absolute_url(),
+            obj.project_year_number)
     project_id.short_description = 'Year-Number'
     project_id.allow_tags = True
 
     def project_title(self, obj):
         return "<a href={0}>{1}</a>".format(
-                obj.get_absolute_url(),
-                obj.project_title_html)
+            obj.get_absolute_url(),
+            obj.project_title_html)
     project_title.short_description = 'Project name'
     project_title.admin_order_field = 'title'
     project_title.allow_tags = True
@@ -162,6 +162,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
         ChangeList = super(ProjectAdmin, self).get_changelist(request, **kwargs)
 
         class ProjectChangeList(ChangeList):
+
             def __init__(self, request, model, list_display,
                          list_display_links, list_filter, date_hierarchy,
                          search_fields, list_select_related, list_per_page,
@@ -213,7 +214,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
             Breadcrumb(_('Home'), reverse('admin:index')),
             Breadcrumb(_('All projects'),
                        reverse('admin:projects_project_changelist'))
-                       )
+        )
 
     def get_readonly_fields(self, request, obj=None):
         """Control which fields can be updated by whom.
@@ -328,7 +329,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
             "admin/%s/%s/transition.html" % (opts.app_label, opts.model_name),
             "admin/%s/%s_transition.html" % (opts.app_label, t.name),
             "admin/%s/transition.html" % opts.app_label
-            ], context, current_app=self.admin_site.name)
+        ], context, current_app=self.admin_site.name)
 
     def history_view(self, request, object_id, extra_context=None):
         obj = get_object_or_404(self.model, pk=unquote(object_id))
@@ -379,6 +380,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
 
 class CollaborationProjectAdmin(ProjectAdmin):
     """Admin for External Collaboration"""
+
     def get_fieldsets(self, request, obj=None):
         return (
             ('Partnership details', {
@@ -386,8 +388,8 @@ class CollaborationProjectAdmin(ProjectAdmin):
                 'description': "Details for the overview table in the "
                 "Annual Research Activity Report",
                 'fields': ('name', 'budget', 'aims', 'description'), }),
-            ) + super(CollaborationProjectAdmin, self).get_fieldsets(
-                request, obj)
+        ) + super(CollaborationProjectAdmin, self).get_fieldsets(
+            request, obj)
 
 
 class StudentProjectAdmin(ProjectAdmin):
@@ -400,5 +402,5 @@ class StudentProjectAdmin(ProjectAdmin):
                 'description': "Details for the overview table in the "
                 "Annual Research Activity Report",
                 'fields': ('level', 'organisation',), }),
-                ) + super(StudentProjectAdmin, self).get_fieldsets(
-                    request, obj)
+        ) + super(StudentProjectAdmin, self).get_fieldsets(
+            request, obj)

@@ -28,10 +28,10 @@ urlpatterns = patterns(
 
     url(r'^api-docs/', include('rest_framework_swagger.urls')),
 
-    url(r'^export/(?P<model_name>[^/]+)/$',
-        "django_tablib.views.generic_export"),
+    # url(r'^export/(?P<model_name>[^/]+)/$',
+    #     "django_tablib.views.generic_export"),
 
     url(r'', include(site.urls)),
-    )
+)
 
 urlpatterns += staticfiles_urlpatterns()

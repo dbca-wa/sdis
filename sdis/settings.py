@@ -38,7 +38,7 @@ ALLOWED_HOSTS = [
     'static.dbca.wa.gov.au',
     'sdis-internal.dbca.wa.gov.au',
     'sdis.dbca.wa.gov.au'
-    ]
+]
 
 INTERNAL_IPS = ['127.0.0.1', '::1']
 
@@ -68,7 +68,8 @@ INSTALLED_APPS = (
     # 'django.contrib.postgres',
     'django_extensions',
     'django_comments',
-    'django_tablib',
+    # 'django_tablib',
+    # 'adminactions',
     'compressor',
 
     'crispy_forms',
@@ -96,7 +97,7 @@ INSTALLED_APPS = (
     'pythia.documents',
     'pythia.projects',
     'pythia.reports',
-    )
+)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -111,7 +112,7 @@ MIDDLEWARE_CLASSES = (
     # loaded if DEBUG (below):
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     # 'django_pdb.middleware.PdbMiddleware'
-    )
+)
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -122,7 +123,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
-    )
+)
 
 
 # I8n
@@ -137,7 +138,7 @@ DATE_INPUT_FORMATS = (
     'd/m/Y',             # '25/10/2006'
     'Y-m-d',             # '2006-10-25'
     'Y_m_d',             # '2006_10_25'
-    )
+)
 
 # Logs
 if not os.path.exists(os.path.join(BASE_DIR, 'logs')):
@@ -160,7 +161,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
-    )
+)
 # This is required to add context variables to all templates:
 STATIC_CONTEXT_VARS = {}
 
@@ -171,14 +172,14 @@ TEMPLATE_LOADERS = (
     ('django.template.loaders.cached.Loader',
      ('django.template.loaders.filesystem.Loader',
       'django.template.loaders.app_directories.Loader',)),
-    )
+)
 
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'pythia/templates'),)
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'pythia.backends.EmailBackend',
-    )
+)
 
 ANONYMOUS_USER_ID = 100000
 AUTH_USER_MODEL = 'pythia.User'
@@ -206,17 +207,17 @@ AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
                "(sAMAccountName=%(user)s)"),
     LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
                "(mail=%(user)s)"),
-               )
+)
 
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
     "DC=corporateict,DC=domain",
     ldap.SCOPE_SUBTREE, "(objectClass=group)"
-    )
+)
 
 AUTH_LDAP_GLOBAL_OPTIONS = {
     ldap.OPT_X_TLS_REQUIRE_CERT: False,
     ldap.OPT_REFERRALS: False,
-    }
+}
 
 AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 
@@ -224,58 +225,16 @@ AUTH_LDAP_USER_ATTR_MAP = {
     'first_name': "givenName",
     'last_name': "sn",
     'email': "mail",
-    }
+}
 
-# Django-tablib CSV export
-TABLIB_MODELS = {
-    'projects.Project': {
-        # "id", "type", "status", "year", "number", "position",
-        # "title", "title_plain", "tagline", "comments",
-        # "start_date", "end_date", "effective_from", "effective_to",
-        # "creator", "modifier", "created", "modified",
-        # "program", "output_program", "research_function",
-        # "project_owner", "data_custodian", "site_custodian",
-        # "team_list_plain", "supervising_scientist_list_plain",
-        # "area_list_dpaw_region", "area_list_dpaw_district",
-        # "area_list_ibra_imcra_region", "area_list_nrm_region",
-        },
-
-    'projects.CollaborationProject': {
-        # "id", "type", "status", "year", "number", "position",
-        # "title", "title_plain", "tagline", "comments",
-        # "start_date", "end_date", "effective_from", "effective_to",
-        # "creator", "modifier", "created", "modified",
-        # "program", "output_program", "research_function",
-        # "project_owner", "data_custodian", "site_custodian",
-        # "team_list_plain", "supervising_scientist_list_plain",
-        # "area_list_dpaw_region", "area_list_dpaw_district",
-        # "area_list_ibra_imcra_region", "area_list_nrm_region",
-        # "name", "budget", "staff_list_plain",
-        },
-
-    'projects.StudentProject': {
-        # "id", "type", "status", "year", "number", "position",
-        # "title", "title_plain", "tagline", "comments",
-        # "start_date", "end_date", "effective_from", "effective_to",
-        # "creator", "modifier", "created", "modified",
-        # "program", "output_program", "research_function",
-        # "project_owner", "data_custodian", "site_custodian",
-        # "team_list_plain", "supervising_scientist_list_plain",
-        # "area_list_dpaw_region", "area_list_dpaw_district",
-        # "area_list_ibra_imcra_region", "area_list_nrm_region",
-        # "level", "organisation", "student_list_plain", "academic_list_plain",
-        # "academic_list_plain_no_affiliation",
-        },
-
-
-    'projects.ProjectMembership': {},
-    'pythia.User': {"id", "is_superuser", "username",
-                    "title", "first_name", "middle_initials", "last_name",
-                    "is_staff", "is_active", "is_external",
-                    "is_group", "group_name", "affiliation", "image", "email",
-                    "program_id", "work_center_id",
-                    "agreed", "date_joined", "last_login", },
-    }
+# # Django-tablib CSV export: can't configure cols/headers this way
+# TABLIB_MODELS = {
+#     'projects.Project': None,
+#     'projects.CollaborationProject': None,
+#     'projects.StudentProject': None,
+#     'projects.ProjectMembership': {},
+#     'pythia.User': None,
+# }
 
 # Django-Restframework
 REST_FRAMEWORK = {
@@ -293,13 +252,13 @@ REST_FRAMEWORK = {
         'rest_framework_swagger.views.get_restructuredtext',
 
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',)
-    }
+}
 
 
 SWAGGER_SETTINGS = {
     'api_version': '1.0',
     'api_path': '/api/'
-    }
+}
 
 # Email
 EMAIL_HOST = env('EMAIL_HOST', default='smtp.corporateict.domain')
@@ -314,7 +273,7 @@ COMPRESS_PARSER = 'compressor.parser.HtmlParser'
 
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': 'sdis.utils.show_toolbar'
-    }
+}
 
 # Logging configuration
 LOGGING = {
@@ -324,53 +283,53 @@ LOGGING = {
         'standard': {
             'format': '%(asctime)-.19s [%(process)d] [%(levelname)s] '
                       '%(message)s'
-                      },
-            },
+        },
+    },
     'handlers': {
         'null': {
             'level': 'DEBUG',
             'class': 'django.utils.log.NullHandler',
-            },
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'standard'
-            },
+        },
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/sdis.log'),
             'formatter': 'standard',
             'maxBytes': '16777216'
-            },
+        },
         'mail_admins': {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-            }
-        },
+        }
+    },
     'loggers': {
         'django': {
             'handlers': ['file'],
             'propagate': True,
             'level': 'INFO',
-            },
+        },
         'django.request': {
             'handlers': ['file'],
             'level': 'INFO',
             'propagate': False,
-            },
+        },
         'request': {
             'handlers': ['file'],
             'level': 'INFO',
             'propagate': True
-            },
+        },
         'sdis': {
             'handlers': ['console', 'file'],
             'level': 'INFO',
             'propagate': True
-            }
         }
     }
+}
 LOGGING_CONFIG = {}
 
 if DEBUG:
@@ -382,12 +341,12 @@ if DEBUG:
         'debug_toolbar',
         'debug_toolbar_htmltidy',
         'django_pdb',
-        )
+    )
 
     MIDDLEWARE_CLASSES += (
         'debug_toolbar.middleware.DebugToolbarMiddleware',
         'django_pdb.middleware.PdbMiddleware',
-        )
+    )
 
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -396,29 +355,29 @@ if DEBUG:
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
-            },
+        },
         'django.request': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
-            },
+        },
         'request': {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True
-            },
+        },
         'sdis': {
             'handlers': ['console', 'file'],
             'level': 'DEBUG',
             'propagate': True
-            },
-        }
+        },
+    }
 
     # SDIS-260: cached template loader crashes debug toolbar template source
     TEMPLATE_LOADERS = (
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
-        )
+    )
 
 DJANGORESIZED_DEFAULT_SIZE = [600, 600]
 # DJANGORESIZED_DEFAULT_QUALITY = 75
