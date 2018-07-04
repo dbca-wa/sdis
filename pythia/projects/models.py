@@ -120,7 +120,7 @@ class ResearchFunction(PolymorphicModel, Audit, ActiveModel):
     class Meta:
         """Class opts."""
 
-        ordering = ['-active', 'name']
+        ordering = ('-active', 'name')
 
     def __str__(self):
         """The name."""

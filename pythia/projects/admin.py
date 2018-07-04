@@ -27,7 +27,7 @@ from functools import update_wrapper
 class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
     """Admin for ResearchFunction."""
 
-    list_display = ('__str__', 'description', 'association_safe',
+    list_display = ('__str__', 'description_safe', 'association_safe',
                     'active', 'function_leader')
     exclude = ('effective_from', 'effective_to', )
 
@@ -36,6 +36,11 @@ class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
         return obj.leader.get_full_name() if obj.leader else ''
     function_leader.short_description = 'Research Function Leader'
     function_leader.admin_order_field = 'leader__last_name'
+
+    def description_safe(self, obj):
+        """Render field description."""
+        return mark_safe(obj.description) if obj.description else ''
+    description_safe.short_description = 'Description'
 
     def association_safe(self, obj):
         """Render field association."""
