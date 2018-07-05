@@ -111,7 +111,7 @@ class DetailAdmin(ModelAdmin):
             url(r'^(\d+)/$',
                 wrap(self.detail_view),
                 name='%s_%s_detail' % info),
-            )
+        )
         return urlpatterns
 
     def detail_view(self, request, object_id, extra_context=None):
@@ -138,14 +138,14 @@ class DetailAdmin(ModelAdmin):
             'app_label': opts.app_label,
             'opts': opts,
             'has_change_permission': self.has_change_permission(request, obj),
-            }
+        }
         context.update(extra_context or {})
         return TemplateResponse(request, self.detail_template or [
             "admin/%s/%s/detail.html" % (opts.app_label,
                                          opts.object_name.lower()),
             "admin/%s/detail.html" % opts.app_label,
             "admin/detail.html"
-            ], context, current_app=self.admin_site.name)
+        ], context, current_app=self.admin_site.name)
 
     def queryset(self, request):
         """Custom queryset."""
@@ -153,7 +153,7 @@ class DetailAdmin(ModelAdmin):
         return qs.select_related(
             *[field.rsplit('__', 1)[0]
               for field in self.list_display if '__' in field]
-            )
+        )
 
 
 class AuditAdmin(VersionAdmin, GuardedModelAdmin, ModelAdmin):
@@ -191,11 +191,11 @@ class AuditAdmin(VersionAdmin, GuardedModelAdmin, ModelAdmin):
                 'obj': obj,
                 'opts': opts,
                 'count': count
-                }
+            }
             return render_to_string(
                 'admin/change_list_links.html',
                 RequestContext(request, context)
-                )
+            )
         inner.allow_tags = True
         inner.short_description = related.opts.verbose_name_plural.title()
         return inner
@@ -296,7 +296,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin, TablibAdmin):
         context = {
             'object': obj,
             'version_date': version.revision.date_created
-            }
+        }
         context.update(extra_context or {})
         return super(BaseAdmin, self).revision_view(request, object_id,
                                                     version_id,
@@ -365,7 +365,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin, TablibAdmin):
         context = {
             'breadcrumbs': self.get_breadcrumbs(request, obj),
             'is_popup': "_popup" in request.REQUEST
-            }
+        }
         context.update(extra_context or {})
 
         result = super(BaseAdmin, self).delete_view(
@@ -415,7 +415,7 @@ class UserAdmin(DjangoUserAdmin, TablibAdmin):
             'fields': ('program', 'work_center', 'username', 'password',
                        'is_active', 'is_staff', 'is_superuser',
                        'date_joined', 'groups'), })
-        )
+    )
 
     def program(self, obj):
         """Return the User's program."""
@@ -462,6 +462,7 @@ class UserAdmin(DjangoUserAdmin, TablibAdmin):
         class PythiaUserForm(Form):
             # shim to work around broken saving of form as normal user
             # (username should be RO to begin with, no harm done)
+
             def __init__(self, *args, **kwargs):
                 super(PythiaUserForm, self).__init__(*args, **kwargs)
                 self.fields['username'].required = False
@@ -512,7 +513,7 @@ class DownloadAdminMixin(ModelAdmin):
             url(r'^(\d+)/download/html/$',
                 wrap(self.simplehtml),
                 name='%s_%s_download_html' % info),
-            )
+        )
         return urlpatterns + super(DownloadAdminMixin, self).get_urls()
 
     def simplehtml(self, request, object_id):
@@ -534,7 +535,7 @@ class DownloadAdminMixin(ModelAdmin):
             'baseurl': request.build_absolute_uri("/")[:-1],
             'STATIC_ROOT': settings.STATIC_ROOT,
             'MEDIA_ROOT': settings.MEDIA_ROOT,
-            }
+        }
 
         if not request.GET.get("download", False):
             disposition = "inline"
@@ -572,7 +573,7 @@ class DownloadAdminMixin(ModelAdmin):
             'baseurl': request.build_absolute_uri("/")[:-1],
             'STATIC_ROOT': settings.STATIC_ROOT,
             'MEDIA_ROOT': settings.MEDIA_ROOT,
-            }
+        }
 
         if not request.GET.get("download", False):
             disposition = "inline"
@@ -654,7 +655,7 @@ class DownloadAdminMixin(ModelAdmin):
             'baseurl': request.build_absolute_uri("/")[:-1],
             'STATIC_ROOT': settings.STATIC_ROOT,
             'MEDIA_ROOT': settings.MEDIA_ROOT,
-            }
+        }
 
         if not request.GET.get("download", False):
             disposition = "inline"
