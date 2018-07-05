@@ -3,7 +3,7 @@
     <table>
         <thead>
             <tr class="reg_sum_col_hdg">
-                <th class="reg_sum_col_hdg">DPaW Region</th>
+                <th class="reg_sum_col_hdg">DBCA Region</th>
                 <th class="reg_sum_col_hdg">IBRA/IMCRA</th>
                 <th class="reg_sum_col_hdg">NRM Region</th>
                 <th class="reg_sum_col_hdg">Project Title</th>
@@ -12,7 +12,7 @@
         </thead>
         <tbody>
         {# requires reports to be sorted by program, done in ARARReport.progressreports #}
-        {% regroup reports|dictsort:"project.program.position" by project.program as report_list %} 
+        {% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
 
         {% for program_reports in report_list %}
         <tr class="reg_sum_program">

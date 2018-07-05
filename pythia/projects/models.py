@@ -6,7 +6,7 @@ from an abstract base class, while defining relevant project documentation
 per class.
 
 Projects are spatially defined through Areas of different types:
-Administrative Regions (DPaW Regions and Districts, NRM/IBRA/IMCRA Regions),
+Administrative Regions (DBCA Regions and Districts, NRM/IBRA/IMCRA Regions),
 Area of field work as the combined extent of sampling transects (if field work
 occurs), Areas of relevance (Project findings apply to).
 """
@@ -269,15 +269,15 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     #
     program = models.ForeignKey(
         Program,
-        verbose_name=_("Science and Conservation Division Program"),
+        verbose_name=_("Biodiversity and Conservation Science Program"),
         blank=True, null=True,
-        help_text=_("The Science and Conservation Division Program hosting "
-                    "this project."))
+        help_text=_("The Biodiversity and Conservation Science Program "
+                    "hosting this project."))
     output_program = models.ForeignKey(
         Division,
-        verbose_name="Parks and Wildlife Service",
+        verbose_name="Departmental Service",
         blank=True, null=True,
-        help_text=_("The DPaW service that this project delivers outputs to."))
+        help_text=_("The DBCA service that this project delivers outputs to."))
     research_function = models.ForeignKey(
         ResearchFunction,
         blank=True, null=True,
@@ -336,21 +336,21 @@ class Project(PolymorphicModel, Audit, ActiveModel):
                     " rank. NOT the project owner, but all supervising "
                     "scientists on the team."))
     area_list_dpaw_region = models.TextField(
-        verbose_name="DPaW Region List",
+        verbose_name="DBCA Region List",
         editable=False, null=True, blank=True,
-        help_text=_("DPaW Region names."))
+        help_text=_("DBCA Region names."))
     area_list_dpaw_district = models.TextField(
-        verbose_name="DPaW Region List",
+        verbose_name="DBCA Region List",
         editable=False, null=True, blank=True,
-        help_text=_("DPaW Region names."))
+        help_text=_("DBCA Region names."))
     area_list_ibra_imcra_region = models.TextField(
-        verbose_name="DPaW Region List",
+        verbose_name="DBCA Region List",
         editable=False, null=True, blank=True,
-        help_text=_("DPaW Region names."))
+        help_text=_("DBCA Region names."))
     area_list_nrm_region = models.TextField(
-        verbose_name="DPaW Region List",
+        verbose_name="DBCA Region List",
         editable=False, null=True, blank=True,
-        help_text=_("DPaW Region names."))
+        help_text=_("DBCA Region names."))
     # end dirty hacks
     # -------------------------------------------------------------------------#
 
@@ -1102,11 +1102,11 @@ class CollaborationProject(Project):
         help_text=_("Describe the project in about one to three paragraphs."))
 
     staff_list_plain = models.TextField(
-        verbose_name="DPaW Involvement",
+        verbose_name="DBCA Involvement",
         editable=False,
         null=True, blank=True,
         help_text=_("Staff names in order of membership rank."
-                    " Update by adding DPaW staff as team members."))
+                    " Update by adding DBCA staff as team members."))
 
     class Meta:
         """Model options."""
@@ -1127,7 +1127,7 @@ class CollaborationProject(Project):
         self.save(update_fields=['status', ])
 
     def get_staff_list_plain(self):
-        """Return a string of DPaW staff."""
+        """Return a string of DBCA staff."""
         return ', '.join([
             x.user.abbreviated_name for x in
             ProjectMembership.objects.filter(project=self).filter(
@@ -1298,14 +1298,14 @@ class StudentProject(Project):
                 role=ProjectMembership.ROLE_SUPERVISED_STUDENT)])
 
     def get_academic_list_plain(self):
-        """Return a string of DPaW staff."""
+        """Return a string of DBCA staff."""
         return ', '.join([
             x.user.abbreviated_name for x in
             ProjectMembership.objects.filter(project=self).filter(
                 role=ProjectMembership.ROLE_ACADEMIC_SUPERVISOR)])
 
     def get_academic_list_plain_no_affiliation(self):
-        """Return a string of DPaW staff without their affiliation."""
+        """Return a string of DBCA staff without their affiliation."""
         return ', '.join([
             x.user.abbreviated_name_no_affiliation for x in
             ProjectMembership.objects.filter(project=self).filter(
@@ -1525,7 +1525,7 @@ class ProjectMembership(models.Model):
         Project, help_text=_("The project for the team membership."))
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        help_text=_("The DPaW staff member to participate in the project "
+        help_text=_("The DBCA staff member to participate in the project "
                     "team."))
     role = models.PositiveSmallIntegerField(
         choices=ROLE_CHOICES,

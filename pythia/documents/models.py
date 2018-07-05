@@ -6,7 +6,7 @@ Project transitions.
 from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 
-from collections import OrderedDict as OD
+from collections import OrderedDict as OD  # noqa
 from datetime import date
 from itertools import chain
 import logging
@@ -110,14 +110,14 @@ class Document(PolymorphicModel, Audit):
         (STATUS_INREVIEW, _("Review requested")),
         (STATUS_INAPPROVAL, _("Approval requested")),
         (STATUS_APPROVED, _("Approved"))
-        )
+    )
 
     STATUS_LABELS = {
         STATUS_NEW: "danger",
         STATUS_INREVIEW: "warning",
         STATUS_INAPPROVAL: "info",
         STATUS_APPROVED: "success"
-        }
+    }
 
     ENDORSEMENT_NOTREQUIRED = 'not required'
     ENDORSEMENT_REQUIRED = 'required'
@@ -128,14 +128,14 @@ class Document(PolymorphicModel, Audit):
         (ENDORSEMENT_REQUIRED, _('required')),
         (ENDORSEMENT_DENIED, _('denied')),
         (ENDORSEMENT_GRANTED, _('granted'))
-        )
+    )
 
     ENDORSEMENT_NULL_CHOICES = (
         (ENDORSEMENT_NOTREQUIRED, _('not required')),
         (ENDORSEMENT_REQUIRED, _('required')),
         (ENDORSEMENT_DENIED, _('denied')),
         (ENDORSEMENT_GRANTED, _('granted'))
-        )
+    )
 
     template = None
     template_tex = None
@@ -146,9 +146,9 @@ class Document(PolymorphicModel, Audit):
         default=STATUS_NEW, choices=STATUS_CHOICES,
         verbose_name=_("Document Status"))
     pdf = models.FileField(
-            upload_to=documents_upload_to, blank=True, null=True,
-            editable=False,
-            help_text="The latest, greatest and PDFest version of all times")
+        upload_to=documents_upload_to, blank=True, null=True,
+        editable=False,
+        help_text="The latest, greatest and PDFest version of all times")
 
     objects = DocumentManager()
 
@@ -280,22 +280,22 @@ class Document(PolymorphicModel, Audit):
         `directorate` have been used as labels.
         """
         return [
-                {
-                    "role": "Project Team",
-                    "css_classes": self.submitter_endorsement_status[0],
-                    "status": self.submitter_endorsement_status[1]
-                    },
-                {
-                    "role": "Program Leader",
-                    "css_classes": self.reviewer_endorsement_status[0],
-                    "status": self.reviewer_endorsement_status[1]
-                    },
-                {
-                    "role": "Directorate",
-                    "css_classes": self.approver_endorsement_status[0],
-                    "status": self.approver_endorsement_status[1]
-                    },
-                ]
+            {
+                "role": "Project Team",
+                "css_classes": self.submitter_endorsement_status[0],
+                "status": self.submitter_endorsement_status[1]
+            },
+            {
+                "role": "Program Leader",
+                "css_classes": self.reviewer_endorsement_status[0],
+                "status": self.reviewer_endorsement_status[1]
+            },
+            {
+                "role": "Directorate",
+                "css_classes": self.approver_endorsement_status[0],
+                "status": self.approver_endorsement_status[1]
+            },
+        ]
 
     # -------------------------------------------------------------------------#
     # audiences
@@ -378,7 +378,7 @@ class Document(PolymorphicModel, Audit):
                          " either request a revision from the project team"
                          " or submit to the Directorate for approval."),
             notify=True,)
-        )
+    )
     def seek_review(self):
         """Transition this document to being in review."""
         return
@@ -399,7 +399,7 @@ class Document(PolymorphicModel, Audit):
                                  " team again, who then can submit the"
                                  " document for review again."),
                     notify=True,)
-        )
+    )
     def recall(self):
         """Transition this document to being new."""
         return
@@ -422,7 +422,7 @@ class Document(PolymorphicModel, Audit):
             explanation=("Submit the document for approval to the "
                          "Directorate."),
             notify=True,)
-        )
+    )
     def seek_approval(self):
         """Transition this document to be in approval."""
 
@@ -437,7 +437,7 @@ class Document(PolymorphicModel, Audit):
             explanation=("Recall the document from approval by the "
                          "Directorate, e.g. in order to update the content."),
             notify=True,)
-        )
+    )
     def recall_approval(self):
         """Transition this document from in approval to be in review again."""
 
@@ -452,7 +452,7 @@ class Document(PolymorphicModel, Audit):
             explanation=("Request a revision of the document "
                          "from the project team."),
             notify=True,)
-        )
+    )
     def request_revision_from_authors(self):
         """Push back to NEW to request a revision from the authors."""
         return
@@ -475,7 +475,7 @@ class Document(PolymorphicModel, Audit):
             explanation=("Approve the document. This will have consequences"
                          " for the project."),
             notify=True,)
-        )
+    )
     def approve(self):
         """Approve document."""
         return
@@ -491,7 +491,7 @@ class Document(PolymorphicModel, Audit):
             explanation=("Request a revision of the document from "
                          " the Program Leader."),
             notify=True,)
-        )
+    )
     def request_reviewer_revision(self):
         """Push back to INREVIEW to request reviewer revision."""
         return
@@ -507,7 +507,7 @@ class Document(PolymorphicModel, Audit):
             explanation=("Request a revision of the document from "
                          " the project leader."),
             notify=True,)
-        )
+    )
     def request_author_revision(self):
         """Push back to NEW to request author revision."""
         return
@@ -533,7 +533,7 @@ class Document(PolymorphicModel, Audit):
                          "Revoking this document will have consequences for "
                          "the project."),
             notify=True,)
-        )
+    )
     def reset(self):
         """Push back to NEW to reset document approval."""
 
@@ -592,7 +592,7 @@ class Document(PolymorphicModel, Audit):
             permitted = set()
 
         snitch("Permitted to change {0}: {1}".format(
-             self.debugname, ", ".join([p.fullname for p in permitted])))
+            self.debugname, ", ".join([p.fullname for p in permitted])))
         return permitted
 
 
@@ -604,7 +604,7 @@ class ConceptPlan(Document):
     Science Management Team determine whether this Project is in line with
     Divisional strategy.
 
-    Modelled after the original document on the DPaW intranet:
+    Modelled after the original document on the DBCA intranet:
     http://intranet/science/Documents/Guideline%207%20Appendix%201%20SCPs.docx
     """
 
@@ -641,13 +641,13 @@ class ConceptPlan(Document):
         #           '<td></td><td></td><td></td></tr><tr><td>Collaborator</td>'
         #           '<td></td><td></td><td></td></tr></tbody></table>'
         default=json.dumps([
-                ['Role', 'Year 1', 'Year 2', 'Year 3'],
-                ['Scientist', '', '', ''],
-                ['Technical', '', '', ''],
-                ['Volunteer', '', '', ''],
-                ['Collaborator', '', '', ''],
-            ], cls=DjangoJSONEncoder)
-        )
+            ['Role', 'Year 1', 'Year 2', 'Year 3'],
+            ['Scientist', '', '', ''],
+            ['Technical', '', '', ''],
+            ['Volunteer', '', '', ''],
+            ['Collaborator', '', '', ''],
+        ], cls=DjangoJSONEncoder)
+    )
     budget = PythiaArrayField(
         verbose_name=_("Indicative operating budget"),
         blank=True, null=True,
@@ -655,15 +655,15 @@ class ConceptPlan(Document):
                     "or for a time span appropriate for the Project's life "
                     "time."),
         default=json.dumps([
-                ['Source', 'Year 1', 'Year 2', 'Year 3'],
-                ['Consolidated Funds (DPaW)', '', '', ''],
-                ['External Funding', '', '', ''],
-            ], cls=DjangoJSONEncoder)
-        )
+            ['Source', 'Year 1', 'Year 2', 'Year 3'],
+            ['Consolidated Funds (DBCA)', '', '', ''],
+            ['External Funding', '', '', ''],
+        ], cls=DjangoJSONEncoder)
+    )
     # Currently not desired:
     director_scd_comment = models.TextField(
         editable=False,  # remove to unhide
-        verbose_name=_("Science and Conservation Division Director's Comment"),
+        verbose_name=_("Director's Comment"),
         help_text=_("Optional comment to clarify endorsement or provide "
                     "feedback"), blank=True, null=True)
     director_outputprogram_comment = models.TextField(
@@ -685,12 +685,12 @@ class ConceptPlan(Document):
         [doc.repair_staff() for doc in ConceptPlan.objects.filter(staff=None)]
         """
         self.staff = json.dumps([
-                ['Role', 'Year 1', 'Year 2', 'Year 3'],
-                ['Scientist', '', '', ''],
-                ['Technical', '', '', ''],
-                ['Volunteer', '', '', ''],
-                ['Collaborator', '', '', ''],
-            ], cls=DjangoJSONEncoder)
+            ['Role', 'Year 1', 'Year 2', 'Year 3'],
+            ['Scientist', '', '', ''],
+            ['Technical', '', '', ''],
+            ['Volunteer', '', '', ''],
+            ['Collaborator', '', '', ''],
+        ], cls=DjangoJSONEncoder)
         self.save(update_fields=['staff'])
         logger.info("ConceptPlan {0} field 'staff' reset to default".format(
                     self.__str__()))
@@ -702,10 +702,10 @@ class ConceptPlan(Document):
          ConceptPlan.objects.filter(budget=None)]
         """
         self.budget = json.dumps([
-                ['Source', 'Year 1', 'Year 2', 'Year 3'],
-                ['Consolidated Funds (DPaW)', '', '', ''],
-                ['External Funding', '', '', ''],
-            ], cls=DjangoJSONEncoder)
+            ['Source', 'Year 1', 'Year 2', 'Year 3'],
+            ['Consolidated Funds (DBCA)', '', '', ''],
+            ['External Funding', '', '', ''],
+        ], cls=DjangoJSONEncoder)
         self.save(update_fields=['budget'])
         logger.info("ConceptPlan {0} field 'budget' reset to default".format(
                     self.__str__()))
@@ -759,7 +759,7 @@ class ConceptPlan(Document):
                          "which the project team then needs to update and "
                          " submit for review."),
             notify=True,)
-        )
+    )
     def approve(self):
         """
         Advance the project to status "pending".
@@ -799,7 +799,7 @@ class ConceptPlan(Document):
                          "The project team will have to revise and re-submit "
                          "the ConceptPlan."),
             notify=True,)
-        )
+    )
     def reset(self):
         """Reset document approval, reset project status to NEW."""
         from pythia.projects.models import Project
@@ -862,13 +862,13 @@ class ProjectPlan(Document):
         help_text=_("Describe the study design and statistical analysis"
                     " (SPP D22)."))
     bm_endorsement = models.CharField(
-            verbose_name=_("Biometrician's Endorsement"),
-            blank=True, null=True,
-            max_length=100,
-            default=Document.ENDORSEMENT_REQUIRED,
-            choices=Document.ENDORSEMENT_CHOICES,
-            help_text=_("The Biometrician's endorsement of the methodology's "
-                        "statistical validity."))
+        verbose_name=_("Biometrician's Endorsement"),
+        blank=True, null=True,
+        max_length=100,
+        default=Document.ENDORSEMENT_REQUIRED,
+        choices=Document.ENDORSEMENT_CHOICES,
+        help_text=_("The Biometrician's endorsement of the methodology's "
+                    "statistical validity."))
 
     # Part E: data management and budget #
     involves_plants = models.BooleanField(
@@ -885,13 +885,13 @@ class ProjectPlan(Document):
                     "(SPP E23). Provide any additional info required for "
                     "the Harbarium Curator's endorsement."))
     hc_endorsement = models.CharField(
-            verbose_name=_("Herbarium Curator's Endorsement"),
-            blank=True, null=True,
-            max_length=100,
-            default=Document.ENDORSEMENT_NOTREQUIRED,
-            choices=Document.ENDORSEMENT_NULL_CHOICES,
-            help_text=_("The Herbarium Curator's endorsement of the planned "
-                        "collection of voucher specimens."))
+        verbose_name=_("Herbarium Curator's Endorsement"),
+        blank=True, null=True,
+        max_length=100,
+        default=Document.ENDORSEMENT_NOTREQUIRED,
+        choices=Document.ENDORSEMENT_NULL_CHOICES,
+        help_text=_("The Herbarium Curator's endorsement of the planned "
+                    "collection of voucher specimens."))
 
     # New one! Animal Ethics Committee approval
     involves_animals = models.BooleanField(
@@ -903,60 +903,60 @@ class ProjectPlan(Document):
                     "direct interaction with animals, which will require "
                     "endorsement by the Animal Ethics Committee."))
     ae_endorsement = models.CharField(
-            verbose_name=_("Animal Ethics Committee's Endorsement"),
-            blank=True, null=True,
-            max_length=100,
-            default=Document.ENDORSEMENT_NOTREQUIRED,
-            choices=Document.ENDORSEMENT_NULL_CHOICES,
-            help_text=_("The Animal Ethics Committee's endorsement of the"
-                        " planned direct interaction with animals. "
-                        "Approval process is currently handled outside "
-                        "of SDIS."))
+        verbose_name=_("Animal Ethics Committee's Endorsement"),
+        blank=True, null=True,
+        max_length=100,
+        default=Document.ENDORSEMENT_NOTREQUIRED,
+        choices=Document.ENDORSEMENT_NULL_CHOICES,
+        help_text=_("The Animal Ethics Committee's endorsement of the"
+                    " planned direct interaction with animals. "
+                    "Approval process is currently handled outside "
+                    "of SDIS."))
 
     data_management = models.TextField(
         verbose_name=_("Data management"), blank=True, null=True,
         help_text=_("Describe how and where data will be maintained, archived,"
-                    " cataloged (SPP E24). Read DPaW guideline 16."))
+                    " cataloged (SPP E24). Read DBCA guideline 16."))
     # Data manager's endorsement!!!
     data_manager_endorsement = models.CharField(
-            editable=False,  # uncomment to unleash data management goodness
-            verbose_name=_("Data Manager's Endorsement"),
-            blank=True, null=True,
-            max_length=100,
-            choices=Document.ENDORSEMENT_NULL_CHOICES,
-            help_text=_("The Data Manager's endorsement of the project's "
-                        "data management. The DM will help to set up Wiki"
-                        "pages, data catalogue permissions, scientific sites, "
-                        "and advise on metadata creation."))
+        editable=False,  # uncomment to unleash data management goodness
+        verbose_name=_("Data Manager's Endorsement"),
+        blank=True, null=True,
+        max_length=100,
+        choices=Document.ENDORSEMENT_NULL_CHOICES,
+        help_text=_("The Data Manager's endorsement of the project's "
+                    "data management. The DM will help to set up Wiki"
+                    "pages, data catalogue permissions, scientific sites, "
+                    "and advise on metadata creation."))
 
     operating_budget = PythiaArrayField(
         verbose_name=_("Consolidated Funds"),
         blank=True, null=True,
-        help_text=_("Estimated budget: consolidated DPaW funds"),
+        help_text=_("Estimated budget: consolidated DBCA funds"),
         default=json.dumps([
-                ['Source', 'Year 1', 'Year 2', 'Year 3'],
-                ['FTE Scientist', '', '', ''],
-                ['FTE Technical', '', '', ''],
-                ['Equipment', '', '', ''],
-                ['Vehicle', '', '', ''],
-                ['Travel', '', '', ''],
-                ['Other', '', '', ''],
-                ['Total', '', '', ''],
-            ], cls=DjangoJSONEncoder))
+            ['Source', 'Year 1', 'Year 2', 'Year 3'],
+            ['FTE Scientist', '', '', ''],
+            ['FTE Technical', '', '', ''],
+            ['Equipment', '', '', ''],
+            ['Vehicle', '', '', ''],
+            ['Travel', '', '', ''],
+            ['Other', '', '', ''],
+            ['Total', '', '', ''],
+        ], cls=DjangoJSONEncoder))
 
     operating_budget_external = PythiaArrayField(
         verbose_name=_("External Funds"), blank=True, null=True,
         help_text=_("Estimated budget: external funds"),
         default=json.dumps([
-                ['Source', 'Year 1', 'Year 2', 'Year 3'],
-                ['Salaries, Wages, Overtime', '', '', ''],
-                ['Overheads', '', '', ''],
-                ['Equipment', '', '', ''],
-                ['Vehicle', '', '', ''],
-                ['Travel', '', '', ''],
-                ['Other', '', '', ''],
-                ['Total', '', '', ''],
-            ], cls=DjangoJSONEncoder))
+            ['Source', 'Year 1', 'Year 2', 'Year 3'],
+            ['Salaries, Wages, Overtime', '', '', ''],
+            ['Overheads', '', '', ''],
+            ['Equipment', '', '', ''],
+            ['Vehicle', '', '', ''],
+            ['Travel', '', '', ''],
+            ['Other', '', '', ''],
+            ['Total', '', '', ''],
+        ], cls=DjangoJSONEncoder))
 
     class Meta:
         """Class options."""
@@ -972,15 +972,15 @@ class ProjectPlan(Document):
          ProjectPlan.objects.filter(operating_budget=None)]
         """
         self.operating_budget = json.dumps([
-                ['Source', 'Year 1', 'Year 2', 'Year 3'],
-                ['FTE Scientist', '', '', ''],
-                ['FTE Technical', '', '', ''],
-                ['Equipment', '', '', ''],
-                ['Vehicle', '', '', ''],
-                ['Travel', '', '', ''],
-                ['Other', '', '', ''],
-                ['Total', '', '', ''],
-            ], cls=DjangoJSONEncoder)
+            ['Source', 'Year 1', 'Year 2', 'Year 3'],
+            ['FTE Scientist', '', '', ''],
+            ['FTE Technical', '', '', ''],
+            ['Equipment', '', '', ''],
+            ['Vehicle', '', '', ''],
+            ['Travel', '', '', ''],
+            ['Other', '', '', ''],
+            ['Total', '', '', ''],
+        ], cls=DjangoJSONEncoder)
         self.save(update_fields=['operating_budget'])
         logger.info("ProjectPlan {0}".format(self.__str__()) +
                     " field 'operating_budget' reset to default")
@@ -992,15 +992,15 @@ class ProjectPlan(Document):
          ProjectPlan.objects.filter(operating_budget_external=None)]
         """
         self.operating_budget_external = json.dumps([
-                ['Source', 'Year 1', 'Year 2', 'Year 3'],
-                ['Salaries, Wages, Overtime', '', '', ''],
-                ['Overheads', '', '', ''],
-                ['Equipment', '', '', ''],
-                ['Vehicle', '', '', ''],
-                ['Travel', '', '', ''],
-                ['Other', '', '', ''],
-                ['Total', '', '', ''],
-            ], cls=DjangoJSONEncoder)
+            ['Source', 'Year 1', 'Year 2', 'Year 3'],
+            ['Salaries, Wages, Overtime', '', '', ''],
+            ['Overheads', '', '', ''],
+            ['Equipment', '', '', ''],
+            ['Vehicle', '', '', ''],
+            ['Travel', '', '', ''],
+            ['Other', '', '', ''],
+            ['Total', '', '', ''],
+        ], cls=DjangoJSONEncoder)
         self.save(update_fields=['operating_budget_external'])
         logger.info("ProjectPlan {0}".format(self.__str__()) +
                     "field 'operating_budget_external' reset to default")
@@ -1144,27 +1144,27 @@ class ProjectPlan(Document):
         Ethics Committee, and soon, the Data Manager.
         """
         return super(ProjectPlan, self).endorsements + [
-                {
-                    "role": "Biometrician",
-                    "css_classes": self.bm_endorsement_status[0],
-                    "status": self.bm_endorsement_status[1]
-                    },
-                # {
-                # "role": "Data Manager",
-                # "css_classes": self.dm_endorsement_status[0],
-                # "status": self.dm_endorsement_status[1]
-                #   },
-                {
-                    "role": "Herbarium Curator",
-                    "css_classes": self.hc_endorsement_status[0],
-                    "status": self.hc_endorsement_status[1]
-                    },
-                {
-                    "role": "Animal Ethics Committee",
-                    "css_classes": self.ae_endorsement_status[0],
-                    "status": self.ae_endorsement_status[1]
-                    }
-                ]
+            {
+                "role": "Biometrician",
+                "css_classes": self.bm_endorsement_status[0],
+                "status": self.bm_endorsement_status[1]
+            },
+            # {
+            # "role": "Data Manager",
+            # "css_classes": self.dm_endorsement_status[0],
+            # "status": self.dm_endorsement_status[1]
+            #   },
+            {
+                "role": "Herbarium Curator",
+                "css_classes": self.hc_endorsement_status[0],
+                "status": self.hc_endorsement_status[1]
+            },
+            {
+                "role": "Animal Ethics Committee",
+                "css_classes": self.ae_endorsement_status[0],
+                "status": self.ae_endorsement_status[1]
+            }
+        ]
 
     def can_seek_approval(self):
         """Hide the third approval tier - reviewers approve directly."""
@@ -1180,7 +1180,7 @@ class ProjectPlan(Document):
             verbose="Submit for approval",
             explanation=("This transition is disabled for project plans!"),
             notify=True,)
-        )
+    )
     def seek_approval(self):
         """Transition this document to be in approval. Disabled here."""
         return
@@ -1209,7 +1209,7 @@ class ProjectPlan(Document):
                          "This means that formal work on the Project may "
                          "commence, and annual updates will be required."),
             notify=True,)
-        )
+    )
     def approve(self):
         """Approve document and turn project active."""
         from pythia.projects.models import Project
@@ -1229,7 +1229,7 @@ class ProjectPlan(Document):
                          "phase. The Project team will have to submit a"
                          "revised ProjectPlan."),
             notify=True,)
-        )
+    )
     def reset(self):
         """Resetting ProjectPlan approval pushes Project to PENDING."""
         from pythia.projects.models import Project
@@ -1337,7 +1337,7 @@ class ProgressReport(Document):
             Project.PROJECT_ABBREVIATIONS[self.project.type],
             self.project.year,
             self.project.number,
-            str(self.year-1),
+            str(self.year - 1),
             str(self.year))
 
     # def can_seek_review(self):
@@ -1386,7 +1386,7 @@ class ProgressReport(Document):
                          "active state, or complete an ongoing closure "
                          "process."),
             notify=True,)
-        )
+    )
     def approve(self):
         """Complete the requested update.
 
@@ -1416,7 +1416,7 @@ class ProgressReport(Document):
             explanation=("Revoking the approval of a ProgressReport will "
                          "restart its annual update process."),
             notify=True,)
-        )
+    )
     def reset(self):
         """Push the project back to status before ProgressReport approval."""
         from pythia.projects.models import Project
@@ -1449,7 +1449,7 @@ class ProjectClosure(Document):
         (STATUS_FORCE_COMPLETED, _("Completed without final update")),
         (STATUS_SUSPENDED, _("Suspended")),
         (STATUS_TERMINATED, _("Terminated"))
-        )
+    )
 
     goal = models.CharField(
         max_length=300,
@@ -1506,7 +1506,7 @@ class ProjectClosure(Document):
                          "await its last annual update before the closure "
                          "process is complete."),
             notify=True,)
-        )
+    )
     def approve(self):
         """Auto-advance the project to CLOSING stated depending on goal.
 
@@ -1538,7 +1538,7 @@ class ProjectClosure(Document):
             explanation=("Revoking the approval of a ProjectClosure pushes "
                          "the Project back to its active state."),
             notify=True,)
-        )
+    )
     def reset(self):
         """Revoke document approval transitions project back to active."""
         from pythia.projects.models import Project
@@ -1583,7 +1583,7 @@ class StudentReport(Document):
             Project.PROJECT_ABBREVIATIONS[self.project.type],
             self.project.year,
             self.project.number,
-            str(self.year-1),
+            str(self.year - 1),
             str(self.year))
 
     @transition(
@@ -1598,7 +1598,7 @@ class StudentReport(Document):
                          "update and brings the Project back to its normal, "
                          "active state."),
             notify=True,)
-        )
+    )
     def approve(self):
         """Approving the update transitions project back to active."""
         from pythia.projects.models import Project
@@ -1618,7 +1618,7 @@ class StudentReport(Document):
                          "will have to submit a revised StudentReport "
                          "to complete the update."),
             notify=True,)
-        )
+    )
     def reset(self):
         """
         Push back to NEW to reset document approval.
@@ -1649,7 +1649,7 @@ class StaffTimeEstimate(Audit):
         (ROLE_TECHNICAL_OFFICER, "Technical Officer"),
         (ROLE_EXTERNAL_COLLABORATOR, "External Collaborator"),
         (ROLE_OTHER, "Other (specify)"),
-        )
+    )
     document = models.ForeignKey(
         ConceptPlan, help_text=_("The Concept Plan."))
     role = models.TextField(

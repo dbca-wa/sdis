@@ -253,13 +253,13 @@
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Administrative Regions</span></a></li>
                 <li><a href="{{ list_region }}" id="nav-region-list"
-                    title="List and create DPaW Regions">
+                    title="List and create DBCA Regions">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
-                    <span class="text-info">DPaW Regions</span></a></li>
+                    <span class="text-info">DBCA Regions</span></a></li>
                 <li><a href="{{ list_district }}" id="nav-district-list"
-                    title="List and create DPaW Districts">
+                    title="List and create DBCA Districts">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
-                    <span class="text-info">DPaW Districts</span></a></li>
+                    <span class="text-info">DBCA Districts</span></a></li>
                 <li><a href="{{ list_address }}" id="nav-address-list"
                     title="List and create Addresses">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
@@ -277,7 +277,7 @@
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Divisional Research Functions</span></a></li>
                 <li><a href="{{ list_program }}" id="nav-program-list"
-                    title="List and create Science and Conservation Division Programs">
+                    title="List and create Biodiversity and Conservation Science Programs">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Divisional Programs</span></a></li>
                 <li><a href="{{ list_projectmembership }}" id="nav-projectmembership-list"
@@ -359,7 +359,7 @@
                 >Welcome, {% firstof user.short_name user.email %} <b class="caret"></b></a>
             <ul class="dropdown-menu">
             {% block userlinks %}
-                <li class="dropdown-header">DPaW account</li>
+                <li class="dropdown-header">DBCA account</li>
 
                 <li><a href="{% url 'admin:pythia_user_change' request.user.pk %}"
                     title="View and edit your SDIS Profile">
@@ -479,7 +479,7 @@
                 alt='Up next' /></a>
           </div>
           {% endblock %}
-      </div><!-- /.row -->    
+      </div><!-- /.row -->
     </div><!-- /.container -->
 </div><!-- /#footer -->
 <!-- /Footer -->

@@ -432,8 +432,8 @@ class Area(Audit):  # , models.PolygonModelMixin):
     AREA_TYPE_CHOICES = (
         (AREA_TYPE_RELEVANT,  _("Relevant Area Polygon")),
         (AREA_TYPE_FIELDWORK, _("Fieldwork Area Polygon")),
-        (AREA_TYPE_DPAW_REGION, _("DPaW Region")),
-        (AREA_TYPE_DPAW_DISTRICT, _("DPaW District")),
+        (AREA_TYPE_DPAW_REGION, _("DBCA Region")),
+        (AREA_TYPE_DPAW_DISTRICT, _("DBCA District")),
         (AREA_TYPE_IBRA_REGION, _("IBRA")),
         (AREA_TYPE_IMCRA_REGION, _("IMCRA")),
         (AREA_TYPE_NRM_REGION, _("Natural Resource Management Region"))
@@ -492,7 +492,7 @@ class RegionManager(models.Manager):
 
 @python_2_unicode_compatible
 class Region(models.Model):
-    """DPaW Region."""
+    """DBCA Region."""
 
     mpoly = geo_models.MultiPolygonField(
         null=True, blank=True, help_text='Optional cache of spatial features.')
@@ -537,7 +537,7 @@ class DistrictManager(models.Manager):
 
 @python_2_unicode_compatible
 class District(models.Model):
-    """DPaW District."""
+    """DBCA District."""
 
     # the name should be unique=True
     name = models.CharField(max_length=200, null=True, blank=True)
@@ -619,7 +619,7 @@ class Division(Audit, ActiveModel):
     """Departmental divisions.
 
     Divisions are structured into programs.
-    The work of Science and Conservation Division is a service provided
+    The work of Biodiversity and Conservation Science is a service provided
     to output programs like Parks and Visitor Services, Nature Cons,
     Sustainable Forest Management and potentially other Divisions.
     """
@@ -645,7 +645,7 @@ class Division(Audit, ActiveModel):
 
 @python_2_unicode_compatible
 class Program(Audit, ActiveModel):
-    """A Science and Conservation Division Program.
+    """A Biodiversity and Conservation Science Program.
 
     An organizational structure of research scientists, technical officers and
     admin staff, such as a dedicated finance admin or a default data custodian,
@@ -994,7 +994,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=200,
         null=True, blank=True,
         verbose_name=_("Affiliation"),
-        help_text=_("Optional affiliation, not required for DPaW."
+        help_text=_("Optional affiliation, not required for DBCA."
                     " If provided, the affiliation will be appended to the"
                     " person or group name in parentheses."))
 
@@ -1024,7 +1024,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Affiliation: spatial, organizational -----------------------------------#
     program = models.ForeignKey(
         Program, blank=True, null=True,  # optional for migrations
-        help_text=_("The main Science and Conservation Division Program "
+        help_text=_("The main Biodiversity and Conservation Science Program "
                     "affilitation."))
 
     work_center = models.ForeignKey(
@@ -1085,8 +1085,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     is_external = models.BooleanField(
         default=False,
-        verbose_name=_("External to DPaW"),
-        help_text=_("Is the user external to DPaW?"))
+        verbose_name=_("External to DBCA"),
+        help_text=_("Is the user external to DBCA?"))
 
     agreed = models.BooleanField(
         default=False, editable=False,

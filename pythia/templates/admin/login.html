@@ -23,8 +23,8 @@
           </a>
           <h1 id="site-title" class="site-logo pull-left">
             <a href="/">
-              <img src="/static/pbs/img/logo-dpaw.gif" alt="Department of Parks and Wildlife" />
-              Department of <br><strong>Parks and Wildlife</strong>
+              <img src="/static/pbs/img/logo-dpaw.gif" alt="Department of Biodiversity, Conservation and Attractions" />
+              Department of Biodiversity, Conservation and Attractions
             </a>
           </h1>
         </div>
@@ -48,7 +48,7 @@
 {% endfor %}
 {% endif %}
   <div class="body">
-    <h2>Sign in to the Science and Conservation Division Information System</h2>
+    <h2>Sign in to the Biodiversity and Conservation Science Information System</h2>
     <div class="control-group{% if form.username.errors %} error{% endif %}">
     <label for="id_username" class="control-label required">{{ form.username.label }}:</label>
     <div class="controls">
@@ -66,7 +66,7 @@
     </div>
     </div>
     <blockquote>
-    <p>DPaW users log in using their DPaW credentials, external users have to register first.</p>
+    <p>DBCA users log in using their DBCA credentials, external users have to register first.</p>
     </blockquote>
   </div>
   {% url 'password_reset' as password_reset_url %}

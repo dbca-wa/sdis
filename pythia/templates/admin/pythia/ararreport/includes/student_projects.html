@@ -24,7 +24,7 @@
 
 <table class="table">
   <thead>
-      <th>DPaW Officer</th>
+      <th>DBCA Officer</th>
       <th>Student</th>
       <th>University Academic</th>
       <th>Project title</th>
@@ -35,7 +35,7 @@
   {% for report in reports %}
     {% url report.project.opts|pythia_urlname:'change' report.project.pk|pythia_urlquote as project_change %}
     <tr>
-        <!-- DPaW Officer -->
+        <!-- DBCA Officer -->
         <td>{{ report.project.supervising_scientist_list_plain }}</td>
 
         <!-- Student with Degree/Level -->

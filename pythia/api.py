@@ -21,7 +21,7 @@ from pythia.projects.models import (
     # CoreFunctionProject,
     # CollaborationProject,
     # StudentProject
-    )
+)
 # from pythia.documents.models import (
 #     Document,
 #     ConceptPlan,
@@ -109,7 +109,7 @@ class ProgramSerializer(serializers.HyperlinkedModelSerializer):
             'cost_center',
             'image',
             'program_leader',
-            )
+        )
 
 
 class FullProgramSerializer(serializers.HyperlinkedModelSerializer):
@@ -211,7 +211,7 @@ class FullProjectSerializer(ProjectSerializer):
         'area_list_ibra_imcra_region',
         'area_list_dpaw_region',
         'area_list_dpaw_district',
-        )
+    )
 
     class Meta:
         """Class opts."""
@@ -237,7 +237,7 @@ class FullProjectSerializer(ProjectSerializer):
             'area_list_ibra_imcra_region',
             'area_list_dpaw_region',
             'area_list_dpaw_district'
-            )
+        )
 
 
 # -----------------------------------------------------------------------------#
@@ -256,8 +256,8 @@ class AreaViewSet(viewsets.ModelViewSet):
       `/api/areas/?area_type=1 </api/areas/?area_type=1>`_
     * "Fieldwork Area Polygon"
       `/api/areas/?area_type=2 </api/areas/?area_type=2>`_
-    * "DPaW Region" `/api/areas/?area_type=3 </api/areas/?area_type=3>`_
-    * "DPaW District" `/api/areas/?area_type=4 </api/areas/?area_type=4>`_
+    * "DBCA Region" `/api/areas/?area_type=3 </api/areas/?area_type=3>`_
+    * "DBCA District" `/api/areas/?area_type=4 </api/areas/?area_type=4>`_
     * "IBRA" `/api/areas/?area_type=5 </api/areas/?area_type=5>`_
     * "IMCRA" `/api/areas/?area_type=6 </api/areas/?area_type=6>`_
     * "Natural Resource Management Region"
@@ -267,7 +267,7 @@ class AreaViewSet(viewsets.ModelViewSet):
     queryset = Area.objects.all()
     filter_fields = (
         'area_type',
-        )
+    )
 
     def get_serializer_class(self):
         """Toggle serializer: Minimal list, full details."""
@@ -373,7 +373,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     * All projects with "adaptive" in title or tagline:
       `/api/projects/?search=adaptive </api/projects/?search=adaptive>`_
-    * All projects in (at least) DPaW District Moora:
+    * All projects in (at least) DBCA District Moora:
       `/api/projects/?search=Moora </api/projects/?search=Moora>`_
     """
 
@@ -388,7 +388,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         'area_list_ibra_imcra_region',
         'area_list_dpaw_region',
         'area_list_dpaw_district',
-        )
+    )
     search_fields = (
         'title',
         'tagline',
@@ -397,7 +397,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         'area_list_ibra_imcra_region',
         'area_list_dpaw_region',
         'area_list_dpaw_district',
-        )
+    )
 
     def get_serializer_class(self):
         """Toggle serializer: Minimal list, full details."""

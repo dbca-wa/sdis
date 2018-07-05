@@ -42,7 +42,7 @@ from guardian.backends import ObjectPermissionBackend
 #
 #
 # def get_admins(obj):
-#     """For a given object of any documents model, return core project members.
+#     """For a given object of any documents model return core project members.
 #
 #     Includes project_owner, data_custodian and site_custodian.
 #     Excludes other team members.
@@ -123,17 +123,19 @@ from guardian.backends import ObjectPermissionBackend
 
 class EmailBackend(ObjectPermissionBackend):
     """
-    An authentication backend to handle user requirements in DPaW.
+    An authentication backend to handle user requirements in DBCA.
 
     It will authenticate a user against LDAP if it can't find a user entry in
-    the database, and will allow users to login with their DPaW emails.
+    the database, and will allow users to login with their DBCA emails.
 
     It also handles object permissions through guardian's object permission
     framework.
     """
+
     def authenticate(self, username=None, password=None):
-        """
-        Attempt to authenticate a particular user. The username field is taken
+        """Attempt to authenticate a particular user.
+
+        The username field is taken
         to be an email address and checked against LDAP if the user cannot
         be found.
 
@@ -181,6 +183,7 @@ class EmailBackend(ObjectPermissionBackend):
                 return None
 
     def get_user(self, user_id):
+        """Ger User."""
         User = get_user_model()
         try:
             return User.objects.get(pk=user_id)
