@@ -18,7 +18,7 @@ import subprocess
 # import json
 # import markdown
 
-from django.conf import settings
+# from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 # from django.core.mail import EmailMultiAlternatives
@@ -47,16 +47,6 @@ def texify_filename(filename):
 
 
 # -----------------------------------------------------------------------------#
-# Logging
-def snitch(msg):
-    """Write a message to INFO logger, if DEBUG to DEBUG logger and console."""
-    if settings.DEBUG:
-        print(msg)
-        logger.debug(msg)
-    else:
-        logger.info(msg)
-
-# -----------------------------------------------------------------------------#
 # Permissions
 
 
@@ -66,7 +56,6 @@ def setup_permissions():
     Create project permissions, which can be assigned per object to teams.
     Create global permissions and assign to Group "Managers".
     """
-
     managers, created = Group.objects.get_or_create(name='Managers')
     doc_ct = ContentType.objects.filter(app_label='documents')
     proj_ct = ContentType.objects.filter(app_label='projects')
@@ -79,7 +68,7 @@ def setup_permissions():
             name="Can manage %s" % (content_type.name))
 
         managers.permissions.add(p)
-        snitch("Granted {0} to Group managers".format(p))
+        logger.debug("Granted {0} to Group managers".format(p))
 
 
 # -----------------------------------------------------------------------------#
@@ -100,7 +89,7 @@ def setup_permissions():
 #     """Markdown utility class."""
 #
 #     def __init__(self, *args, **kwargs):
-#         """Override init to disable line wraps at 78 chars when saving HTML."""
+#         """Override init to disable line wraps at 78 chars when saving HTML."""  # noqa
 #         HTML2Text.__init__(self, *args, **kwargs)
 #         self.body_width = 0
 #
@@ -124,9 +113,9 @@ def setup_permissions():
 
 
 def get_version(version=None):
-    "Return a PEP 386-compliant version number from VERSION."
+    """Return a PEP 386-compliant version number from VERSION."""
     if version is None:
-        from pythia import VERSION as version
+        from pythia import VERSION as version  # noqa
     else:
         assert len(version) == 5
         assert version[3] in ('alpha', 'beta', 'rc', 'final')
@@ -153,8 +142,7 @@ def get_version(version=None):
 
 
 def get_git_changeset(format_string):
-    """
-    Returns a numeric identifier of the latest git changeset.
+    """Return a numeric identifier of the latest git changeset.
 
     The result is the UTC timestamp of the changeset in YYYYMMDDHHMMSS format.
     This value isn't guaranteed to be unique, but collisions are very unlikely,
@@ -187,7 +175,7 @@ def get_revision_hash():
 
 #
 # def is_list_of_lists_of_navigable_strings(obj):
-#     """Returns true if an object is a list of lists of NavigableStrings.
+#     """Return true if an object is a list of lists of NavigableStrings.
 #
 #     An example are tables stored in Markdown.
 #     """
@@ -203,8 +191,7 @@ def get_revision_hash():
 #
 #
 # def list2htmltable(some_string):
-#     '''Returns a JSON 2D array (a list of list of NavigableStrings) as HTML table
-#     '''
+#     '''Return a JSON 2D array (a list of list of NavigableStrings) as HTML table.'''  # noqa
 #
 #     table_html = '<table style="width:400px;" border="1" ' +\
 #                  'cellpadding="2"><tbody>{0}</tbody></table>'
@@ -217,12 +204,12 @@ def get_revision_hash():
 #                 ''.join([cell_html.format(cell) for cell in row]
 #                         )) for row in json.loads(some_string)]))
 #     except:
-#         print("Found non-JSON string {0}".format(some_string))
+#         logger.warn("Found non-JSON string {0}".format(some_string))
 #         return some_string
 #
 #
 # def extract_md_tables(html_string):
-#     '''Returns a given HTML string with markdown tables converted to HTML tables.
+#     '''Return a given HTML string with markdown tables converted to HTML tables.  # noqa
 #
 #     Use this method to convert any Markdown table stored in model fields of
 #     type text to an HTML table while discarding non-table content.
@@ -239,7 +226,7 @@ def get_revision_hash():
 #
 #
 # def convert_md_tables(html_string):
-#     '''Returns a given HTML string with markdown tables converted to HTML tables.
+#     '''Return a given HTML string with markdown tables converted to HTML tables. # noqa
 #
 #     Use this method to convert any Markdown table stored in model fields of
 #     type text to an HTML table.
@@ -249,4 +236,4 @@ def get_revision_hash():
 #     # pp = [p.contents for p in BS(html_string).find_all('p')]
 #     # TODO extract all tags
 #     # TODO convert only md tables, keep the rest
-#     print("Not implemented: pythia.utils.convert_md_tables")
+#     logger.warn("Not implemented: pythia.utils.convert_md_tables")

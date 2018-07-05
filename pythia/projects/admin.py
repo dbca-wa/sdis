@@ -17,11 +17,13 @@ from django_tablib.admin import TablibAdmin
 from pythia.admin import BaseAdmin, Breadcrumb, DownloadAdminMixin
 from pythia.projects.models import PROJECT_CLASS_MAP
 # from pythia.templatetags.pythia_base import pythia_urlname
-# from pythia.utils import snitch
 from pythia.widgets import AreasWidgetWrapper
 from mail_templated import send_mail
 from sdis import settings
 from functools import update_wrapper
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
@@ -122,7 +124,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
 
     def get_fieldsets(self, request, obj=None):
         """Override get_fieldsets."""
-        # print("project admin get fieldsets")
+        # logger.debug("project admin get fieldsets")
         # fs = super(ProjectAdmin, self).get_fieldsets(request, obj)
         # return fs
         return (
@@ -300,8 +302,8 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
         # Should we use django_fsm.can_proceed instead?
         if tx not in [t.name for t in
                       obj.get_available_user_status_transitions(request.user)]:
-            print("Requested transition '{0}' not available for the "
-                  "current user {1}".format(tx, request.user))
+            logger.warn("Requested transition '{0}' not available for the "
+                        "current user {1}".format(tx, request.user))
             raise PermissionDenied
 
         t = [t for t in obj.get_available_user_status_transitions(request.user)

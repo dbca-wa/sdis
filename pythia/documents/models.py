@@ -27,7 +27,6 @@ from pythia.models import Audit, ActiveGeoModelManager
 from pythia.fields import PythiaArrayField  # , PythiaTextField
 from pythia.documents.utils import update_document_permissions
 from pythia.reports.models import ARARReport
-from pythia.utils import snitch
 
 logger = logging.getLogger(__name__)
 
@@ -173,7 +172,8 @@ class Document(PolymorphicModel, Audit):
         # try:
         #     update_document_permissions(self)  # hack: give team access
         # except:
-        #     snitch("{0} couldn't update permissions".format(self.__str__()))
+        #     logger.warn(
+        #        "{0} couldn't update permissions".format(self.__str__()))
 
         # if created:
         #    self.setup()
@@ -559,7 +559,8 @@ class Document(PolymorphicModel, Audit):
         Default: use self.submitters, reviewers and approvers and
         override in Document models
         """
-        snitch("Getting recipients for transition target {0}".format(target))
+        logger.debug(
+            "Getting recipients for transition target {0}".format(target))
         if target in [Document.STATUS_NEW, Document.STATUS_APPROVED]:
             return self.submitters
         elif target == Document.STATUS_INREVIEW:
@@ -591,7 +592,7 @@ class Document(PolymorphicModel, Audit):
         elif self.status == Document.STATUS_APPROVED:
             permitted = set()
 
-        snitch("Permitted to change {0}: {1}".format(
+        logger.debug("Permitted to change {0}: {1}".format(
             self.debugname, ", ".join([p.fullname for p in permitted])))
         return permitted
 
@@ -1248,19 +1249,19 @@ def projectplan_post_save(sender, instance, created, **kwargs):
     NB: the mandatory Biometrician's endorsement defaults to "requested".
     Data manager's endorsement will do the same once activated.
     """
-    snitch('ProjectPlan {0} post-save: setting required endorsements '
-           'as inferred from other fields.'.format(instance.__str__()))
+    logger.debug('ProjectPlan {0} post-save: setting required endorsements '
+                 'as inferred from other fields.'.format(instance.__str__()))
     if instance.involves_plants:
-        snitch('Project involves plants, needs HC endorsement!')
+        logger.debug('Project involves plants, needs HC endorsement!')
         if instance.hc_endorsement == Document.ENDORSEMENT_NOTREQUIRED:
-            snitch('Setting HC endorsement from default to "required".')
+            logger.debug('Setting HC endorsement from default to "required".')
             instance.hc_endorsement = Document.ENDORSEMENT_REQUIRED
             instance.save(update_fields=['hc_endorsement'])
 
     if instance.involves_animals:
-        snitch('Project involves animals, needs AE endorsement!')
+        logger.debug('Project involves animals, needs AE endorsement!')
         if instance.ae_endorsement == Document.ENDORSEMENT_NOTREQUIRED:
-            snitch('Setting AE endorsement from default to "required".')
+            logger.debug('Setting AE endorsement from default to "required".')
             instance.ae_endorsement = Document.ENDORSEMENT_REQUIRED
             instance.save(update_fields=['ae_endorsement'])
 

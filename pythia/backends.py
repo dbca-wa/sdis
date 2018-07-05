@@ -16,6 +16,9 @@ Document model methods providing the correct audience for each transition.
 from django.contrib.auth import get_user_model
 from django_auth_ldap.backend import LDAPBackend
 from guardian.backends import ObjectPermissionBackend
+import logging
+
+logger = logging.getLogger(__name__)
 
 # from django.contrib.auth.models import Group
 # def get_team(obj):
@@ -35,7 +38,7 @@ from guardian.backends import ObjectPermissionBackend
 #         team = [m.user for m in p.projectmembership_set.all()]
 #         # pks = p.projectmembership_set.values_list('user', flat=True)
 #         # team = set(User.objects.filter(pk__in=pks))
-#         print("get_team for {0} is {1}".format(obj.__str__(), team))
+#         logger.debug("get_team for {0} is {1}".format(obj.__str__(), team))
 #         return team
 #     else:
 #         return set()
@@ -179,7 +182,7 @@ class EmailBackend(ObjectPermissionBackend):
                     user.save()
                 return user
             except Exception, e:
-                print e
+                logger.warn(e)
                 return None
 
     def get_user(self, user_id):

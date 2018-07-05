@@ -37,7 +37,7 @@ from pythia.documents.models import (
 from pythia.models import ActiveGeoModelManager, Audit, ActiveModel
 from pythia.models import Program, WebResource, Division, Area, User
 from pythia.reports.models import ARARReport
-from pythia.utils import snitch, texify_filename
+from pythia.utils import texify_filename
 
 logger = logging.getLogger(__name__)
 
@@ -467,7 +467,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             smt, created = Group.objects.get_or_create(name='SMT')
             return smt.user_set.all()
         except:
-            snitch("ERROR reviewers not found for {0}".format(self.debugname))
+            logger.debug(
+                "ERROR reviewers not found for {0}".format(self.debugname))
             return set()
 
     @property
@@ -486,7 +487,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             scd, created = Group.objects.get_or_create(name='SCD')
             return scd.user_set.all()
         except:
-            print("approvers not found")
+            logger.warn("[pythia.projects.models.Project.approvers] "
+                        "approvers not found")
             return set()
         # return Group.objects.get(name='SCD').user_set.all()
 
@@ -970,7 +972,7 @@ class ScienceProject(Project):
         :param report: an instance of pythia.reports.models.ARARReport
         """
         msg = "Creating ProgressReport for {0}".format(self.__str__())
-        snitch(msg)
+        logger.debug(msg)
         p, created = ProgressReport.objects.get_or_create(
             year=report.year, project=self)
         p.report = report
@@ -987,7 +989,7 @@ class ScienceProject(Project):
         p.save()
         msg = "{0} Added ProgressReport for year {1} in report {2}".format(
             p.project.project_type_year_number, p.year, p.report)
-        snitch(msg)
+        logger.debug(msg)
 
 
 class CoreFunctionProject(Project):
@@ -1051,8 +1053,6 @@ class CoreFunctionProject(Project):
         """
         msg = "Creating ProgressReport for {0}".format(self.__str__())
         logger.info(msg)
-        if settings.DEBUG:
-            print(msg)
         p, created = ProgressReport.objects.get_or_create(
             year=report.year, project=self)
         p.report = report
@@ -1070,8 +1070,6 @@ class CoreFunctionProject(Project):
         msg = "{0} Added ProgressReport for year {1} in report {2}".format(
             p.project.project_type_year_number, p.year, p.report)
         logger.info(msg)
-        if settings.DEBUG:
-            print(msg)
 
 
 class CollaborationProject(Project):
@@ -1478,7 +1476,7 @@ class StudentProject(Project):
         p.save()
         msg = "{0} Added StudentReport for year {1} in report {2}".format(
             p.project.project_type_year_number, p.year, p.report)
-        snitch(msg)
+        logger.debug(msg)
 
 
 PROJECT_CLASS_MAP = {
@@ -1608,10 +1606,12 @@ def refresh_project_member_cache_fields(projectmembership_instance,
 
     # give user permission to change team?
     # if remove:
-    #    print("remove user permission to change/delete team memberships")
+    #    logger.debug("remove user permission to change/delete"
+    # " team memberships")
     # TODO remove user's permissions on documents
     # else:
-    #    print("grant user permission to change/delete team memberships")
+    #    logger.debug("grant user permission to change/delete "
+    # "team memberships")
 
     # some crazyness for StudentProjects and CollaborationProjects
     if (projectmembership_instance.role ==

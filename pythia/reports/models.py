@@ -15,10 +15,11 @@ from django.db import models
 from django_resized import ResizedImageField
 
 from pythia import models as pythia_models
-from pythia.utils import snitch, texify_filename
+from pythia.utils import texify_filename
 
 from south.modelsinspector import add_introspection_rules
-add_introspection_rules([], ["^pythia\.reports\.models\.fields\.ResizedImageField"])
+add_introspection_rules(
+    [], ["^pythia\.reports\.models\.fields\.ResizedImageField"])
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ def reports_upload_to(instance, filename):
     return "ararreports/{0}/{1}".format(
         instance.pk,
         texify_filename(filename)
-        )
+    )
 
 
 class ARARReport(pythia_models.Audit):
@@ -60,8 +61,8 @@ class ARARReport(pythia_models.Audit):
             " The horizon, if shown, should be in the top third and level."
             " The aspect ratio (width to height) must be 2:1."
             " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-            )
         )
+    )
 
     sds_orgchart = ResizedImageField(
         upload_to=reports_upload_to,
@@ -70,8 +71,8 @@ class ARARReport(pythia_models.Audit):
         help_text=_(
             "Upload an org chart for the SDS chapter."
             " The image will be resized to max 2480 (wt) x 2480 pt (ht)."
-            )
         )
+    )
 
     sds_intro = models.TextField(
         verbose_name=_("Service Delivery Structure"),
@@ -89,8 +90,8 @@ class ARARReport(pythia_models.Audit):
             " The horizon, if shown, should be in the top third and level."
             " The aspect ratio (width to height) must be 2:1."
             " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-            )
         )
+    )
 
     research_intro = models.TextField(
         verbose_name=_("Research Activities Introduction"),
@@ -108,8 +109,8 @@ class ARARReport(pythia_models.Audit):
             " The horizon, if shown, should be in the top third and level."
             " The aspect ratio (width to height) must be 2:1."
             " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-            )
         )
+    )
 
     collaboration_chapterimage = ResizedImageField(
         upload_to=reports_upload_to,
@@ -121,8 +122,8 @@ class ARARReport(pythia_models.Audit):
             " The horizon, if shown, should be in the top third and level."
             " The aspect ratio (width to height) must be 2:1."
             " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-            )
         )
+    )
 
     studentprojects_chapterimage = ResizedImageField(
         upload_to=reports_upload_to,
@@ -134,8 +135,8 @@ class ARARReport(pythia_models.Audit):
             " The horizon, if shown, should be in the top third and level."
             " The aspect ratio (width to height) must be 2:1."
             " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-            )
         )
+    )
 
     student_intro = models.TextField(
         verbose_name=_("Student Projects Introduction"),
@@ -153,8 +154,8 @@ class ARARReport(pythia_models.Audit):
             " The horizon, if shown, should be in the top third and level."
             " The aspect ratio (width to height) must be 2:1."
             " The image will be resized to max 2480 (wt) x 1240 pt (ht)."
-            )
         )
+    )
 
     pub = models.TextField(
         verbose_name=_("Publications and Reports"),
@@ -170,6 +171,8 @@ class ARARReport(pythia_models.Audit):
         help_text=_("The cut-off date for any changes."))
 
     class Meta:
+        """Class opts."""
+
         app_label = 'pythia'
         get_latest_by = 'date_open'  # 'created'
         verbose_name = 'Annual Research Report'
@@ -177,7 +180,8 @@ class ARARReport(pythia_models.Audit):
 
     def __str__(self):
         """The report name."""
-        return "Annual Research Report {0}-{1}".format(self.year-1, self.year)
+        return "Annual Research Report {0}-{1}".format(
+            self.year - 1, self.year)
 
     @property
     def fullname(self):
@@ -203,36 +207,36 @@ class ARARReport(pythia_models.Audit):
     def progress_reports(self):
         """A QuerySet of Science Projects with prefetched documents."""
         return self.progressreport_set.all().order_by(
-                "project__program",
-                "project__position",
-                "-project__year",
-                "-project__number"
-            ).prefetch_related(
-                "project",
-                "modifier",
-                "project__program",
-                "project__program__program_leader")
+            "project__program",
+            "project__position",
+            "-project__year",
+            "-project__number"
+        ).prefetch_related(
+            "project",
+            "modifier",
+            "project__program",
+            "project__program__program_leader")
 
     @property
     def student_reports(self):
         """A QuerySet of StudentProjects with prefetched documents."""
         return self.studentreport_set.all().prefetch_related(
-                "project",
-                "modifier",
-                "project__project_owner"
-                ).order_by(
-                "project__position",
-                "project__project_owner__last_name",
-                "-project__year",
-                "-project__number")
+            "project",
+            "modifier",
+            "project__project_owner"
+        ).order_by(
+            "project__position",
+            "project__project_owner__last_name",
+            "-project__year",
+            "-project__number")
 
     @property
     def collaboration_projects(self):
         """A QuerySet of CollaborationProjects with prefetched documents."""
-        from pythia.projects.models import (Project, CollaborationProject as x)
-        return x.objects.filter(
+        from pythia.projects.models import (Project, CollaborationProject as p)  # noqa
+        return p.objects.filter(
             status=Project.STATUS_ACTIVE
-            ).order_by("position", "-year", "-number")
+        ).order_by("position", "-year", "-number")
 
     """
     @property
@@ -294,16 +298,17 @@ def call_update(proj, rep, final=False):
         proj.request_update(rep)
         proj.status = Project.STATUS_UPDATE
     proj.save()
-    snitch("{0} processed request for progress report".format(proj.debugname))
+    logger.debug(
+        "{0} processed request for progress report".format(proj.debugname))
 
 
 def request_progress_reports(instance):
     """Call Project.request_update() for each active or closing project."""
-    snitch("Function request_progress_reports() called.")
+    logger.debug("Function request_progress_reports() called.")
     from pythia.projects.models import (
         Project, ScienceProject, CoreFunctionProject, StudentProject)
 
-    snitch("{0} requesting progress reports".format(instance.fullname))
+    logger.debug("{0} requesting progress reports".format(instance.fullname))
     [call_update(Project.objects.get(pk=p), instance) for p in
         ScienceProject.objects.filter(status=Project.STATUS_ACTIVE
                                       ).values_list('pk', flat=True)]
@@ -323,7 +328,8 @@ def request_progress_reports(instance):
     [call_update(Project.objects.get(pk=p), instance) for p in
         StudentProject.objects.filter(status=Project.STATUS_ACTIVE
                                       ).values_list('pk', flat=True)]
-    snitch("{0} finished requesting progressreports".format(instance.fullname))
+    logger.debug(
+        "{0} finished requesting progressreports".format(instance.fullname))
 
 
 def arar_post_save(sender, instance, created, **kwargs):
@@ -333,7 +339,7 @@ def arar_post_save(sender, instance, created, **kwargs):
     An existing ARAR will not request updates.
     """
     if created:
-        snitch("ARARReport saved as new calls request_progress_reports.")
+        logger.debug("ARARReport saved as new calls request_progress_reports.")
         request_progress_reports(instance)
 
 signals.post_save.connect(arar_post_save, sender=ARARReport)

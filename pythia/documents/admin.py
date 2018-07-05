@@ -3,8 +3,8 @@ from __future__ import unicode_literals, absolute_import
 
 from django.contrib.admin.util import unquote
 # from django.contrib import messages
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+# from django.contrib.auth import get_user_model
+# from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.forms import fields_for_model
@@ -23,13 +23,16 @@ from pythia.admin import BaseAdmin, Breadcrumb, DownloadAdminMixin
 # from pythia.documents.models import Document
 # from pythia.models import User
 from pythia.templatetags.pythia_base import pythia_urlname
-from pythia.utils import snitch
 from sdis import settings
 
 from diff_match_patch import diff_match_patch
 # from django_fsm import can_proceed
 from functools import update_wrapper
 from reversion.models import Version
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
@@ -99,7 +102,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
     @property
     def download_template(self):
         """Derive a download template name from model name."""
-        return "doc_"+self.model._meta.model_name
+        return "doc_" + self.model._meta.model_name
 
     def get_readonly_fields(self, request, obj=None):
         """Lock the document after seeking approval for all but superusers."""
@@ -160,8 +163,8 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
         # Is the tx available to the current user?
         if tx not in [t.name for t in
                       obj.get_available_user_status_transitions(request.user)]:
-            print("Requested transition '{0}' not available for the "
-                  "current user {1}".format(tx, request.user))
+            logger.warn("Requested transition '{0}' not available for the "
+                        "current user {1}".format(tx, request.user))
             raise PermissionDenied
 
         # Is there a better way to get the transition object?
@@ -218,7 +221,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
             "admin/%s/%s/transition.html" % (opts.app_label, opts.model_name),
             "admin/%s/%s_transition.html" % (opts.app_label, t.name),
             "admin/%s/transition.html" % opts.app_label
-            ], context, current_app=self.admin_site.name)
+        ], context, current_app=self.admin_site.name)
 
     # def endorsement_view(self, request, object_id, extra_context=None):
     #     """Handle adding an endorsement to a document.
@@ -260,7 +263,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
         context = {
             'has_diff_view': True,
             'breadcrumbs': self.get_breadcrumbs(request, obj)
-            }
+        }
         context.update(extra_context or {})
         return super(DocumentAdmin, self).history_view(request, object_id,
                                                        extra_context=context)
@@ -300,7 +303,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
             'breadcrumbs': self.get_breadcrumbs(request, obj),
             'diffs': diffs, 'object': obj, 'opts': self.model._meta,
             'version_date': obj_old.revision.date_created,
-            }
+        }
         context.update(extra_context or {})
 
         return TemplateResponse(request, self.object_diff_template or [
@@ -308,7 +311,7 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
                                               opts.object_name.lower()),
             'admin/%s/object_diff.html' % app_label,
             'admin/object_diff.html'
-            ], context, current_app=self.admin_site.name)
+        ], context, current_app=self.admin_site.name)
 
 
 class ConceptPlanAdmin(DocumentAdmin):
@@ -345,22 +348,23 @@ class ProjectPlanAdmin(DocumentAdmin):
 
         if special_user:
             # Superusers and special roles can always edit SPPs
-            # snitch("ProjectPlan admin: editable for special user.")
+            logger.debug("ProjectPlan admin: editable for special user.")
             return ()
 
         elif (obj and not obj.is_approved and request.user and
               request.user in obj.get_users_with_change_permissions()):
             # Normal users can edit doc if not approved except endorsements
-            # snitch("ProjectPlan admin: non approved = editable except "
-                #    "endorsements for team member.")
+            logger.debug("ProjectPlan admin: non approved = editable except "
+                         "endorsements for team member.")
             return ('bm_endorsement', 'hc_endorsement', 'ae_endorsement')
 
         # if is_approved: all readonly
         elif (obj and obj.is_approved):
-            # snitch("ProjectPlan admin: approved = read-only for normal user.")
+            logger.debug("ProjectPlan admin: approved = read-only "
+                         "for normal user.")
             return fields_for_model(obj, exclude=self.exclude).keys()
 
         else:
-            # snitch("ProjectPlan admin: defaulting to DocumentAdmin.")
+            logger.debug("ProjectPlan admin: defaulting to DocumentAdmin.")
             return super(ProjectPlanAdmin, self).get_readonly_fields(
                 request, obj)

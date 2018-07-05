@@ -9,7 +9,6 @@ This module contains helpers for:
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 # from django.db.models.signals import post_syncdb
-from pythia.utils import snitch
 import logging
 
 logger = logging.getLogger(__name__)
@@ -39,14 +38,15 @@ def update_document_permissions(document):
 
     # TODO: handle removing permissions too.
     opts = document._meta
-    snitch("Post-save: Updating permissions for document {0}".format(
+    logger.debug("Post-save: Updating permissions for document {0}".format(
         document.__str__()))
 
     for action in ["submit", "change"]:
         perm = "{0}.{1}_{2}".format(opts.app_label, action, opts.model_name)
 
         for user in document.project.members.all():
-            snitch("Giving {0} permission {1}".format(user.username, perm))
+            logger.debug(
+                "Giving {0} permission {1}".format(user.username, perm))
             assign_perm(perm, user, document)
 
 
@@ -70,7 +70,7 @@ def grant_special_role_permissions():
     hc.permissions.add(p)
     ae.permissions.add(p)
     dm.permissions.add(p)
-    snitch("Granted {0} to special roles".format(p))
+    logger.debug("Granted {0} to special roles".format(p))
 
 
 def add_document_permissions(sender, **kwargs):
@@ -164,7 +164,7 @@ def setup_user_permissions(sender, **kwargs):
         # ('change_progressreport', 'documents', 'progressreport'),
         # ('change_studentreport', 'documents', 'studentreport'),
         # ('change_projectclosure', 'documents', 'projectclosure'),
-        )
+    )
 
     for codename, app_label, model in permissions:
         # This should only be run once, after all models and content types
@@ -194,8 +194,7 @@ def migrate_documents_to_html(debug=False):
 
     for d in m.Document.objects.all():
         if d._meta.model_name == 'conceptplan':
-            if debug:
-                print("Converting {0}".format(d))
+            logger.debug("Converting {0}".format(d))
             d.summary = text2html(d.summary)
             d.outcome = text2html(d.outcome)
             d.collaborations = text2html(d.collaborations)
@@ -237,18 +236,17 @@ def migrate_documents_to_html(debug=False):
             action = "Skipping"
 
         # Common actions
-        snitch("{0} {1}".format(action, d))
+        logger.debug("{0} {1}".format(action, d))
 
 
 def html_table_to_array(html_string):
-    """Converts an HTML table to a list of lists.
-    """
-    from bs4 import BeautifulSoup as BS
+    """Convert an HTML table to a list of lists."""
+    from bs4 import BeautifulSoup as Bs
     import json
-    if (len(BS(html_string).findAll("tr")) > 0 and
+    if (len(Bs(html_string).findAll("tr")) > 0 and
             html_string is not None and html_string is not ""):
         return json.dumps([[cell.string or '' for cell in row.findAll("td")]
-                           for row in BS(html_string).findAll("tr")])
+                           for row in Bs(html_string).findAll("tr")])
     else:
         return html_string
 
@@ -264,8 +262,7 @@ def migrate_html_tables_to_arrays(debug=False):
 
     for d in m.Document.objects.all():
         if d._meta.model_name == 'conceptplan':
-            if debug:
-                print("Converting {0}".format(d))
+            logger.debug("Converting {0}".format(d))
             d.budget = html_table_to_array(d.budget)
             d.staff = html_table_to_array(d.staff)
             d.save()
@@ -273,7 +270,7 @@ def migrate_html_tables_to_arrays(debug=False):
 
         # There are no populated budgets yet!
         # elif d._meta.model_name == 'projectplan':
-        #    if debug: print("Converting {0}".format(d))
+        #    logger.debug("Converting {0}".format(d))
         #    d.operating_budget = html_table_to_array(d.operating_budget)
         #    d.save()
         #    action = 'Converted'
@@ -283,6 +280,4 @@ def migrate_html_tables_to_arrays(debug=False):
 
         # Common actions
         msg = "{0} {1}".format(action, d)
-        if debug:
-            print(msg)
         logger.info(msg)

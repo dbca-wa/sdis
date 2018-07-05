@@ -368,7 +368,7 @@ if DEBUG:
         },
         'sdis': {
             'handlers': ['console', 'file'],
-            'level': 'DEBUG',
+            'level': 'INFOI',
             'propagate': True
         },
     }
