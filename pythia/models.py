@@ -41,23 +41,24 @@ def programs_upload_to(instance, filename):
     return "programs/{0}/{1}".format(
         instance.slug,
         texify_filename(filename)
-        )
+    )
 
 
 class ActiveQuerySet(QuerySet):
     """Cursom QuerySet."""
 
     def __init__(self, model, query=None, using=None):
-        # the model needs to be defined so that we can construct our custom
-        # query
+        """Define model to be avail for custom query."""
         if query is None:
             query = Query(model)
             query.add_q(models.Q(effective_to__isnull=True))
         return super(ActiveQuerySet, self).__init__(model, query, using)
 
     def __deepcopy__(self, memo):
-        # borrowed from django.db.models.query.QuerySet because we need to pass
-        # self.model to the self.__class__ call
+        """Borrow from django.db.models.query.QuerySet.
+
+        Required because we need to pass self.model to the self.__class__ call.
+        """
         obj = self.__class__(self.model)
         for k, v in self.__dict__.items():
             if k in ('_iter', '_result_cache'):
@@ -67,7 +68,7 @@ class ActiveQuerySet(QuerySet):
                 return obj
 
     def delete(self):
-        # see django.db.models.query.QuerySet.delete
+        """see django.db.models.query.QuerySet.delete."""
         assert_msg = "Cannot use 'limit' or 'offset' with delete."
         assert self.query.can_filter(), assert_msg
 
@@ -93,8 +94,7 @@ class ActiveGeoQuerySet(ActiveQuerySet, GeoQuerySet):
     """Custom GeoQuerySet."""
 
     def __init__(self, model, query=None, using=None):
-        # the model needs to be defined so that we can construct our custom
-        # query
+        """Define model to be avail for custom query."""
         if query is None:
             query = GeoQuery(model)
             query.add_q(geo_models.Q(effective_to__isnull=True))
@@ -111,21 +111,22 @@ class ActiveModelManager(models.Manager):
     # __getattr__ borrowed from
     # http://lincolnloop.com/django-best-practices/applications.html#managers
     def __getattr__(self, attr, *args):
-        # see https://code.djangoproject.com/ticket/15062 for
-        # details
+        """see https://code.djangoproject.com/ticket/15062."""
         if attr.startswith("_"):
             raise AttributeError
         return getattr(self.get_query_set(), attr, *args)
 
 
 class ActiveGeoModelManager(ActiveModelManager, geo_models.GeoManager):
+    """ActiveGeoModelManager."""
+
     def get_query_set(self):
+        """Query set."""
         return ActiveGeoQuerySet(self.model)
 
 
 class ActiveModel(models.Model):
-    """
-    Custom "don't really delete" Mixin.
+    """Custom "don't really delete" Mixin.
 
     Model mixin to allow objects to be saved as 'non-current' or 'inactive',
     instead of deleting those objects.
@@ -134,16 +135,20 @@ class ActiveModel(models.Model):
     "effective_from" allows 'past' and/or 'future' objects to be saved.
     "effective_to" is used to 'delete' objects (null==not deleted).
     """
+
     effective_from = models.DateTimeField(default=timezone.now)
     effective_to = models.DateTimeField(null=True, blank=True)
     objects = ActiveModelManager()
-    # Return all objects, including deleted ones, the default manager.
+    # Return all objects, including deleted ones, the default manager:
     objects_all = models.Manager()
 
     class Meta:
+        """Class opts."""
+
         abstract = True
 
     def __init__(self, *args, **kwargs):
+        """Init."""
         if not issubclass(type(type(self).objects), ActiveModelManager):
             raise ImproperlyConfigured(
                 "The ActiveModel objects manager is not a subclass of "
@@ -153,14 +158,17 @@ class ActiveModel(models.Model):
         super(ActiveModel, self).__init__(*args, **kwargs)
 
     def is_active(self):
+        """Whether object is not marked for deletion."""
         return self.effective_to is None
 
     def is_deleted(self):
+        """Whether object is marked for deletion."""
         return not self.is_active()
 
     def delete(self, *args, **kwargs):
-        """
-        Overides the standard model delete method; sets "effective_to" as the
+        """Overide the standard model delete method.
+
+        Sets "effective_to" as the
         current date and time and then calls save() instead.
         """
         # see django.db.models.deletion.Collection.delete
@@ -224,12 +232,14 @@ class ActiveModel(models.Model):
 
 
 class ActiveGeoModel(ActiveModel):
+    """Abstract ActiveGeoModel base class."""
 
     objects = ActiveGeoModelManager()
     # Return all objects, including deleted ones, the default manager.
     objects_all = geo_models.GeoManager()
 
     def __init__(self, *args, **kwargs):
+        """Init."""
         if not issubclass(type(type(self).objects), ActiveGeoModelManager):
             raise ImproperlyConfigured(
                 "The ActiveGeoModel objects manager is not a subclass of "
@@ -239,12 +249,18 @@ class ActiveGeoModel(ActiveModel):
         super(ActiveGeoModel, self).__init__(*args, **kwargs)
 
     class Meta:
+        """Class opts."""
+
         abstract = True
 
 
 @python_2_unicode_compatible
 class Audit(geo_models.Model):
+    """Abstract Audit base class."""
+
     class Meta:
+        """Class opts."""
+
         abstract = True
 
     creator = models.ForeignKey(
@@ -259,6 +275,7 @@ class Audit(geo_models.Model):
     modified = models.DateTimeField(auto_now=True, editable=False)
 
     def __init__(self, *args, **kwargs):
+        """Init."""
         super(Audit, self).__init__(*args, **kwargs)
         self._changed_data = None
         self._initial = {}
@@ -267,9 +284,7 @@ class Audit(geo_models.Model):
                 self._initial[field.attname] = getattr(self, field.attname)
 
     def has_changed(self):
-        """
-        Returns true if the current data differs from initial.
-        """
+        """Return true if the current data differs from initial."""
         return bool(self.changed_data)
 
     def _get_changed_data(self):
@@ -316,16 +331,19 @@ class Audit(geo_models.Model):
                     reversion.set_comment('Nothing changed.')
 
     def __str__(self):
+        """String representation."""
         return str(self.pk)
 
     def get_absolute_url(self):
+        """Absolute base url."""
         opts = self._meta.app_label, self._meta.module_name
         return reverse("admin:%s_%s_change" % opts, args=(self.pk, ))
 
     def clean_fields(self, exclude=None):
-        """
-        Override clean_fields to do what model validation should have done
-        in the first place -- call clean_FIELD during model validation.
+        """Override clean_fields.
+
+        Do what model validation should have done in the first place:
+        call clean_FIELD during model validation.
         """
         errors = {}
 
@@ -354,20 +372,26 @@ class Audit(geo_models.Model):
 # Report Parts
 #
 class ReportPart(object):
+    """Report part class."""
+
     def __str__(self):
+        """String representation."""
         return str(self.original)
 
     def __init__(self, original, template, context, *args):
+        """Init."""
         self.original = original
         self.template_ = template
         self.context_ = context
 
     @property
     def template(self):
+        """Template."""
         return self.base + self.template_ + self.suffix
 
     @property
     def context(self):
+        """Context."""
         if callable(self.context_):
             context_ = self.context_(self.original)
         elif hasattr(self.original, self.context_):
@@ -378,11 +402,15 @@ class ReportPart(object):
 
 
 class HTMLReportPart(ReportPart):
+    """Class HTMLReportPart."""
+
     suffix = '.html'
     base = 'admin/pythia/ararreport/includes/'
 
 
 class LATEXReportPart(ReportPart):
+    """Class LATEXReportPart."""
+
     suffix = '.tex'
     base = 'latex/includes/'
 
@@ -392,9 +420,8 @@ class LATEXReportPart(ReportPart):
 #
 @python_2_unicode_compatible
 class Area(Audit):  # , models.PolygonModelMixin):
-    """
-    An area of interest to a Project, classified by area type.
-    """
+    """An area of interest to a Project, classified by area type."""
+
     AREA_TYPE_RELEVANT = 1
     AREA_TYPE_FIELDWORK = 2
     AREA_TYPE_DPAW_REGION = 3
@@ -410,7 +437,7 @@ class Area(Audit):  # , models.PolygonModelMixin):
         (AREA_TYPE_IBRA_REGION, _("IBRA")),
         (AREA_TYPE_IMCRA_REGION, _("IMCRA")),
         (AREA_TYPE_NRM_REGION, _("Natural Resource Management Region"))
-        )
+    )
     area_type = models.PositiveSmallIntegerField(
         verbose_name=_("Area Type"), choices=AREA_TYPE_CHOICES,
         default=AREA_TYPE_RELEVANT)
@@ -429,19 +456,24 @@ class Area(Audit):  # , models.PolygonModelMixin):
         help_text=_("The spatial extent of this feature, stored as WKT."))
 
     class Meta:
+        """Class opts."""
+
         verbose_name = _("area")
         verbose_name_plural = _("areas")
         ordering = ['area_type', '-northern_extent']
 
     def save(self, *args, **kwargs):
+        """Save."""
         if self.get_northern_extent() is not None:
             self.northern_extent = self.get_northern_extent()
         super(Area, self).save(*args, **kwargs)
 
     def __str__(self):
+        """String representation."""
         return '[{0}] {1}'.format(self.get_area_type_display(), self.name)
 
     def get_northern_extent(self):
+        """Northernmost latitude."""
         return self.mpoly.extent[3] if self.mpoly else None
 
     @property
@@ -451,15 +483,17 @@ class Area(Audit):  # , models.PolygonModelMixin):
 
 
 class RegionManager(models.Manager):
+    """RegionManager."""
+
     def get_by_natural_key(self, name):
+        """Get by natural key."""
         return self.get(name=name)
 
 
 @python_2_unicode_compatible
 class Region(models.Model):
-    """
-    DPaW Region
-    """
+    """DPaW Region."""
+
     mpoly = geo_models.MultiPolygonField(
         null=True, blank=True, help_text='Optional cache of spatial features.')
     # the name should be unique=True
@@ -468,35 +502,43 @@ class Region(models.Model):
     objects = RegionManager()
 
     class Meta:
+        """Class opts."""
+
         verbose_name = _("region")
         verbose_name_plural = _("regions")
         ordering = ['-northern_extent']
 
     def __str__(self):
+        """String representation."""
         return self.name if self.name else str(self.pk)
 
     def save(self, *args, **kw):
+        """Save."""
         self.northern_extent = self.get_northern_extent()
         super(Region, self).save(*args, **kw)
 
     def natural_key(self):
+        """Natural key."""
         return (self.name,)
 
     def get_northern_extent(self):
+        """Northern extent."""
         return self.mpoly.extent[3] if self.mpoly else 0
 
 
 class DistrictManager(models.Manager):
+    """DistrictManager."""
+
     def get_by_natural_key(self, region, name):
+        """Get by natural key."""
         region = Region.objects.get_by_natural_key(region)
         return self.get(name=name, region=region)
 
 
 @python_2_unicode_compatible
 class District(models.Model):
-    """
-    DPaW District
-    """
+    """DPaW District."""
+
     # the name should be unique=True
     name = models.CharField(max_length=200, null=True, blank=True)
     code = models.CharField(max_length=3, null=True, blank=True)
@@ -513,30 +555,35 @@ class District(models.Model):
         help_text=_("Optional cache of spatial features."))
 
     def __str__(self):
+        """String representation."""
         return '[{0}] {1}'.format(self.region.name, self.name)
 
     def save(self, *args, **kw):
+        """Save."""
         self.northern_extent = self.get_northern_extent()
         super(District, self).save(*args, **kw)
 
     def natural_key(self):
+        """Natural key."""
         return self.region.natural_key() + (self.name,)
     natural_key.dependencies = ['project.region']
 
     class Meta:
+        """Class opts."""
+
         ordering = ['-northern_extent']
         verbose_name = _("district")
         verbose_name_plural = _("districts")
 
     def get_northern_extent(self):
+        """Northernmost latitude."""
         return self.mpoly.extent[3] if self.mpoly else 0
 
 
 @python_2_unicode_compatible
 class Address(Audit, ActiveModel):
-    """
-    An address with street 1, street 2, city, and zip code.
-    """
+    """An address with street 1, street 2, city, and zip code."""
+
     street = models.CharField(
         max_length=254, help_text=_("The street address"))
     extra = models.CharField(
@@ -552,10 +599,13 @@ class Address(Audit, ActiveModel):
         max_length=254, default="Australia", help_text=_("The country"))
 
     class Meta:
+        """Class opts."""
+
         verbose_name = _("address")
         verbose_name_plural = _("addresses")
 
     def __str__(self):
+        """String representation."""
         if self.extra:
             return '{0}, {1}, {2} {3} {4}'.format(
                 self.street, self.extra, self.city, self.zipcode, self.state)
@@ -566,12 +616,14 @@ class Address(Audit, ActiveModel):
 
 @python_2_unicode_compatible
 class Division(Audit, ActiveModel):
-    """
-    Departmental divisions. Divisions are structured into programs.
+    """Departmental divisions.
+
+    Divisions are structured into programs.
     The work of Science and Conservation Division is a service provided
     to output programs like Parks and Visitor Services, Nature Cons,
     Sustainable Forest Management and potentially other Divisions.
     """
+
     name = models.CharField(max_length=320)
     slug = models.SlugField(help_text=_("The acronym of the name."))
     # Key personnel ----------------------------------------------------------#
@@ -580,23 +632,27 @@ class Division(Audit, ActiveModel):
         blank=True, null=True, help_text=_("The Division's Director"))
 
     class Meta:
+        """Class opts."""
+
         verbose_name = _("Departmental Service")
         verbose_name_plural = _("Departmental Services")
         ordering = ['slug', 'name']
 
     def __str__(self):
+        """String representation."""
         return 'Service {0}: {1}'.format(self.slug, self.name)
 
 
 @python_2_unicode_compatible
 class Program(Audit, ActiveModel):
-    """
-    A Science and Conservation Division Program is an organizational
-    structure of research scientists, technical officers and admin staff
-    such as a dedicated finance admin or a default data custodian
+    """A Science and Conservation Division Program.
+
+    An organizational structure of research scientists, technical officers and
+    admin staff, such as a dedicated finance admin or a default data custodian,
     under the responsibility of a program leader.
     A program has a cost center code which is unique across the Department.
     """
+
     name = models.CharField(max_length=320)
     slug = models.SlugField(
         help_text='A unique slug to be used in folder names etc.')
@@ -646,14 +702,18 @@ class Program(Audit, ActiveModel):
         size=[2480, 1240],
         help_text="Upload an image representative of the program."
                   " Aim for a visually quiet, low contrast image."
-                  " The horizon, if shown, should be in the top third and level."
+                  " The horizon should be in the top third and level."
                   " The aspect ratio (width to height) must be 2:1."
-                  " The image will be resized to max 2480 (wt) x 1240 pt (ht).")
+                  " The image will be resized to max 2480 (wt) x 1240 pt"
+                  " (ht).")
 
     class Meta:
+        """Class opts."""
+
         ordering = ['position', 'cost_center']
 
     def __str__(self):
+        """String representation."""
         # return '[{0}-{1}] {2}'.format(self.cost_center, self.slug, self.name)
         return self.name
 
@@ -664,6 +724,7 @@ class Program(Audit, ActiveModel):
         super(Program, self).save(*args, **kw)
 
     def parts(self, part_class):
+        """Parts."""
         # TODO: we probably only want projects that are on the current ARAR
         # TODO: :) iterators?
 
@@ -681,18 +742,22 @@ class Program(Audit, ActiveModel):
 
     @property
     def latexparts(self):
+        """Latex parts."""
         return self.parts(LATEXReportPart)
 
     @property
     def htmlparts(self):
+        """HTML parts."""
         return self.parts(HTMLReportPart)
 
     @property
     def opts(self):
+        """Class opts."""
         return self._meta
 
     @property
     def projects(self):
+        """Projects."""
         Project = self.project_set.model
         # return Project.objects.filter(program=self
         #    ).filter(Q(instance_of='pythia.projects.models.ScienceProject') |
@@ -705,6 +770,7 @@ class Program(Audit, ActiveModel):
 
 def set_smt_to_pl(sender, instance, created, **kwargs):
     """Add all Program Leaders to Group SMT.
+
     If clobber==True, drop all SMT members beforehand.
     """
     smt, created = Group.objects.get_or_create(name='SMT')
@@ -721,9 +787,8 @@ signals.post_save.connect(set_smt_to_pl, sender=Program)
 
 @python_2_unicode_compatible
 class WorkCenter(Audit, ActiveModel):
-    """
-    A departmental work center is where staff offices are located.
-    """
+    """A departmental work center is where staff offices are located."""
+
     name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField()
 
@@ -735,33 +800,35 @@ class WorkCenter(Audit, ActiveModel):
     district = models.ForeignKey(District, blank=True, null=True)
 
     class Meta:
+        """Class opts."""
+
         app_label = 'pythia'
         verbose_name = _("work centre")
         verbose_name_plural = _("work centres")
 
     def __str__(self):
+        """String representation."""
         return self.name
 
     def save(self, *args, **kw):
-        """
-        Generate slug from name if not set.
-        """
+        """Generate slug from name if not set."""
         if not self.slug:
             self.slug = slugify(self.name)
         super(WorkCenter, self).save(*args, **kw)
 
 
 class WebResourceDomain(Audit, ActiveModel):
-    """
-    The domain of a Web Resource.
+    """The domain of a Web Resource.
+
     E.g., social networks like Google Scholar, LinkedIn, ResearchGate et al.
     """
+
     CATEGORY_PROJECT = 1
     CATEGORY_USER = 2
     CATEGORY_CHOICES = (
         (CATEGORY_PROJECT, "Project related"),
         (CATEGORY_USER, "User related"),
-        )
+    )
 
     category = models.PositiveSmallIntegerField(
         max_length=200, choices=CATEGORY_CHOICES, default=CATEGORY_USER)
@@ -770,36 +837,45 @@ class WebResourceDomain(Audit, ActiveModel):
         max_length=2000, help_text='The main URL of the web resource')
 
     class Meta:
+        """Class opts."""
+
         verbose_name = _('web resource domain')
         verbose_name_plural = _('web resource domains')
 
 
 class URLPrefix(Audit):
     """A base URL of a commonly used resources.
+
     E.g. http or https
     """
+
     slug = models.SlugField(default="Custom Link")
     base_url = models.CharField(
         max_length=2000, help_text=_("The start of an allowed url (to be "
                                      "joined to an actual url)"))
 
     class Meta:
+        """Class opts."""
+
         verbose_name = _('URL prefix')
         verbose_name_plural = _('URL prefixes')
 
 
 class WebResource(Audit):
-    """A URI pointing to any web-accessible resource.
-    """
+    """A URI pointing to any web-accessible resource."""
+
     prefix = models.ForeignKey(URLPrefix, editable=False)
     suffix = models.CharField(max_length=2000)
 
     class Meta:
+        """Class opts."""
+
         app_label = 'pythia'
         verbose_name = _("web resource")
         verbose_name_plural = _("web resources")
 
     def clean(self):
+        """Clean."""
         fragments = self.suffix.split("/", 3)
         prefix = "/".join(fragments[:3]) + "/"
         suffix = fragments[3]
@@ -812,11 +888,15 @@ class WebResource(Audit):
 
     @property
     def url(self):
+        """Url."""
         return self.prefix + self.suffix
 
 
 class UserManager(BaseUserManager):
+    """UserManager."""
+
     def __init__(self):
+        """Init."""
         super(BaseUserManager, self).__init__()
         self.model = 'pythia.User'  # get_user_model()
 
@@ -831,38 +911,42 @@ class UserManager(BaseUserManager):
         return user
 
     def create_user(self, username, email, password=None, **extra_fields):
+        """Create user."""
         extra_fields = extra_fields or {}
         extra_fields.setdefault('email', email)
         return self._create_user(username, password, True, False,
                                  **extra_fields)
 
     def create_superuser(self, username, password, **extra_fields):
+        """Create superuser."""
         return self._create_user(username, password, True, True,
                                  **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """
-    A custom user model for SDIS. Mostly intended to make profile modification
+    """A custom user model for SDIS.
+
+    Mostly intended to make profile modification
     simpler and less "broken" (seeing a lot of "create profile if it doesn't
     exist") comments littered throughout the code.
 
     A user can have contact details, affiliations, research profiles and
     publications.
     """
+
     username = models.CharField(
         _('username'), max_length=30, unique=True,
         help_text=_('Required. 30 characters or fewer. Letters, digits and '
                     '@/./+/-/_ only.'),
-        validators=[validators.RegexValidator(r'^[\w.@+-]+$',
-                    _('Enter a valid username.'), 'invalid')])
+        validators=[validators.RegexValidator(
+            r'^[\w.@+-]+$', _('Enter a valid username.'), 'invalid')])
 
-# Internal person
-# Internal group
-# External person
-# External group
-# Title: everyone if they have it
-# Affiliation: everyone if not none or ""
+    # Internal person
+    # Internal group
+    # External person
+    # External group
+    # Title: everyone if they have it
+    # Affiliation: everyone if not none or ""
 
     # Name -------------------------------------------------------------------#
     title = models.CharField(
@@ -1018,13 +1102,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     class Meta:
+        """Class opts."""
+
         verbose_name = _('user')
         verbose_name_plural = _('users')
 
     def save(self, *args, **kwargs):
-        """
-        Try to add the user to the default group on save.
-        """
+        """Try to add the user to the default group on save."""
         created = True if not self.pk else False
 
         if not self.middle_initials:
@@ -1091,23 +1175,26 @@ class User(AbstractBaseUser, PermissionsMixin):
                 self.get_middle_initials(),
                 self.last_name,
                 self.get_affiliation()
-                ).strip().replace("  ", " ")
+            ).strip().replace("  ", " ")
         return full_name
 
     @property
     def short_name(self):
+        """Short name."""
         return self.first_name if self.first_name else self.fullname
 
     def get_short_name(self):
-        """Returns the short name for the user."""
+        """Return the short name for the user."""
         return self.first_name
 
     @property
     def abbreviated_name(self):
+        """String representation."""
         return self.get_abbreviated_name()
 
     def get_abbreviated_name(self):
-        """
+        """Abbreviated name.
+
         If initials are supplied, returns initials and surname, else
         given name and surname.
         """
@@ -1115,18 +1202,20 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.get_full_name()
         else:
             full_name = "{0} {1} {2} {3}".format(
-                    self.get_title(),
-                    self.middle_initials,  # remember these are full initials
-                    self.last_name,
-                    self.get_affiliation())
+                self.get_title(),
+                self.middle_initials,  # remember these are full initials
+                self.last_name,
+                self.get_affiliation())
         return full_name.replace("  ", " ")
 
     @property
     def abbreviated_name_no_affiliation(self):
+        """Abbreviated name."""
         return self.get_abbreviated_name_no_affiliation()
 
     def get_abbreviated_name_no_affiliation(self):
-        """
+        """Abbreviated name.
+
         If initials are supplied, returns initials and surname, else
         given name and surname.
         """
@@ -1134,33 +1223,31 @@ class User(AbstractBaseUser, PermissionsMixin):
             return self.get_full_name()
         else:
             full_name = "{0} {1} {2}".format(
-                    self.get_title(),
-                    self.middle_initials,  # remember these are full initials
-                    self.last_name)
+                self.get_title(),
+                self.middle_initials,  # remember these are full initials
+                self.last_name)
         return full_name.strip()
 
     def email_user(self, subject, message, from_email=None, **kwargs):
-        """
-        Sends an email to this User.
-        """
+        """Send an email to this User."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
     def __str__(self):
+        """String representation."""
         slug = " ({0}-{1})".format(self.program.cost_center,
                                    self.program.slug) if self.program else ""
         return "{0}{1}".format(self.get_full_name(), slug)
 
     @property
     def supervisor(self):
-        """
-        Returns the Program Leader as User object, falls back to the User.
-        """
+        """Return the Program Leader as User object, falls back to the User."""
         return self.program.program_leader if self.program else self
 
     @property
     def registration_complete(self):
-        """
-        Returns True if the user is registered, but not yet cleared to use the
+        """Return whether registration is complete.
+
+        Return True if the user is registered, but not yet cleared to use the
         site.
         """
         if self.user.is_superuser:
@@ -1182,18 +1269,18 @@ class User(AbstractBaseUser, PermissionsMixin):
         excludes = set()
         # Project Plans pending endorsement/approval
         pplan_list = ProjectPlan.objects.filter(
-                project__status=Project.STATUS_PENDING)
+            project__status=Project.STATUS_PENDING)
         for doc in pplan_list:
             if ((doc.bm_endorsement == Document.ENDORSEMENT_REQUIRED) or (
-                 doc.hc_endorsement == Document.ENDORSEMENT_REQUIRED) or (
-                 doc.ae_endorsement == Document.ENDORSEMENT_REQUIRED)):
-                    excludes.add(doc)
+                    doc.hc_endorsement == Document.ENDORSEMENT_REQUIRED) or (
+                    doc.ae_endorsement == Document.ENDORSEMENT_REQUIRED)):
+                excludes.add(doc)
 
         endorsements = set()
         needed = Document.ENDORSEMENT_REQUIRED
 
         if is_bm:
-            print(type(pplan_list))
+            logger.debug(type(pplan_list))
             endorsements.update(pplan_list.filter(
                 bm_endorsement=needed).select_related('project'))
 
@@ -1218,7 +1305,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                     status=Document.STATUS_INREVIEW).select_related('project'))
 
         member_list = ProjectMembership.objects.prefetch_related(
-                'project', 'project__documents').filter(user=self)
+            'project', 'project__documents').filter(user=self)
 
         for member in member_list:
             approvals.update(member.project.documents.filter(
@@ -1236,7 +1323,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         # TODO: presort the output lists by descending project ID
         return {'approvals': list(approvals),
                 'endorsements': list(endorsements),
-                'count': len(approvals)+len(endorsements)}
+                'count': len(approvals) + len(endorsements)}
 
     @property
     def portfolio(self):
@@ -1263,8 +1350,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         best_before = datetime.now() - timedelta(days=60)
         pm_list = ProjectMembership.objects.select_related("project").order_by(
-                    "-project__year", "-project__number").filter(
-                user=self, project__status__in=Project.ACTIVE)
+            "-project__year", "-project__number").filter(
+            user=self, project__status__in=Project.ACTIVE)
         projects = Project.objects.order_by("-year", "-number").filter(
             project_owner=self)
         own_list = projects.filter(status__in=Project.ACTIVE)
@@ -1323,7 +1410,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                         res["regular"].append(proj)
 
             except:
-                print("Project lookup failed: " + str(x))
+                logger.warn("Project lookup failed: " + str(x))
 
         if proj_result["super"] or proj_result["regular"]:
             result["projects"] = proj_result
