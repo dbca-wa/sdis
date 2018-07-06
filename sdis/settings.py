@@ -9,8 +9,8 @@ import os
 import sys
 from unipath import Path
 
-from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType,
-                                     LDAPSearchUnion)
+from django_auth_ldap.config import (
+    LDAPSearch, GroupOfNamesType, LDAPSearchUnion)
 
 BASE_DIR = Path(__file__).ancestor(2)
 PROJECT_DIR = os.path.join(BASE_DIR, 'pythia')
@@ -21,9 +21,6 @@ DEBUG = env('DEBUG', default=False)
 CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
 GOOGLE_ANALYTICS_KEY = env('GOOGLE_ANALYTICS_KEY', default='')
-
-CACHES = {'default':
-          {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', }}
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -70,6 +67,7 @@ INSTALLED_APPS = (
     'django_comments',
     # 'django_tablib',
     # 'adminactions',
+    'django_redis',
     'compressor',
 
     'crispy_forms',
@@ -125,6 +123,18 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
 )
 
+
+# {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', }
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
 
 # I8n
 LANGUAGE_CODE = 'en-au'
