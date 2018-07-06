@@ -79,13 +79,13 @@
 
 $(function() {
     // init tablesorter
-    $('table#result_list thead th:nth-child(3)').addClass('filter-select');
-    $('table#result_list thead th:nth-child(4)').addClass('filter-select');
-    $('table#result_list thead th:nth-child(5)').addClass('filter-select');
-    $('table#result_list thead th:nth-child(7)').addClass('filter-select');
-    $('table#result_list thead th:nth-child(8)').addClass('filter-select');
-    $('table#result_list thead th:nth-child(9)').addClass('filter-select');
-    $('table#result_list thead th:nth-child(10)').addClass('filter-select');
+    // $('table#result_list thead th:nth-child(3)').addClass('filter-select');
+    // $('table#result_list thead th:nth-child(4)').addClass('filter-select');
+    // $('table#result_list thead th:nth-child(5)').addClass('filter-select');
+    // $('table#result_list thead th:nth-child(7)').addClass('filter-select');
+    // $('table#result_list thead th:nth-child(8)').addClass('filter-select');
+    // $('table#result_list thead th:nth-child(9)').addClass('filter-select');
+    // $('table#result_list thead th:nth-child(10)').addClass('filter-select');
     // bloody django makes a "second" column th instead of td (which confuses tablesorter)
     $('table#result_list tbody th').each(function(i, el) {
         $(this).replaceWith($('<td>' + this.innerHTML + '</td>'));
@@ -115,6 +115,7 @@ $(function() {
             $("table#result_list tbody tr:visible .indexColumn:not(:contains('"+ this + "'))"
              ).parent().hide();});
     });//key up.
+
     // three shortcut buttons
     $("#clear").click(function(){$("table#result_list tbody tr:hidden").show(); $("#FilterTextBox").val(""); return false; });
     $("#current-user").click(function(){$("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false;});
@@ -126,6 +127,7 @@ $(function() {
         return false;
     });
     //$("#cfspp").click();
+
 });//document.ready
 
 
@@ -158,6 +160,7 @@ $(function() {
   {% block pretitle %}{% endblock %}
   {% block content_title %}{{ block.super }}{% endblock %}
   {% block content %}
+
   {% if cl.formset.errors %}
   <p class="errornote alert alert-block alert-error fade in">
     <i class="glyphicon-warning-sign"></i>
@@ -171,6 +174,7 @@ $(function() {
     </p>
   {% endfor %}
   {% endif %}
+
   <div class="{% if cl.has_filters %}filtered{% endif %}" id="changelist">
     <div id="toolbar" class="toolbar-list-pre">
       {% block object-tools %}

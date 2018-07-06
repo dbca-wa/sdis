@@ -1,10 +1,13 @@
 {% extends "admin/base_site.html" %}
 {% load i18n staticfiles admin_list markup pythia_base %}
 
+<!-- admin/documents/change_list.html -->
+
 {% block extrahead %}
   {{ block.super }}
   {{ media.js }}
   <script src="{% static 'js/table-fixed-header.js' %}"></script>
+
   {% if action_form %}{% if actions_on_top or actions_on_bottom %}
   <script type="text/javascript">
     (function($) {
@@ -14,6 +17,7 @@
     })(django.jQuery);
   </script>
   {% endif %}{% endif %}
+
   <script>
   (function($) {
     $(document).ready(function($) {

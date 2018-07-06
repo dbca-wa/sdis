@@ -10,7 +10,9 @@
   {% if action_form %}{% if actions_on_top or actions_on_bottom %}
   <script type="text/javascript">
     (function($) {
-      $(document).ready(function($) {$("tr input.action-select").actions();});
+      $(document).ready(function($) {
+        $("tr input.action-select").actions();
+      });
     })(django.jQuery);
   </script>
   {% endif %}{% endif %}
@@ -53,6 +55,7 @@
         {% endif %}
     });
   })(django.jQuery);
+
   $(function() {
     // reinit the chosen() widgets (so that the event is bound to a
     // correct select element)
