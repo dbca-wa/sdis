@@ -150,10 +150,7 @@
   <div class="{% if cl.has_filters %}filtered{% endif %}" id="changelist">
     <div id="toolbar" class="toolbar-list-pre">
 
-        <!-- object tools contains the add user link and tablib export links -->
-        <!-- hidden because users get added via staff > register external
-        or staff login, and tablib items are duplicated from "action" menu -->
-      <!-- {% block object-tools %}
+      {% block object-tools %}
       {% if has_add_permission %}
       <div class="object-tools pull-right">
           {% block object-tools-items %}
@@ -165,7 +162,7 @@
           {% endblock %}
       </div>
       {% endif %}
-      {% endblock %} -->
+      {% endblock %}
 
       {% block search %}{% search_form cl %}{% endblock %}
       {% block date_hierarchy %}{% date_hierarchy cl %}{% endblock %}
@@ -178,6 +175,9 @@
     {% if cl.formset %}
       <div>{{ cl.formset.management_form }}</div>
     {% endif %}
+
+
+
     {% block result_list %}
         {% if action_form and actions_on_top and cl.full_result_count and request.user.is_superuser %}{% admin_actions %}{% endif %}
         {% result_list cl %}

@@ -26,7 +26,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class ResearchFunctionAdmin(BaseAdmin, DownloadAdminMixin):
+class ResearchFunctionAdmin(BaseAdmin):
     """Admin for ResearchFunction."""
 
     list_display = ('__str__', 'description_safe', 'association_safe',
@@ -112,21 +112,21 @@ class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
 class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
     """Admin for Project."""
 
+    # List view
     list_display = ('project_id', 'type', 'year', 'number', 'project_title',
                     'project_owner_name', 'program', 'research_function',
                     'status', 'fm_start_date', 'fm_end_date')
-    list_per_page = 1000    # whoooa
-    exclude = ('status', 'effective_from', 'effective_to', 'web_resources')
     list_display_links = ('project_id', 'project_title')
+    list_per_page = 1000    # whoooa
     search_fields = ('title', 'year', 'number')
     list_filter = ('type', 'program', 'status')
+
+    # Detail view
+    exclude = ('status', 'effective_from', 'effective_to', 'web_resources')
     download_template = "project_showcase"
 
     def get_fieldsets(self, request, obj=None):
         """Override get_fieldsets."""
-        # logger.debug("project admin get fieldsets")
-        # fs = super(ProjectAdmin, self).get_fieldsets(request, obj)
-        # return fs
         return (
             ('Project details', {
                 'classes': ('collapse in',),
@@ -141,7 +141,7 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
                 'classes': ('collapse',),
                 'fields': ('areas',), }),
             ('Project display', {
-                'description': "Make your project stand out!",
+                'description': "Showcase info used in overviews and reports",
                 'classes': ('collapse',),
                 'fields': ('image', 'tagline', 'comments',
                            'keywords', 'position'), })
