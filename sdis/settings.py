@@ -125,14 +125,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 
 # {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', }
-
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient", }
     }
 }
 
@@ -146,6 +143,7 @@ DATE_FORMAT = 'd/m/Y'      # O5/10/2006
 # Set the formats that will be accepted in date input fields
 DATE_INPUT_FORMATS = (
     'd/m/Y',             # '25/10/2006'
+    'Y/m/d',             # '2006/10/25'
     'Y-m-d',             # '2006-10-25'
     'Y_m_d',             # '2006_10_25'
 )
