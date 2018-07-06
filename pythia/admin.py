@@ -425,6 +425,13 @@ class UserAdmin(DjangoUserAdmin):
         """Return the User's workcenter."""
         return obj.pythia_profile.work_center
 
+    def get_breadcrumbs(self, request, obj=None, add=False):
+        """Override the base breadcrumbs."""
+        return (
+            Breadcrumb(_('Home'), reverse('admin:index')),
+            Breadcrumb(_('All users'), reverse('admin:pythia_user_changelist'))
+        )
+
     def get_readonly_fields(self, request, obj=None):
         """Determine which fields a User can edit, depending on role and group.
 
