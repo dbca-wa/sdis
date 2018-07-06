@@ -379,7 +379,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin, TablibAdmin):
         return result
 
 
-class UserAdmin(DjangoUserAdmin, TablibAdmin):
+class UserAdmin(DjangoUserAdmin):
     """Custom UserAdmin."""
     list_display = ('username', 'fullname', 'email', 'program', 'work_center')
     list_per_page = 1000    # sod pagination
