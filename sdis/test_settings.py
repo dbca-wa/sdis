@@ -1,3 +1,5 @@
+"""SDIS Test settings."""
+
 from .settings import *
 
 # Additional apps required for testing.
@@ -15,3 +17,7 @@ NOSE_ARGS = [
     '--cover-package=pythia',
     '--verbosity=3',
     '--detailed-errors']
+
+CACHES = {
+    "default": {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', }
+}

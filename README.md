@@ -1,7 +1,6 @@
-[![Test Status](https://circleci.com/gh/parksandwildlife/sdis.svg?style=svg)](https://circleci.com/gh/parksandwildlife/sdis)
-[![Test Coverage](https://coveralls.io/repos/github/parksandwildlife/sdis/badge.svg?branch=master)](https://coveralls.io/github/parksandwildlife/sdis?branch=master)
-[![Requirements Status](https://requires.io/github/parksandwildlife/sdis/requirements.svg?branch=master)](https://requires.io/github/parksandwildlife/sdis/requirements/?branch=master)
-[![Issues](https://badge.waffle.io/parksandwildlife/sdis.svg?label=ready&title=Ready)](http://waffle.io/parksandwildlife/sdis)
+[![Test Status](https://circleci.com/gh/dbca-wa/sdis.svg?style=svg)](https://circleci.com/gh/dbca-wa/sdis)
+[![Coverage Status](https://coveralls.io/repos/github/dbca-wa/sdis/badge.svg?branch=master)](https://coveralls.io/github/dbca-wa/sdis?branch=master)
+[![Issues](https://badge.waffle.io/dbca-wa/sdis.svg?label=ready&title=Ready)](http://waffle.io/dbca-wa/sdis)
 [![Documentation Status](https://readthedocs.org/projects/sdis/badge/?version=latest)](http://sdis.readthedocs.io/?badge=latest)
 
 Science Directorate Information System
