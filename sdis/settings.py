@@ -275,6 +275,8 @@ ENVELOPE_EMAIL_RECIPIENTS = ['sdis@dbca.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True
 DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dbca.wa.gov.au>'
 
+# Admins get notified of ERR/WARN logging events
+ADMINS = (('Florian Mayer', 'Florian.Mayer@dbca.wa.gov.au'), )
 
 COMPRESS_ENABLED = True
 COMPRESS_PARSER = 'compressor.parser.HtmlParser'
