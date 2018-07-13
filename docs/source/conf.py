@@ -19,9 +19,10 @@ from django.conf import settings
 
 
 class Mock(MagicMock):
+
     @classmethod
     def __getattr__(cls, name):
-            return Mock()
+        return Mock()
 
 MOCK_MODULES = ['ldap', 'django_auth_ldap', 'django_auth_ldap.config', ]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
@@ -50,6 +51,7 @@ settings.configure(default_settings=sdis_settings,
                    TRANSACTIONS_MANAGED=True,
                    LOCALE_PATHS='',
                    FORMAT_MODULE_PATH='',
+                   LOGGING_CONFIG={},
                    )
 # django.setup() # alternative for higher Django versions (e.g. 1.9)
 print("Now the Django settings are loaded, e.g. installed apps are:"
@@ -72,7 +74,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
-    ]
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -226,22 +228,22 @@ htmlhelp_basename = 'SDISdoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #'papersize': 'letterpaper',
 
-# The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #'pointsize': '10pt',
 
-# Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'SDIS.tex', u'SDIS Documentation',
-   u'Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton', 'manual'),
+    ('index', 'SDIS.tex', u'SDIS Documentation',
+     u'Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -284,9 +286,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'SDIS', u'SDIS Documentation',
-   u'Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton', 'SDIS', 'One line description of project.',
-   'Miscellaneous'),
+    ('index', 'SDIS', u'SDIS Documentation',
+     u'Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton', 'SDIS', 'One line description of project.',
+     'Miscellaneous'),
 ]
 
 # Documents to append as an appendix to all manuals.
