@@ -271,7 +271,7 @@ SWAGGER_SETTINGS = {
 # Email
 EMAIL_HOST = env('EMAIL_HOST', default='smtp.corporateict.domain')
 EMAIL_PORT = env('EMAIL_PORT', default=25)
-ENVELOPE_EMAIL_RECIPIENTS = ['sdis@dbca.wa.gov.au']
+ENVELOPE_EMAIL_RECIPIENTS = ['florian.mayer@dbca.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True
 DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dbca.wa.gov.au>'
 
