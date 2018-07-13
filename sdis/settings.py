@@ -347,11 +347,6 @@ LOGGING = {
             'handlers': ['console', 'file', 'mail_admins'],
             'level': 'DEBUG',
             'propagate': True
-        },
-        'pythia.views': {
-            'handlers': ['console', 'file', 'mail_admins'],
-            'level': 'DEBUG',
-            'propagate': True
         }
     }
 }

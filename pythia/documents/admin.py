@@ -322,6 +322,18 @@ class ConceptPlanAdmin(DocumentAdmin):
         return mark_safe(obj.summary)
     summary.allow_tags = True
 
+    def get_readonly_fields(self, request, obj=None):
+        """Custom logic to toggle editing of ConnceptPlan fields.
+
+        Inject logging message.
+        """
+        try:
+            logger.debug("{0} views {1}".format(request.user.fullname, obj))
+        except:
+            logger.debug("ConceptPlanAdmin called without object or request.")
+
+        return super(ConceptPlanAdmin, self).get_readonly_fields(request, obj)
+
 
 class ProjectPlanAdmin(DocumentAdmin):
     """Custom ProjectPlan Admin.
@@ -330,7 +342,7 @@ class ProjectPlanAdmin(DocumentAdmin):
     """
 
     def get_readonly_fields(self, request, obj=None):
-        """Custon logic to toggle editing of ProjectPlan fields.
+        """Custom logic to toggle editing of ProjectPlan fields.
 
         Logic in sequential order:
 
@@ -340,8 +352,12 @@ class ProjectPlanAdmin(DocumentAdmin):
         * Approved SPPs are read-only.
         * All other cases, e.g. users without change permissions,
           default to DocumentAdmin.get_readonly_fields.
-
         """
+        try:
+            logger.debug("{0} views {1}".format(request.user.fullname, obj))
+        except:
+            logger.debug("ProjectPlanAdmin called without object or request.")
+
         special_user = obj and request.user and (
             request.user.is_superuser or
             request.user in obj.project.special_roles)
