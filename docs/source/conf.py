@@ -45,13 +45,14 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'sdis.settings'
 # 3. Setup the Django app, so that autodoc will find the modules this help references
 # Patch settings with missing keys
 from sdis import settings as sdis_settings
+# sdis_settings["LOGGING_CONFIG"] = {}
 settings.configure(default_settings=sdis_settings,
+                   LOGGING_CONFIG='',
                    DEFAULT_INDEX_TABLESPACE=None,
                    DEFAULT_TABLESPACE=None,
                    TRANSACTIONS_MANAGED=True,
                    LOCALE_PATHS='',
                    FORMAT_MODULE_PATH='',
-                   LOGGING_CONFIG={},
                    )
 # django.setup() # alternative for higher Django versions (e.g. 1.9)
 print("Now the Django settings are loaded, e.g. installed apps are:"
@@ -90,7 +91,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'SDIS'
-copyright = u'2012-2016, Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
+copyright = u'2012-2018, Department of Biodivsersity, Conservation and  Attractions WA'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -243,7 +244,9 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     ('index', 'SDIS.tex', u'SDIS Documentation',
-     u'Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton', 'manual'),
+     u'2012-2018, Department of Biodivsersity, Conservation and  Attractions WA' +
+     ', Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, ' +
+     'Nick Sandford, Ashley Felton', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -273,7 +276,9 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'sdis', u'SDIS Documentation',
-     [u'Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'], 1)
+     [u'2012-2018, Department of Biodivsersity, Conservation and  Attractions WA' +
+      ', Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, ' +
+      'Nick Sandford, Ashley Felton'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -287,7 +292,9 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     ('index', 'SDIS', u'SDIS Documentation',
-     u'Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton', 'SDIS', 'One line description of project.',
+     u'2012-2018, Department of Biodivsersity, Conservation and  Attractions WA' +
+     ', Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, ' +
+     'Nick Sandford, Ashley Felton', 'SDIS', 'Project approval and reporting.',
      'Miscellaneous'),
 ]
 
@@ -308,9 +315,9 @@ texinfo_documents = [
 
 # Bibliographic Dublin Core info.
 epub_title = u'SDIS'
-epub_author = u'Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
-epub_publisher = u'Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
-epub_copyright = u'2014, Department of Parks and Wildlife, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
+epub_author = u'Department of Biodivsersity, Conservation and  Attractions WA, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
+epub_publisher = u'Department of Biodivsersity, Conservation and  Attractions WA, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
+epub_copyright = u'2018, Department of Biodivsersity, Conservation and  Attractions WA, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = u'SDIS'
