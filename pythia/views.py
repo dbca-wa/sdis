@@ -47,8 +47,8 @@ def arar_dashboard(request):
     from pythia.reports.models import ARARReport
     logger.debug("[DEBUG][arar_dashboard] test log!")
     logger.info("[INFO][arar_dashboard] test log!")
-    logger.warning("[WARN][arar_dashboard] test log!")
-    logger.error("[ERROR][arar_dashboard] test log!")
+    # logger.warning("[WARN][arar_dashboard] test log!")
+    # logger.error("[ERROR][arar_dashboard] test log!")
 
     return TemplateResponse(
         request,

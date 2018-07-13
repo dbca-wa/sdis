@@ -83,7 +83,7 @@ INSTALLED_APPS = (
     'rest_framework',           # API
     # 'rest_framework.authtoken', # API auth via token
     # 'rest_framework_gis',       # API spatial fields
-    # 'rest_framework_swagger',   # API docs
+    'rest_framework_swagger',   # API docs
     # 'rest_framework_latex',     # API latex renderer
 
     'leaflet',
@@ -307,7 +307,7 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'standard'
+            'formatter': 'verbose'
         },
         'file': {
             'level': 'DEBUG',
@@ -319,27 +319,28 @@ LOGGING = {
         'mail_admins': {
             'level': 'WARNING',
             'class': 'django.utils.log.AdminEmailHandler',
-            'formatter': 'verbose'
+            'formatter': 'verbose',
+            'include_html': True
         }
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file', 'mail_admins'],
+            'handlers': ['console', 'file', ],
             'propagate': True,
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['console', 'file', 'mail_admins'],
-            'level': 'DEBUG',
-            'propagate': False,
+            'handlers': ['console', 'file', ],
+            'level': 'INFO',
+            'propagate': True,
         },
         'request': {
-            'handlers': ['console', 'file', 'mail_admins'],
-            'level': 'DEBUG',
+            'handlers': ['console', 'file', ],
+            'level': 'INFO',
             'propagate': True
         },
         'sdis': {
-            'handlers': ['console', 'file', 'mail_admins'],
+            'handlers': ['console', 'file', ],
             'level': 'DEBUG',
             'propagate': True
         },

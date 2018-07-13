@@ -106,6 +106,11 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
 
     def get_readonly_fields(self, request, obj=None):
         """Lock the document after seeking approval for all but superusers."""
+        try:
+            logger.debug("{0} views {1}".format(request.user.fullname, obj))
+        except:
+            logger.debug("DocumentAdmin called without object or request.")
+
         if obj and request.user.is_superuser:
             return ()
         elif obj and request.user in obj.get_users_with_change_permissions():
@@ -155,16 +160,24 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
 
         # Does the thing exist
         if obj is None:
-            raise Http404(_('%(name)s object with primary key %(key)r does '
-                            'not exist.') % {
-                                'name': force_text(opts.verbose_name),
-                                'key': escape(object_id)})
+            msg = _('Object %(name)s with PK %(key)r does not exist.') % {
+                'name': force_text(opts.verbose_name),
+                'key': escape(object_id)}
+            logger.warning(msg)
+            raise Http404(msg)
+        else:
+            logger.info("{0} wants to {1} for {2} {3}".format(
+                request.user,
+                tx,
+                force_text(opts.verbose_name),
+                escape(object_id)
+            ))
 
         # Is the tx available to the current user?
         if tx not in [t.name for t in
                       obj.get_available_user_status_transitions(request.user)]:
             logger.warning("Requested transition '{0}' not available for the "
-                           "current user {1}".format(tx, request.user))
+                           "current user {1}".format(tx, request.user.fullname))
             raise PermissionDenied
 
         # Is there a better way to get the transition object?
@@ -260,6 +273,13 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
         """History view."""
         obj = get_object_or_404(self.model, pk=unquote(object_id))
 
+        try:
+            logger.debug("{0} views history_view of {1}".format(
+                request.user.fullname, obj))
+        except:
+            logger.debug("DocumentAdmin history_view called "
+                         "without object or request.")
+
         context = {
             'has_diff_view': True,
             'breadcrumbs': self.get_breadcrumbs(request, obj)
@@ -280,6 +300,13 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
         obj = get_object_or_404(self.model, pk=unquote(object_id))
         obj_old = get_object_or_404(
             Version, pk=unquote(version_id), object_id=force_text(obj.pk))
+
+        try:
+            logger.debug("{0} views diff_view of {1}".format(
+                request.user.fullname, obj))
+        except:
+            logger.debug("DocumentAdmin diff_view called without "
+                         "object or request.")
 
         fieldsets = self.get_fieldsets(request, obj)
         # inline_instances = self.get_inline_instances(request, obj)
@@ -322,17 +349,17 @@ class ConceptPlanAdmin(DocumentAdmin):
         return mark_safe(obj.summary)
     summary.allow_tags = True
 
-    def get_readonly_fields(self, request, obj=None):
-        """Custom logic to toggle editing of ConnceptPlan fields.
+    # def get_readonly_fields(self, request, obj=None):
+    #     """Custom logic to toggle editing of ConnceptPlan fields.
 
-        Inject logging message.
-        """
-        try:
-            logger.debug("{0} views {1}".format(request.user.fullname, obj))
-        except:
-            logger.debug("ConceptPlanAdmin called without object or request.")
+    #     Inject logging message.
+    #     """
+    #     try:
+    #         logger.debug("{0} views {1}".format(request.user.fullname, obj))
+    #     except:
+    #         logger.debug("ConceptPlanAdmin called without object or request.")
 
-        return super(ConceptPlanAdmin, self).get_readonly_fields(request, obj)
+    #     return super(ConceptPlanAdmin, self).get_readonly_fields(request, obj)
 
 
 class ProjectPlanAdmin(DocumentAdmin):
@@ -353,11 +380,6 @@ class ProjectPlanAdmin(DocumentAdmin):
         * All other cases, e.g. users without change permissions,
           default to DocumentAdmin.get_readonly_fields.
         """
-        try:
-            logger.debug("{0} views {1}".format(request.user.fullname, obj))
-        except:
-            logger.debug("ProjectPlanAdmin called without object or request.")
-
         special_user = obj and request.user and (
             request.user.is_superuser or
             request.user in obj.project.special_roles)

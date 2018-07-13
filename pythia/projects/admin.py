@@ -250,6 +250,11 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
         would possibly require the deletion and creation of other documents.
         Therefore, setting the project type is an irreversible decision.
         """
+        try:
+            logger.debug("{0} views {1}".format(request.user.fullname, obj))
+        except:
+            logger.debug("ProjectAdmin called without object or request.")
+
         rof = super(ProjectAdmin, self).get_readonly_fields(request, obj)
 
         if not ((request.user.is_superuser) or
@@ -294,10 +299,19 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
 
         # Does the thing exist
         if obj is None:
-            raise Http404(_('%(name)s object with primary key %(key)r does '
-                            'not exist.') % {
-                                'name': force_text(opts.verbose_name),
-                                'key': escape(object_id)})
+            msg = _('%(name)s object with primary key %(key)r does '
+                    'not exist.') % {
+                'name': force_text(opts.verbose_name),
+                'key': escape(object_id)}
+            logger.warning(msg)
+            raise Http404(msg)
+        else:
+            logger.info("{0} wants to {1} for {2} {3}".format(
+                request.user,
+                tx,
+                force_text(opts.verbose_name),
+                escape(object_id)
+            ))
         # Is current user allowed to do the stuff with the thing
         # Should we use django_fsm.can_proceed instead?
         if tx not in [t.name for t in

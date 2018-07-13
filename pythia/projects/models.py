@@ -639,7 +639,11 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         Fast-tracks project to complete the update
         """
         pc, created = ProjectClosure.objects.get_or_create(project=self)
-        self.progressreport.delete()
+        try:
+            self.progressreport.delete()
+        except:
+            logger.info("Project {0} forcibly closed, "
+                        "no progress report to delete.".format(self))
 
     # CLOSING -> FINAL_UPDATE ------------------------------------------------#
     def can_request_final_update(self):
