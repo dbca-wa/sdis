@@ -350,6 +350,7 @@ LOGGING = {
         }
     }
 }
+LOGGING_CONFIG = LOGGING
 
 if DEBUG:
     ALLOWED_HOSTS = ['*']
