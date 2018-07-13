@@ -319,27 +319,27 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'mail_admins'],
+            'handlers': ['console', 'file', 'mail_admins'],
             'propagate': True,
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['file', 'mail_admins'],
+            'handlers': ['console', 'file', 'mail_admins'],
             'level': 'DEBUG',
             'propagate': False,
         },
         'request': {
-            'handlers': ['file', 'mail_admins'],
+            'handlers': ['console', 'file', 'mail_admins'],
             'level': 'DEBUG',
             'propagate': True
         },
         'sdis': {
-            'handlers': ['file', 'mail_admins'],
+            'handlers': ['console', 'file', 'mail_admins'],
             'level': 'DEBUG',
             'propagate': True
         },
         'pythia': {
-            'handlers': ['file', 'mail_admins'],
+            'handlers': ['console', 'file', 'mail_admins'],
             'level': 'DEBUG',
             'propagate': True
         }
