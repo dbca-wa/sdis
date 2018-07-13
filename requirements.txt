@@ -6,7 +6,7 @@ https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
 # django-confy>=1.0.4
 django-extensions==1.6.5
 # django-redis==3.6.2
-# psycopg2==2.5.2
+psycopg2==2.7.5
 
 # Database, models
 django-contrib-postgres
