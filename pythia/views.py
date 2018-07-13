@@ -1,6 +1,7 @@
 """Custom pythia views."""
 
 import json
+import logging
 
 from django.conf import settings
 from django.contrib import messages
@@ -23,11 +24,14 @@ from django_comments.views.utils import next_redirect
 
 from pythia.forms import TermsAndConditionsForm
 
+logger = logging.getLogger(__name__)
+
 
 class DetailChangeList(ChangeList):
     """Custom DetailChangeList."""
 
     def url_for_result(self, result):
+        """URL for result."""
         if self.model_admin.changelist_link_detail:
             pk = getattr(result, self.pk_attname)
             return reverse('admin:%s_%s_detail' % (self.opts.app_label,
@@ -119,7 +123,7 @@ def spell_check(request):
 
             if not enchant.dict_exists(str(lang)):
                 raise RuntimeError(
-                        "dictionary not found for language '%s'" % lang)
+                    "dictionary not found for language '%s'" % lang)
 
             checker = enchant.Dict(str(lang))
 
@@ -134,7 +138,7 @@ def spell_check(request):
     output = {
         'id': id,
         'result': result,
-        }
+    }
     # except Exception:
     #    logging.exception("Error running spellchecker")
     #    return HttpResponse("Error running spellchecker")
@@ -158,7 +162,7 @@ def comments_delete(request, comment_id):
         'next': request.GET.get('next'),
         'comment': comment,
         'is_popup': "_popup" in request.REQUEST
-        }
+    }
 
     if request.method == 'POST':
         perform_delete(request, comment)
@@ -178,6 +182,7 @@ def comments_delete(request, comment_id):
 
 class CommentUpdateForm(ModelForm):
     """Custom comment update form."""
+
     class Meta:
         model = Comment
         fields = ('comment',)
@@ -185,6 +190,7 @@ class CommentUpdateForm(ModelForm):
 
 class CommentUpdateView(edit.UpdateView):
     """Custom comment update view."""
+
     model = Comment
     template_name = "comments/comment_form.html"
     form_class = CommentUpdateForm
@@ -193,7 +199,7 @@ class CommentUpdateView(edit.UpdateView):
         context = {
             'next': self.request.REQUEST.get('next'),
             'is_popup': self.request.REQUEST.get('_popup')
-            }
+        }
         context.update(kwargs)
         return super(CommentUpdateView, self).get_context_data(**context)
 

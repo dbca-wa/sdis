@@ -288,12 +288,12 @@ DEBUG_TOOLBAR_CONFIG = {
 # Logging configuration
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'formatters': {
         'verbose': {
             'format': '%(asctime)-.19s [%(levelname)s]  %(message)s'
         },
-        'simple': {
+        'standard': {
             'format': '[%(levelname)s] %(message)s',
 
         },
@@ -347,10 +347,14 @@ LOGGING = {
             'handlers': ['console', 'file', 'mail_admins'],
             'level': 'DEBUG',
             'propagate': True
+        },
+        'pythia.views': {
+            'handlers': ['console', 'file', 'mail_admins'],
+            'level': 'DEBUG',
+            'propagate': True
         }
     }
 }
-LOGGING_CONFIG = {}
 
 if DEBUG:
     ALLOWED_HOSTS = ['*']
