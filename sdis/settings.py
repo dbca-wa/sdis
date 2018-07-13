@@ -306,7 +306,7 @@ LOGGING = {
             'formatter': 'standard'
         },
         'file': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/sdis.log'),
             'formatter': 'standard',
@@ -325,22 +325,22 @@ LOGGING = {
         },
         'django.request': {
             'handlers': ['file', 'mail_admins'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': False,
         },
         'request': {
             'handlers': ['file', 'mail_admins'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True
         },
         'sdis': {
             'handlers': ['file', 'mail_admins'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True
         },
         'pythia': {
             'handlers': ['file', 'mail_admins'],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True
         }
     }
