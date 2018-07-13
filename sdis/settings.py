@@ -256,8 +256,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES':
         ['rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'],
 
-    'VIEW_DESCRIPTION_FUNCTION':
-        'rest_framework_swagger.views.get_restructuredtext',
+    # 'VIEW_DESCRIPTION_FUNCTION':
+    #     'rest_framework_swagger.views.get_restructuredtext',
 
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',)
 }
@@ -319,22 +319,27 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
+            'handlers': ['file', 'mail_admins'],
             'propagate': True,
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['file'],
+            'handlers': ['file', 'mail_admins'],
             'level': 'INFO',
             'propagate': False,
         },
         'request': {
-            'handlers': ['file'],
+            'handlers': ['file', 'mail_admins'],
             'level': 'INFO',
             'propagate': True
         },
         'sdis': {
-            'handlers': ['console', 'file'],
+            'handlers': ['file', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': True
+        },
+        'pythia': {
+            'handlers': ['file', 'mail_admins'],
             'level': 'INFO',
             'propagate': True
         }
@@ -361,26 +366,31 @@ if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
     LOGGING['loggers'] = {
-        'django_auth_ldap': {
-            'handlers': ['file'],
+        'django': {
+            'handlers': ['console', 'file', ],
+            'propagate': True,
             'level': 'DEBUG',
-            'propagate': True
         },
         'django.request': {
-            'handlers': ['file'],
+            'handlers': ['console', 'file', ],
             'level': 'DEBUG',
-            'propagate': True
+            'propagate': False,
         },
         'request': {
-            'handlers': ['file'],
+            'handlers': ['console', 'file', ],
             'level': 'DEBUG',
             'propagate': True
         },
         'sdis': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
+            'handlers': ['console', 'file', ],
+            'level': 'DEBUG',
             'propagate': True
         },
+        'pythia': {
+            'handlers': ['console', 'file', ],
+            'level': 'DEBUG',
+            'propagate': True
+        }
     }
 
     # SDIS-260: cached template loader crashes debug toolbar template source
