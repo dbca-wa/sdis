@@ -1410,7 +1410,8 @@ class User(AbstractBaseUser, PermissionsMixin):
                         res["regular"].append(proj)
 
             except:
-                logger.warn("Project lookup failed: " + str(x))
+                logger.warning("Project lookup for User portfolio"
+                               " failed: " + str(x))
 
         if proj_result["super"] or proj_result["regular"]:
             result["projects"] = proj_result

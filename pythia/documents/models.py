@@ -172,7 +172,7 @@ class Document(PolymorphicModel, Audit):
         # try:
         #     update_document_permissions(self)  # hack: give team access
         # except:
-        #     logger.warn(
+        #     logger.warning(
         #        "{0} couldn't update permissions".format(self.__str__()))
 
         # if created:

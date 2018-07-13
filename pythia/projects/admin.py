@@ -302,8 +302,8 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
         # Should we use django_fsm.can_proceed instead?
         if tx not in [t.name for t in
                       obj.get_available_user_status_transitions(request.user)]:
-            logger.warn("Requested transition '{0}' not available for the "
-                        "current user {1}".format(tx, request.user))
+            logger.warning("Requested transition '{0}' not available for the "
+                           "current user {1}".format(tx, request.user))
             raise PermissionDenied
 
         t = [t for t in obj.get_available_user_status_transitions(request.user)

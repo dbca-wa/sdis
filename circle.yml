@@ -14,6 +14,6 @@ database:
 
 test:
   override:
-    - coverage run --source="." manage.py test --ipdb --settings=sdis.test_settings
+    - coverage run --source="." manage.py test --settings=sdis.test_settings
   post:
     - coveralls

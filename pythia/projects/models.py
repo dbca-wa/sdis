@@ -487,8 +487,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
             scd, created = Group.objects.get_or_create(name='SCD')
             return scd.user_set.all()
         except:
-            logger.warn("[pythia.projects.models.Project.approvers] "
-                        "approvers not found")
+            logger.warning("[pythia.projects.models.Project.approvers] "
+                           "approvers not found")
             return set()
         # return Group.objects.get(name='SCD').user_set.all()
 

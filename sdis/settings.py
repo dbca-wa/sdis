@@ -311,7 +311,7 @@ LOGGING = {
             'maxBytes': '16777216'
         },
         'mail_admins': {
-            'level': 'ERROR',
+            'level': 'WARNING',
             'class': 'django.utils.log.AdminEmailHandler',
         }
     },
@@ -376,7 +376,7 @@ if DEBUG:
         },
         'sdis': {
             'handlers': ['console', 'file'],
-            'level': 'INFOI',
+            'level': 'INFO',
             'propagate': True
         },
     }

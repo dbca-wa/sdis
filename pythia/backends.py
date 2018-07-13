@@ -182,7 +182,7 @@ class EmailBackend(ObjectPermissionBackend):
                     user.save()
                 return user
             except Exception, e:
-                logger.warn(e)
+                logger.warning("User does not exist even after LDAP. Exception: {0}".format(e))
                 return None
 
     def get_user(self, user_id):

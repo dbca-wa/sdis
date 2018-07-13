@@ -204,7 +204,7 @@ def get_revision_hash():
 #                 ''.join([cell_html.format(cell) for cell in row]
 #                         )) for row in json.loads(some_string)]))
 #     except:
-#         logger.warn("Found non-JSON string {0}".format(some_string))
+#         logger.warning("Found non-JSON string {0}".format(some_string))
 #         return some_string
 #
 #
@@ -236,4 +236,4 @@ def get_revision_hash():
 #     # pp = [p.contents for p in BS(html_string).find_all('p')]
 #     # TODO extract all tags
 #     # TODO convert only md tables, keep the rest
-#     logger.warn("Not implemented: pythia.utils.convert_md_tables")
+#     logger.warning("Not implemented: pythia.utils.convert_md_tables")
