@@ -1,0 +1,38 @@
+[uwsgi]
+## Django-related settings
+# appname: e.g. sdis
+appname         = appname
+appdir          = /home/florianm/projects
+venvdir         = /path/to/virtualenvs
+module          = sdis.wsgi
+
+
+
+chdir           = %(chdir)/%(appname)/
+home            = %(venvdir)/%(appname)/
+
+## Process-related settings
+auto-procname   = true
+hook-pre-app    = exec:venv/bin/python manage.py collectstatic --clear --noinput -l
+static-map      = /static=%(chdir)staticfiles
+static-map      = /media=%(chdir)media
+static-cache-paths = 30
+http            = :8210
+die-on-term     = true
+# master
+master          = true
+# maximum number of worker processes
+processes       = 10
+# the socket (use the full path to be safe
+# socket          = /path/to/your/project/mysite.sock
+# ... with appropriate permissions - may be needed
+# chmod-socket    = 664
+# clear environment on exit
+vacuum          = true
+
+
+## Required to be in the app config file for %n to work
+procname-prefix = %n/
+touch-reload    = %d%n.ini
+stats           = /var/spool/uwsgi/sockets/stats_%n.sock
+logto           = /var/log/uwsgi/%n.log
