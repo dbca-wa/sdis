@@ -33,3 +33,6 @@ hoit
 
 # downloads
 pythia/static/files/*
+
+# uwsgi config
+sdis/sdis_uwsgi.ini
