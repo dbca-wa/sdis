@@ -1,8 +1,9 @@
-1 [program:sdis]
-2 user=www-data
-3 stopasgroup=true
-4 autostart=true
-5 autorestart=true
-6 directory=/path/to/repo/sdis
-7 command=/path/to/virtualenvs/sdis/bin/honcho start
-8 environment=PATH="/path/to/virtualenvs/sdis/bin/:%(ENV_PATH)s",PYTHONUNBUFFERED="true"
+[program:sdis]
+user=www-data
+stopasgroup=true
+autostart=true
+autorestart=true
+directory=/path/to/repo/sdis
+#command=/path/to/virtualenvs/sdis/bin/honcho start
+command=/home/CORPORATEICT/florianm/.virtualenvs/sdis/bin/gunicorn sdis.wsgi --config gunicorn.ini
+environment=PATH="/path/to/virtualenvs/sdis/bin/:%(ENV_PATH)s",PYTHONUNBUFFERED="true"

@@ -10,5 +10,5 @@ RUN apt-get update -y \
   && pip install --no-cache-dir -r requirements.txt \
   && python manage.py collectstatic --noinput
 
-EXPOSE 8080
+EXPOSE 8210
 CMD ["gunicorn", "sdis.wsgi", "--config", "gunicorn.ini"]
