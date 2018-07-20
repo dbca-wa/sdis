@@ -39,12 +39,12 @@ def pip():
     local("pip install -r requirements.txt")
 
 
-def _removestaticlinks():
+def rmstaticlinks():
     """Remove links to static files, prepare for collectstatic."""
     local("find -L staticfiles/ -type l -delete")
 
 
-def _collectstatic():
+def static():
     """Link static files."""
     local("python manage.py collectstatic --noinput -l "
           "|| python manage.py collectstatic --clear --noinput -l")
@@ -53,8 +53,8 @@ def _collectstatic():
 def quickdeploy():
     """Deploy static files."""
     clean()
-    _removestaticlinks()
-    _collectstatic()
+    rmstaticlinks()
+    static()
 
 
 def install():
