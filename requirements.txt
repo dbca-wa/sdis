@@ -54,7 +54,7 @@ pipdeptree
 argparse
 django-confy
 django-wsgiserver>=0.8.0rc1
-Fabric
+Fabric==1.8.2
 honcho
 gunicorn==19.8.1
 wsgiref==0.1.2
