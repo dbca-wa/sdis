@@ -563,6 +563,7 @@ class DownloadAdminMixin(ModelAdmin):
     def pdf(self, request, object_id):
         """Render as PDF using Latex."""
         obj = self.get_object(request, unquote(object_id))
+        logger.info("PDF requested by {0} of {1}".format(request.user, obj))
         template = self.download_template
         texname = template + ".tex"
         filename = template + ".pdf"
@@ -591,6 +592,7 @@ class DownloadAdminMixin(ModelAdmin):
         response['Content-Disposition'] = '{0}; filename="{1}.pdf"'.format(
             disposition, downloadname)
 
+        logger.debug("PDF export: render to string")
         output = render_to_string(
             "latex/" + template + ".tex", context,
             context_instance=RequestContext(request))
@@ -622,6 +624,7 @@ class DownloadAdminMixin(ModelAdmin):
         with open(os.path.join(directory, texname), "w") as f:
             f.write(output.encode('utf-8'))
 
+        logger.debug("PDF export: processing tex to PDF")
         cmd = ['lualatex', "--interaction", "batchmode", "--output-directory",
                directory, texname]
         try:
@@ -638,6 +641,7 @@ class DownloadAdminMixin(ModelAdmin):
             else:
                 raise
 
+        logger.debug("PDF export: returning PDF")
         with open(os.path.join(directory, filename), "r") as f:
             response.write(f.read())
 
