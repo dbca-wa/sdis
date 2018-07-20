@@ -56,7 +56,7 @@ argparse
 django-confy
 django-wsgiserver>=0.8.0rc1
 Fabric
-gunicorn
+gunicorn==19.8.1
 wsgiref==0.1.2
 pipdeptree
 django-appconf==0.6
