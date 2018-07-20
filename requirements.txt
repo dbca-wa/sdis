@@ -1,7 +1,7 @@
 Django==1.6.5       # rq.filter: >=1.6,<1.7
 
 # DPaW custom
-ipython<=6.0
+ipython<6.0
 https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
 # provides:
 # django-confy>=1.0.4
