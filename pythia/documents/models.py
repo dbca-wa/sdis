@@ -896,8 +896,7 @@ class ProjectPlan(Document):
 
     # New one! Animal Ethics Committee approval
     involves_animals = models.BooleanField(
-        verbose_name=_("Involves interaction with vertebrate animals"
-                       " (excl. fish)"),
+        verbose_name=_("Involves interaction with vertebrate animals"),
         blank=False, null=False,
         default=False,
         help_text=_("Tick to indicate that this project will involve "
