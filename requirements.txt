@@ -56,7 +56,7 @@ django-confy
 django-wsgiserver>=0.8.0rc1
 Fabric==1.8.2
 honcho
-gunicorn==19.8.1
+gunicorn==19.9.0
 wsgiref==0.1.2
 django-appconf==0.6
 uwsgi
