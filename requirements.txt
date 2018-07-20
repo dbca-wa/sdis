@@ -1,13 +1,9 @@
 Django==1.6.5       # rq.filter: >=1.6,<1.7
+setuptools
 
-# DPaW custom: downgrade iPython
-ipython<6.0
 #https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
-git+git://github.com/dbca-wa/dpaw-utils@minimal
-# provides:
-# django-confy>=1.0.4
+
 django-extensions==1.6.5
-# django-redis==3.6.2
 psycopg2==2.7.5
 
 # Database, models
@@ -63,6 +59,7 @@ wsgiref==0.1.2
 pipdeptree
 django-appconf==0.6
 uwsgi
+honcho
 
 # Docs, images, thumbnails
 Sphinx==1.5.5
