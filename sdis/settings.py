@@ -34,7 +34,9 @@ ALLOWED_HOSTS = [
     'static.dpaw.wa.gov.au',
     'static.dbca.wa.gov.au',
     'sdis-internal.dbca.wa.gov.au',
-    'sdis.dbca.wa.gov.au'
+    'sdis.dbca.wa.gov.au',
+    'aws-eco-001',
+    'aws-eco-002'
 ]
 
 INTERNAL_IPS = ['127.0.0.1', '::1']
