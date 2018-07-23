@@ -17,7 +17,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-from django.contrib.admin.util import flatten_fieldsets, unquote
+from django.contrib.admin.util import unquote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.models import Group
@@ -697,6 +697,12 @@ class DivisionAdmin(BaseAdmin, DetailAdmin):
     director_name.short_description = 'Director'
     director_name.admin_order_field = 'director__last_name'
 
+    def get_breadcrumbs(self, request, obj=None, add=False):
+        """Add change list to breadcrumbs."""
+        return (Breadcrumb(_('Home'), reverse('admin:index')),
+                Breadcrumb(_('Departmental Services'),
+                           reverse('admin:pythia_division_changelist')))
+
 
 class ProgramAdmin(BaseAdmin, DetailAdmin):
     """Custom ProgramAdmin."""
@@ -713,7 +719,7 @@ class ProgramAdmin(BaseAdmin, DetailAdmin):
         """
         rof = super(ProgramAdmin, self).get_readonly_fields(request, obj)
         scd = Group.objects.get_or_create(name='SCD')[0].user_set.all()
-        smt = Group.objects.get_or_create(name='SCD')[0].user_set.all()
+        smt = Group.objects.get_or_create(name='SMT')[0].user_set.all()
         editors = list(set(chain(scd, smt)))
         if not (request.user.is_superuser or request.user in editors):
             rof += ('effective_to', 'effective_from', 'cost_center',
@@ -722,26 +728,25 @@ class ProgramAdmin(BaseAdmin, DetailAdmin):
         return rof
 
     def get_breadcrumbs(self, request, obj=None, add=False):
-        """
-        Override the base breadcrumbs to add the research function list to
-        the trail.
-        """
+        """Add change list to breadcrumbs."""
         return (Breadcrumb(_('Home'), reverse('admin:index')),
                 Breadcrumb(_('Divisional Programs'),
-                           reverse('admin:pythia_program_changelist'))
-                )
+                           reverse('admin:pythia_program_changelist')))
 
     def program_leader_name(self, obj):
+        """Field label for program leader."""
         return obj.program_leader.__str__()
     program_leader_name.short_description = 'Program Leader'
     program_leader_name.admin_order_field = 'program_leader__last_name'
 
     def finance_admin_name(self, obj):
+        """Field label for finance admin."""
         return obj.finance_admin.__str__()
     finance_admin_name.short_description = 'Finance Admin'
     finance_admin_name.admin_order_field = 'finance_admin__last_name'
 
     def data_custodian_name(self, obj):
+        """Field label for data custodian."""
         return obj.data_custodian.__str__()
     data_custodian_name.short_description = 'Data Custodian'
     data_custodian_name.admin_order_field = 'data_custodian__last_name'

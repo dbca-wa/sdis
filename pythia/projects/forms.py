@@ -1,6 +1,6 @@
-
-
 """
+# Some good examples. Keep for reference.
+
 from pbs.prescription.models import (Prescription, Endorsement,
                                      BriefingChecklist,
                                      Approval, EndorsingRole)
