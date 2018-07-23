@@ -458,8 +458,8 @@ class Area(Audit):  # , models.PolygonModelMixin):
     class Meta:
         """Class opts."""
 
-        verbose_name = _("area")
-        verbose_name_plural = _("areas")
+        verbose_name = _("Area")
+        verbose_name_plural = _("Areas")
         ordering = ['area_type', '-northern_extent']
 
     def save(self, *args, **kwargs):
@@ -504,8 +504,8 @@ class Region(models.Model):
     class Meta:
         """Class opts."""
 
-        verbose_name = _("region")
-        verbose_name_plural = _("regions")
+        verbose_name = _("Region")
+        verbose_name_plural = _("Regions")
         ordering = ['-northern_extent']
 
     def __str__(self):
@@ -572,8 +572,8 @@ class District(models.Model):
         """Class opts."""
 
         ordering = ['-northern_extent']
-        verbose_name = _("district")
-        verbose_name_plural = _("districts")
+        verbose_name = _("District")
+        verbose_name_plural = _("Districts")
 
     def get_northern_extent(self):
         """Northernmost latitude."""
@@ -601,8 +601,8 @@ class Address(Audit, ActiveModel):
     class Meta:
         """Class opts."""
 
-        verbose_name = _("address")
-        verbose_name_plural = _("addresses")
+        verbose_name = _("Address")
+        verbose_name_plural = _("Addresses")
 
     def __str__(self):
         """String representation."""
@@ -711,6 +711,8 @@ class Program(Audit, ActiveModel):
         """Class opts."""
 
         ordering = ['position', 'cost_center']
+        verbose_name = "Divisional Program"
+        verbose_name_plural = "Divisional Programs"
 
     def __str__(self):
         """String representation."""
@@ -803,8 +805,8 @@ class WorkCenter(Audit, ActiveModel):
         """Class opts."""
 
         app_label = 'pythia'
-        verbose_name = _("work centre")
-        verbose_name_plural = _("work centres")
+        verbose_name = _("Work centre")
+        verbose_name_plural = _("Work centres")
 
     def __str__(self):
         """String representation."""
@@ -839,8 +841,8 @@ class WebResourceDomain(Audit, ActiveModel):
     class Meta:
         """Class opts."""
 
-        verbose_name = _('web resource domain')
-        verbose_name_plural = _('web resource domains')
+        verbose_name = _('Web resource domain')
+        verbose_name_plural = _('Web resource domains')
 
 
 class URLPrefix(Audit):

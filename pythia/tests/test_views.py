@@ -1,14 +1,125 @@
+"""View tests."""
 from django.core.urlresolvers import reverse
 from django.test import Client
+# from django.test.client import RequestFactory
 from guardian.models import Group
 
 from pythia.models import Program
 from pythia.documents.models import ConceptPlan, ProjectPlan
 from pythia.projects.models import ProjectMembership
 
-from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
+from .base import (BaseTestCase, ScienceProjectFactory,
                    CoreFunctionProjectFactory, CollaborationProjectFactory,
                    StudentProjectFactory, UserFactory, SuperUserFactory)
+
+
+class SmokeTest(BaseTestCase):
+    """Poke each view in the eye and see if it twitches."""
+
+    def setUp(self):
+        """Set up."""
+        self.client = Client()
+        self.smt, created = Group.objects.get_or_create(name='SMT')
+        self.scd, created = Group.objects.get_or_create(name='SCD')
+        self.users, created = Group.objects.get_or_create(name='Users')
+
+        self.superuser = SuperUserFactory.create(username='admin')
+        self.bob = UserFactory.create(
+            username='bob', first_name='Bob', last_name='Bobson')
+        self.john = UserFactory.create(
+            username='john', first_name='John', last_name='Johnson')
+        self.steven = UserFactory.create(
+            username='steven', first_name='Steven', last_name='Stevenson')
+        self.steven.groups.add(self.smt)
+        self.fran = UserFactory.create(
+            username='fran', first_name='Fran', last_name='Franson')
+        self.fran.groups.add(self.smt)
+        self.marge = UserFactory.create(
+            username='marge', first_name='Marge', last_name='Simpson')
+        self.marge.groups.add(self.scd)
+        self.peter = UserFactory.create(
+            username='peter', first_name='Peter', last_name='Peterson')
+        self.program = Program.objects.create(
+            name="ScienceProgram",
+            slug="scienceprogram",
+            position=0,
+            program_leader=self.steven)
+
+    def assert_200(self, url):
+        """GET a given URL and assert that the response has status 200 OK."""
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_project_changelist(self):
+        """Render Project change_list."""
+        url = reverse('admin:projects_project_changelist')
+        self.assert_200(url)
+
+    def test_scienceproject_changelist(self):
+        """Render ScienceProject change_list."""
+        url = reverse('admin:projects_scienceproject_changelist')
+        self.assert_200(url)
+
+    def test_scienceproject_changeview(self):
+        """Render ScienceProject change_view."""
+        project = ScienceProjectFactory.create(
+            program=self.program,
+            project_owner=self.bob)
+        url = project.absolute_url
+        self.assert_200(url)
+
+    def test_cfproject_changelist(self):
+        """Render CFProject change_list."""
+        url = reverse('admin:projects_corefunctionproject_changelist')
+        self.assert_200(url)
+
+    def test_cfproject_changeview(self):
+        """Render CFProject change_view."""
+        project = CoreFunctionProjectFactory.create(
+            program=self.program,
+            project_owner=self.bob)
+        url = project.absolute_url
+        self.assert_200(url)
+
+    def test_extproject_changelist(self):
+        """Render EXT Project change_list."""
+        url = reverse('admin:projects_collaborationproject_changelist')
+        self.assert_200(url)
+
+    def test_extproject_changeview(self):
+        """Render EXT Project change_view."""
+        project = CollaborationProjectFactory.create(
+            program=self.program,
+            project_owner=self.bob)
+        url = project.absolute_url  # convenience helper on Project
+        self.assert_200(url)
+
+    def test_studentproject_changelist(self):
+        """Render StudentProject change_list."""
+        url = reverse('admin:projects_studentproject_changelist')
+        self.assert_200(url)
+
+    def test_studentproject_changeview(self):
+        """Render StudentProject change_view."""
+        scienceproject = StudentProjectFactory.create(
+            program=self.program,
+            project_owner=self.bob)
+        url = scienceproject.absolute_url
+        self.assert_200(url)
+
+    def test_conceptplan_changelist(self):
+        """Render ConceptPlan changelist."""
+        url = reverse("admin:documents_conceptplan_changelist")
+        self.assert_200(url)
+
+    def test_conceptplan_changeview(self):
+        """Render ConceptPlan changeview."""
+        scienceproject = ScienceProjectFactory.create(
+            program=self.program,
+            project_owner=self.bob)
+        scp = scienceproject.documents.instance_of(ConceptPlan).get()
+        url = scp.get_absolute_url()
+        self.assert_200(url)
 
 
 # TEST: User adds external user, enter username, password
@@ -17,6 +128,7 @@ from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
 # Test user updates own profile, all but superuser fields are ro
 
 # TEST: ProgramAdminTest(BaseTestCase) - only editable to SMT + SCD
+
 
 class ConceptPlanAdminTests(BaseTestCase):
     """ConceptPlan view tests."""
@@ -44,10 +156,10 @@ class ConceptPlanAdminTests(BaseTestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
         self.program = Program.objects.create(
-                name="ScienceProgram",
-                slug="scienceprogram",
-                position=0,
-                program_leader=self.steven)
+            name="ScienceProgram",
+            slug="scienceprogram",
+            position=0,
+            program_leader=self.steven)
 
         self.project = ScienceProjectFactory.create(
             program=self.program,
@@ -66,7 +178,7 @@ class ConceptPlanAdminTests(BaseTestCase):
         self.tx_url = 'admin:documents_conceptplan_transition?transition={0}'
 
     def test_everyone_can_view_conceptplan(self):
-        """Test that everyone can view the ConceptPlan"""
+        """Test that everyone can view the ConceptPlan."""
         # get ConceptPlan detail
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
@@ -141,41 +253,48 @@ class ConceptPlanAdminTests(BaseTestCase):
         """Test that only approvers can approve a ConceptPlan."""
         pass
         # ConceptPlan(inapproval)
-        # marge can "approve", "request_reviewer_revision", "request_author_revision".
-        # steven, bob, peter can't "approve", "request_reviewer_revision", "request_author_revision".
+        # marge can "approve", "request_reviewer_revision",
+        # "request_author_revision".
+        # steven, bob, peter can't "approve", "request_reviewer_revision",
+        # "request_author_revision".
 
     def test_conceptplan_inreview_is_readonly_to_team(self):
-        """Test that a ConceptPlan(inreview) is readonly to team,
-        but editable to reviewers and approvers."""
+        """Test that a ConceptPlan(inreview) is readonly to team.
+
+        Editable to reviewers and approvers.
+        """
         # ConceptPlan(inreview)
         # readonly to peter, bob, john
         # editable to steven, fran, marge, user
 
     def test_conceptplan_inapproval_is_readonly_to_reviewers(self):
-        """Test that a ConceptPlan(inreview) is readonly to team and reviewers,
-        but editable to approvers."""
+        """Test that a ConceptPlan(inreview) is readonly to team and reviewers.
+
+        Editable to approvers.
+        """
         # ConceptPlan(inapproval)
         # readonly to peter, bob, john, steven, fran
         # editable to marge, user
 
     def test_conceptplan_approved_is_readonly_to_all_but_superuser(self):
-        """Test that a ConceptPlan(inreview) is readonly to team, reviewers,
-        and approvers, but editable to superusers."""
+        """Test that a ConceptPlan(inreview) is readonly to all but SU.
+
+        RO to Team, reviewers, and approvers, but editable to superusers.
+        """
         # ConceptPlan(approved)
         # readonly to peter, bob, john, steven, fran, marge
         # editable to user
 
-
     def test_concept_plan_read_only_superuser(self):
-        """
-        After approval the concept plan must still be editable to a super-user.
-        """
+        """Test that an approved ConceptPlan is still be editable to SU."""
         pass
+
 
 class ProjectPlanAdminTests(BaseTestCase):
     """ProjectPlan view tests."""
 
     def setUp(self):
+        """Set up."""
         self.smt, created = Group.objects.get_or_create(name='SMT')
         self.scd, created = Group.objects.get_or_create(name='SCD')
         self.users, created = Group.objects.get_or_create(name='Users')
@@ -203,16 +322,16 @@ class ProjectPlanAdminTests(BaseTestCase):
             username='peter', first_name='Peter', last_name='Peterson')
 
         self.program = Program.objects.create(
-                name="ScienceProgram",
-                slug="scienceprogram",
-                position=0,
-                program_leader=self.steven)
+            name="ScienceProgram",
+            slug="scienceprogram",
+            position=0,
+            program_leader=self.steven)
 
         self.program = Program.objects.create(
-                name="ConservationProgram",
-                slug="conservationprogram",
-                position=1,
-                program_leader=self.fran)
+            name="ConservationProgram",
+            slug="conservationprogram",
+            position=1,
+            program_leader=self.fran)
 
         self.project = ScienceProjectFactory.create(
             modifier=self.bob,

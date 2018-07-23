@@ -1,10 +1,14 @@
 """Project admin."""
-from __future__ import unicode_literals, absolute_import
+from __future__ import absolute_import
+from __future__ import unicode_literals
 # from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.contrib.admin.util import unquote
+from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.http import Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_text
@@ -12,21 +16,24 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
-from django.http import HttpResponseRedirect, Http404
 from django_tablib.admin import TablibAdmin
-from pythia.admin import BaseAdmin, Breadcrumb, DownloadAdminMixin
+from pythia.admin import BaseAdmin
+from pythia.admin import Breadcrumb
+from pythia.admin import DetailAdmin
+from pythia.admin import DownloadAdminMixin
 from pythia.projects.models import PROJECT_CLASS_MAP
 # from pythia.templatetags.pythia_base import pythia_urlname
-from pythia.widgets import AreasWidgetWrapper
-from mail_templated import send_mail
-from sdis import settings
-from functools import update_wrapper
 import logging
+
+from functools import update_wrapper
+from mail_templated import send_mail
+from pythia.widgets import AreasWidgetWrapper
+from sdis import settings
 
 logger = logging.getLogger(__name__)
 
 
-class ResearchFunctionAdmin(BaseAdmin):
+class ResearchFunctionAdmin(BaseAdmin, DetailAdmin):
     """Admin for ResearchFunction."""
 
     list_display = ('__str__', 'description_safe', 'association_safe',
@@ -49,14 +56,6 @@ class ResearchFunctionAdmin(BaseAdmin):
         return mark_safe(obj.association) if obj.association else ''
     association_safe.short_description = 'Association'
 
-    def get_breadcrumbs(self, request, obj=None, add=False):
-        """Override the base breadcrumbs."""
-        return (
-            Breadcrumb(_('Home'), reverse('admin:index')),
-            Breadcrumb(_('Research Functions'),
-                       reverse('admin:projects_researchfunction_changelist'))
-        )
-
 
 class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
     """Admin for ProjectMembership."""
@@ -65,13 +64,6 @@ class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
     raw_id_fields = ()
     change_form_template = 'admin/projects/change_form_projectmembership.html'
     formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
-
-    def get_breadcrumbs(self, request, obj=None, add=False):
-        """Override the base breadcrumbs."""
-        return (Breadcrumb(_('Home'), reverse('admin:index')),
-                Breadcrumb(_('Project Memberships'),
-                           reverse(
-                               'admin:projects_projectmembership_changelist')))
 
     def get_readonly_fields(self, request, obj=None):
         """Control write permissions.
@@ -109,7 +101,7 @@ class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
     #    return result
 
 
-class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
+class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
     """Admin for Project."""
 
     # List view
@@ -235,12 +227,19 @@ class ProjectAdmin(BaseAdmin, DownloadAdminMixin):
                                                       post_url_continue)
 
     def get_breadcrumbs(self, request, obj=None, add=False):
-        """Override the base breadcrumbs."""
-        return (
-            Breadcrumb(_('Home'), reverse('admin:index')),
-            Breadcrumb(_('All projects'),
-                       reverse('admin:projects_project_changelist'))
-        )
+        """Override the base breadcrumbs: Inject All Projects."""
+        ct = ContentType.objects.get_for_model(self.model)
+        cl = reverse("admin:{}_{}_changelist".format(ct.app_label, ct.model))
+        pcl = reverse('admin:projects_project_changelist')
+
+        if cl == pcl:
+            return(
+                Breadcrumb(_('Home'), reverse('admin:index')),
+                Breadcrumb(_('All Projects'), pcl),)
+        else:
+            return (Breadcrumb(_('Home'), reverse('admin:index')),
+                    Breadcrumb(_('All Projects'), pcl),
+                    Breadcrumb(self.model._meta.verbose_name_plural, cl))
 
     def get_readonly_fields(self, request, obj=None):
         """Control which fields can be updated by whom.

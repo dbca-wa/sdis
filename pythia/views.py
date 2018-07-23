@@ -45,10 +45,7 @@ class DetailChangeList(ChangeList):
 def arar_dashboard(request):
     """Render ARAR dashboard with latest ARAR."""
     from pythia.reports.models import ARARReport
-    logger.debug("[DEBUG][arar_dashboard] test log!")
-    logger.info("[INFO][arar_dashboard] test log!")
-    # logger.warning("[WARN][arar_dashboard] test log!")
-    # logger.error("[ERROR][arar_dashboard] test log!")
+    logger.info("User {0} views ARAR Dashboard".format(request.user))
 
     return TemplateResponse(
         request,

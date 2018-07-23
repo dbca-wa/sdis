@@ -1,14 +1,17 @@
 """pythia.documents Admin."""
-from __future__ import unicode_literals, absolute_import
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 from django.contrib.admin.util import unquote
 # from django.contrib import messages
 # from django.contrib.auth import get_user_model
 # from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.forms import fields_for_model
-from django.http import Http404, HttpResponseRedirect  # HttpResponseForbidden
+from django.http import Http404
+from django.http import HttpResponseRedirect  # HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_text
@@ -18,7 +21,9 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 from mail_templated import send_mail
 
-from pythia.admin import BaseAdmin, Breadcrumb, DownloadAdminMixin
+from pythia.admin import BaseAdmin
+from pythia.admin import Breadcrumb
+from pythia.admin import DownloadAdminMixin
 
 # from pythia.documents.models import Document
 # from pythia.models import User
@@ -117,13 +122,6 @@ class DocumentAdmin(BaseAdmin, DownloadAdminMixin):
             return super(DocumentAdmin, self).get_readonly_fields(request, obj)
         else:
             return fields_for_model(obj, exclude=self.exclude).keys()
-
-    def get_breadcrumbs(self, request, obj=None, add=False):
-        """Add the project list to the breadcrumb trail."""
-        return (
-            Breadcrumb(_('Home'), reverse('admin:index')),
-            Breadcrumb(_('All projects'),
-                       reverse('admin:projects_project_changelist')))
 
     def get_urls(self):
         """Add transition/endorsement/diff views URLs."""

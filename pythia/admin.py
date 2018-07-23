@@ -21,6 +21,7 @@ from django.contrib.admin.util import unquote
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.models import Group
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.forms.models import modelformset_factory
@@ -52,6 +53,8 @@ Breadcrumb = namedtuple('Breadcrumb', ['name', 'url'])
 
 
 class DetailAdmin(ModelAdmin):
+    """Generic DetailAdmin."""
+
     detail_template = None
     changelist_link_detail = False
     # prevent django-guardian from clobbering change_form template (Scott):
@@ -276,12 +279,11 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin, TablibAdmin):
 
         Returns a named tuple of ('name', 'url') for each bread crumb.
         """
-        # opts = self.model._meta
-        return (
-            Breadcrumb(_('Home'), reverse('admin:index')), )
-        # Breadcrumb(opts.app_label,reverse('admin:app_list',
-        #    kwargs={'app_label': opts.app_label},
-        #    current_app=self.admin_site.name))
+        ct = ContentType.objects.get_for_model(self.model)
+        cl = reverse("admin:{}_{}_changelist".format(ct.app_label, ct.model))
+
+        return (Breadcrumb(_('Home'), reverse('admin:index')),
+                Breadcrumb(self.model._meta.verbose_name_plural, cl))
 
     def get_list_editable(self, request):
         """Return whether list is editable."""
@@ -381,6 +383,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin, TablibAdmin):
 
 class UserAdmin(DjangoUserAdmin):
     """Custom UserAdmin."""
+
     list_display = ('username', 'fullname', 'email', 'program', 'work_center')
     list_per_page = 1000    # sod pagination
     list_filter = ('is_external', 'is_group', 'agreed',
@@ -697,12 +700,6 @@ class DivisionAdmin(BaseAdmin, DetailAdmin):
     director_name.short_description = 'Director'
     director_name.admin_order_field = 'director__last_name'
 
-    def get_breadcrumbs(self, request, obj=None, add=False):
-        """Add change list to breadcrumbs."""
-        return (Breadcrumb(_('Home'), reverse('admin:index')),
-                Breadcrumb(_('Departmental Services'),
-                           reverse('admin:pythia_division_changelist')))
-
 
 class ProgramAdmin(BaseAdmin, DetailAdmin):
     """Custom ProgramAdmin."""
@@ -727,11 +724,11 @@ class ProgramAdmin(BaseAdmin, DetailAdmin):
                     'data_custodian')
         return rof
 
-    def get_breadcrumbs(self, request, obj=None, add=False):
-        """Add change list to breadcrumbs."""
-        return (Breadcrumb(_('Home'), reverse('admin:index')),
-                Breadcrumb(_('Divisional Programs'),
-                           reverse('admin:pythia_program_changelist')))
+    # def get_breadcrumbs(self, request, obj=None, add=False):
+    #     """Add change list to breadcrumbs."""
+    #     return (Breadcrumb(_('Home'), reverse('admin:index')),
+    #             Breadcrumb(_('Divisional Programs'),
+    #                        reverse('admin:pythia_program_changelist')))
 
     def program_leader_name(self, obj):
         """Field label for program leader."""
@@ -752,7 +749,7 @@ class ProgramAdmin(BaseAdmin, DetailAdmin):
     data_custodian_name.admin_order_field = 'data_custodian__last_name'
 
 
-class WorkCenterAdmin(DetailAdmin):
+class WorkCenterAdmin(BaseAdmin, DetailAdmin):
     """Custom WorkCenterAdmin."""
 
     exclude = ('effective_to', 'effective_from')
@@ -761,7 +758,7 @@ class WorkCenterAdmin(DetailAdmin):
     formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
 
 
-class AreaAdmin(DetailAdmin):
+class AreaAdmin(BaseAdmin, DetailAdmin):
     """Custom AreaAdmin."""
 
     exclude = ('effective_to', 'effective_from')
