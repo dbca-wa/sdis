@@ -194,7 +194,59 @@ class FullProjectSerializer(ProjectSerializer):
     status_display = serializers.Field()
     project_type_year_number_plain = serializers.Field()
     team_list_plain = serializers.Field()
-    program = FullProgramSerializer()
+    program = ProgramSerializer()
+    absolute_url = serializers.Field()
+    read_only_fields = (
+        'id',
+        'absolute_url',
+        'type',
+        'year',
+        'number',
+        'status_display',
+        'title_plain',
+        'tagline_plain',
+        'keywords_plain',
+        'program',
+        'area_list_nrm_region',
+        'area_list_ibra_imcra_region',
+        'area_list_dpaw_region',
+        'area_list_dpaw_district',
+    )
+
+    class Meta:
+        """Class opts."""
+
+        model = Project
+        fields = (
+            'id',
+            'absolute_url',
+            'type',
+            'year',
+            'number',
+            'status_display',
+            'project_type_year_number_plain',
+            'title_plain',
+            'tagline_plain',
+            'comments',
+            'keywords_plain',
+            'team_list_plain',
+            'program',
+            'start_date',
+            'end_date',
+            'area_list_nrm_region',
+            'area_list_ibra_imcra_region',
+            'area_list_dpaw_region',
+            'area_list_dpaw_district'
+        )
+
+
+class FullProjectSerializerFromHell(ProjectSerializer):
+    """The Project serializer to end all project serializers."""
+
+    status_display = serializers.Field()
+    project_type_year_number_plain = serializers.Field()
+    team_list_plain = serializers.Field()
+    program = serializers.RelatedField()
     absolute_url = serializers.Field()
     read_only_fields = (
         'id',
@@ -322,59 +374,41 @@ class ProjectViewSet(viewsets.ModelViewSet):
     area_list_ibra_imcra_region, area_list_dpaw_region, area_list_dpaw_district
 
     Program
-    -------
-
-    * `/api/projects/?program__name=Biogeography
-      </api/projects/?program__name=Biogeography>`_
-    * `/api/projects/?program__name=Ecosystem Science
-      </api/projects/?program__name=Ecosystem Science>`_
-    * Program choices: 'Biogeography', 'Animal Science',
-      'Plant Science and Herbarium', 'Ecosystem Science',
-      'Wetlands Conservation', 'Marine Science', 'Ecoinformatics'
+    * /api/projects/?program__name=Biogeography
+    * /api/projects/?program__name=Ecosystem Science
 
     Year
-    ----
-    * `/api/projects/?year=2016 </api/projects/?year=2016>`_
+    * [/api/projects/?year=2016](/api/projects/?year=2016)
 
     Number
-    ------
-    * `/api/projects/?number=12 </api/projects/?number=12>`_
+    * [/api/projects/?number=12](/api/projects/?number=12)
 
     Status
-    ------
-    * `/api/projects/?status=active </api/projects/?status=active>`_
+    * [/api/projects/?status=active](/api/projects/?status=active)
     * Status choices: 'active', 'updating', 'closure requested', 'closing',
       'final update', 'completed'.
 
     Location
-    --------
     Note: no partial match, e.g.
-    `/api/projects/?area_list_dpaw_district=Moora
-    </api/projects/?area_list_dpaw_district=Moora>`_ only returns projects with
+    /api/projects/?area_list_dpaw_district=Moora only returns projects with
     only Moora, but not projects with Moora and additional districts.
 
-    * `/api/projects/?area_list_nrm_region=Rangelands
-      </api/projects/?area_list_nrm_region=Rangelands>`_
-    * area_list_nrm_region choices:
-      `/api/areas/?area_type=7 </api/areas/?area_type=7>`_
-    * area_list_ibra_imcra_region choices:
-      `/api/areas/?area_type=5 </api/areas/?area_type=5>`_ and
-      `/api/areas/?area_type=6 </api/areas/?area_type=6>`_
-    * area_list_dpaw_region choices:
-      `/api/areas/?area_type=3 </api/areas/?area_type=3>`_
-    * area_list_dpaw_district choices:
-      `/api/areas/?area_type=4 </api/areas/?area_type=4>`_
+    * /api/projects/?area_list_nrm_region=Rangelands
+    * area_list_nrm_region choices: /api/areas/?area_type=7
+    * area_list_ibra_imcra_region choices: /api/areas/?area_type=5
+      and /api/areas/?area_type=6 </api/areas/?area_type=6>
+    * area_list_dpaw_region choices: /api/areas/?area_type=3
+    * area_list_dpaw_district choices: /api/areas/?area_type=4
 
 
     Search fields
-    -------------
     Fulltext search with partial, case-insensitive match works on
     title, tagline, keywords, and all four area fields.
 
     * All projects with "adaptive" in title or tagline:
-      `/api/projects/?search=adaptive </api/projects/?search=adaptive>`_
+      /api/projects/?search=adaptive
     * All projects in (at least) DBCA District Moora:
-      `/api/projects/?search=Moora </api/projects/?search=Moora>`_
+      /api/projects/?search=Moora
     """
 
     queryset = Project.published.all()
@@ -408,10 +442,37 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return FullProjectSerializer
 
 
+class FullProjectViewSet(viewsets.ModelViewSet):
+    """Extensive Project Viewset."""
+
+    queryset = Project.objects.all()
+    serializer_class = FullProjectSerializerFromHell
+    filter_backends = (filters.SearchFilter,)
+    filter_fields = (
+        'program__name',
+        'status',
+        'year',
+        'number',
+        'area_list_nrm_region',
+        'area_list_ibra_imcra_region',
+        'area_list_dpaw_region',
+        'area_list_dpaw_district',
+    )
+    search_fields = (
+        'title_plain',
+        'tagline_plain',
+        'keywords_plain',
+        'area_list_nrm_region',
+        'area_list_ibra_imcra_region',
+        'area_list_dpaw_region',
+        'area_list_dpaw_district',
+    )
+
 # -----------------------------------------------------------------------------#
 # Routers
 router = routers.DefaultRouter()
 router.register(r'areas', AreaViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'programs', ProgramViewSet)
-router.register(r'projects', ProjectViewSet)
+router.register(r'projects', ProjectViewSet, base_name="projects-minimal")
+router.register(r'projects-all', FullProjectViewSet, base_name="projects-all")

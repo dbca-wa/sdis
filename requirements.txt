@@ -37,6 +37,7 @@ semantic-version==2.3.0
 djangorestframework==2.4.8 # highest version for Django<=1.8
 django-rest-swagger==2.0.7 # highest version for djangorestframework<=3.0.0, but needs drf.renderers.CoreJSONRenderer (not avail in drf==2.4.8, only from drf==3.4)
 django-filter==0.7
+djangorestframework-csv==2.1.0
 
 # Auth
 django-auth-ldap==1.2.0

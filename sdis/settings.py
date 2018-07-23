@@ -261,7 +261,15 @@ REST_FRAMEWORK = {
     # 'VIEW_DESCRIPTION_FUNCTION':
     #     'rest_framework_swagger.views.get_restructuredtext',
 
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',)
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
+        # 'rest_framework_jsonp.renderers.JSONPRenderer',
+        'rest_framework_csv.renderers.CSVRenderer',
+        # 'rest_framework_yaml.renderers.YAMLRenderer',
+        # 'rest_framework_latex.renderers.LatexRenderer',
+        ),
 }
 
 
