@@ -124,7 +124,7 @@ class ResearchFunction(PolymorphicModel, Audit, ActiveModel):
 
     def __str__(self):
         """The name."""
-        return '{0} {1}'.format(
+        return '{0}{1}'.format(
             mark_safe(strip_tags(self.name)),
             '' if self.active else ' (deprecated)'
         )

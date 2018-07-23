@@ -24,6 +24,8 @@ from django.db.models.sql.query import Query
 
 from django.utils import timezone, six
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.html import strip_tags
+from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from pythia.middleware import get_current_user
@@ -660,7 +662,8 @@ class Program(Audit, ActiveModel):
     # Publishing and printing options ----------------------------------------#
     published = models.BooleanField(
         default=True,
-        verbose_name="Publish this Program?")
+        verbose_name="Publish this Program?"
+        " Administrative and deprecated programs are unpublished.")
     position = models.IntegerField(
         help_text='An arbitrary, ascending ordering number.')
 
@@ -710,14 +713,16 @@ class Program(Audit, ActiveModel):
     class Meta:
         """Class opts."""
 
-        ordering = ['position', 'cost_center']
+        ordering = ['-published', 'position', 'cost_center']
         verbose_name = "Divisional Program"
         verbose_name_plural = "Divisional Programs"
 
     def __str__(self):
-        """String representation."""
-        # return '[{0}-{1}] {2}'.format(self.cost_center, self.slug, self.name)
-        return self.name
+        """The name."""
+        return '{0}{1}'.format(
+            mark_safe(strip_tags(self.name)),
+            '' if self.published else ' (not published)'
+        )
 
     def save(self, *args, **kw):
         """Generate slug from name if not set."""
