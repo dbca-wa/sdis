@@ -142,59 +142,13 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     """A minimal Project serializer to build a filterable list."""
 
     status_display = serializers.Field()
-    project_type_year_number_plain = serializers.Field()
-    title_plain = serializers.Field()
-    tagline_plain = serializers.Field()
-    keywords_plain = serializers.Field()
-    team_list_plain = serializers.Field
-    program = serializers.RelatedField()
-    absolute_url = serializers.Field()
-    read_only_fields = (
-        'type',
-        'year',
-        'number',
-        'status_display',
-        'title_plain',
-        'team_list_plain',
-        'keywords_plain',
-        'program',
-        'absolute_url',
-        'area_list_nrm_region',
-        'area_list_ibra_imcra_region',
-        'area_list_dpaw_region',
-        'area_list_dpaw_district',)
-
-    class Meta:
-        """Class opts."""
-
-        model = Project
-        fields = (
-            'id',
-            'absolute_url',
-            'project_type_year_number_plain',
-            'title_plain',
-            'status_display',
-            'tagline_plain',
-            'comments',
-            'keywords_plain',
-            'image',
-            'team_list_plain',
-            'program',
-            'start_date',
-            'end_date',
-            'area_list_nrm_region',
-            'area_list_ibra_imcra_region',
-            'area_list_dpaw_region',
-            'area_list_dpaw_district',)
-
-
-class FullProjectSerializer(ProjectSerializer):
-    """A comprehensive Project serializer to view project details."""
-
-    status_display = serializers.Field()
+    type_display = serializers.Field()
     project_type_year_number_plain = serializers.Field()
     team_list_plain = serializers.Field()
-    program = ProgramSerializer()
+    tagline_plain = serializers.Field()
+    program = serializers.RelatedField()
+    cost_center = serializers.Field()
+    status_active = serializers.Field()
     absolute_url = serializers.Field()
     read_only_fields = (
         'id',
@@ -203,9 +157,12 @@ class FullProjectSerializer(ProjectSerializer):
         'year',
         'number',
         'status_display',
+        'type_display',
+        'status_active',
         'title_plain',
         'tagline_plain',
         'keywords_plain',
+        'cost_center',
         'program',
         'area_list_nrm_region',
         'area_list_ibra_imcra_region',
@@ -219,34 +176,38 @@ class FullProjectSerializer(ProjectSerializer):
         model = Project
         fields = (
             'id',
-            'absolute_url',
-            'type',
-            'year',
-            'number',
-            'status_display',
             'project_type_year_number_plain',
             'title_plain',
+            'status_display',
+            'status_active',
+            'team_list_plain',
+            'program',
+            'cost_center',
+            'start_date',
+            'end_date',
+            'type',
+            'type_display',
+            'year',
+            'number',
             'tagline_plain',
             'comments',
             'keywords_plain',
-            'team_list_plain',
-            'program',
-            'start_date',
-            'end_date',
             'area_list_nrm_region',
             'area_list_ibra_imcra_region',
             'area_list_dpaw_region',
-            'area_list_dpaw_district'
+            'area_list_dpaw_district',
+            'absolute_url',
+            'image',
         )
 
 
-class FullProjectSerializerFromHell(ProjectSerializer):
-    """The Project serializer to end all project serializers."""
+class FullProjectSerializer(ProjectSerializer):
+    """A comprehensive Project serializer to view project details."""
 
     status_display = serializers.Field()
     project_type_year_number_plain = serializers.Field()
     team_list_plain = serializers.Field()
-    program = serializers.RelatedField()
+    program = ProgramSerializer()
     absolute_url = serializers.Field()
     read_only_fields = (
         'id',
@@ -396,7 +357,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     * /api/projects/?area_list_nrm_region=Rangelands
     * area_list_nrm_region choices: /api/areas/?area_type=7
     * area_list_ibra_imcra_region choices: /api/areas/?area_type=5
-      and /api/areas/?area_type=6 </api/areas/?area_type=6>
+      and /api/areas/?area_type=6
     * area_list_dpaw_region choices: /api/areas/?area_type=3
     * area_list_dpaw_district choices: /api/areas/?area_type=4
 
@@ -414,10 +375,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.published.all()
     filter_backends = (filters.SearchFilter,)
     filter_fields = (
-        'program__name',
         'status',
         'year',
         'number',
+        'type',
+        'status_active',
+        'cost_center',
         'area_list_nrm_region',
         'area_list_ibra_imcra_region',
         'area_list_dpaw_region',
@@ -425,6 +388,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     )
     search_fields = (
         'title',
+        'program__name',
         'tagline',
         'keywords_plain',
         'area_list_nrm_region',
@@ -442,37 +406,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return FullProjectSerializer
 
 
-class FullProjectViewSet(viewsets.ModelViewSet):
-    """Extensive Project Viewset."""
-
-    queryset = Project.objects.all()
-    serializer_class = FullProjectSerializerFromHell
-    filter_backends = (filters.SearchFilter,)
-    filter_fields = (
-        'program__name',
-        'status',
-        'year',
-        'number',
-        'area_list_nrm_region',
-        'area_list_ibra_imcra_region',
-        'area_list_dpaw_region',
-        'area_list_dpaw_district',
-    )
-    search_fields = (
-        'title_plain',
-        'tagline_plain',
-        'keywords_plain',
-        'area_list_nrm_region',
-        'area_list_ibra_imcra_region',
-        'area_list_dpaw_region',
-        'area_list_dpaw_district',
-    )
-
 # -----------------------------------------------------------------------------#
 # Routers
 router = routers.DefaultRouter()
 router.register(r'areas', AreaViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'programs', ProgramViewSet)
-router.register(r'projects', ProjectViewSet, base_name="projects-minimal")
-router.register(r'projects-all', FullProjectViewSet, base_name="projects-all")
+router.register(r'projects', ProjectViewSet, base_name="projects")

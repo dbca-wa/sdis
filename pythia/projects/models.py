@@ -811,6 +811,21 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         return self.get_status_display()
 
     @property
+    def type_display(self):
+        """Return the human-readable project type."""
+        return self.get_type_display()
+
+    @property
+    def status_active(self):
+        """Whether the project is considered active."""
+        return self.status in Project.ACTIVE
+
+    @property
+    def cost_center(self):
+        """The cost center of the project's program."""
+        return self.program.cost_center
+
+    @property
     def absolute_url(self):
         """Return the absolute url."""
         return self.get_absolute_url()
