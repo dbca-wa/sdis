@@ -823,7 +823,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     @property
     def cost_center(self):
         """The cost center of the project's program."""
-        return self.program.cost_center
+        return self.program.cost_center if self.program and self.program.cost_center else ''
 
     @property
     def absolute_url(self):
