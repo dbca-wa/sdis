@@ -784,12 +784,14 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     @property
     def tagline_plain(self):
         """Return a plain text version of the project tagline."""
-        return unicode(strip_tags(self.tagline)).strip() if self.tagline else ""
+        return unicode(
+            strip_tags(self.tagline)).strip() if self.tagline else ""
 
     @property
     def comments_plain(self):
         """Return a plain text version of the project comments."""
-        return unicode(strip_tags(self.comments)).strip() if self.comments else ""
+        return unicode(
+            strip_tags(self.comments)).strip() if self.comments else ""
 
     @property
     def keywords_plain(self):
@@ -823,7 +825,8 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     @property
     def cost_center(self):
         """The cost center of the project's program."""
-        return self.program.cost_center if self.program and self.program.cost_center else ''
+        return self.program.cost_center if (
+            self.program and self.program.cost_center) else ''
 
     @property
     def absolute_url(self):
@@ -1551,13 +1554,20 @@ class ProjectMembership(models.Model):
         blank=True, null=True, default=0,
         verbose_name=_("Time allocation (0 to 1 FTE)"),
         help_text=_("Indicative time allocation as a fraction of a Full Time "
-                    "Equivalent (220 person-days). Values between 0 and 1."))
+                    "Equivalent (210 person-days). Values between 0 and 1. "
+                    "Fill in estimated allocation for the next 12 months."))
     position = models.IntegerField(
         blank=True, null=True, verbose_name=_("List position"), default=100,
         help_text=_("The lowest position number comes first in the team "
                     "members list. Ignore to keep alphabetical order, "
                     "increase to shift member towards the end of the list, "
                     "decrease to promote member to beginning of the list."))
+    short_code = models.CharField(
+        blank=True, null=True,
+        max_length=500,
+        verbose_name=_("Short code"),
+        help_text=_("Cost code for this project membership's salary. "
+                    "Allocated by divisional admin."))
     comments = models.TextField(
         blank=True, null=True,
         help_text=_("Any comments clarifying the project membership."))
@@ -1571,12 +1581,14 @@ class ProjectMembership(models.Model):
 
     def __str__(self):
         """A HTML-safe description of the ProjectMembership."""
-        msg = "{0} ({1} - {2} - {3} FTE) [List position {4}] {5}"
+        msg = "{0} ({1} - {2} - {3} FTE - {4}) [Position {5}] {6}"
         return mark_safe(msg.format(
             self.user.__str__(),
             self.project.project_type_year_number,
             self.get_role_display(), self.time_allocation,
-            self.position, self.comments))
+            self.short_code if self.short_code else 'enter short code',
+            self.position,
+            self.comments))
 
 
 def refresh_project_cache(p):

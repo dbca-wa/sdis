@@ -60,10 +60,11 @@ class ResearchFunctionAdmin(BaseAdmin, DetailAdmin):
 class ProjectMembershipAdmin(BaseAdmin, TablibAdmin):
     """Admin for ProjectMembership."""
 
-    list_display = ('project', 'user', 'role')
+    list_display = ('__str__', 'project', )
     raw_id_fields = ()
     change_form_template = 'admin/projects/change_form_projectmembership.html'
     formats = ['xls', 'json', 'yaml', 'csv', 'html', ]
+    ordering = ["-project__year", "-project__number"]
 
     def get_readonly_fields(self, request, obj=None):
         """Control write permissions.
