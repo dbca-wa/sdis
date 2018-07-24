@@ -121,6 +121,13 @@ class SmokeTest(BaseTestCase):
         url = scp.get_absolute_url()
         self.assert_200(url)
 
+    def test_api_projects(self):
+        """Test API endpoints /api/projects/"""
+        scienceproject = ScienceProjectFactory.create(
+            program=self.program,
+            project_owner=self.bob)
+        url = "/api/projects/"
+        self.assert_200(url)
 
 # TEST: User adds external user, enter username, password
 # next screen add first name, last name etc, username must be ro

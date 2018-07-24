@@ -144,8 +144,10 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     status_display = serializers.Field()
     type_display = serializers.Field()
     project_type_year_number_plain = serializers.Field()
+    title_plain = serializers.Field()
     team_list_plain = serializers.Field()
     tagline_plain = serializers.Field()
+    keywords_plain = serializers.Field()
     program = serializers.RelatedField()
     cost_center = serializers.Field()
     status_active = serializers.Field()
@@ -207,6 +209,7 @@ class FullProjectSerializer(ProjectSerializer):
     status_display = serializers.Field()
     project_type_year_number_plain = serializers.Field()
     team_list_plain = serializers.Field()
+    title_plain = serializers.Field()
     program = ProgramSerializer()
     absolute_url = serializers.Field()
     read_only_fields = (
@@ -253,8 +256,44 @@ class FullProjectSerializer(ProjectSerializer):
         )
 
 
+# class ProjectFilter(filters.FilterSet):
+#     """Project filter."""
+
+#     class Meta:
+#         """Class opts."""
+
+#         model = Project
+#         fields = {
+
+#             'id': '__all__',
+#             'project_type_year_number_plain': '__all__',
+#             'title_plain': '__all__',
+#             'status_display': '__all__',
+#             'status_active': '__all__',
+#             'team_list_plain': '__all__',
+#             'program': '__all__',
+#             'cost_center': '__all__',
+#             'start_date': '__all__',
+#             'end_date': '__all__',
+#             'type': '__all__',
+#             'type_display': '__all__',
+#             'year': '__all__',
+#             'number': '__all__',
+#             'tagline_plain': '__all__',
+#             'comments': '__all__',
+#             'keywords_plain': '__all__',
+#             'area_list_nrm_region': '__all__',
+#             'area_list_ibra_imcra_region': '__all__',
+#             'area_list_dpaw_region': '__all__',
+#             'area_list_dpaw_district': '__all__',
+#             'absolute_url': '__all__',
+#             'image': '__all__',
+#         }
+
 # -----------------------------------------------------------------------------#
 # Viewsets
+
+
 class AreaViewSet(viewsets.ModelViewSet):
     """A clever Area ViewSet that returns fast lists and full details.
 
@@ -339,10 +378,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     * /api/projects/?program__name=Ecosystem Science
 
     Year
-    * [/api/projects/?year=2016](/api/projects/?year=2016)
+    * /api/projects/?year=2016
 
     Number
-    * [/api/projects/?number=12](/api/projects/?number=12)
+    * /api/projects/?number=12
 
     Status
     * [/api/projects/?status=active](/api/projects/?status=active)
@@ -372,24 +411,30 @@ class ProjectViewSet(viewsets.ModelViewSet):
       /api/projects/?search=Moora
     """
 
-    queryset = Project.published.all()
-    filter_backends = (filters.SearchFilter,)
+    queryset = Project.objects.all()
+    filter_backends = (filters.SearchFilter, )
     filter_fields = (
-        'status',
+        # 'status',
+        'status_display',
         'year',
         'number',
         'type',
+        'type_display',
         'status_active',
         'cost_center',
+        'start_date',
+        'end_date',
         'area_list_nrm_region',
         'area_list_ibra_imcra_region',
         'area_list_dpaw_region',
         'area_list_dpaw_district',
     )
     search_fields = (
-        'title',
-        'program__name',
-        'tagline',
+        'title_plain',
+        # 'program__name',
+        'comments',
+        'team_list_plain',
+        'tagline_plain',
         'keywords_plain',
         'area_list_nrm_region',
         'area_list_ibra_imcra_region',

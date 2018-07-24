@@ -784,12 +784,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     @property
     def tagline_plain(self):
         """Return a plain text version of the project tagline."""
-        return unicode(strip_tags(self.tagline)).strip()
+        return unicode(strip_tags(self.tagline)).strip() if self.tagline else ""
 
     @property
     def comments_plain(self):
         """Return a plain text version of the project comments."""
-        return unicode(strip_tags(self.comments)).strip()
+        return unicode(strip_tags(self.comments)).strip() if self.comments else ""
 
     @property
     def keywords_plain(self):

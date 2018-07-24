@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     # 'rest_framework_gis',       # API spatial fields
     'rest_framework_swagger',   # API docs
     # 'rest_framework_latex',     # API latex renderer
+    'django_filters',
 
     'leaflet',
     'south',
