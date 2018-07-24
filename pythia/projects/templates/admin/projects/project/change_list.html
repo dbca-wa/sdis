@@ -181,26 +181,16 @@ $(function() {
       {% if has_add_permission %}
       <div class="object-tools pull-right">
           {% block object-tools-items %}
-          <a class="btn btn-xs btn-info"
-            href="/export/projects.Project/"
-            title="Download as XLS">
+          <a class="btn btn-xs btn-info" href="/api/projects?format=csv" title="Download all Projects as CSV">
               <i class="glyphicon glyphicon-save glyphicon-white"></i> Projects</a>
-          <a class="btn btn-xs btn-info"
-            href="/export/projects.CollaborationProject/"
-            title="Download as XLS">
-              <i class="glyphicon glyphicon-save glyphicon-white"></i> EXT</a>
-          <a class="btn btn-xs btn-info"
-            href="/export/projects.StudentProject/"
-            title="Download as XLS">
-              <i class="glyphicon glyphicon-save glyphicon-white"></i> STP</a>
-          <a class="btn btn-xs btn-info"
+          <!-- <a class="btn btn-xs btn-info"
             href="/export/projects.ProjectMembership/"
             title="Download as XLS">
               <i class="glyphicon glyphicon-save glyphicon-white"></i> Teams</a>
           <a class="btn btn-xs btn-info"
             href="/export/pythia.User/"
             title="Download as XLS">
-              <i class="glyphicon glyphicon-save glyphicon-white"></i> Users</a>
+              <i class="glyphicon glyphicon-save glyphicon-white"></i> Users</a> -->
 
           <a class="btn btn-small btn-info"
 href="{% if current %}{% url cl.opts|pythia_urlname:'add' current.id %}{% else %}{% url cl.opts|pythia_urlname:'add' %}{% endif %}{% if is_popup %}?_popup=1{% endif %}">
