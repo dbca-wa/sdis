@@ -45,7 +45,7 @@ jobs:
           - v1-dependencies-
 
       - run:
-          name: Install system packages for GDAL
+          name: Install system packages for GDAL, Pandoc, LDAP
           command: sudo apt-get install -qq binutils libproj-dev gdal-bin libxml2-dev libxslt1-dev libsasl2-dev libenchant1c2a pandoc libsasl2-dev python-dev libldap2-dev libssl-dev
 
 
