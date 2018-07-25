@@ -65,7 +65,7 @@ jobs:
           name: Run tests
           command: |
             . venv/bin/activate
-            fab test
+            coverage run --source="." manage.py test --settings=sdis.test_settings && coverage report -m
 
       - store_artifacts:
           path: test-reports
