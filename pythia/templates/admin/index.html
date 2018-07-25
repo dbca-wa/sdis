@@ -23,16 +23,17 @@ favicon.badge({{ my_tasklist.count }});
 {% block bodyclass %}dashboard{% endblock %}
 
 {% block contentwrapper %}
-<div class="jumbotron">
+<div class="jumbotron hidden-xs">
     <h1>Science Directorate Information System</h1>
-    <p>Hello, {% firstof request.user.first_name request.user.username %}!
+    <p class="hidden-sm">Hello, {% firstof request.user.first_name request.user.username %}!
         This is SDIS, our one-stop shop for project approval and reporting.</p>
-    <small>
+    <small class="hidden-xs">
         Please update and submit (when ready) all documents awaiting your
         attention in "My Tasks", update project details and team lists of
         "My Projects" and "My Partnerships", create new projects and initiate
-        closure of old projects as appropriate. If you need help, our all new
-        <a href="http://sdis.readthedocs.io/">Documentation</a> is here to help!
+        closure of old projects as appropriate.
+        If you get stuck, the <a href="http://sdis.readthedocs.io/">User Manual</a>
+        has all the anwers!
     </small>
 </div>
 <div class="row">

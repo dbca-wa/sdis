@@ -46,7 +46,9 @@ margin-right: 0px; /* we need less negativity, especially in margins */
 }
 
 /* Set the fixed height of the footer here */
-#footer {height: 40px; background-color: rgb(34,34,34);}
+#footer {
+    /*height: 40px; */
+    background-color: rgb(34,34,34);}
 .container .credit {margin: 10px 0;}
 
 /* Used on templates/admin/change_list.html to provide a toolbar area above the list */
