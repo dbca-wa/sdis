@@ -1,0 +1,11 @@
+docs/
+.circleci/
+snapshots/
+staticfiles/
+media/
+.env
+.cov*
+.gitignore
+.git/
+requirements-docs.txt
+*.dump

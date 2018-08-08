@@ -125,9 +125,9 @@ def test():
 
 def doc():
     """Compile docs, draw data models and transitions."""
-    #apps = ['pythia', 'projects', 'documents', 'reports']
-    #dm_cmd = "python manage.py graph_models {0} -o docs/source/img/dm_{0}.svg"
-    #[local(dm_cmd.format(app)) for app in apps]
+    # apps = ['pythia', 'projects', 'documents', 'reports']
+    # cmd = "python manage.py graph_models {0} -o docs/source/img/dm_{0}.svg"
+    # [local(cmd.format(app)) for app in apps]
 
     # custom lucidchart docs are better
     # doc_models = ['Document', 'ConceptPlan', 'ProjectPlan', 'ProgressReport',

@@ -1,14 +1,20 @@
-FROM python:2.7.15-slim-stretch
-MAINTAINER asi@dbca.wa.gov.au
+FROM python:2.7.15-stretch
+LABEL maintainer=Florian.Mayer@dbca.wa.gov.au
+LABEL description="Python 2.7.15-stretch plus Latex, GDAL and LDAP."
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+  && DEBIAN_FRONTEND=noninteractive apt-get install --yes \
+  -o Acquire::Retries=10 --no-install-recommends \
+    texlive-full lmodern libmagic-dev libproj-dev gdal-bin \
+    python-dev libsasl2-dev libldap2-dev python-enchant \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
-COPY pythia ./pythia
-COPY sdis ./sdis
-COPY favicon.ico gunicorn.ini manage.py requirements.txt ./
-RUN apt-get update -y \
-  && apt-get install -y wget git libmagic-dev gcc binutils libproj-dev gdal-bin libsasl2-dev libldap2-dev libssl-dev python-dev python-enchant \
-  && pip install --no-cache-dir -r requirements.txt \
-  && python manage.py collectstatic --noinput
-
+COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN python manage.py collectstatic --clear --noinput -l
 EXPOSE 8210
 CMD ["gunicorn", "sdis.wsgi", "--config", "gunicorn.ini"]
+HEALTHCHECK --interval=1m --timeout=5s --start-period=10s --retries=3 \
+  CMD ["wget", "-q", "-O", "-", "http://localhost:8210"]
