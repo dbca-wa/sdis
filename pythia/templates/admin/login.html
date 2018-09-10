@@ -18,12 +18,10 @@
     <div class="row-fluid">
       <div class="span8">
         <div class="agency-freespace">
-          <a class="brand pull-left" href="/">
-            <img src="/static/pbs/img/waTextBlack_80-bluebg.gif" alt="Government of Western Australia" />
-          </a>
           <h1 id="site-title" class="site-logo pull-left">
             <a href="/">
-              <img src="/static/pbs/img/logo-dpaw.gif" alt="Department of Biodiversity, Conservation and Attractions" />
+              <img src="{% static 'img/logo-dbca.jpg' %}"
+              alt="Department of Biodiversity, Conservation and Attractions" />
               Department of Biodiversity, Conservation and Attractions
             </a>
           </h1>
@@ -83,7 +81,7 @@
 
 
 <script>
-$.backstretch("{% static 'pbs/img/login_background.jpg' %}");
+$.backstretch("{% static 'img/login_background.jpg' %}");
 </script>
 </div>
 </div>

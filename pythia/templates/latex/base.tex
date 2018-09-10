@@ -12,15 +12,15 @@
   \renewcommand{\footrulewidth}{0.1pt}
   {% block header %}
   {% if headers == True %}
-  \fancyhead[L]{ 
+  \fancyhead[L]{
     \href{% templatetag openbrace %}{{ baseurl|safe }}}{
-    \includegraphics[scale=0.6]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}
+    \includegraphics[scale=0.6]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca.jpg}}
   }
-  \fancyhead[R]{ 
+  \fancyhead[R]{
       \hfill
-      \href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System} 
-      \newline 
-      \href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}} 
+      \href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}
+      \newline
+      \href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{% templatetag openbrace %}{{ subtitle }}}
   }
   {% endif %}
   {% endblock %}
@@ -47,7 +47,7 @@
 \begin{minipage}[t]{0.28\textwidth}
 \begin{flushleft}
 \href{% templatetag openbrace %}{{ baseurl|safe }}}{
-  \includegraphics[scale=0.6]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dpaw.png}}
+  \includegraphics[scale=0.6]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca.jpg}}
 \end{flushleft}
 \end{minipage}
 \begin{minipage}[b]{0.7\textwidth}

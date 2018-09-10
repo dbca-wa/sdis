@@ -24,7 +24,7 @@ GOOGLE_ANALYTICS_KEY = env('GOOGLE_ANALYTICS_KEY', default='')
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = [
+ALLOWED_HOSTS = env('DJANGO_ALLOWED_HOSTS', default=[
     'localhost',
     '127.0.0.1',
     'sdis.dpaw.wa.gov.au',
@@ -37,7 +37,7 @@ ALLOWED_HOSTS = [
     'sdis.dbca.wa.gov.au',
     'aws-eco-001',
     'aws-eco-002'
-]
+])
 
 INTERNAL_IPS = ['127.0.0.1', '::1']
 
@@ -131,7 +131,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "{0}/1".format(env('REDIS_URL', default='redis://127.0.0.1:6379')),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient", }
     }
 }

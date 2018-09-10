@@ -11,8 +11,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
-COPY . .
+COPY requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
 RUN python manage.py collectstatic --clear --noinput -l
 EXPOSE 8210
 CMD ["gunicorn", "sdis.wsgi", "--config", "gunicorn.ini"]
