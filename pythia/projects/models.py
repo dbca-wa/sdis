@@ -1265,7 +1265,7 @@ class StudentProject(Project):
         (LEVEL_PDC, "Post-Doc"),
         (LEVEL_PHD, "PhD"),
         (LEVEL_MSC, "MSc"),
-        (LEVEL_HON, "BSc (Honours)"),
+        (LEVEL_HON, "BSc Honours"),
         (LEVEL_4TH, "Yr 4 intern"),
         (LEVEL_3RD, "3rd year"),
         (LEVEL_UND, "Undergraduate project"),
