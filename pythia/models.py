@@ -1213,7 +1213,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 self.middle_initials,  # remember these are full initials
                 self.last_name,
                 self.get_affiliation())
-        return full_name.replace("  ", " ")
+        return full_name.replace("  ", " ").strip()
 
     @property
     def abbreviated_name_no_affiliation(self):
