@@ -430,12 +430,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         'area_list_dpaw_district',
     )
     search_fields = (
-        'title_plain',
+        'title',
         # 'program__name',
         'comments',
-        'team_list_plain',
-        'tagline_plain',
-        'keywords_plain',
+        'tagline',
+        'keywords',
         'area_list_nrm_region',
         'area_list_ibra_imcra_region',
         'area_list_dpaw_region',
