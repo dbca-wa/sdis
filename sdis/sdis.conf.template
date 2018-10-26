@@ -4,6 +4,6 @@ stopasgroup=true
 autostart=true
 autorestart=true
 directory=/path/to/repo/sdis
-#command=/path/to/virtualenvs/sdis/bin/honcho start
-command=/home/CORPORATEICT/florianm/.virtualenvs/sdis/bin/gunicorn sdis.wsgi --config gunicorn.ini
+command=/path/to/virtualenvs/sdis/bin/honcho start
+#command=/home/CORPORATEICT/florianm/.virtualenvs/sdis/bin/gunicorn sdis.wsgi --config gunicorn.ini
 environment=PATH="/path/to/virtualenvs/sdis/bin/:%(ENV_PATH)s",PYTHONUNBUFFERED="true"
