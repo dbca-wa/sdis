@@ -19,6 +19,7 @@ import copy
 
 
 class ArrayFieldWidget(widgets.TextInput):
+
     def render(self, name, value, *args, **kwargs):
         html = super(ArrayFieldWidget, self).render(
             name, value, *args, **kwargs)
@@ -36,8 +37,8 @@ class ArrayFieldWidget(widgets.TextInput):
         return output
 
 
-
 class AreasWidgetWrapper(widgets.Widget):
+
     def __init__(self, widget):
         self.widget = widget
         self.attrs = widget.attrs
@@ -92,23 +93,23 @@ class InlineEditWidgetWrapper(widgets.Widget):
         (widgets.Textarea, 'pythia.inlineEditTextarea("%s", "%s");'),
         (widgets.Select, 'pythia.inlineEditSelect("%s", "%s");'),
         (widgets.Widget, 'pythia.inlineEditWidget("%s", "%s");'),
-        )
+    )
 
     def __init__(self, widget):
         self.widget = widget
         self.attrs = widget.attrs
 
-    @property
-    def media(self):
-        """Load custom static assets depending on widget class."""
-        if isinstance(self.widget, widgets.Textarea):
-            cdn = 'https://static.dpaw.wa.gov.au/static/libs/'
-            return forms.Media(
-                js=[cdn + 'tinymce/4.3.12/tinymce.min.js',
-                    cdn + 'tinymce/4.3.12/jquery.tinymce.min.js'
-                    ]) + self.widget.media
-        else:
-            return self.widget.media
+    # @property
+    # def media(self):
+    #     """Load custom static assets depending on widget class."""
+    #     if isinstance(self.widget, widgets.Textarea):
+    #         cdn = 'https://static.dpaw.wa.gov.au/static/libs/'
+    #         return forms.Media(
+    #             js=[cdn + 'tinymce/4.3.12/tinymce.min.js',
+    #                 cdn + 'tinymce/4.3.12/jquery.tinymce.min.js'
+    #                 ]) + self.widget.media
+    #     else:
+    #         return self.widget.media
 
     def __deepcopy__(self, memo):
         obj = copy.copy(self)
@@ -138,7 +139,7 @@ class InlineEditWidgetWrapper(widgets.Widget):
         if self.form.instance.pk:
             url = reverse('admin:%s_%s_change' % (
                 opts.app_label, opts.model_name),
-                          args=(quote(self.form.instance.pk),))
+                args=(quote(self.form.instance.pk),))
 
         output = [self.widget.render(name, value, *args, **kwargs)]
         # name - input name, value, kwargs['attrs']['id'] input id
@@ -224,11 +225,11 @@ class LocationWidget(widgets.MultiWidget):
 
     def format_output(self, rendered_widgets):
         return rendered_widgets[0] + ' - ' + rendered_widgets[1] + 'km(s) ' +\
-        rendered_widgets[2] + ' of ' + rendered_widgets[3]
+            rendered_widgets[2] + ' of ' + rendered_widgets[3]
 
 # TODO: this code should work for Django 1.6
 #
-#class CheckboxFieldRenderer(widgets.CheckboxFieldRenderer):
+# class CheckboxFieldRenderer(widgets.CheckboxFieldRenderer):
 #    def render(self):
 #        output = []
 #        for widget in self:
@@ -236,14 +237,16 @@ class LocationWidget(widgets.MultiWidget):
 #        return mark_safe('\n'.join(output))
 #
 #
-#class CheckboxSelectMultiple(widgets.CheckboxSelectMultiple):
+# class CheckboxSelectMultiple(widgets.CheckboxSelectMultiple):
 #    renderer = CheckboxFieldRenderer
 
 
 # This code is from Django 1.5
 class CheckboxSelectMultiple(SelectMultiple):
+
     def render(self, name, value, attrs=None, choices=()):
-        if value is None: value = []
+        if value is None:
+            value = []
         has_id = attrs and 'id' in attrs
         final_attrs = self.build_attrs(attrs, name=name)
         output = []

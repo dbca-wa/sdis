@@ -27,6 +27,19 @@ Deployment
 * Create a supervisor config following `sdis/sdis.conf.template`
 * Run SDIS in production mode with `honcho start`, or orchestrate with supervisor
 
+Note: [This bug](https://code.djangoproject.com/ticket/20036) could throw an error like
+"django GEOSException: Could not parse version info string 3.6.2-CAPI...".
+
+Patch [django/contrib/gis/geos/libgeos.py](https://github.com/django/django/commit/747f7d25490abc3d7fdb119f0ce3708d450eb4c2#diff-e0475de5c597e1c67bb40752a38f2276)
+as follows:
+```
+ version_regex = re.compile(
+     r'^(?P<version>(?P<major>\d+)\.(?P<minor>\d+)\.(?P<subminor>\d+))'
+     r'((rc(?P<release_candidate>\d+))|dev)?-CAPI-(?P<capi_version>\d+\.\d+\.\d+)( .*)?$')
+```
+
+Note the changed `( .*)?` group at the end to capture the version hash.
+
 CI
 ---
 
