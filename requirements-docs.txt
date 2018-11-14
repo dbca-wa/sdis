@@ -9,7 +9,7 @@ mock
 Django==1.6.5       # rq.filter: >=1.6,<1.7
 
 # DPaW custom
-https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
+# https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
 # provides:
 # django-confy>=1.0.4
 django-extensions==1.6.5
