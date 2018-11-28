@@ -1615,6 +1615,9 @@ def refresh_project_cache(p):
         p.save(update_fields=['student_list_plain', 'academic_list_plain', ])
         # p.staff_list_plain = p.get_staff_list_plain()
         # p.save(update_fields=['staff_list_plain'])
+    if (p._meta.model_name == 'collaborationproject'):
+        p.staff_list_plain = p.get_staff_list_plain()
+        p.save(update_fields=['staff_list_plain'])
     return True
 
 
