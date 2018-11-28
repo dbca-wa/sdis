@@ -1,3 +1,4 @@
+{% load staticfiles%}
 \documentclass[version=last,
     paper=a4,                               % paper size
     10pt,                                   % default font size
@@ -27,7 +28,9 @@
 % Header (inner, center, outer)
 \ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{\textbf{% templatetag openbrace %}{{ subtitle }}}}}
 %\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}}
-\ohead{\href{https://www.dpaw.wa.gov.au/about-us/science-and-research}{\includegraphics[height=8mm, keepaspectratio]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca-bcs.jpg}}}
+\ohead{\href{https://www.dbca.wa.gov.au/science/10-biodiversity-and-conservation-science}{
+\includegraphics[height=8mm, keepaspectratio]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca-bcs.jpg}}
+}
 
 % Footer (inner, center, outer)
 \ifoot{\RaggedRight\leftmark}                       % Chapter

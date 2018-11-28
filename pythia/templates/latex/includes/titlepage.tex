@@ -1,9 +1,10 @@
+{% load staticfiles %}
 %------------------------------------------------------------------------------%
 % Titlepage
 %------------------------------------------------------------------------------%
 \begin{titlepage}
 \null\vfil\vskip 60pt                       % 60 pt vspace
-\setlength{\parindent}{2cm}                 % Indent left 3 cm
+\setlength{\parindent}{20pt}                 % Indent left 3 cm
 {\Large\bfseries Department of\par}
 {\huge\bfseries Biodiversity, Conservation and Attractions\par}
 {\Large Biodiversity and Conservation Science\par Annual Research Report\par}
@@ -14,8 +15,7 @@
 \centering
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=15cm]%
-    {% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca-bcs.jpg}
+    \includegraphics[width=0.9\linewidth]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca-bcs.jpg}}}
     \label{fig:departmental-logo}
 \end{figure}
 \end{titlepage}
