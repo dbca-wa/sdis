@@ -214,13 +214,12 @@ Contents
 %------------------------------------------------------------------------------%
 % Custom Tikz node for SDS diagram
 %------------------------------------------------------------------------------%
-\newcommand\mynode[6][]{
+\newcommand\mynode[5][]{
   \node[#1] (#2){
     \parbox{#3\relax}{
       \begin{center}
-      \textbf{#4}\\
-      #5\\
-      \footnotesize{#6}
+      \textbf{#4}\\%
+      #5%
       \end{center}
     }};}
 
