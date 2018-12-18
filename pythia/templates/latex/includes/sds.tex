@@ -32,7 +32,7 @@
     \mynode[below = of c10]{c11}{5.5cm}{Senior Policy Officer}{Kim Onton}
     \mynode[below = of c11]{c12}{5.5cm}{Business Manager}{Karen Rogers}
     \mynode[below = of c12]{c13}{5.5cm}{Ecoinformatics Unit}{Paul Gioia}
-    \foreach \value in {10,11,12,13} \draw[->] (root.south) |- (c\value.east);
+    \foreach \value in {10,11,12,13} \draw[->] ([xshift=-3mm] root.south) |- (c\value.east);
 
     % Block 2: Programs, right below ED
     % Force vertical alignment by placing right of corresponding nodes
@@ -46,7 +46,7 @@
     \mynode[below = of c26]{c27}{7cm}{Fire Science}{Lachie McCaw, Ben Miller}
     \mynode[below = of c27]{c28}{7cm}{Rivers and Estuaries Science}{Kerry Trayler}
     \mynode[below = of c28]{c29}{7cm}{Marine Science}{Alan Kendrick}
-    \foreach \value in {20,21,22,23,24,25,26,27,28,29} \draw[->] (root.south) |- (c\value.west);
+    \foreach \value in {20,21,22,23,24,25,26,27,28,29} \draw[->] ([xshift=3mm] root.south) |- (c\value.west);
 
     \end{tikzpicture}
     {% endif %}

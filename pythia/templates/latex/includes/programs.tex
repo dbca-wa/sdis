@@ -16,7 +16,7 @@
     \addcontentsline{toc}{chapter}{% templatetag openbrace %}{{ program.name|striptags }}}
     \chaptermark{% templatetag openbrace %}{{ program.name|striptags }}}
     \paragraph*{Program Leader: {{ program.program_leader.get_full_name|striptags }}}
-    % {\small {{ program.introduction|html2latex }}} % Deactivated 2017-18
+    {\small {{ program.introduction|html2latex }}}
     {% for report in program_reports.list %}
       {% include "latex/includes/project.tex" with project=report.project %}
     {% endfor %}
