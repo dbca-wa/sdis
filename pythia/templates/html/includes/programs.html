@@ -7,7 +7,7 @@
     <div class="program_heading">{{ program }}</div>
     <div class="program_content">
         <div class="program_leader">{{ program.program_leader.get_full_name }}</div>
-        <div class="program_intro">{{ program.introduction|safe }}</div>
+        <!-- <div class="program_intro">{{ program.introduction|safe }}</div> -->
         {% for report in program_reports.list %}
         <div class="project_title">{{ report.project.project_title_html|safe }}</div>
         <div class="project_number">{{ report.project.project_type_year_number }}</div>
