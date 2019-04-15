@@ -13,10 +13,11 @@
 
 {% block content %}
 {% include "latex/includes/project_title_section.tex" %}
+{% as_latex original "goal" 'section' %}
+{% as_latex original "reason" 'section' %}
 {% as_latex original "scientific_outputs" 'section' %}
 {% as_latex original "knowledge_transfer" 'section' %}
 {% as_latex original "data_location" 'section' %}
 {% as_latex original "hardcopy_location" 'section' %}
-{% as_latex original "backup_location" 'section' %}
 {% endblock %}
 
