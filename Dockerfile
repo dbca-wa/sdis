@@ -15,7 +15,7 @@ COPY requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 RUN python manage.py collectstatic --clear --noinput -l
-EXPOSE 8210
+EXPOSE 8080
 CMD ["gunicorn", "sdis.wsgi", "--config", "gunicorn.ini"]
 HEALTHCHECK --interval=1m --timeout=5s --start-period=10s --retries=3 \
   CMD ["wget", "-q", "-O", "-", "http://localhost:8210"]
