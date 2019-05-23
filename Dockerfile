@@ -11,7 +11,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app
-COPY requirements.txt ./requirements.txt
+COPY requirements_docker.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 RUN python manage.py collectstatic --clear --noinput -l
