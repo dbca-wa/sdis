@@ -24,20 +24,10 @@ GOOGLE_ANALYTICS_KEY = env('GOOGLE_ANALYTICS_KEY', default='')
 
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = env('DJANGO_ALLOWED_HOSTS', default=[
-    'localhost',
-    '127.0.0.1',
-    'sdis.dpaw.wa.gov.au',
-    'sdis-dev.dpaw.wa.gov.au',
-    'sdis-test.dpaw.wa.gov.au',
-    'sdis-uat.dpaw.wa.gov.au',
-    'static.dpaw.wa.gov.au',
-    'static.dbca.wa.gov.au',
-    'sdis-internal.dbca.wa.gov.au',
-    'sdis.dbca.wa.gov.au',
-    'aws-eco-001',
-    'aws-eco-002'
-])
+if not DEBUG:
+    ALLOWED_HOSTS = env('ALLOWED_HOSTS', 'localhost').split(',')
+else:
+    ALLOWED_HOSTS = ['*']
 
 INTERNAL_IPS = ['127.0.0.1', '::1']
 
