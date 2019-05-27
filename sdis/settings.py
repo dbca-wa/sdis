@@ -301,21 +301,14 @@ LOGGING = {
     },
     'handlers': {
         'null': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'django.utils.log.NullHandler',
             'formatter': 'standard'
         },
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
-        },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/sdis.log'),
-            'formatter': 'verbose',
-            'maxBytes': '16777216'
         },
         'mail_admins': {
             'level': 'WARNING',
@@ -326,28 +319,23 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file', ],
+            'handlers': ['console'],
             'propagate': True,
-            'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['console', 'file', ],
-            'level': 'INFO',
+            'handlers': ['console'],
             'propagate': True,
         },
         'request': {
-            'handlers': ['console', 'file', ],
-            'level': 'INFO',
-            'propagate': True
+            'handlers': ['console'],
+            'propagate': True,
         },
         'sdis': {
-            'handlers': ['console', 'file', ],
-            'level': 'DEBUG',
-            'propagate': True
+            'handlers': ['console'],
+            'propagate': True,
         },
         'pythia': {
-            'handlers': ['console', 'file', 'mail_admins'],
-            'level': 'DEBUG',
+            'handlers': ['console', 'mail_admins'],
             'propagate': True
         }
     }
