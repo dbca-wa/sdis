@@ -286,25 +286,15 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': 'sdis.utils.show_toolbar'
 }
 
-# Logging configuration
+# Logging configuration - log to stdout/stderr
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
-            'format': '%(asctime)-.19s [%(levelname)s]  %(message)s'
-        },
-        'standard': {
-            'format': '[%(levelname)s] %(message)s',
-
-        },
+        'verbose': {'format': '%(asctime)-.19s [%(levelname)s] %(message)s'},
+        'standard': {'format': '[%(levelname)s] %(message)s'},
     },
     'handlers': {
-        'null': {
-            'level': 'INFO',
-            'class': 'django.utils.log.NullHandler',
-            'formatter': 'standard'
-        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
@@ -320,30 +310,31 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
+            'level': 'INFO',
             'propagate': True,
         },
         'django.request': {
             'handlers': ['console'],
-            'propagate': True,
-        },
-        'request': {
-            'handlers': ['console'],
+            'level': 'WARNING',
             'propagate': True,
         },
         'sdis': {
             'handlers': ['console'],
+            'level': 'INFO',
             'propagate': True,
         },
         'pythia': {
             'handlers': ['console', 'mail_admins'],
-            'propagate': True
+            'level': 'INFO',
+            'propagate': True,
         }
     }
 }
 
 
 if DEBUG:
-    ALLOWED_HOSTS = ['*']
+    LOGGING['loggers']['pythia']['level'] = 'DEBUG'
+    LOGGING['loggers']['sdis']['level'] = 'DEBUG'
 
     COMPRESS_ENABLED = False
 
@@ -359,34 +350,6 @@ if DEBUG:
     )
 
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-    # LOGGING['loggers'] = {
-    #     'django': {
-    #         'handlers': ['console', 'file', ],
-    #         'propagate': True,
-    #         'level': 'DEBUG',
-    #     },
-    #     'django.request': {
-    #         'handlers': ['console', 'file', ],
-    #         'level': 'DEBUG',
-    #         'propagate': False,
-    #     },
-    #     'request': {
-    #         'handlers': ['console', 'file', ],
-    #         'level': 'DEBUG',
-    #         'propagate': True
-    #     },
-    #     'sdis': {
-    #         'handlers': ['console', 'file', ],
-    #         'level': 'DEBUG',
-    #         'propagate': True
-    #     },
-    #     'pythia': {
-    #         'handlers': ['console', 'file', ],
-    #         'level': 'DEBUG',
-    #         'propagate': True
-    #     }
-    # }
 
     # SDIS-260: cached template loader crashes debug toolbar template source
     TEMPLATE_LOADERS = (
