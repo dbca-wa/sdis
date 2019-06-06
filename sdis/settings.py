@@ -120,9 +120,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 # {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', }
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "{0}/1".format(env('REDIS_URL', default='redis://127.0.0.1:6379')),
-        "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient", }
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        'LOCATION': 'django_cache_table', }
     }
 }
 
