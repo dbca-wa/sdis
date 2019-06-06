@@ -121,7 +121,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        'LOCATION': 'django_cache_table', }
+        'LOCATION': 'django_cache_table'
     }
 }
 
