@@ -21,6 +21,55 @@ Development
 Deployment
 ----------
 
+### Local environment
+
+#### Set up virtualenv
+
+```
+pip3 install virtualenvwrapper           
+
+# Add to ~/.bashrc
+export WORKON_HOME=~/.venv
+export PROJECT_HOME=~/projects
+source /usr/local/bin/virtualenvwrapper.sh
+
+source ~/.bashrc                        
+mkproject sdis               
+
+# Jumps you into ~/projects/sdis
+git clone git@github.com:dbca-wa/sdis.git .
+sudo apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev
+pip install -r requirements_docker.txt                                                                                  
+```
+
+#### Set up database
+Install postgres. Create role "sdis" with superuser and login privileges. Create database "sdis" with owner "sdis".
+Install `sudo apt install openssh-server` to receive files via `scp`.
+
+Transfer prod db:
+
+On the workload `db` in namespace `sdis`  through [rancher](https://rancher.dbca.wa.gov.au/):
+pg_dump the database, install openssh, scp the dump to your local machine (USER and IP).
+
+```
+root@db-0:/# pg_dump -d sdis_prod -U sdis -Fc > /tmp/sdis.dump
+root@db-0:/# apt update && apt install -y openssh-client
+root@db-0:/# scp /tmp/sdis.dump USER@IP:/home/florian/
+```
+
+On the local machine, restore the database from the dump:
+```
+pg_restore -h localhost -d sdis -U sdis < ~/sdis.dump
+```
+
+#### Media files
+In rancher, workload sdis_prod, shell:
+```
+oot@prod-6f5d5b9867-frfw8:/usr/src/app# apt update && apt install -y openssh-client rsync
+oot@prod-6f5d5b9867-frfw8:/usr/src/app# rsync -Pavvr media/ USER@IP:/home/USER/projects/sdis/media/
+```
+
+
 * Rename `.env.template` to `.env`, enter your confidential settings.
 * Run `fab deploy`.
 * Set file permissions and ownership (media, logs) for code
@@ -32,6 +81,7 @@ Note: [This bug](https://code.djangoproject.com/ticket/20036) could throw an err
 
 Patch [django/contrib/gis/geos/libgeos.py](https://github.com/django/django/commit/747f7d25490abc3d7fdb119f0ce3708d450eb4c2#diff-e0475de5c597e1c67bb40752a38f2276)
 as follows:
+
 ```
  version_regex = re.compile(
      r'^(?P<version>(?P<major>\d+)\.(?P<minor>\d+)\.(?P<subminor>\d+))'
@@ -39,6 +89,8 @@ as follows:
 ```
 
 Note the changed `( .*)?` group at the end to capture the version hash.
+
+
 
 CI
 ---
