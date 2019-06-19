@@ -239,7 +239,11 @@ class ScienceProjectModelTests(BaseTestCase):
 
         self.scp = self.project.documents.instance_of(ConceptPlan).get()
 
+        self.superuser.set_password('test')
+        self.superuser.save()
         self.client = Client()
+        res = self.client.post('/login', {'username':'admin', 'password':'test'})
+        
         self.url = reverse('admin:documents_conceptplan_change',
                            args=(self.scp.id,))
         self.tx_url = 'admin:documents_conceptplan_transition?transition={0}'
@@ -677,6 +681,10 @@ class ScienceProjectModelTests(BaseTestCase):
         pc.seek_review()
         pc.seek_approval()
         pc.approve()
+        # Test PDF output
+        print("  Check ProjectClosure PDF output")
+        res = self.client.get(pc.get_absolute_url() + "download/pdf/")
+        self.assertEqual(res.status_code, 200)
         print("  Check that {0} is approved".format(pc.debugname))
         self.assertEqual(pc.status, Document.STATUS_APPROVED)
         self.project = pc.project    # NOTE pc.project has latest change
