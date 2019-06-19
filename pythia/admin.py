@@ -37,6 +37,8 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django_select2 import AutoModelSelect2Field, Select2Widget
 from django_tablib.admin import TablibAdmin
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 
 from pythia.forms import (
     SdisModelForm, BaseInlineEditForm,
@@ -50,6 +52,12 @@ Breadcrumb = namedtuple('Breadcrumb', ['name', 'url'])
 
 # -----------------------------------------------------------------------------#
 # swingers.sauth.AuditAdmin, swingers.admin.DetailAdmin
+
+class NeverCacheMixin(object):
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        return super(NeverCacheMixin, self).dispatch(*args, **kwargs)
+
 
 
 class DetailAdmin(ModelAdmin):
@@ -492,7 +500,7 @@ class UserAdmin(DjangoUserAdmin):
         return PythiaUserForm
 
 
-class DownloadAdminMixin(ModelAdmin):
+class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
     """Mixin providing download as PDF, Latex or simple HTML."""
 
     download_template = ""
@@ -526,6 +534,7 @@ class DownloadAdminMixin(ModelAdmin):
         )
         return urlpatterns + super(DownloadAdminMixin, self).get_urls()
 
+    
     def simplehtml(self, request, object_id):
         """Render as simple HTML."""
         obj = self.get_object(request, unquote(object_id))
@@ -563,6 +572,7 @@ class DownloadAdminMixin(ModelAdmin):
         response.write(output)
         return response
 
+    
     def pdf(self, request, object_id):
         """Render as PDF using Latex."""
         obj = self.get_object(request, unquote(object_id))
@@ -649,6 +659,7 @@ class DownloadAdminMixin(ModelAdmin):
             response.write(f.read())
 
         return response
+
 
     def latex(self, request, object_id):
         """Render as Latex source code."""
