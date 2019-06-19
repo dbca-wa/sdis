@@ -13,21 +13,22 @@
 
   <!-- Site-level CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"
-        integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-        integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
-        integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
+    integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" 
+    integrity="sha256-7s5uDGW3AHqw6xtJmNNtr+OBRJUlgkNJEo78P4b0yRw=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.min.css" 
+    integrity="sha256-o8bM0Z5cFvrvvvQp0EJFi4LICvBA9FCx7iCNuojVsN8=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/handsontable/7.1.0/handsontable.full.min.css" 
+    integrity="sha256-nmaH3Bq6F7njZD0wdBD32m4k5TBxYbx/8NFlcFE5LJQ=" crossorigin="anonymous" />
   <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Lato" />
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" 
+    integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
   {{ form.media.css }}
 
-  <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />
-  <link rel="stylesheet" type="text/css" href="{% static "admin/css/widgets.css" %}">
-  <link rel="stylesheet" type="text/css" href="{% static "css/pythia-ext.css" %}">
-  <link rel="stylesheet" type="text/css" href="{% static "css/changelists.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'admin/css/dashboard.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'admin/css/widgets.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/pythia-ext.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/changelists.css' %}" />
   {% compress css %}
   {% endcompress %}
   <!-- /Site-level CSS -->
@@ -36,30 +37,37 @@
   {% block extrastyle %}{% endblock %}
   <!-- /Page-level CSS -->
 
+  {% block javascript%}
   <!-- Site-level JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" 
+    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" 
+    integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" 
+    integrity="sha256-0rguYS0qgS6L4qVzANq4kjxPLtvnp5nn2nB5G1lWRv4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js" 
+    integrity="sha256-KXn5puMvxCw+dAYznun+drMdG1IFl3agK0p/pqT9KAo=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.0/pikaday.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/zeroclipboard/2.3.0/ZeroClipboard.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-handsontable/0.10.2/jquery.handsontable.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/js/jquery.tablesorter.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.8.5/tinymce.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/favico.js/0.3.10/favico.min.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handsontable/7.1.0/handsontable.full.min.js" 
+    integrity="sha256-Dm7JYc3FGyCsjt3Lsa2TsGVACSw5FawFNA6qNv3rE3M=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.1/js/jquery.tablesorter.min.js" 
+    integrity="sha256-uC1JMW5e1U5D28+mXFxzTz4SSMCywqhxQIodqLECnfU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.8.5/tinymce.min.js" 
+    integrity="sha256-BWGlECOM0f4OdMtyz5KsxTeW4S+FPuDvva6yNDjWBJo=" crossorigin="anonymous"></script>    
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.8.5/jquery.tinymce.min.js" 
+    integrity="sha256-nws9gG0l3dJYDL46Oc93epZ4MuxrIUBeeK8YiDPU6Cg=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/favico.js/0.3.10/favico.min.js" 
+    integrity="sha256-i265HmNQ6FYdanwd4Tvt6Phby2Ht/9KOGQ3cromZq5Y=" crossorigin="anonymous"></script>
 
   <script src="{% static 'js/pythia.js' %}"></script>
   <script src="{% static 'js/pythia-magic.js' %}"></script>
   <script>
   window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";
   // fix standard addrelated popup closure
-  var SelectBox = SelectBox || {
-      add_to_cache: function() {},
-      redisplay: function() { window.location.reload(true); }
-  };
+  var SelectBox = SelectBox || {add_to_cache: function() {}, redisplay: function() { window.location.reload(true); }};
   </script>
   {% google_analytics %}
   {% compress js %}
@@ -71,6 +79,7 @@
   <!-- /Page-level JS -->
 
   {{ form.media.js }}
+  {% endblock %}
 </head>
 
 <!-- Application navigation links -->
@@ -474,9 +483,7 @@
 <!-- /Footer -->
 {% endblock %}
 
-{% endblock %}
 <!-- template pythia/templates/admin/pythia/base.html -->
 </body>
-
-
+{% endblock %}
 </html>

@@ -9,17 +9,16 @@ import os
 import sys
 from unipath import Path
 
-from django_auth_ldap.config import (
-    LDAPSearch, GroupOfNamesType, LDAPSearchUnion)
+from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType, LDAPSearchUnion)
 
 BASE_DIR = Path(__file__).ancestor(2)
 PROJECT_DIR = os.path.join(BASE_DIR, 'pythia')
 sys.path.insert(0, PROJECT_DIR)
 
 SECRET_KEY = env('SECRET_KEY', default='foo')
-DEBUG = env('DEBUG', default=False)
-CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
-SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
+DEBUG = env('DJANGO_DEBUG', default=False)
+CSRF_COOKIE_SECURE = env('DJANGO_CSRF_COOKIE_SECURE', default=True)
+SESSION_COOKIE_SECURE = env('DJANGO_CSRF_COOKIE_SECURE', default=True)
 GOOGLE_ANALYTICS_KEY = env('GOOGLE_ANALYTICS_KEY', default='')
 
 TEMPLATE_DEBUG = DEBUG
@@ -329,7 +328,6 @@ LOGGING = {
         }
     }
 }
-
 
 if DEBUG:
     LOGGING['loggers']['pythia']['level'] = 'DEBUG'
