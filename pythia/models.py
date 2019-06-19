@@ -1342,8 +1342,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         tag!
         """
         from pythia.projects.models import (
-            Project, ProjectMembership, ScienceProject, CoreFunctionProject,
-            CollaborationProject, StudentProject)
+            Project, ProjectMembership,
+            # ScienceProject, CoreFunctionProject,
+            # CollaborationProject, StudentProject
+        )
         from pythia.documents.models import (ConceptPlan, ProjectPlan)
         from datetime import datetime, timedelta
 
@@ -1396,16 +1398,20 @@ class User(AbstractBaseUser, PermissionsMixin):
             try:
                 if x.project.type == Project.SCIENCE_PROJECT:
                     res = proj_result
-                    proj = ScienceProject.objects.get(pk=x.project.pk)
+                    # proj = ScienceProject.objects.get(pk=x.project.pk)
+                    proj = Project.objects.get(pk=x.project.pk)
                 elif x.project.type == Project.CORE_PROJECT:
                     res = proj_result
-                    proj = CoreFunctionProject.objects.get(pk=x.project.pk)
+                    # proj = CoreFunctionProject.objects.get(pk=x.project.pk)
+                    proj = Project.objects.get(pk=x.project.pk)
                 elif x.project.type == Project.COLLABORATION_PROJECT:
                     res = collab_result
-                    proj = CollaborationProject.objects.get(pk=x.project.pk)
+                    # proj = CollaborationProject.objects.get(pk=x.project.pk)
+                    proj = Project.objects.get(pk=x.project.pk)
                 elif x.project.type == Project.STUDENT_PROJECT:
                     res = collab_result
-                    proj = StudentProject.objects.get(pk=x.project.pk)
+                    # proj = StudentProject.objects.get(pk=x.project.pk)
+                    proj = Project.objects.get(pk=x.project.pk)
                 else:
                     continue
 
