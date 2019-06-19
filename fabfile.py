@@ -5,7 +5,7 @@ Convenience wrapper for often used operations.
 from fabric.api import local, sudo, settings, env  # cd, run
 from fabric.colors import green, yellow  # red
 # from fabric.contrib.files import exists, upload_template
-
+from confy import env as confyenv
 env.hosts = ['localhost', ]
 
 
@@ -141,3 +141,23 @@ def doc():
     # [local(cmd.format("projects", i)) for i in pro_models]
 
     local("cd docs && make html && cd ..")
+
+def dbuild():
+    """Build Docker image."""
+    ver = confyenv("SDIS_RELEASE", default="0.1.0")
+    print(yellow("Building docker images with tag latest and {0}...".format(ver)))
+    local("docker build -t dbcawa/sdis -t dbcawa/sdis:{0} .".format(ver))
+
+def dpush():
+    """Push Docker image to Dockerhub. Requires `docker login`."""
+    print(yellow("Pushing docker images to DockerHub..."))
+    local("docker push dbcawa/sdis")
+
+def docker():
+    """Build and push docker images."""
+    dbuild()
+    dpush()
+    ver = confyenv("SDIS_RELEASE", default="0.1.0")
+    print(green(
+        "Updated Docker images are available on DockerHub "
+        "as dbcawa/sdis:latest and dbcawa/sdis:{0}".format(ver)))
