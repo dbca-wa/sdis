@@ -36,7 +36,7 @@ SITE_ID = 1
 SITE_URL = env('SITE_URL')
 SITE_NAME = 'SDIS'
 SITE_TITLE = 'Science Directorate Information System'
-APPLICATION_VERSION_NO = '4.0'
+APPLICATION_VERSION_NO = env("SDIS_VERSION", default="0.1")
 
 DATABASES = {'default': database.config()}
 ROOT_URLCONF = 'sdis.urls'
@@ -116,12 +116,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 
-# {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', }
 CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        'LOCATION': 'django_cache_table'
-    }
+    'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', }
+    # {"BACKEND": "django.core.cache.backends.db.DatabaseCache",'LOCATION': 'django_cache_table'}
 }
 
 # I8n

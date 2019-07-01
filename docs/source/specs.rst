@@ -288,7 +288,7 @@ The review and approval process exists to ensure and audit that the plan:
 * conforms to relevant corporate policy.
 
 Model fields
-^^^^^^^^^^^^
+------------
 * document - file
 * for each role: involves_X (y/n), determines whether role needs to review
 * for each role: endorsed by role Y, editable only to members of role
@@ -296,7 +296,7 @@ Model fields
 * authors - either plain text or SDIS user list
 
 Life cycle
-^^^^^^^^^^
+----------
 
 * RP is prepared by staff member who keeps working version on their desk.
 * RP is uploaded to SDIS as read-only PDF copy.
@@ -328,7 +328,7 @@ Life cycle
 * Document is filed and released to public (both external to SDIS).
 
 Questions
-^^^^^^^^^
+---------
 
 * Where is the point of truth for the approved document?
 * SDIS should rename "PL" to accommodate "Branch Manager", eg. "PL or BM"

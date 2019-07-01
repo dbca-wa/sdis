@@ -605,7 +605,7 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         response['Content-Disposition'] = '{0}; filename="{1}.pdf"'.format(
             disposition, downloadname)
 
-        logger.debug("PDF export: render to string")
+        logger.info("PDF export: render to string")
         output = render_to_string(
             "latex/" + template + ".tex", context,
             context_instance=RequestContext(request))
@@ -629,6 +629,7 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
             # If cache is valid just return
             else:
                 # Until we set outdated file don't cache
+                logger.info("PDF export: deleting old PDF")
                 os.remove(os.path.join(directory, filename))
                 # with open(filename, "r") as f:
                 #    response.write(f.read())
@@ -637,7 +638,7 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         with open(os.path.join(directory, texname), "w") as f:
             f.write(output.encode('utf-8'))
 
-        logger.debug("PDF export: processing tex to PDF")
+        logger.info("PDF export: processing tex to PDF")
         cmd = ['lualatex', "--interaction", "batchmode", "--output-directory",
                directory, texname]
         try:
@@ -645,13 +646,16 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
                 # 2 passes for numbering
                 try:
                     subprocess.check_output(cmd)
-                except subprocess.CalledProcessError:
+                except subprocess.CalledProcessError as e:
+                    logger.error("Error: {0}".format(e))
                     pass
-        except subprocess.CalledProcessError:
+        except subprocess.CalledProcessError as e:
+            logger.error("Error: {0}".format(e))
             if not os.path.exists(os.path.join(directory, filename)):
                 filename = filename.replace(".pdf", ".log")
                 response["Content-Type"] = "text"
             else:
+                logger.error("Error: path exists {0}".format(os.path.join(directory, filename)))
                 raise
 
         logger.debug("PDF export: returning PDF")

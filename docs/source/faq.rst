@@ -32,7 +32,7 @@ documents (Concept Plans and Project Closures) awaiting SCMT approval.
 This selection is of particular interest to SCMT members as pre-read for the SCMT meeting.
 
 Is there anything SDIS wants *me* to do?
-======================================
+========================================
 If there are any documents awaiting your input, and possibly any approval actions,
 they will be shown on the `SDIS home page <https://sdis.dpaw.wa.gov.au/>`_ under
 "My Tasks". Click each link, update the content as appropriate, save the changes,

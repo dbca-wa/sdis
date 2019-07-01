@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Fabric makefile.
 
 Convenience wrapper for often used operations.
@@ -6,6 +7,13 @@ from fabric.api import local, sudo, settings, env  # cd, run
 from fabric.colors import green, yellow  # red
 # from fabric.contrib.files import exists, upload_template
 from confy import env as confyenv
+import confy
+try:
+    confy.read_environment_file(".env")
+except:
+    pass
+
+
 env.hosts = ['localhost', ]
 
 
@@ -161,3 +169,16 @@ def docker():
     print(green(
         "Updated Docker images are available on DockerHub "
         "as dbcawa/sdis:latest and dbcawa/sdis:{0}".format(ver)))
+
+def tag():
+    """Tag code with SDIS_RELEASE and push to GitHub."""
+    ver = confyenv("SDIS_RELEASE", default="0.1.0")
+    local("git tag -a {0} -m 'Version {0}'".format(ver))
+    local("git push origin {0}".format(ver))
+    print(green("Code tagged as {0} and pushed to GitHub.".format(ver)))
+
+def release():
+    """Make release: doc, tag, docker."""
+    # doc()
+    tag()
+    docker()

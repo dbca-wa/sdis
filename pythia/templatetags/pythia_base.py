@@ -10,6 +10,13 @@ from django import template
 import pythia
 from pythia.utils import get_revision_hash
 
+from confy import env
+import confy
+try:
+    confy.read_environment_file(".env")
+except:
+    pass
+
 register = template.Library()
 
 
@@ -120,10 +127,9 @@ def as_html(original, field, tag='h1'):
 
 @register.simple_tag
 def get_version_info():
-    return "SDIS %(version)s (%(commit)s), Django %(django)s" % {
-        'version': pythia.get_version(),
-        'commit': get_revision_hash(),
-        'django': django.get_version(), }
+    return "SDIS %(version)s, Django %(django)s" % {
+        'version': env("SDIS_RELEASE", default="4.0.0"),
+        'django': django.get_version()}
 
 
 @register.inclusion_tag('latex/includes/as_latex.tex')
