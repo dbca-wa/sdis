@@ -580,6 +580,7 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         template = self.download_template
         texname = template + ".tex"
         filename = template + ".pdf"
+        logfilename = template + ".log"
         now = timezone.localtime(timezone.now())
         # timestamp = now.isoformat().rsplit(".")[0].replace(":", "")[:-2]
         downloadname = obj.__str__()
@@ -613,6 +614,7 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         directory = os.path.join(settings.MEDIA_ROOT, "reports", str(obj.id))
         if not os.path.exists(directory):
             os.makedirs(directory)
+        pdffile = os.path.join(directory, filename)
 
         # symlink MEDIA_ROOT so that relative project image paths work from
         # within the PDF directory
@@ -620,21 +622,10 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         if not os.path.lexists(virtual_media_root):
             os.symlink(settings.MEDIA_ROOT, virtual_media_root)
 
-        if os.path.exists(filename):
-            # if outdated then remove all pdfs
-            if os.path.exists("outdated"):
-                for f in os.listdir(directory):
-                    if os.path.splitext(f)[0] == ".pdf":
-                        os.remove(os.path.join(directory, f))
-            # If cache is valid just return
-            else:
-                # Until we set outdated file don't cache
-                logger.info("PDF export: deleting old PDF")
-                os.remove(os.path.join(directory, filename))
-                # with open(filename, "r") as f:
-                #    response.write(f.read())
-                # return response
-
+        if os.path.exists(pdffile):
+            logger.info("PDF export: deleting old PDF")
+            os.remove(pdffile)
+            
         with open(os.path.join(directory, texname), "w") as f:
             f.write(output.encode('utf-8'))
 
@@ -647,19 +638,21 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
                 try:
                     subprocess.check_output(cmd)
                 except subprocess.CalledProcessError as e:
-                    logger.error("Error: {0}".format(e))
+                    # logger.error("Expected return from lualatex: {0}".format(e))
                     pass
         except subprocess.CalledProcessError as e:
-            logger.error("Error: {0}".format(e))
-            if not os.path.exists(os.path.join(directory, filename)):
-                filename = filename.replace(".pdf", ".log")
+            if not os.path.exists(pdffile):
+                logger.error("Error creating PDF, returning log instead.")
                 response["Content-Type"] = "text"
+                with open(logfilename, "r") as f:
+                    response.write(f.read())
+                return response
             else:
-                logger.error("Error: path exists {0}".format(os.path.join(directory, filename)))
                 raise
 
-        logger.debug("PDF export: returning PDF")
-        with open(os.path.join(directory, filename), "r") as f:
+        logger.info("PDF export: returning PDF")
+        # Read *.pdf to response
+        with open(pdffile, "r") as f:
             response.write(f.read())
 
         return response

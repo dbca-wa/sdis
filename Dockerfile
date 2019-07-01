@@ -30,6 +30,7 @@ COPY fabfile.py favicon.ico gunicorn.ini manage.py ./
 COPY pythia ./pythia
 COPY sdis ./sdis
 RUN python manage.py collectstatic --clear --noinput -l
+USER www-data
 EXPOSE 8080
 HEALTHCHECK --interval=1m --timeout=5s --start-period=10s --retries=3 CMD ["wget", "-q", "-O", "-", "http://localhost:8080/"]
 CMD ["gunicorn", "sdis.wsgi", "--config", "gunicorn.ini"]
