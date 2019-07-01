@@ -651,10 +651,11 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
                 raise
 
         if not os.path.exists(pdffile):
-            logger.error("Error creating PDF, returning log instead.")
-            response["Content-Type"] = "text"
-            with open(logfile, "r") as f:
-                response.write(f.read())
+            logger.error("Error creating PDF!")
+            if os.path.exists(logfile):
+                response["Content-Type"] = "text"
+                with open(logfile, "r") as f:
+                    response.write(f.read())
             return response
 
         logger.info("PDF export: returning PDF")
