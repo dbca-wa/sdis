@@ -580,7 +580,7 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         template = self.download_template
         texname = template + ".tex"
         filename = template + ".pdf"
-        logfilename = template + ".log"
+        logfile = template + ".log"
         now = timezone.localtime(timezone.now())
         # timestamp = now.isoformat().rsplit(".")[0].replace(":", "")[:-2]
         downloadname = obj.__str__()
@@ -644,11 +644,18 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
             if not os.path.exists(pdffile):
                 logger.error("Error creating PDF, returning log instead.")
                 response["Content-Type"] = "text"
-                with open(logfilename, "r") as f:
+                with open(logfile, "r") as f:
                     response.write(f.read())
                 return response
             else:
                 raise
+
+        if not os.path.exists(pdffile):
+            logger.error("Error creating PDF, returning log instead.")
+            response["Content-Type"] = "text"
+            with open(logfile, "r") as f:
+                response.write(f.read())
+            return response
 
         logger.info("PDF export: returning PDF")
         # Read *.pdf to response

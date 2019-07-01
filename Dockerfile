@@ -6,7 +6,7 @@ LABEL description="Python 2.7.15-stretch plus Latex, GDAL and LDAP."
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install --yes \
   -o Acquire::Retries=10 --no-install-recommends \
-    texlive lmodern libmagic-dev libproj-dev gdal-bin \
+    texlive-full lmodern libmagic-dev libproj-dev gdal-bin \
     python-dev libsasl2-dev libldap2-dev python-enchant \
     postgresql-client openssh-client rsync \
   && apt-get clean \
@@ -23,8 +23,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Update the bug in django/contrib/gis/geos/libgeos.py
 # Reference: https://stackoverflow.com/questions/18643998/geodjango-geosexception-error
 RUN sed -i -e "s/ver = geos_version().decode()/ver = geos_version().decode().split(' ')[0]/" /usr/local/lib/python2.7/site-packages/django/contrib/gis/geos/libgeos.py
-
-RUN tlmgr init-usertree && tlmgr install gensymb
 
 # Install the project.
 FROM python_libs_sdis
