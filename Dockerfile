@@ -24,6 +24,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Reference: https://stackoverflow.com/questions/18643998/geodjango-geosexception-error
 RUN sed -i -e "s/ver = geos_version().decode()/ver = geos_version().decode().split(' ')[0]/" /usr/local/lib/python2.7/site-packages/django/contrib/gis/geos/libgeos.py
 
+RUN tlmgr init-usertree && tlmgr install gensymb
+
 # Install the project.
 FROM python_libs_sdis
 COPY fabfile.py favicon.ico gunicorn.ini manage.py ./
