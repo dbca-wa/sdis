@@ -1411,7 +1411,7 @@ class StudentProject(Project):
                     explanation="If a StudentProject should have been closed"
                     ", but an ARAR has erroneously requested an update, "
                     "the project team or their line management can close "
-                    "the project without any further process. Doing so will"
+                    "the project without any further process. Doing so will "
                     "remove the unwanted progress report.",
                     notify=True,)
     )
