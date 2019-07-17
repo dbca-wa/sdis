@@ -24,7 +24,7 @@ GOOGLE_ANALYTICS_KEY = env('GOOGLE_ANALYTICS_KEY', default='')
 TEMPLATE_DEBUG = DEBUG
 
 if not DEBUG:
-    ALLOWED_HOSTS = env('ALLOWED_HOSTS', 'localhost').split(',')
+    ALLOWED_HOSTS = env('ALLOWED_HOSTS', 'localhost', '127.0.0.1', '::1').split(',')
 else:
     ALLOWED_HOSTS = ['*']
 
