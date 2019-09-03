@@ -174,7 +174,7 @@ TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'pythia/templates'),)
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'pythia.backends.EmailBackend',
+    # 'pythia.backends.EmailBackend',
 )
 
 ANONYMOUS_USER_ID = 100000

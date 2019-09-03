@@ -66,13 +66,15 @@ h2 {
         <div class="col-sm-8 form-hack">{{ form.username }}</div>
     </div>
     <div class="form-group{% if form.password.errors %} error{% endif %}">
-        {% if form.password.errors %}<span class="help-block">{% for error in form.password.errors %}{{ error }}{% endfor %}</span>{% endif %}
-        <label for="id_password" class="col-sm-offset-1 col-sm-2 control-label">{{ form.password.label }}</label>
-        <div class="col-sm-8 form-hack">{{ form.password }}</div>
+      {% if form.password.errors %}
+        <span class="help-block">{% for error in form.password.errors %}{{ error }}{% endfor %}</span>
+      {% endif %}
+      <label for="id_password" class="col-sm-offset-1 col-sm-2 control-label">{{ form.password.label }}</label>
+      <div class="col-sm-8 form-hack">{{ form.password }}</div>
     </div>
     {{ form.this_is_the_login_form }}
     <div class="actions">
-            <input class="btn btn-primary btn-block btn-lg" type="submit" value="Log in" />
+      <input class="btn btn-primary btn-block btn-lg" type="submit" value="Log in" />
     </div>
 </form>
 
