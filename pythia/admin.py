@@ -602,10 +602,6 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         else:
             disposition = "attachment"
 
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = '{0}; filename="{1}.pdf"'.format(
-            disposition, downloadname)
-
         logger.info("PDF export: render to string")
         output = render_to_string(
             "latex/" + template + ".tex", context,
@@ -643,8 +639,9 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         except subprocess.CalledProcessError as e:
             if not os.path.exists(pdffile):
                 logger.error("Error creating PDF, returning log instead.")
-                response["Content-Type"] = "text"
+                
                 with open(logfile, "r") as f:
+                    response = HttpResponse(content_type='text')
                     response.write(f.read())
                 return response
             else:
@@ -653,17 +650,20 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         if not os.path.exists(pdffile):
             logger.error("Error creating PDF!")
             if os.path.exists(logfile):
-                response["Content-Type"] = "text"
                 with open(logfile, "r") as f:
+                    response = HttpResponse(content_type='text')
                     response.write(f.read())
             return response
 
-        logger.info("PDF export: returning PDF")
+        logger.info("PDF generation complete, returning PDF file.")
+
         # Read *.pdf to response
         with open(pdffile, "r") as f:
-            response.write(f.read())
-
-        return response
+            # response.write(f.read())
+            response = HttpResponse(f, content_type='application/pdf')
+            response['Content-Disposition'] = '{0}; filename="{1}.pdf"'.format(
+                disposition, downloadname)
+            return response
 
 
     def latex(self, request, object_id):
