@@ -15,7 +15,7 @@
             <a href="{% url 'admin:pythia_ararreport_download_pdf' original.pk %}"
                 target="_"
                 title="View PDF print version in new browser tab"
-                class="btn btn-xs btn-primary">PDF</a>
+                class="btn btn-xs btn-primary">Generate PDF</a>
 
             {% if request.user.is_superuser %}
             <!-- Superuser only: Tex, HTML; Edit -->
@@ -27,6 +27,10 @@
                 target="_"
                 title="View plain HTML version in new tab"
                 class="btn btn-xs btn-primary">HTML</a>
+            <a href="{{ MEDIA_URL }}/reports/{{ original.pk }}/arar.pdf"
+                target="_" rel="nofollow"
+                title="Download PDF"
+                class="btn btn-xs btn-primary">Download PDF</a>
             {% url opts|pythia_urlname:'change' original.pk|pythia_urlquote as url_change %}
             <a onclick="return showAddAnotherPopup(this);"
                 type="button"

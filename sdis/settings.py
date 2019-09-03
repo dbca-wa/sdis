@@ -4,12 +4,12 @@ An environment variable `DEBUG` toggles dev and prod settings within this file.
 Tests run by `fab test` explicitly use `sdis/test_settings.py`.
 """
 from confy import env, database  # cache
-import ldap
+# import ldap
 import os
 import sys
 from unipath import Path
 
-from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType, LDAPSearchUnion)
+# from django_auth_ldap.config import (LDAPSearch, GroupOfNamesType, LDAPSearchUnion)
 
 BASE_DIR = Path(__file__).ancestor(2)
 PROJECT_DIR = os.path.join(BASE_DIR, 'pythia')
@@ -24,7 +24,7 @@ GOOGLE_ANALYTICS_KEY = env('GOOGLE_ANALYTICS_KEY', default='')
 TEMPLATE_DEBUG = DEBUG
 
 if not DEBUG:
-    ALLOWED_HOSTS = env('ALLOWED_HOSTS', 'localhost', '127.0.0.1', '::1').split(',')
+    ALLOWED_HOSTS = env('ALLOWED_HOSTS', 'localhost, 127.0.0.1, ::1').split(',')
 else:
     ALLOWED_HOSTS = ['*']
 
@@ -186,42 +186,42 @@ LOGIN_REDIRECT_URL_FAILURE = LOGIN_URL
 LOGOUT_URL = '/logout/'
 LOGOUT_REDIRECT_URL = LOGOUT_URL
 
-# LDAP settings
-AUTH_LDAP_SERVER_URI = env('LDAP_SERVER_URI')
-AUTH_LDAP_BIND_DN = env('LDAP_BIND_DN')
-AUTH_LDAP_BIND_PASSWORD = env('LDAP_BIND_PASSWORD')
+# # LDAP settings -- deprecated
+# AUTH_LDAP_SERVER_URI = env('LDAP_SERVER_URI')
+# AUTH_LDAP_BIND_DN = env('LDAP_BIND_DN')
+# AUTH_LDAP_BIND_PASSWORD = env('LDAP_BIND_PASSWORD')
 
-AUTH_LDAP_ALWAYS_UPDATE_USER = False
-AUTH_LDAP_AUTHORIZE_ALL_USERS = True
-AUTH_LDAP_FIND_GROUP_PERMS = False
-AUTH_LDAP_MIRROR_GROUPS = False
-AUTH_LDAP_CACHE_GROUPS = False
-AUTH_LDAP_GROUP_CACHE_TIMEOUT = 300
+# AUTH_LDAP_ALWAYS_UPDATE_USER = False
+# AUTH_LDAP_AUTHORIZE_ALL_USERS = True
+# AUTH_LDAP_FIND_GROUP_PERMS = False
+# AUTH_LDAP_MIRROR_GROUPS = False
+# AUTH_LDAP_CACHE_GROUPS = False
+# AUTH_LDAP_GROUP_CACHE_TIMEOUT = 300
 
-AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
-    LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
-               "(sAMAccountName=%(user)s)"),
-    LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
-               "(mail=%(user)s)"),
-)
+# AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
+#     LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
+#                "(sAMAccountName=%(user)s)"),
+#     LDAPSearch("DC=corporateict,DC=domain", ldap.SCOPE_SUBTREE,
+#                "(mail=%(user)s)"),
+# )
 
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-    "DC=corporateict,DC=domain",
-    ldap.SCOPE_SUBTREE, "(objectClass=group)"
-)
+# AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+#     "DC=corporateict,DC=domain",
+#     ldap.SCOPE_SUBTREE, "(objectClass=group)"
+# )
 
-AUTH_LDAP_GLOBAL_OPTIONS = {
-    ldap.OPT_X_TLS_REQUIRE_CERT: False,
-    ldap.OPT_REFERRALS: False,
-}
+# AUTH_LDAP_GLOBAL_OPTIONS = {
+#     ldap.OPT_X_TLS_REQUIRE_CERT: False,
+#     ldap.OPT_REFERRALS: False,
+# }
 
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+# AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 
-AUTH_LDAP_USER_ATTR_MAP = {
-    'first_name': "givenName",
-    'last_name': "sn",
-    'email': "mail",
-}
+# AUTH_LDAP_USER_ATTR_MAP = {
+#     'first_name': "givenName",
+#     'last_name': "sn",
+#     'email': "mail",
+# }
 
 # # Django-tablib CSV export: can't configure cols/headers this way
 # TABLIB_MODELS = {
