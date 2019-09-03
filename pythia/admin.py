@@ -666,8 +666,8 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         msg = "PDF available at {0}".format(os.path.join(settings.MEDIA_URL, pdffile))
         logger.info(msg)
         messages.success(request, msg)
-        
-        return HttpResponseRedirect(request.path_info)
+
+        return HttpResponseRedirect(obj.get_absolute_url())
 
         # # Read *.pdf to response
         # with open(pdffile, "r") as f:
