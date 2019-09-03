@@ -27,10 +27,6 @@
                 target="_"
                 title="View plain HTML version in new tab"
                 class="btn btn-xs btn-primary">HTML</a>
-            <a href="{{ MEDIA_URL }}/reports/{{ original.pk }}/arar.pdf"
-                target="_" rel="nofollow"
-                title="Download PDF"
-                class="btn btn-xs btn-primary">Download PDF</a>
             {% url opts|pythia_urlname:'change' original.pk|pythia_urlquote as url_change %}
             <a onclick="return showAddAnotherPopup(this);"
                 type="button"
@@ -38,7 +34,11 @@
                 href="{{ url_change }}"
                 title="Click to edit this ARAR"><i
                 class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
-        {% endif %}
+            {% endif %}
+            <a href="{{ MEDIA_URL }}reports/{{ original.pk }}/arar.pdf"
+                target="_" rel="nofollow"
+                title="Download previously generated PDF"
+                class="btn btn-xs btn-primary">Download PDF</a>
         </div>
     </div>
     {% as_html original 'dm' 'h1' %}
