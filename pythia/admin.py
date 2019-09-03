@@ -572,6 +572,10 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         response.write(output)
         return response
 
+    def save_pdf(self, request, object_id):
+        """Render to local PDF file."""
+        pass
+
     
     def pdf(self, request, object_id):
         """Render as PDF using Latex."""
@@ -601,6 +605,10 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
             disposition = "inline"
         else:
             disposition = "attachment"
+
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = '{0}; filename="{1}.pdf"'.format(
+                disposition, downloadname)
 
         logger.info("PDF export: render to string")
         output = render_to_string(
@@ -655,15 +663,17 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
                     response.write(f.read())
             return response
 
-        logger.info("PDF generation complete, returning PDF file.")
+        msg = "PDF available at {0}".format(os.path.join(settings.MEDIA_URL, pdffile))
+        logger.info(msg)
+        messages.success(request, msg)
+        
+        return HttpResponseRedirect(request.path_info)
 
-        # Read *.pdf to response
-        with open(pdffile, "r") as f:
-            # response.write(f.read())
-            response = HttpResponse(f, content_type='application/pdf')
-            response['Content-Disposition'] = '{0}; filename="{1}.pdf"'.format(
-                disposition, downloadname)
-            return response
+        # # Read *.pdf to response
+        # with open(pdffile, "r") as f:
+        #     response.write(f.read())
+
+        # return response
 
 
     def latex(self, request, object_id):

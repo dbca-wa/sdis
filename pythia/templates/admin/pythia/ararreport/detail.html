@@ -13,7 +13,6 @@
         <div class="col-md-12">
             <!-- Public: PDF -->
             <a href="{% url 'admin:pythia_ararreport_download_pdf' original.pk %}"
-                target="_"
                 title="View PDF print version in new browser tab"
                 class="btn btn-xs btn-primary">Generate PDF</a>
 
@@ -36,7 +35,6 @@
                 class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
             {% endif %}
             <a href="{{ MEDIA_URL }}reports/{{ original.pk }}/arar.pdf"
-                target="_" rel="nofollow"
                 title="Download previously generated PDF"
                 class="btn btn-xs btn-primary">Download PDF</a>
         </div>
