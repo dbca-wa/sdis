@@ -54,7 +54,7 @@ class SSOLoginMiddleware(object):
             logout(request)
             return http.HttpResponseRedirect(request.META["HTTP_X_LOGOUT_URL"])
         if not request.user.is_authenticated() and "HTTP_REMOTE_USER" in request.META:
-            logger.info("User not authenticated and remote. Debug: {0}".format(settings.DEBUG))
+            # logger.info("User not authenticated and remote. Debug: {0}".format(settings.DEBUG))
             attributemap = {
                 "username": "HTTP_REMOTE_USER",
                 "last_name": "HTTP_X_LAST_NAME",
@@ -82,8 +82,8 @@ class SSOLoginMiddleware(object):
             user.save()
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
-        else:
-            logger.info("User not authenticated and local. Request: {0}".format(request.POST))
+        # else:
+            # logger.info("User {0} authenticated or local.".format(user))
             # user = authenticate(username=request.POST["username"], password=request.POST["password"])
 
 
