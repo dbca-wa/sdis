@@ -1225,6 +1225,7 @@ class ARARReportModelTests(TestCase):
         self.marge.delete()
         self.peter.delete()
 
+
     def test_new_arar(self):
         """Test new ARAR creates updates and changes project status."""
         print("\n  Fast-track {0} to active".format(self.sp.debugname))

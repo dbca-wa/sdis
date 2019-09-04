@@ -184,6 +184,11 @@ class ConceptPlanAdminTests(BaseTestCase):
                            args=(self.scp.id,))
         self.tx_url = 'admin:documents_conceptplan_transition?transition={0}'
 
+    def assert_200(self, url):
+        """GET a given URL and assert that the response has status 200 OK."""
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
     def test_everyone_can_view_conceptplan(self):
         """Test that everyone can view the ConceptPlan."""
         # get ConceptPlan detail
@@ -309,6 +314,7 @@ class ProjectPlanAdminTests(BaseTestCase):
         self.user = UserFactory.create(username='test')
         self.user.is_superuser = True
         self.user.save()
+
         # self.user.groups.add(self.smt)
         # self.user.groups.add(self.scd)
 
@@ -367,6 +373,16 @@ class ProjectPlanAdminTests(BaseTestCase):
         self.scp.approve()
         self.spp = self.project.documents.instance_of(ProjectPlan).get()
 
+    def assert_200(self, url):
+        """GET a given URL and assert that the response has status 200 OK."""
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def assert_302(self, url):
+        """GET a given URL and assert that the response has status 200 OK."""
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)        
+
     def test_everyone_can_view_projectplan(self):
         """Test that everyone can view the ProjectPlan."""
         pass
@@ -374,3 +390,14 @@ class ProjectPlanAdminTests(BaseTestCase):
     def test_only_team_can_change_projectplan(self):
         """Test that only team can change ProjectPlan."""
         pass
+
+    def test_projectplan_exports(self):
+        """Test document export."""
+        info = self.spp._meta.app_label, self.spp._meta.model_name
+        pdf_url = reverse('admin:%s_%s_download_pdf' % info, args=(self.spp.id,))
+        tex_url = reverse('admin:%s_%s_download_tex' % info, args=(self.spp.id,))
+        html_url = reverse('admin:%s_%s_download_html' % info, args=(self.spp.id,))
+        
+        self.assert_200(pdf_url)
+        # self.assert_200(tex_url)
+        # self.assert_200(html_url)

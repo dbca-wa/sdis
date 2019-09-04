@@ -13,30 +13,40 @@
         <div class="col-md-12">
             <!-- Public: PDF -->
             <a href="{% url 'admin:pythia_ararreport_download_pdf' original.pk %}"
-                title="View PDF print version in new browser tab"
+                title="Generate new PDF version"
                 class="btn btn-xs btn-primary">Generate PDF</a>
 
             {% if request.user.is_superuser %}
             <!-- Superuser only: Tex, HTML; Edit -->
-            <a href="{% url 'admin:pythia_ararreport_download_tex' original.pk %}"
+            <!-- <a href="{% url 'admin:pythia_ararreport_download_tex' original.pk %}"
                 target="_"
                 title="View Latex source code in new tab"
-                class="btn btn-xs btn-primary">Latex</a>
+                class="btn btn-xs btn-primary">
+                Latex
+            </a>
             <a href="{% url 'admin:pythia_ararreport_download_html' original.pk %}"
                 target="_"
                 title="View plain HTML version in new tab"
-                class="btn btn-xs btn-primary">HTML</a>
+                class="btn btn-xs btn-primary">
+                HTML
+            </a> -->
             {% url opts|pythia_urlname:'change' original.pk|pythia_urlquote as url_change %}
             <a onclick="return showAddAnotherPopup(this);"
                 type="button"
                 class="btn btn-primary btn-xs pull-right"
                 href="{{ url_change }}"
-                title="Click to edit this ARAR"><i
-                class="glyphicon glyphicon-pencil"></i>&nbsp;Edit</a>
+                title="Click to edit this ARAR">
+                <i class="glyphicon glyphicon-pencil"></i>
+                Edit
+            </a>
+            {% if original.pdf %}
+            <a href="{{ original.pdf.url }"
+                class="btn btn-xs btn-primary"
+                title="Download PDF">
+                Download PDF
+            </a>
             {% endif %}
-            <a href="{{ MEDIA_URL }}reports/{{ original.pk }}/arar.pdf"
-                title="Download previously generated PDF"
-                class="btn btn-xs btn-primary">Download PDF</a>
+            {% endif %}
         </div>
     </div>
     {% as_html original 'dm' 'h1' %}

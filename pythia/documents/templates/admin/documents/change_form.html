@@ -6,10 +6,15 @@
 {% endblock %}
 
 {% block object-tools-download %}
+{% if original.pdf %}
 <li class="pull-right">
-    <a href="{% url opts|pythia_urlname:'download_pdf' original.pk %}" 
-       target="_" 
-       title="View PDF in new tab">View PDF</a>
+    <a href="{{ original.pdf.url }}"
+       title="Download PDF">Download PDF</a>
+</li>
+{% endif %}
+<li class="pull-right">
+    <a href="{% url opts|pythia_urlname:'download_pdf' original.pk %}"
+       title="Generate PDF">Generate PDF</a>
 </li>
 {% endblock %}
 

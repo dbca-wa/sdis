@@ -34,6 +34,7 @@ from django.template.response import TemplateResponse
 from django.utils import timezone
 from django.utils.html import escape
 from django.utils.encoding import force_text
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django_select2 import AutoModelSelect2Field, Select2Widget
 from django_tablib.admin import TablibAdmin
@@ -576,7 +577,7 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         """Render to local PDF file."""
         pass
 
-    
+    @never_cache
     def pdf(self, request, object_id):
         """Render as PDF using Latex."""
         obj = self.get_object(request, unquote(object_id))
@@ -663,7 +664,18 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
                     response.write(f.read())
             return response
 
-        msg = "PDF available at {0}".format(os.path.join(settings.MEDIA_URL, pdffile))
+        try:
+            logger.info("Writing PDF to object")
+            from django.core.files import File
+            with open(pdffile) as f:
+                obj.pdf.save("{0}.pdf".format(downloadname), File(f))
+                obj.save()
+            logger.info("Saving PDF to object field 'pdf' finished.")
+        except e:
+            logger.info("Writing PDF to object failed: {0}".format(e))
+            pass
+
+        msg = mark_safe('PDF available <a href="{0}">here</a>.'.format(obj.pdf.url))
         logger.info(msg)
         messages.success(request, msg)
 

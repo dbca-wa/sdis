@@ -7,13 +7,13 @@ from __future__ import (division, print_function, unicode_literals,
                         absolute_import)
 from django import http
 from django.conf import settings
-from django.contrib.auth import login, logout, get_user_model
+from django.contrib.auth import login, logout, get_user_model, authenticate
 from django.db.models import signals
 from django.utils.functional import curry
-
+import logging
 from threading import local
 _thread_locals = local()
-
+logger = logging.getLogger(__name__)
 
 def get_first_user():
     """Return the superuser, typically the first user."""
@@ -48,11 +48,13 @@ class ThreadLocals(object):
 class SSOLoginMiddleware(object):
 
     def process_request(self, request):
+        
         User = get_user_model()
         if request.path.startswith('/logout') and "HTTP_X_LOGOUT_URL" in request.META:
             logout(request)
             return http.HttpResponseRedirect(request.META["HTTP_X_LOGOUT_URL"])
         if not request.user.is_authenticated() and "HTTP_REMOTE_USER" in request.META:
+            logger.info("User not authenticated and remote. Debug: {0}".format(settings.DEBUG))
             attributemap = {
                 "username": "HTTP_REMOTE_USER",
                 "last_name": "HTTP_X_LAST_NAME",
@@ -80,6 +82,9 @@ class SSOLoginMiddleware(object):
             user.save()
             user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
+        else:
+            logger.info("User not authenticated and local. Request: {0}".format(request.POST))
+            # user = authenticate(username=request.POST["username"], password=request.POST["password"])
 
 
 class AuditMiddleware(object):

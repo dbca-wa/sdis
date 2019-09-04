@@ -172,6 +172,12 @@ class ARARReport(pythia_models.Audit):
         verbose_name=_("Closed for submissions"),
         help_text=_("The cut-off date for any changes."))
 
+    pdf = models.FileField(
+        upload_to=reports_upload_to, 
+        blank=True, null=True,
+        editable=False,
+        help_text="The latest, greatest and PDFest version of all times")    
+
     class Meta:
         """Class opts."""
 

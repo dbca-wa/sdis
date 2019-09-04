@@ -38,9 +38,12 @@ def aptget():
     * libsasl2-dev (for python-ldap),
     * libenchant for pyenchant
     """
-    sudo("aptitude install -y binutils libproj-dev gdal-bin libxml2-dev "
-         "libxslt1-dev libsasl2-dev libenchant1c2a pandoc libsasl2-dev "
-         "python-dev libldap2-dev libssl-dev")
+    sudo("aptitude install -y "
+        "lmodern software-properties-common "
+        "libmagic-dev libproj-dev gdal-bin "
+        "python-dev libsasl2-dev python-enchant "
+        "postgresql-client openssh-client rsync "
+        "texlive-full texlive-xetex")
 
 
 def pip():

@@ -22,14 +22,8 @@ SESSION_COOKIE_SECURE = env('DJANGO_CSRF_COOKIE_SECURE', default=True)
 GOOGLE_ANALYTICS_KEY = env('GOOGLE_ANALYTICS_KEY', default='')
 
 TEMPLATE_DEBUG = DEBUG
-
-if not DEBUG:
-    ALLOWED_HOSTS = env('ALLOWED_HOSTS', 'localhost, 127.0.0.1, ::1').split(',')
-else:
-    ALLOWED_HOSTS = ['*']
-
 INTERNAL_IPS = ['127.0.0.1', '::1']
-
+ALLOWED_HOSTS = env('DJANGO_ALLOWED_HOSTS', '*,localhost,127.0.0.1,::1').split(',')
 
 # Application definition
 SITE_ID = 1
@@ -334,7 +328,7 @@ if DEBUG:
 
     INSTALLED_APPS += (
         'debug_toolbar',
-        'debug_toolbar_htmltidy',
+        # 'debug_toolbar_htmltidy',
         'django_pdb',
     )
 
@@ -350,6 +344,8 @@ if DEBUG:
         'django.template.loaders.filesystem.Loader',
         'django.template.loaders.app_directories.Loader',
     )
+
+    # SESSION_COOKIE_DOMAIN = "localhost"
 
 DJANGORESIZED_DEFAULT_SIZE = [600, 600]
 # DJANGORESIZED_DEFAULT_QUALITY = 75
