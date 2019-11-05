@@ -39,9 +39,6 @@ django-rest-swagger==2.0.7 # highest version for djangorestframework<=3.0.0, but
 django-filter==0.11.0      # highest version for Django<=1.8
 djangorestframework-csv==2.1.0
 
-# Auth
-# django-auth-ldap==1.2.0
-
 # Export to CSV
 django_tablib==3.2
 

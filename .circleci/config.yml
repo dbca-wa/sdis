@@ -34,8 +34,9 @@ jobs:
           command: |
             sudo chown -R circleci:circleci /usr/local/bin
             sudo chown -R circleci:circleci /usr/local/lib/python2.7/site-packages
-            mkdir -p logs staticfiles
+            mkdir -p logs staticfiles media/reports media/documents media/projects
             touch logs/sdis.log
+
 
       # Download and cache dependencies
       - restore_cache:
@@ -45,7 +46,7 @@ jobs:
           - v1-dependencies-
 
       - run:
-          name: Install system packages for GDAL, Pandoc, LDAP
+          name: Install system packages for GDAL, Pandoc
           command: sudo apt-get install -qq binutils libproj-dev gdal-bin libxml2-dev libxslt1-dev libsasl2-dev libenchant1c2a pandoc libsasl2-dev python-dev libssl-dev
 
 

@@ -177,11 +177,11 @@ def user_portfolio(usr, personalise=True):
     """
     return {'my_tasklist': usr.tasklist,
             'my_portfolio': usr.portfolio,
-            'my': "my" if personalise else "{0}'s".format(usr.first_name),
+            'my': "my" if personalise else "{0}'s".format(force_str(usr.first_name)),
             'you': "you" if personalise else usr.first_name,
             's': "" if personalise else "s",
             'are': "are" if personalise else "is",
-            'your': "your" if personalise else "{0}'s".format(usr.first_name), }
+            'your': "your" if personalise else "{0}'s".format(force_str(usr.first_name)), }
 
 
 @register.inclusion_tag('frontpage/scmt_preread.html')
