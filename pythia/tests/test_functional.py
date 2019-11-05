@@ -515,3 +515,13 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
         #plan = self.project.documents.instance_of(ConceptPlan).get()
         #status = self.selenium.find_element_by_id('document_status').text
         #self.assertEqual(status, plan.get_status_display())
+
+
+        # TODO: test PDF export
+        # info = self.spp._meta.app_label, self.spp._meta.model_name
+        # pdf_url = reverse('admin:%s_%s_download_pdf' % info, args=(self.spp.id,))
+        # tex_url = reverse('admin:%s_%s_download_tex' % info, args=(self.spp.id,))
+        
+        # self.assert_200(pdf_url)
+        # self.assert_200(tex_url)
+        # self.assert_200(html_url)
