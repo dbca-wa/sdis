@@ -61,7 +61,7 @@ django-taggit==0.12
 django-tinymce==1.5.2
 django-uni-form==0.9.0
 django-wsgiserver==0.8.0rc1
-djangorestframework==2.4.8
+djangorestframework==3.9.1
 djangorestframework-csv==2.1.0
 djorm-ext-pgarray==0.10
 djorm-pgarray==1.2
