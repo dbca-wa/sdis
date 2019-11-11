@@ -1,9 +1,14 @@
 {% load pythia_base texify %}
 {% include "latex/header_scrbook.tex" with print=false %}
 \begin{document}
+
 \frontmatter %-----------------------------------------------------------------%
 \pagestyle{plain}
 \pagenumbering{roman}
+{% if original.coverpage %}
+\includepdf[pages={1}]{.{{ original.coverpage.url }}}
+{% include "latex/includes/backtitle.tex"               with original=original %}
+{% endif %}
 {% include "latex/includes/titlepage.tex"               with original=original %}
 {% include "latex/includes/dm.tex"                      with original=original %}
 {
@@ -11,9 +16,22 @@
 \pagebreak
 \tableofcontents
 }
+
 \mainmatter %------------------------------------------------------------------%
 \raggedbottom
 \pagestyle{scrheadings}
 \pagenumbering{arabic}
+{% include "latex/includes/sds.tex"                     with original=original %}
+{% include "latex/includes/programs.tex"                with arar=original reports=original.progress_reports %}
+{% include "latex/includes/collaboration_projects.tex"  with projects=original.collaboration_projects %}
+{% include "latex/includes/student_projects.tex"        with reports=original.student_reports %}
+{% include "latex/includes/student_reports.tex"         with arar=original reports=original.student_reports %}
+{% include "latex/includes/publications.tex"            with original=original %}
+{% include "latex/includes/science_projects.tex"        with reports=original.progress_reports %}
+
+\backmatter %------------------------------------------------------------------%
+{% if original.rearcoverpage %}
+\includepdf[pages={1}]{.{{ original.rearcoverpage.url }}}
+{% endif %}
 
 \end{document}
