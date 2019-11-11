@@ -1,8 +1,20 @@
 {% load staticfiles %}
 %------------------------------------------------------------------------------%
+%  Cover Page
+%------------------------------------------------------------------------------%
+{% if original.coverpage %}
+\includepdf[pages={1}]{.{{ original.coverpage.url }}}
+{% include "latex/includes/backtitle.tex"               with original=original %}
+{% endif %}
+%------------------------------------------------------------------------------%
+%  End Cover Page
+%------------------------------------------------------------------------------%
+
+%------------------------------------------------------------------------------%
 % Titlepage
 %------------------------------------------------------------------------------%
-\begin{titlepage}
+\newpage
+% \begin{titlepage}
 \null\vfil\vskip 60pt                       % 60 pt vspace
 \setlength{\parindent}{20pt}                 % Indent left 3 cm
 {\Large\bfseries Department of\par}
@@ -18,7 +30,7 @@
     \includegraphics[width=0.9\linewidth]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca-bcs.jpg}
     \label{fig:departmental-logo}
 \end{figure}
-\end{titlepage}
+% \end{titlepage}
 %------------------------------------------------------------------------------%
 % End Titlepage
 %------------------------------------------------------------------------------%

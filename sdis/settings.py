@@ -141,6 +141,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
+# South migrations
+SOUTH_AUTO_FREEZE_APP = True
+
 # Static files (CSS, JavaScript, Images)
 if not os.path.exists(os.path.join(BASE_DIR, 'staticfiles')):
     os.mkdir(os.path.join(BASE_DIR, 'staticfiles'))

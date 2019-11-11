@@ -53,6 +53,18 @@ class ARARReport(pythia_models.Audit):
         blank=True, null=True,
         help_text=_("The Director's Message in less than 10 000 words."))
 
+    coverpage = models.FileField(
+        upload_to=reports_upload_to, 
+        blank=True, null=True,
+        help_text="The cover page is provided from graphic designers"
+                  " externally as on page A4 PDF.")
+
+    rearcoverpage = models.FileField(
+        upload_to=reports_upload_to, 
+        blank=True, null=True,
+        help_text="The back cover page is provided from graphic designers"
+                  " externally as on page A4 PDF.")
+
     sds_chapterimage = ResizedImageField(
         upload_to=reports_upload_to,
         blank=True, null=True,

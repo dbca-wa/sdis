@@ -626,6 +626,8 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         virtual_media_root = os.path.join(directory, 'media')
         if not os.path.lexists(virtual_media_root):
             os.symlink(settings.MEDIA_ROOT, virtual_media_root)
+        if not os.path.lexists(virtual_media_root):
+            logger.error("Virtual media root not linked!")
 
         if os.path.exists(pdffile):
             logger.info("PDF export: deleting old PDF")
