@@ -26,10 +26,18 @@
 \renewcommand{\sectionmark}[1]{\markright{#1}{}}    % Section: suppress numbering
 
 % Header (inner, center, outer)
-\ihead{\href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{\textbf{% templatetag openbrace %}{{ subtitle }}}}}
+{% if link_sdis %}
+\ihead{
+  \href{% templatetag openbrace %}{{ baseurl|safe }}{{ original_change }}}{%
+    \textbf{% templatetag openbrace %}{{ subtitle }}}}
+}
+{% else %}
+\ihead{\textbf{% templatetag openbrace %}{{ subtitle }}}}
+{% endif %}
 %\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}}
-\ohead{\href{https://www.dbca.wa.gov.au/science/10-biodiversity-and-conservation-science}{
-\includegraphics[height=8mm, keepaspectratio]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca-bcs.jpg}}
+\ohead{
+  \href{https://www.dbca.wa.gov.au/science}{%
+    \includegraphics[height=8mm, keepaspectratio]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca-bcs.jpg}}%
 }
 
 % Footer (inner, center, outer)

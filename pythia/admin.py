@@ -600,6 +600,7 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
             'baseurl': request.build_absolute_uri("/")[:-1],
             'STATIC_ROOT': settings.STATIC_ROOT,
             'MEDIA_ROOT': settings.MEDIA_ROOT,
+            'link_sdis': False
         }
 
         if not request.GET.get("download", False):
