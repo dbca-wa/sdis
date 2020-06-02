@@ -62,7 +62,7 @@ gevent==1.3.5
 pycrypto==2.6.1
 
 # Docs, images, thumbnails
-Sphinx==1.5.5
+Sphinx==3.0.4
 pycallgraph
 graphviz
 mock
