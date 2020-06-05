@@ -19,7 +19,7 @@ cryptography==2.4.1
 decorator==4.3.0
 diff-match-patch==20110725.1
 dj-static==0.0.6
-Django==1.6.5
+Django==1.11.29
 django-appconf==0.6
 django-bootstrap-pagination==1.5.0
 django-bootstrap3==5.4.0

@@ -1,4 +1,4 @@
-Django==1.6.5       # rq.filter: >=1.6,<1.7
+Django==1.11.29       # rq.filter: >=1.6,<1.7
 setuptools
 
 #https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
