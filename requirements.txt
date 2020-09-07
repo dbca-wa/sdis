@@ -132,3 +132,5 @@ flake8_import_order
 flake8-todo
 pep8-naming
 radon
+
+pip>=19.2 # not directly required, pinned by Snyk to avoid a vulnerability
