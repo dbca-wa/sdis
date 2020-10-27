@@ -15,7 +15,7 @@ configparser==3.5.0
 coreapi==2.3.3
 coreschema==0.0.4
 coverage==4.5.3
-cryptography==2.4.1
+cryptography==3.2
 decorator==4.3.0
 diff-match-patch==20110725.1
 dj-static==0.0.6
