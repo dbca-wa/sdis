@@ -36,3 +36,5 @@ hoit
 
 # uwsgi config
 sdis/sdis_uwsgi.ini
+
+.venv/
