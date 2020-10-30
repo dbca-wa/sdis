@@ -54,13 +54,13 @@ class ARARReport(pythia_models.Audit):
         help_text=_("The Director's Message in less than 10 000 words."))
 
     coverpage = models.FileField(
-        upload_to=reports_upload_to, 
+        upload_to=reports_upload_to,
         blank=True, null=True,
         help_text="The cover page is provided from graphic designers"
                   " externally as on page A4 PDF.")
 
     rearcoverpage = models.FileField(
-        upload_to=reports_upload_to, 
+        upload_to=reports_upload_to,
         blank=True, null=True,
         help_text="The back cover page is provided from graphic designers"
                   " externally as on page A4 PDF.")
@@ -185,22 +185,22 @@ class ARARReport(pythia_models.Audit):
         help_text=_("The cut-off date for any changes."))
 
     pdf = models.FileField(
-        upload_to=reports_upload_to, 
+        upload_to=reports_upload_to,
         blank=True, null=True,
         editable=False,
-        help_text="The latest, greatest and PDFest version of all times")    
+        help_text="The latest, greatest and PDFest version of all times")
 
     class Meta:
         """Class opts."""
 
         app_label = 'pythia'
         get_latest_by = 'date_open'  # 'created'
-        verbose_name = 'Annual Research Report'
-        verbose_name_plural = 'Annual Research Reports'
+        verbose_name = 'Annual Report'
+        verbose_name_plural = 'Annual Reports'
 
     def __str__(self):
         """The report name."""
-        return "Annual Research Report {0}-{1}".format(
+        return "Annual Report {0}-{1}".format(
             self.year - 1, self.year)
 
     @property
@@ -211,7 +211,7 @@ class ARARReport(pythia_models.Audit):
     @property
     def download_title(self):
         """The PDF title."""
-        return 'Annual Research Report'
+        return 'Annual Report'
 
     @property
     def download_subtitle(self):
