@@ -1,0 +1,79 @@
+name: DjangoCI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [2.7, ]
+    env:
+      DATABASE_URL: "postgis://tsc:tsc@localhost/tsc"
+      COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
+    steps:
+    - name: Setup PostgreSQL
+      uses: huaxk/postgis-action@v1.0.0
+      with:
+        postgresql db: tsc
+        postgresql user: tsc
+        postgresql password: tsc
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -qq binutils libproj-dev gdal-bin
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Pandoc
+      uses: r-lib/actions/setup-pandoc@v1
+      with:
+        pandoc-version: '2.7.3'
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        mkdir logs && touch logs/sdis.log
+
+    - name: Run parallel tests and skip test coverage
+      run: fab ptest
+
+    # - name: Build documentation
+    #   if: matrix.python-version == 3.8
+    #   uses: ammaraskar/sphinx-action@master
+    #   with:
+    #     docs-folder: "docs_source/"
+
+    # - name: Commit documentation changes
+    #   if: matrix.python-version == 2.7
+    #   run: |
+    #     git clone https://github.com/dbca-wa/sdis.git --branch gh-pages --single-branch gh-pages
+    #     cp -r docs/* gh-pages/
+    #     cd gh-pages
+    #     git config --local user.email "${{ secrets.USER_EMAIL }}"
+    #     git config --local user.name "${{ secrets.USER_NAME }}"
+    #     git add .
+    #     git commit -m "Update documentation" -a || true
+
+    # - name: Push changes
+    #   if: matrix.python-version == 2.7
+    #   uses: ad-m/github-push-action@master
+    #   with:
+    #     branch: gh-pages
+    #     directory: gh-pages
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}

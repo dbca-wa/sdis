@@ -36,14 +36,14 @@
         {% if project.keywords %}{{ project.keywords_plain|safe }}
         {% else %}This project needs some keywords!{% endif %}
     </div>
-    
+
     <div>
         <i class="glyphicon glyphicon-comments"></i>&nbsp;
         <span class="text-muted">{{ project.comments|safe }}</span></div>
 
     <div id="datasets">
         <i class="glyphicon glyphicon-qrcode"></i>&nbsp;<span class="text-muted">Datasets on the
-        <a href="https://data.dpaw.wa.gov.au/">data catalogue</a>
+        <a href="https://data.dbca.wa.gov.au/">data catalogue</a>
         tagged with keyword <strong>{{project.project_ckantag}}</strong>:
         </span>
     </div>
@@ -59,9 +59,9 @@
 
 <!-- Get datasets from CKAN data catalogue -->
 <script type="text/javascript">
-var ckan = "https://data.dpaw.wa.gov.au/"
+var ckan = "https://data.dbca.wa.gov.au/"
 var ckan_api = ckan + "api/3/action/package_search?fq=tags:{{project.project_ckantag}}"
-var wiki = "https://confluence.dpaw.wa.gov.au/"
+var wiki = "https://confluence.dbca.wa.gov.au/"
 var wiki_api = wiki + "rest/api/search?cql=label={{project.project_ckantag}}" // doesn't work
 
 $.ajax({
