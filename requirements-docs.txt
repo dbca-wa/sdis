@@ -41,7 +41,7 @@ python-magic==0.4.6
 semantic-version==2.3.0
 
 # API
-djangorestframework==2.3.13
+djangorestframework==3.11.2
 django-rest-swagger==0.1.14
 django-filter==0.7
 
