@@ -132,3 +132,4 @@ flake8_import_order
 flake8-todo
 pep8-naming
 radon
+pygments>=2.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
