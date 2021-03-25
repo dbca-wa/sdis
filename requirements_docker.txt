@@ -137,7 +137,7 @@ python-dateutil==2.7.5
 python-magic==0.4.6
 pytidylib==0.3.2
 pytz==2018.7
-PyYAML==3.13
+PyYAML==5.4
 radon==2.4.0
 redis==2.10.5
 requests==2.20.1
