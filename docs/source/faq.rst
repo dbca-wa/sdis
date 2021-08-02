@@ -205,3 +205,10 @@ Why can't I update a progress report?
 Only users added as project team members can update that project's documents, including the progress reports.
 The creator of a project is added as a team member automatically.
 Other project authors have to be added by the project's creator or an admin.
+
+How is a project plan endorsed and approved?
+--------------------------------------------
+* As a Program Leader, I have received a notification email about a Project Plan which needs to be approved. I cannot see the button to approve the project plan but I'm not sure why.
+* SDIS shows in the sidebar whether the endorsements of Biometrician (always required), the Herbarium Curator (if plant specimen collection involved) and the AEC (if animal handling involved) are required.
+* Any SDIS user who is part of the Group "BM" / "HC" / "AEC" can set the endorsement field inside the main document to "Granted" or "Denied", then save.
+* Once endorsements are given, the Program Leader will be shown the "approve" button, which sets the project to "active" without the need for additional Directorate approval.
