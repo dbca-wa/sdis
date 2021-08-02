@@ -177,18 +177,22 @@ the ARAR process starts. (This meeting has the power to approve requested projec
 
 1. Before the last SCMT meeting before the ARAR: PLs and Scientists review their projects, request closure / termination / suspending where required, and update the team lists.
 2. At the last SCMT meeting before the ARAR: SCMT discusses and approves/rejects Project Closure documents, and terminates / suspends projects as appropriate.
-3. After the last SCMT meeting: SDIS admins (Paul/Florian) create a new ARAR when instructed to by the Directorate. This will generate Progress Reports for all active and closing ScienceProjects, all active CoreFunctions, and all active StudentProjects.
+3. After the last SCMT meeting: SDIS admins (Julian/Florian) create a new ARAR when instructed to by the Directorate. This will generate Progress Reports for all active and closing ScienceProjects, all active CoreFunctions, and all active StudentProjects.
 
 Running through updates in this order will speed up the update process considerably by preventing the confusion (as there's no staff training ahead of the ARAR process) and required subsequent individual coaching from the ARAR admins to involved staff members to back each falsely project open out of the ARAR update process.
 
-How can I exclude a dud progress report?
-========================================
+What happens during the ARAR reporting phase?
+=============================================
+* SDIS admins assist BCS staff with the updates and their approval. Some projects and documents get stuck and need a superuser to reset approvals.
+* Given a draft of the organigram, the developer updates the print version.
+* Any other changes to the report structure are applied by the developer upon request from the Directorate.
+
+How can I exclude an unwanted "final" progress report?
+------------------------------------------------------
 The general purpose of SDIS is to encourage project management through the correct approval of related project documentation, and to audit the human decisions.
 However, sometimes we need to fast-track some processes and override the system. A system admin with sufficient permissions can do so.
 
 
-How to remove a final progress report
--------------------------------------
 Problem: A project with a closure form in status "closing pending final progress report" is triggered by creating a new annual report. The annual report creates the final progress report. Instead of filling in and approving the final progress report, we want to close the project and remove the last and empty (dud) progress report.
 
 Procedure:
