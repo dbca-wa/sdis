@@ -99,6 +99,7 @@ flake8-todo = "*"
 pep8-naming = "*"
 radon = "*"
 coveralls = "*"
+faker = "*"
 
 [dev-packages]
 
