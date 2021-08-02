@@ -199,3 +199,9 @@ Procedure:
 
 * Closure form: reset approval status, change closure goal to "completed without final progress report", and fast forward closure form approval, skipping email notifications. This pushes the project status to "completed".
 * Delete the empty final progress report.
+
+Why can't I update a progress report?
+-------------------------------------
+Only users added as project team members can update that project's documents, including the progress reports.
+The creator of a project is added as a team member automatically.
+Other project authors have to be added by the project's creator or an admin.
