@@ -7,3 +7,4 @@ omit =
     pythia/tests/*
     sdis/wsgi.py
     fabfile.py
+    .venv/*

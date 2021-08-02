@@ -8,9 +8,9 @@ SDIS Documentation
 .. image:: https://coveralls.io/repos/github/dbca-wa/sdis/badge.svg?branch=master
    :target: https://coveralls.io/github/dbca-wa/sdis
    :alt: Test Coverage
-.. image:: https://badge.waffle.io/dbca-wa/sdis.svg?label=ready&title=Ready
-   :target: https://waffle.io/dbca-wa/sdis
-   :alt: Tasks
+.. image:: https://img.shields.io/github/issues/dbca-wa/sdis
+   :target: https://github.com/dbca-wa/sdis/projects/1
+   :alt: GitHub issues
 
 The Science Directorate Information System (SDIS) is the project documentation,
 approval and reporting platform for DBCA's Biodiversity Conservation Division.

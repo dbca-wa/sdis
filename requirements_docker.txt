@@ -100,7 +100,7 @@ lxml==3.7.3
 mando==0.6.4
 MarkupSafe==1.1.0
 mccabe==0.6.1
-mixer==6.1.3
+#mixer==6.1.3
 mock==2.0.0
 nose==1.3.7
 odfpy==1.3.6
