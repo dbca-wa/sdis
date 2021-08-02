@@ -121,7 +121,7 @@ django-dtpanel-htmltidy
 django-nose==1.3
 django-pdb
 python-coveralls
-mixer
+#mixer
 selenium
 ipdbplugin
 
