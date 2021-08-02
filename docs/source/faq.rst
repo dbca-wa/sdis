@@ -183,19 +183,23 @@ Running through updates in this order will speed up the update process considera
 
 What happens during the ARAR reporting phase?
 =============================================
+The general purpose of SDIS is to encourage project management through the correct approval of related project documentation, and to audit the human decisions.
+However, sometimes we need to fast-track some processes and override the system. A system admin with sufficient permissions can do so.
+
 * SDIS admins assist BCS staff with the updates and their approval. Some projects and documents get stuck and need a superuser to reset approvals.
 * Given a draft of the organigram, the developer updates the print version.
 * Any other changes to the report structure are applied by the developer upon request from the Directorate.
 
+How can I exclude an unwanted regular progress report?
+------------------------------------------------------
+A progress report was requested in error for a project that should have been started the project closure process.
+
+* An SDIS admin can force close the project, which deletes the current progress report, excludes the project from the annual report, generates a project closure form, and sets the project status to "closing".
+* Force closing a project can be reverted if needed.
+
 How can I exclude an unwanted "final" progress report?
 ------------------------------------------------------
-The general purpose of SDIS is to encourage project management through the correct approval of related project documentation, and to audit the human decisions.
-However, sometimes we need to fast-track some processes and override the system. A system admin with sufficient permissions can do so.
-
-
-Problem: A project with a closure form in status "closing pending final progress report" is triggered by creating a new annual report. The annual report creates the final progress report. Instead of filling in and approving the final progress report, we want to close the project and remove the last and empty (dud) progress report.
-
-Procedure:
+A project with a closure form in status "closing pending final progress report" is triggered by creating a new annual report. The annual report creates the final progress report. Instead of filling in and approving the final progress report, we want to close the project and remove the last and empty (dud) progress report.
 
 * Closure form: reset approval status, change closure goal to "completed without final progress report", and fast forward closure form approval, skipping email notifications. This pushes the project status to "completed".
 * Delete the empty final progress report.
@@ -203,12 +207,14 @@ Procedure:
 Why can't I update a progress report?
 -------------------------------------
 Only users added as project team members can update that project's documents, including the progress reports.
-The creator of a project is added as a team member automatically.
-Other project authors have to be added by the project's creator or an admin.
+
+* The creator of a project is added as a team member automatically.
+* Other project authors have to be added by the project's creator or an admin.
 
 How is a project plan endorsed and approved?
 --------------------------------------------
-* As a Program Leader, I have received a notification email about a Project Plan which needs to be approved. I cannot see the button to approve the project plan but I'm not sure why.
+As a Program Leader, I have received a notification email about a Project Plan which needs to be approved. I cannot see the button to approve the project plan but I'm not sure why.
+
 * SDIS shows in the sidebar whether the endorsements of Biometrician (always required), the Herbarium Curator (if plant specimen collection involved) and the AEC (if animal handling involved) are required.
 * Any SDIS user who is part of the Group "BM" / "HC" / "AEC" can set the endorsement field inside the main document to "Granted" or "Denied", then save.
 * Once endorsements are given, the Program Leader will be shown the "approve" button, which sets the project to "active" without the need for additional Directorate approval.
