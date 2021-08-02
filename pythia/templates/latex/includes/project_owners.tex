@@ -2,6 +2,7 @@
 \begin{tabu} {X X}
 \textbf{Supervising Scientist} & {{ original.project.project_owner.fullname|html2latex }}\\
 \textbf{Data Custodian} & {{ original.project.data_custodian.fullname|html2latex }}\\
-\textbf{Site Custodian} & {{ original.project.site_custodian.fullname|html2latex }}\\
+% Site custodian is excluded as per https://github.com/dbca-wa/sdis/issues/114
+%\textbf{Site Custodian} & {{ original.project.site_custodian.fullname|html2latex }}\\
 \end{tabu}
 
