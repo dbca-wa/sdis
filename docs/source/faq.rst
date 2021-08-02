@@ -218,3 +218,12 @@ As a Program Leader, I have received a notification email about a Project Plan w
 * SDIS shows in the sidebar whether the endorsements of Biometrician (always required), the Herbarium Curator (if plant specimen collection involved) and the AEC (if animal handling involved) are required.
 * Any SDIS user who is part of the Group "BM" / "HC" / "AEC" can set the endorsement field inside the main document to "Granted" or "Denied", then save.
 * Once endorsements are given, the Program Leader will be shown the "approve" button, which sets the project to "active" without the need for additional Directorate approval.
+
+How can I change how project team members are shown in the team list?
+---------------------------------------------------------------------
+To change a project team member's affiliation (and update the cached version):
+
+* Staff > Browse SDIS users > User details, (e.g. field "Affiliations" > update affiliation "Curtin University") > Save User.
+* Left column shows user's projects (where the users occur on project teams) > open each project in a new tab.
+* Each project: Manage Team > "edit" membership > save. This updates the cached project team list.
+* Update all (admins only): Backstage > update caches.
