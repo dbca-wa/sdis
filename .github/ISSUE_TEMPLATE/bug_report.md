@@ -8,7 +8,11 @@ assignees: florianm
 ---
 
 ## Problem
-<!-- Please briefly describe your problem and what output you expect. -->
+<!--
+  Please briefly describe your problem and what output you expect.
+  Which part of the documentation did you follow? (paste the URL)
+  Should the documentation address this problem?
+-->
 
 ## Reproducible example
 <!-- Describe the steps leading to the bug. Include URLs. -->

@@ -117,6 +117,10 @@ Project thumbnails
 Project thumbnails are used as section thumbnails in the annual report
 and as thumbnails to represent the project online.
 
+* The thumbnails should use a standard image format,
+  such as JPEG (.jpeg, .jpg) or PNG (.png).
+* The thumbnails should be oriented correctly. If the thumbnail
+  stands on its side, edit (rotate) the original file and re-upload.
 * The aspect ratio should be 3:2 to 1:1 (width:height).
 * The horizontal resolution should be at least 600 pixels.
 * The vertical resolution should be at least 600 pixels.
@@ -176,3 +180,18 @@ the ARAR process starts. (This meeting has the power to approve requested projec
 3. After the last SCMT meeting: SDIS admins (Paul/Florian) create a new ARAR when instructed to by the Directorate. This will generate Progress Reports for all active and closing ScienceProjects, all active CoreFunctions, and all active StudentProjects.
 
 Running through updates in this order will speed up the update process considerably by preventing the confusion (as there's no staff training ahead of the ARAR process) and required subsequent individual coaching from the ARAR admins to involved staff members to back each falsely project open out of the ARAR update process.
+
+How can I exclude a dud progress report?
+========================================
+The general purpose of SDIS is to encourage project management through the correct approval of related project documentation, and to audit the human decisions.
+However, sometimes we need to fast-track some processes and override the system. A system admin with sufficient permissions can do so.
+
+
+How to remove a final progress report
+-------------------------------------
+Problem: A project with a closure form in status "closing pending final progress report" is triggered by creating a new annual report. The annual report creates the final progress report. Instead of filling in and approving the final progress report, we want to close the project and remove the last and empty (dud) progress report.
+
+Procedure:
+
+* Closure form: reset approval status, change closure goal to "completed without final progress report", and fast forward closure form approval, skipping email notifications. This pushes the project status to "completed".
+* Delete the empty final progress report.

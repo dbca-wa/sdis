@@ -12,8 +12,10 @@ assignees: florianm
 
 ## Search
 <!-- Where did you look for help? -->
-- [ ] SDIS user manual
-- [ ] SDIS itself
+- [ ] [SDIS user manual](https://sdis.readthedocs.io/)
+- [ ] [SDIS itself](https://sdis.dbca.wa.gov.au/)
+- [ ] [Open SDIS issues](https://github.com/dbca-wa/sdis/issues)
+- [ ] [SDIS Kanban board](https://github.com/dbca-wa/sdis/projects/1)
 
 ## Suggestions
 <!-- What is unintuitive? Where should we add or improve labels, guidance, documentation, tutorials? -->

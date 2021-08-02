@@ -1426,8 +1426,11 @@ class StudentProject(Project):
         not require a formal process.
 
         Deletes current progressreport (warning - is it the right one?)
+        As per https://github.com/dbca-wa/sdis/issues/146,
+        the progressreport is optional.
         """
-        self.progressreport.delete()
+        if self.progressreport:
+            self.progressreport.delete()
 
     @transition(
         field='status',
