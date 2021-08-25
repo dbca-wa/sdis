@@ -14,7 +14,7 @@ except:
     pass
 
 
-env.hosts = ['localhost', ]
+# env.hosts = ['localhost', ]
 
 
 def migrate():
@@ -93,6 +93,7 @@ def cleandeploy():
 
 def go():
     """Run the app with runserver (dev)."""
+    static()
     local('python manage.py runserver 0.0.0.0:5000')
 
 
