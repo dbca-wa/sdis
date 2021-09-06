@@ -1,4 +1,4 @@
-Django==1.6.5       # rq.filter: >=1.6,<1.7
+Django==2.2.18       # rq.filter: >=1.6,<1.7
 setuptools
 
 #https://static.dpaw.wa.gov.au/static/py/dpaw-utils/dist/dpaw-utils-0.3a11.tar.gz
@@ -132,3 +132,4 @@ flake8_import_order
 flake8-todo
 pep8-naming
 radon
+pygments>=2.7.4 # not directly required, pinned by Snyk to avoid a vulnerability
