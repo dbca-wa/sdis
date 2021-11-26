@@ -239,6 +239,16 @@ Contents
   {\par\nobreak\vfil\penalty0\vfilneg\vtop\bgroup}
   {\par\xdef\tpd{\the\prevdepth}\egroup\prevdepth=\tpd}
 
+%------------------------------------------------------------------------------%
+% Insert blank pages without page numbering
+%------------------------------------------------------------------------------%
+\def\blankpage{%
+      \clearpage%
+      \thispagestyle{empty}%
+      \addtocounter{page}{-1}%
+      \null%
+      \clearpage}
+
 
 %------------------------------------------------------------------------------%
 % Remove the header from odd empty pages at the end of chapters

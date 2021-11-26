@@ -32,13 +32,14 @@
     \mynode[below = of c10]{c11}{5.5cm}{Senior Policy Officer}{Rory McAuley}
     \mynode[below = of c11]{c12}{5.5cm}{Business Manager}{Karen Rogers}
     \mynode[below = of c12]{c13}{5.5cm}{Ecoinformatics}{Julian Tonti-Filippini}
-    \foreach \value in {10,11,12,13} \draw[->] ([xshift=-3mm] root.south) |- (c\value.east);
+    \mynode[below = of c13]{c14}{5.5cm}{BIO}{Helen Ensikat}
+    \foreach \value in {10,11,12,13,14} \draw[->] ([xshift=-3mm] root.south) |- (c\value.east);
 
     % Block 2: Programs, right below ED
     % Force vertical alignment by placing right of corresponding nodes
     \mynode[right = 2.5cm of c10]{c20}{7cm}{Animal Science}{Lesley Gibson}
     \mynode[right = 2.5cm of c11]{c21}{7cm}{Perth Zoo Science}{Peter Mawson}
-    \mynode[right = 2.5cm of c12]{c22}{7cm}{Plant Science and Herbarium}{John Huisman}
+    \mynode[right = 2.5cm of c12]{c22}{7cm}{Plant Science and Herbarium}{Colin Yates}
     \mynode[right = 2.5cm of c13]{c23}{7cm}{Kings Park Science}{Jason Stevens}
     \mynode[below = of c23]{c24}{7cm}{Species and Communities}{Ruth Harvey}
     \mynode[below = of c24]{c25}{7cm}{Ecosystem Science}{Adrian Pinder}
