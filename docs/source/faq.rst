@@ -47,7 +47,6 @@ Only project team members can execute these life cycle steps. If you can't, but
 feel you should be able to, an existing project team member has to add you to the
 team.
 
-
 How can I change the project type?
 ==================================
 Behind the scenes, SDIS creates different items when a project is created.
@@ -79,6 +78,12 @@ submitted to the Directorate ("approvers"), again only they can edit it.
 
 If you wish to update a document sitting with your Program Leader "in review",
 you can "recall" it from review, edit it, and resubmit it for review.
+
+How do I update Team lists?
+===========================
+After updating a User's details, such as affiliation or title, you need to
+re-save the Project's details to refresh the cached team list.
+An admin can refresh team lists in bulk, e.g. during editing of the annual report.
 
 Can I download documents?
 =========================
