@@ -1284,6 +1284,7 @@ class StudentProject(Project):
         editable=False,
         null=True, blank=True,
         help_text=_("Student names in order of membership rank."))
+
     academic_list_plain = models.TextField(
         verbose_name="Academic",
         editable=False,
@@ -1311,11 +1312,14 @@ class StudentProject(Project):
         return self.project_owner.last_name
 
     def get_student_list_plain(self):
-        """Return a string of Student names."""
+        """Return a string of Student names.
+        
+        To include the affiliation, use ``x.user.abbreviated_name``.
+        """
         return ', '.join([
-            x.user.abbreviated_name for x in
+            x.user.abbreviated_name_no_affiliation for x in
             ProjectMembership.objects.filter(project=self).filter(
-                role=ProjectMembership.ROLE_SUPERVISED_STUDENT)])
+                role=ProjectMembership.ROLE_SUPERVISED_STUDENT)])          
 
     def get_academic_list_plain(self):
         """Return a string of DBCA staff."""
