@@ -5,7 +5,7 @@
 <div class="sp_section_title">Scientist</div>
 <div class="sp_section_content">{{ report.project.supervising_scientist_list_plain }}</div>
 <div class="sp_section_title">Student</div>
-<div class="sp_section_content">{{ report.project.student_list_plain }}</div>
+<div class="sp_section_content">{{ report.project.student_list_plain }} {{report.project.get_level_display }} </div>
 <div class="sp_section_title">Progress report</div>
 <div class="sp_section_content">{{ report.progress_report|safe }}</div>
 {% endfor %}

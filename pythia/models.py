@@ -1168,7 +1168,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_full_name(self):
         """
-        Return the first_name plus the last_name, with a space in between.
+        Return title, first name, middle initials, last name, affiliation.
 
         Middle initials bring their own prefixed whitespace.
         """
@@ -1202,15 +1202,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_abbreviated_name(self):
         """Abbreviated name.
 
-        If initials are supplied, returns initials and surname, else
-        given name and surname.
+        The first name is initialed.
+        Middle initials are excluded.
         """
         if self.is_group:
             return self.get_full_name()
         else:
             full_name = "{0} {1} {2} {3}".format(
                 self.get_title(),
-                self.middle_initials,  # remember these are full initials
+                self.guess_first_initial(),
                 self.last_name,
                 self.get_affiliation())
         return full_name.replace("  ", " ").strip()
@@ -1221,17 +1221,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.get_abbreviated_name_no_affiliation()
 
     def get_abbreviated_name_no_affiliation(self):
-        """Abbreviated name.
-
-        If initials are supplied, returns initials and surname, else
-        given name and surname.
-        """
+        """Abbreviated name: title, initial of first name, last name."""
         if self.is_group:
             return self.get_full_name()
         else:
             full_name = "{0} {1} {2}".format(
                 self.get_title(),
-                self.middle_initials,  # remember these are full initials
+                self.guess_first_initial(), 
                 self.last_name)
         return full_name.strip()
 

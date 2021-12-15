@@ -116,7 +116,7 @@ django-fsm-log
 
 # Testing and Debugging
 django-debug-toolbar==1.3  # highest version for Django 1.6
-sqlparse==0.4.2  # highest version working with debug-toolbar
+sqlparse==0.1.19  # highest version working with debug-toolbar
 django-dtpanel-htmltidy
 django-nose==1.3
 django-pdb
