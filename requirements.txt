@@ -1,6 +1,6 @@
 alabaster==0.7.12
 amqp==2.6.1
-Babel==2.8.0
+Babel==2.9.1
 backports.csv==1.0.7
 backports.entry-points-selectable==1.1.1
 backports.functools-lru-cache==1.6.1
