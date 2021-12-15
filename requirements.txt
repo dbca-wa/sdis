@@ -81,7 +81,7 @@ humanize==0.5
 
 # Latex, Markdown, JSON, XML, YAML
 django-markup-deprecated==0.0.3
-lxml==3.7.3
+lxml==4.6.5
 beautifulsoup4==4.5.3
 django-tinymce==1.5.2
 html2text==2016.9.19
