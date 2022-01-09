@@ -124,7 +124,7 @@ pathlib2==2.3.5
 pep8-naming==0.11.1
 pexpect==4.8.0
 pickleshare==0.7.5
-Pillow==6.2.2
+Pillow==9.0.0
 pipdeptree==1.0.0
 pipenv==2021.5.29
 platformdirs==2.0.2
