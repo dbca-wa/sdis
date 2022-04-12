@@ -25,7 +25,7 @@ defusedxml==0.6.0
 diff-match-patch==20110725.1
 distlib==0.3.4
 dj-static==0.0.6
-Django==1.6.5
+Django==2.2.28
 django-appconf==0.6
 django-bootstrap-pagination==1.5.0
 django-bootstrap3==5.4.0
