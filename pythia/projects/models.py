@@ -479,18 +479,24 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     @property
     def approvers(self):
         """
-        Return all users with permission to "approve" this document.
+        Return all users with permission to "approve" documents for this project.
 
-        Default: Divisional Directorate members.
+        Default: ``self.program.division.director``.
         """
-        try:
-            scd, created = Group.objects.get_or_create(name='SCD')
-            return scd.user_set.all()
-        except:
+        if self.program.division:
+            return [self.program.division.director, ]
+        else:
             logger.warning("[pythia.projects.models.Project.approvers] "
-                           "approvers not found")
+                           "approvers not found - need project.program.division.director")
             return set()
-        # return Group.objects.get(name='SCD').user_set.all()
+        # try:
+        #     scd, created = Group.objects.get_or_create(name='SCD')
+        #     return scd.user_set.all()
+        # except:
+        #     logger.warning("[pythia.projects.models.Project.approvers] "
+        #                    "approvers not found")
+        #     return set()
+        # # return Group.objects.get(name='SCD').user_set.all()
 
     @property
     def special_roles(self):

@@ -628,7 +628,7 @@ class Service(Audit, ActiveModel):
     slug = models.SlugField(help_text=_("The acronym of the service name."))
     # Key personnel ----------------------------------------------------------#
     director = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='leads_divisions',
+        settings.AUTH_USER_MODEL, related_name='leads_services',
         blank=True, null=True, help_text=_("The Service's Director"))
 
     class Meta:
@@ -644,8 +644,40 @@ class Service(Audit, ActiveModel):
 
 
 @python_2_unicode_compatible
+class Division(Audit, ActiveModel):
+    """Departmental Division.
+
+    Departmental Divisions are the organizational units of the Department.
+    Each Division has an Executive Director, who is the approver of all Divisional projects.
+    Each Divisional Program belongs to exactly one Division.
+    """
+
+    name = models.CharField(max_length=320)
+    slug = models.SlugField(help_text=_("The acronym of the service name."))
+    # Key personnel ----------------------------------------------------------#
+    director = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='leads_divisions',
+        blank=True, null=True, help_text=_("The Division's Director"))
+
+    class Meta:
+        """Class opts."""
+
+        verbose_name = _("Division")
+        verbose_name_plural = _("Divisions")
+        ordering = ['slug', 'name']
+
+    def __str__(self):
+        """String representation."""
+        return 'Division {0}: {1}'.format(self.slug, self.name)
+
+
+@python_2_unicode_compatible
 class Program(Audit, ActiveModel):
-    """A Biodiversity and Conservation Science Program.
+    """A departmental organisational unit inside a Division.
+    
+    * Biodiversity and Conservation Science Program
+    * RFMS Region
+    * CEM Branch
 
     An organizational structure of research scientists, technical officers and
     admin staff, such as a dedicated finance admin or a default data custodian,
@@ -656,6 +688,12 @@ class Program(Audit, ActiveModel):
     name = models.CharField(max_length=320)
     slug = models.SlugField(
         help_text='A unique slug to be used in folder names etc.')
+
+    division = models.ForeignKey(
+        Division,
+        verbose_name=_("Departmental Division"),
+        blank=True, null=True,
+        help_text=_("The Departmental Division this program belongs to."))
 
     # Publishing and printing options ----------------------------------------#
     published = models.BooleanField(

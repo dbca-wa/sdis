@@ -741,6 +741,18 @@ class ServiceAdmin(BaseAdmin, DetailAdmin):
     director_name.short_description = 'Director'
     director_name.admin_order_field = 'director__last_name'
 
+class DivisionAdmin(BaseAdmin, DetailAdmin):
+    """Custom DivisionAdmin."""
+
+    exclude = ('effective_to', 'effective_from')
+    list_display = ('__str__', 'director_name')
+
+    def director_name(self, obj):
+        """Return the director's name."""
+        return obj.director.get_full_name()
+    director_name.short_description = 'Director'
+    director_name.admin_order_field = 'director__last_name'
+
 
 class ProgramAdmin(BaseAdmin, DetailAdmin):
     """Custom ProgramAdmin."""

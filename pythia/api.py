@@ -12,7 +12,7 @@ from rest_framework import serializers, viewsets, routers, filters
 # SessionAuthentication, BasicAuthentication, TokenAuthentication)
 
 from pythia.models import (
-    Program, Service
+    Program, Service, Division,
     # WebResource, Service,
     Area, User)
 from pythia.projects.models import (
@@ -91,10 +91,35 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
                   'is_staff')
 
 
+class ServiceSerializer(serializers.HyperlinkedModelSerializer):
+    """A fast and simple Service serializer."""
+
+    director = serializers.RelatedField()
+
+    class Meta:
+        """Class opts."""
+
+        model = Program
+        fields = ('id', 'name', 'slug', 'director',)
+
+
+class DivisionSerializer(serializers.HyperlinkedModelSerializer):
+    """A fast and simple Division serializer."""
+
+    director = serializers.RelatedField()
+
+    class Meta:
+        """Class opts."""
+
+        model = Program
+        fields = ('id', 'name', 'slug', 'director',)
+
+
 class ProgramSerializer(serializers.HyperlinkedModelSerializer):
     """A fast and simple Program serializer."""
 
     program_leader = serializers.RelatedField()
+    division = DivisionSerializer(read_only = True)
 
     class Meta:
         """Class opts."""
@@ -103,6 +128,7 @@ class ProgramSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'name',
+            'division',
             'slug',
             'published',
             'position',
@@ -118,6 +144,7 @@ class FullProgramSerializer(serializers.HyperlinkedModelSerializer):
     program_leader = UserSerializer()
     finance_admin = UserSerializer()
     data_custodian = UserSerializer()
+    division = DivisionSerializer(read_only = True)
 
     class Meta:
         """Class opts."""
@@ -126,6 +153,7 @@ class FullProgramSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'name',
+            'division',
             'slug',
             'published',
             'position',
@@ -152,6 +180,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     cost_center = serializers.Field()
     status_active = serializers.Field()
     absolute_url = serializers.Field()
+    output_program = ServiceSerializer(read_only = True)
     read_only_fields = (
         'id',
         'absolute_url',
@@ -184,6 +213,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
             'status_active',
             'team_list_plain',
             'program',
+            'output_program',
             'cost_center',
             'start_date',
             'end_date',
@@ -345,10 +375,8 @@ class ProgramViewSet(viewsets.ModelViewSet):
 
     Filter fields: published
 
-    * Published programs:
-      `/api/programs/?published=True </api/programs/?published=True>`_
-    * Retired or administrative programs:
-      `/api/programs/?published=False </api/programs/?published=False>`_
+    * Published programs: /api/programs/?published=True
+    * Retired or administrative programs: /api/programs/?published=False
     """
 
     queryset = Program.objects.all()

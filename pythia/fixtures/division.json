@@ -1,0 +1,65 @@
+[
+{
+    "pk": 1, 
+    "model": "pythia.division", 
+    "fields": {
+        "effective_to": null, 
+        "created": "2022-04-14T07:35:22.483Z", 
+        "creator": [
+            "FlorianM"
+        ], 
+        "modified": "2022-04-14T07:35:22.486Z", 
+        "director": [
+            "margaretb"
+        ], 
+        "effective_from": "2022-04-14T07:35:22.483Z", 
+        "modifier": [
+            "FlorianM"
+        ], 
+        "slug": "BCS", 
+        "name": "Biodiversity and Conservation Science"
+    }
+},
+{
+    "pk": 2, 
+    "model": "pythia.division", 
+    "fields": {
+        "effective_to": null, 
+        "created": "2022-04-14T07:37:36.152Z", 
+        "creator": [
+            "FlorianM"
+        ], 
+        "modified": "2022-04-14T07:44:56.734Z", 
+        "director": [
+            "KatrinaWalton"
+        ], 
+        "effective_from": "2022-04-14T07:37:36.152Z", 
+        "modifier": [
+            "FlorianM"
+        ], 
+        "slug": "RFMS", 
+        "name": "Regional and Fire Management Services"
+    }
+},
+{
+    "pk": 3, 
+    "model": "pythia.division", 
+    "fields": {
+        "effective_to": null, 
+        "created": "2022-04-14T07:45:18.763Z", 
+        "creator": [
+            "FlorianM"
+        ], 
+        "modified": "2022-04-14T07:45:40.879Z", 
+        "director": [
+            "KatrinaWalton"
+        ], 
+        "effective_from": "2022-04-14T07:45:18.763Z", 
+        "modifier": [
+            "FlorianM"
+        ], 
+        "slug": "CEM", 
+        "name": "Conservation and Ecosystem Management"
+    }
+}
+]

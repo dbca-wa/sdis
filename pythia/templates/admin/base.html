@@ -92,6 +92,7 @@
 {% url 'admin:pythia_scienceproject_changelist' as list_scienceproject %}
 {% url 'admin:pythia_workcenter_changelist' as list_workcenter %}
 {% url 'admin:pythia_service_changelist' as list_service %}
+{% url 'admin:pythia_division_changelist' as list_division %}
 {% url 'admin:pythia_program_changelist' as list_program %}
 {% url 'admin:pythia_area_changelist' as list_area %}
 {% url 'admin:pythia_address_changelist' as list_address %}
@@ -269,18 +270,22 @@
                     title="List and create work centers">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
                     <span class="text-info">Work Centers</span></a></li>
-                <li><a href="{{ list_service }}" id="nav-division-list"
-                    title="List and create departmental services">
+                <li><a href="{{ list_service }}" id="nav-service-list"
+                    title="List and create Departmental services">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
-                    <span class="text-info">Departmental Services</span></a></li>
-                <li><a href="{{ list_researchfunction }}" id="nav-division-list"
-                    title="List and create divisional research functions">
+                    <span class="text-info">Services</span></a></li>
+                <li><a href="{{ list_researchfunction }}" id="nav-researchfunction-list"
+                    title="List and create Divisional research functions">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
-                    <span class="text-info">Divisional Research Functions</span></a></li>
+                    <span class="text-info">Research Functions</span></a></li>
+                <li><a href="{{ list_division }}" id="nav-division-list"
+                    title="List and create Departmental Divisions">
+                    <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
+                    <span class="text-info">Divisions</span></a></li>
                 <li><a href="{{ list_program }}" id="nav-program-list"
-                    title="List and create Biodiversity and Conservation Science Programs">
+                    title="List and create Divisional Programs or equivalent organisational units">
                     <span class="glyphicon glyphicon-home text-info"></span>&nbsp;
-                    <span class="text-info">Divisional Programs</span></a></li>
+                    <span class="text-info">Programs</span></a></li>
                 <li><a href="{{ list_projectmembership }}" id="nav-projectmembership-list"
                     title="List Project Memberships">
                     <span class="glyphicon glyphicon-file text-info"></span>&nbsp;

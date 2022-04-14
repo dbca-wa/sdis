@@ -15,10 +15,10 @@ from django.views.decorators.csrf import csrf_protect
 from django.views import static
 
 from pythia.admin import (
-    AuditAdmin, UserAdmin, ProgramAdmin, ServiceAdmin,
+    AuditAdmin, UserAdmin, DivisionAdmin, ServiceAdmin, ProgramAdmin, 
     WorkCenterAdmin, AreaAdmin, RegionAdmin, DistrictAdmin)
 from pythia.models import (
-    Audit, User, Service, Program,
+    Audit, User, Service, Division, Program,
     WorkCenter, Area, Address, Region, District)
 from pythia.documents.admin import (
     DocumentAdmin, ConceptPlanAdmin, ProjectPlanAdmin)
@@ -180,6 +180,7 @@ site.register(StudentReport, DocumentAdmin)
 site.register(ARARReport, ARARReportAdmin)
 
 # stuff
+site.register(Division, DivisionAdmin)
 site.register(Service, ServiceAdmin)
 site.register(Program, ProgramAdmin)
 site.register(WorkCenter, WorkCenterAdmin)
