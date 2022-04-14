@@ -729,8 +729,8 @@ class DownloadAdminMixin(ModelAdmin, NeverCacheMixin):
         return response
 
 
-class DivisionAdmin(BaseAdmin, DetailAdmin):
-    """Custom DivisionAdmin."""
+class ServiceAdmin(BaseAdmin, DetailAdmin):
+    """Custom ServiceAdmin."""
 
     exclude = ('effective_to', 'effective_from')
     list_display = ('__str__', 'director_name')

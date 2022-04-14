@@ -35,7 +35,7 @@ from polymorphic import PolymorphicModel, PolymorphicManager
 from pythia.documents.models import (
     ConceptPlan, ProgressReport, ProjectClosure, StudentReport)
 from pythia.models import ActiveGeoModelManager, Audit, ActiveModel
-from pythia.models import Program, WebResource, Division, Area, User
+from pythia.models import Program, WebResource, Service, Area, User
 from pythia.reports.models import ARARReport
 from pythia.utils import texify_filename
 
@@ -274,7 +274,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         help_text=_("The Biodiversity and Conservation Science Program "
                     "hosting this project."))
     output_program = models.ForeignKey(
-        Division,
+        Service,
         verbose_name="Departmental Service",
         blank=True, null=True,
         help_text=_("The DBCA service that this project delivers outputs to."))

@@ -617,27 +617,25 @@ class Address(Audit, ActiveModel):
 
 
 @python_2_unicode_compatible
-class Division(Audit, ActiveModel):
-    """Departmental divisions.
+class Service(Audit, ActiveModel):
+    """Departmental services.
 
-    Divisions are structured into programs.
-    The work of Biodiversity and Conservation Science is a service provided
-    to output programs like Parks and Visitor Services, Nature Cons,
-    Sustainable Forest Management and potentially other Divisions.
+    Departmental Services are structured into programs (BCS) or equivalent organisational units.
+    Biodiversity and Conservation Science projects provide value to the Departmental Services.
     """
 
     name = models.CharField(max_length=320)
-    slug = models.SlugField(help_text=_("The acronym of the name."))
+    slug = models.SlugField(help_text=_("The acronym of the service name."))
     # Key personnel ----------------------------------------------------------#
     director = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='leads_divisions',
-        blank=True, null=True, help_text=_("The Division's Director"))
+        blank=True, null=True, help_text=_("The Service's Director"))
 
     class Meta:
         """Class opts."""
 
-        verbose_name = _("Departmental Service")
-        verbose_name_plural = _("Departmental Services")
+        verbose_name = _("Service")
+        verbose_name_plural = _("Services")
         ordering = ['slug', 'name']
 
     def __str__(self):
@@ -714,8 +712,8 @@ class Program(Audit, ActiveModel):
         """Class opts."""
 
         ordering = ['-published', 'position', 'cost_center']
-        verbose_name = "Divisional Program"
-        verbose_name_plural = "Divisional Programs"
+        verbose_name = "Program"
+        verbose_name_plural = "Programs"
 
     def __str__(self):
         """The name."""

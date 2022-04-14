@@ -1,0 +1,191 @@
+[
+    {
+        "pk": 1, 
+        "model": "pythia.service", 
+        "fields": {
+            "effective_to": null, 
+            "created": "2014-06-05T10:28:10.297Z", 
+            "creator": [
+                "sdis"
+            ], 
+            "modified": "2018-07-23T05:14:48.760Z", 
+            "director": [
+                "margaretb"
+            ], 
+            "effective_from": "2014-06-05T10:28:10Z", 
+            "modifier": [
+                "FlorianM"
+            ], 
+            "slug": "6", 
+            "name": "Conserving Habitats, Species and Communities"
+        }
+    },
+    {
+        "pk": 3, 
+        "model": "pythia.service", 
+        "fields": {
+            "effective_to": null, 
+            "created": "2014-06-05T10:28:10.307Z", 
+            "creator": [
+                "sdis"
+            ], 
+            "modified": "2018-07-05T06:16:35.694Z", 
+            "director": [
+                "margaretb"
+            ], 
+            "effective_from": "2014-06-05T10:28:10Z", 
+            "modifier": [
+                "FlorianM"
+            ], 
+            "slug": "1", 
+            "name": "Visitor Services and Public Programs Provided at Kings Park and Bold Park"
+        }
+    },
+    {
+        "pk": 4, 
+        "model": "pythia.service", 
+        "fields": {
+            "effective_to": null, 
+            "created": "2015-06-11T07:16:09.235Z", 
+            "creator": [
+                "FlorianM"
+            ], 
+            "modified": "2018-07-23T05:14:41.506Z", 
+            "director": [
+                "margaretb"
+            ], 
+            "effective_from": "2015-06-11T07:15:48Z", 
+            "modifier": [
+                "FlorianM"
+            ], 
+            "slug": "7", 
+            "name": "Research and Conservation Partnerships"
+        }
+    },
+    {
+        "pk": 5, 
+        "model": "pythia.service", 
+        "fields": {
+            "effective_to": null, 
+            "created": "2015-06-11T07:17:29.316Z", 
+            "creator": [
+                "FlorianM"
+            ], 
+            "modified": "2018-07-23T05:14:25.630Z", 
+            "director": [
+                "margaretb"
+            ], 
+            "effective_from": "2015-06-11T07:17:11Z", 
+            "modifier": [
+                "FlorianM"
+            ], 
+            "slug": "8", 
+            "name": "Implementation of the Forest Management Plan"
+        }
+    },
+    {
+        "pk": 6, 
+        "model": "pythia.service", 
+        "fields": {
+            "effective_to": null, 
+            "created": "2015-06-11T07:18:23.113Z", 
+            "creator": [
+                "FlorianM"
+            ], 
+            "modified": "2018-07-23T05:14:12.358Z", 
+            "director": [
+                "margaretb"
+            ], 
+            "effective_from": "2015-06-11T07:18:12Z", 
+            "modifier": [
+                "FlorianM"
+            ], 
+            "slug": "9", 
+            "name": "Prescribed Burning and Fire Management"
+        }
+    },
+    {
+        "pk": 7, 
+        "model": "pythia.service", 
+        "fields": {
+            "effective_to": null, 
+            "created": "2015-06-11T07:18:46.984Z", 
+            "creator": [
+                "FlorianM"
+            ], 
+            "modified": "2018-07-23T05:14:05.859Z", 
+            "director": [
+                "margaretb"
+            ], 
+            "effective_from": "2015-06-11T07:18:34Z", 
+            "modifier": [
+                "FlorianM"
+            ], 
+            "slug": "10", 
+            "name": "Bushfire Suppression"
+        }
+    },
+    {
+        "pk": 8, 
+        "model": "pythia.service", 
+        "fields": {
+            "effective_to": null, 
+            "created": "2015-06-11T07:19:12.411Z", 
+            "creator": [
+                "FlorianM"
+            ], 
+            "modified": "2018-07-23T05:15:04.360Z", 
+            "director": [
+                "margaretb"
+            ], 
+            "effective_from": "2015-06-11T07:18:58Z", 
+            "modifier": [
+                "FlorianM"
+            ], 
+            "slug": "4", 
+            "name": "Visitor Services and Public Programs Provided in the Swan and Canning Riverpark"
+        }
+    },
+    {
+        "pk": 9, 
+        "model": "pythia.service", 
+        "fields": {
+            "effective_to": null, 
+            "created": "2018-07-05T06:10:41.015Z", 
+            "creator": [
+                "FlorianM"
+            ], 
+            "modified": "2018-07-23T05:15:11.241Z", 
+            "director": [
+                "margaretb"
+            ], 
+            "effective_from": "2018-07-05T06:10:41.015Z", 
+            "modifier": [
+                "FlorianM"
+            ], 
+            "slug": "3", 
+            "name": "Visitor Services and Public Programs Provided at Perth Zoo"
+        }
+    },
+    {
+        "pk": 10, 
+        "model": "pythia.service", 
+        "fields": {
+            "effective_to": null, 
+            "created": "2018-07-05T06:14:17.118Z", 
+            "creator": [
+                "FlorianM"
+            ], 
+            "modified": "2018-07-23T05:14:55.545Z", 
+            "director": [
+                "margaretb"
+            ], 
+            "effective_from": "2018-07-05T06:14:17.117Z", 
+            "modifier": [
+                "FlorianM"
+            ], 
+            "slug": "5", 
+            "name": "Visitor Services and Public Programs Provided in National Parks and Other Lands and Waters"
+        }
+    }
+    ]

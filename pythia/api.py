@@ -12,8 +12,8 @@ from rest_framework import serializers, viewsets, routers, filters
 # SessionAuthentication, BasicAuthentication, TokenAuthentication)
 
 from pythia.models import (
-    Program,
-    # WebResource, Division,
+    Program, Service
+    # WebResource, Service,
     Area, User)
 from pythia.projects.models import (
     Project,
