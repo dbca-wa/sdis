@@ -1,4 +1,5 @@
 """Model tests for SDIS."""
+from __future__ import division
 from datetime import datetime
 
 from django.test import TestCase
@@ -17,7 +18,7 @@ from pythia.reports.models import ARARReport
 from .base import (BaseTestCase, ProjectFactory, ScienceProjectFactory,
                    CoreFunctionProjectFactory, CollaborationProjectFactory,
                    StudentProjectFactory, UserFactory, SuperUserFactory,
-                   ProgramFactory)
+                   ProgramFactory, DivisionFactory)
 
 
 def avail_tx(u, tx, obj):
@@ -182,8 +183,11 @@ class ScienceProjectModelTests(BaseTestCase):
             username='group', first_name='External', last_name='Group',
             is_group=True, group_name='Group Name')
 
+        self.division = DivisionFactory.create(
+            creator=self.marge, director=self.marge)
+
         self.program = ProgramFactory.create(
-            creator=self.marge, program_leader=self.steven)
+            creator=self.marge, program_leader=self.steven, division=self.division)
 
         self.project = ScienceProjectFactory.create(
             # creator=self.bob,
@@ -258,6 +262,7 @@ class ScienceProjectModelTests(BaseTestCase):
         self.marge.delete()
         self.peter.delete()
         self.program.delete()
+        self.division.delete()
 
     def test_project_upload_to(self):
         """Test that project image filename gets sanitised enough for Latex."""
@@ -886,8 +891,13 @@ class CoreFunctionProjectModelTests(TestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
 
+        self.division = DivisionFactory.create(
+            creator=self.marge, director=self.marge)
+
         self.program = ProgramFactory.create(
-            creator=self.marge, program_leader=self.steven)
+            creator=self.marge,
+             program_leader=self.steven, 
+             division=self.division)
 
         self.project = CoreFunctionProjectFactory.create(
             creator=self.bob,
@@ -913,6 +923,7 @@ class CoreFunctionProjectModelTests(TestCase):
         self.marge.delete()
         self.peter.delete()
         self.program.delete()
+        self.division.delete()
 
     def new_CF_is_active(self):
         """A new CoreFunction has STATUS_ACTIVE immediately."""
@@ -954,8 +965,11 @@ class CollaborationProjectModelTests(TestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
 
+        self.division = DivisionFactory.create(
+            creator=self.marge, director=self.marge)
+
         self.program = ProgramFactory.create(
-            creator=self.marge, program_leader=self.steven)
+            creator=self.marge, program_leader=self.steven, division = self.division)
 
         self.project = CollaborationProjectFactory.create(
             creator=self.bob,
@@ -979,6 +993,7 @@ class CollaborationProjectModelTests(TestCase):
         self.marge.delete()
         self.peter.delete()
         self.program.delete()
+        self.division.delete()
 
     def test_new_collaboration_project(self):
         """A new CollaborationProject is ACTIVE.
@@ -1034,8 +1049,11 @@ class StudentProjectModelTests(TestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
 
+        self.division = DivisionFactory.create(
+            creator=self.marge, director=self.marge)
+
         self.program = ProgramFactory.create(
-            creator=self.marge, program_leader=self.steven)
+            creator=self.marge, program_leader=self.steven, division = self.division)
 
         self.project = StudentProjectFactory.create(
             creator=self.bob,
@@ -1059,6 +1077,7 @@ class StudentProjectModelTests(TestCase):
         self.marge.delete()
         self.peter.delete()
         self.program.delete()
+        self.division.delete()
 
     def test_new_student_project(self):
         """A new STP has no approval process and is ACTIVE."""
@@ -1165,7 +1184,10 @@ class ARARReportModelTests(TestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
 
-        self.program = ProgramFactory.create(program_leader=self.steven)
+        self.division = DivisionFactory.create(
+            creator=self.marge, director=self.marge)
+
+        self.program = ProgramFactory.create(program_leader=self.steven, division = self.division)
 
         self.sp = ScienceProjectFactory.create(
             creator=self.bob,
@@ -1224,7 +1246,7 @@ class ARARReportModelTests(TestCase):
         self.steven.delete()
         self.marge.delete()
         self.peter.delete()
-
+        self.division.delete()
 
     def test_new_arar(self):
         """Test new ARAR creates updates and changes project status."""

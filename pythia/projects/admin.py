@@ -107,7 +107,7 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
 
     # List view
     list_display = ('project_id', 'type', 'year', 'number', 'project_title',
-                    'project_owner_name', 'program', 'research_function',
+                    'project_owner_name', 'division', 'program', 'research_function',
                     'status', 'fm_start_date', 'fm_end_date')
     list_display_links = ('project_id', 'project_title')
     list_per_page = 1000    # whoooa
@@ -127,7 +127,7 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
                 'fields': ('year', 'number', 'type', 'title',
                            'project_owner', 'data_custodian',
                            # 'site_custodian',
-                           'program', 'output_program', 'research_function',
+                           'division', 'program', 'output_program', 'research_function',
                            'start_date', 'end_date'), }),
             ('Project Location', {
                 'description': "Enter areas of relevance to the project",
@@ -136,9 +136,13 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
             ('Project display', {
                 'description': "Showcase info used in overviews and reports",
                 'classes': ('collapse',),
-                'fields': ('image', 'tagline', 'comments',
-                           'keywords', 'position'), })
+                'fields': ('image', 'tagline', 'comments', 'keywords', 'position'), })
         )
+
+    def division(self, obj):
+        """Program Division."""
+        return obj.program.division.slug if obj.program and obj.program.division else ''
+    division.short_description = 'Division'
 
     def project_id(self, obj):
         """project_id."""

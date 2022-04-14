@@ -483,7 +483,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
 
         Default: ``self.program.division.director``.
         """
-        if self.program.division:
+        if self.program and self.program.division:
             return [self.program.division.director, ]
         else:
             logger.warning("[pythia.projects.models.Project.approvers] "

@@ -61,5 +61,68 @@
         "slug": "CEM", 
         "name": "Conservation and Ecosystem Management"
     }
+},
+{
+    "pk": 4, 
+    "model": "pythia.division", 
+    "fields": {
+        "effective_to": null, 
+        "created": "2022-04-14T09:32:29.697Z", 
+        "creator": [
+            "FlorianM"
+        ], 
+        "modified": "2022-04-14T09:32:29.699Z", 
+        "director": [
+            "KatrinaWalton"
+        ], 
+        "effective_from": "2022-04-14T09:32:29.697Z", 
+        "modifier": [
+            "FlorianM"
+        ], 
+        "slug": "RIA", 
+        "name": "Rottnest Island Authority"
+    }
+},
+{
+    "pk": 5, 
+    "model": "pythia.division", 
+    "fields": {
+        "effective_to": null, 
+        "created": "2022-04-14T09:32:44.411Z", 
+        "creator": [
+            "FlorianM"
+        ], 
+        "modified": "2022-04-14T09:32:44.413Z", 
+        "director": [
+            "KatrinaWalton"
+        ], 
+        "effective_from": "2022-04-14T09:32:44.411Z", 
+        "modifier": [
+            "FlorianM"
+        ], 
+        "slug": "BGPA", 
+        "name": "Botanic Gardens and Parks Authority"
+    }
+},
+{
+    "pk": 6, 
+    "model": "pythia.division", 
+    "fields": {
+        "effective_to": null, 
+        "created": "2022-04-14T09:33:03.598Z", 
+        "creator": [
+            "FlorianM"
+        ], 
+        "modified": "2022-04-14T09:33:03.600Z", 
+        "director": [
+            "KatrinaWalton"
+        ], 
+        "effective_from": "2022-04-14T09:33:03.598Z", 
+        "modifier": [
+            "FlorianM"
+        ], 
+        "slug": "ZPA", 
+        "name": "Zoological Parks Authority"
+    }
 }
 ]

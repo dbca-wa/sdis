@@ -34,7 +34,7 @@ class TemplateTagTests(TestCase):
         plan.save()
 
         output = get_transitions(context, plan)
-        print output
+        print(output)
         # self.fail("blah")
         pass
 

@@ -758,7 +758,7 @@ class ProgramAdmin(BaseAdmin, DetailAdmin):
     """Custom ProgramAdmin."""
 
     exclude = ('effective_to', 'effective_from')
-    list_display = ('__str__', 'cost_center', 'published', 'position',
+    list_display = ('__str__', 'division', 'cost_center', 'published', 'position',
                     'program_leader_name', 'finance_admin_name',
                     'data_custodian_name')
 
@@ -772,7 +772,7 @@ class ProgramAdmin(BaseAdmin, DetailAdmin):
         smt = Group.objects.get_or_create(name='SMT')[0].user_set.all()
         editors = list(set(chain(scd, smt)))
         if not (request.user.is_superuser or request.user in editors):
-            rof += ('effective_to', 'effective_from', 'cost_center',
+            rof += ('effective_to', 'effective_from', 'cost_center', 'division', 
                     'published', 'position', 'program_leader', 'finance_admin',
                     'data_custodian')
         return rof

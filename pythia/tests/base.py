@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 import factory
-from pythia.models import Program
+from pythia.models import Division, Program
 from pythia.documents.models import (
     ConceptPlan, ProjectPlan, ProgressReport, ProjectClosure, StudentReport)
 from pythia.projects.models import (
@@ -43,15 +43,24 @@ class UserFactory(factory.django.DjangoModelFactory):
     is_superuser = False
 
 
+class DivisionFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = Division
+
+    name = factory.Sequence(lambda n: "Division %d" % n)
+    slug = factory.Sequence(lambda n: "division%d" % n)
+    creator = factory.SubFactory(UserFactory)
+    director = factory.SubFactory(UserFactory)
+    
+
 class ProgramFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Program
 
     name = factory.Sequence(lambda n: "Program %d" % n)
     slug = factory.Sequence(lambda n: "program%d" % n)
     creator = factory.SubFactory(UserFactory)
+    division = factory.SubFactory(DivisionFactory)
     position = 10
     program_leader = factory.SubFactory(UserFactory)
-    creator = factory.SubFactory(UserFactory)
 
 
 class ProjectFactory(factory.django.DjangoModelFactory):
@@ -61,6 +70,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     number = factory.Sequence(lambda n: n)
     title = "Test Project"
     type = 0
+    program = factory.SubFactory(ProgramFactory)
     project_owner = factory.SubFactory(UserFactory)
     creator = factory.SubFactory(UserFactory)
 
