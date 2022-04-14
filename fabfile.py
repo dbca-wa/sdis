@@ -177,7 +177,7 @@ def docker():
 def tag():
     """Tag code with SDIS_RELEASE and push to GitHub."""
     ver = confyenv("SDIS_RELEASE", default="0.1.0")
-    local("git tag -a {0} -m 'v{0}'".format(ver))
+    local("git tag -a 'v{0}' -m 'v{0}'".format(ver))
     local("git push && git push --tags")
     print(green("Code tagged as {0} and pushed to GitHub.".format(ver)))
 
