@@ -179,7 +179,7 @@ def tag():
     ver = confyenv("SDIS_RELEASE", default="0.1.0")
     local("git tag -a 'v{0}' -m 'v{0}'".format(ver))
     local("git push && git push --tags")
-    print(green("Code tagged as {0} and pushed to GitHub.".format(ver)))
+    print(green("Code tagged as v{0} and pushed to GitHub.".format(ver)))
 
 def release():
     """Make release: doc, tag, docker."""

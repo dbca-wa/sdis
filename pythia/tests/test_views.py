@@ -9,6 +9,7 @@ from pythia.documents.models import ConceptPlan, ProjectPlan
 from pythia.projects.models import ProjectMembership
 
 from .base import (BaseTestCase, ScienceProjectFactory,
+                   ServiceFactory, DivisionFactory, ProgramFactory,
                    CoreFunctionProjectFactory, CollaborationProjectFactory,
                    StudentProjectFactory, UserFactory, SuperUserFactory)
 
@@ -39,6 +40,15 @@ class SmokeTest(BaseTestCase):
         self.marge.groups.add(self.scd)
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
+        self.service = ServiceFactory.create(
+            name='Service 1', slug='SVC1', creator = self.superuser, director=self.marge)
+        self.service_empty = ServiceFactory.create(
+            name='Service 2', slug='SVC2', creator = self.superuser, director=None)
+        self.division = DivisionFactory.create(
+            name='Division 1', slug='DIV1', creator = self.superuser, director=self.marge)
+        self.division_empty = ServiceFactory.create(
+            name='Division 2', slug='DIV2', creator = self.superuser, director=None)
+        
         self.program = Program.objects.create(
             name="ScienceProgram",
             slug="scienceprogram",
@@ -49,6 +59,24 @@ class SmokeTest(BaseTestCase):
         """GET a given URL and assert that the response has status 200 OK."""
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+    
+    def test_service_changelist(self):
+        """Render Service change_list. 
+        
+        Change list must be robust against missing values.
+        Here, one Service has no Director set.
+        """
+        url = reverse('admin:pythia_service_changelist')
+        self.assert_200(url)
+
+    def test_division_changelist(self):
+        """Render Division change_list. 
+        
+        Change list must be robust against missing values.
+        Here, one Division has no Director set.
+        """
+        url = reverse('admin:pythia_division_changelist')
+        self.assert_200(url)        
 
     def test_project_changelist(self):
         """Render Project change_list."""

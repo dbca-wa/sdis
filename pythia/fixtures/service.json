@@ -21,6 +21,27 @@
         }
     },
     {
+        "pk": 2, 
+        "model": "pythia.service", 
+        "fields": {
+            "effective_to": null, 
+            "created": "2014-06-05T10:28:10.297Z", 
+            "creator": [
+                "sdis"
+            ], 
+            "modified": "2018-07-23T05:14:48.760Z", 
+            "director": [
+                "margaretb"
+            ], 
+            "effective_from": "2014-06-05T10:28:10Z", 
+            "modifier": [
+                "FlorianM"
+            ], 
+            "slug": "6", 
+            "name": "Test"
+        }
+    },
+    {
         "pk": 3, 
         "model": "pythia.service", 
         "fields": {
