@@ -41,19 +41,27 @@ class SmokeTest(BaseTestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
         self.service = ServiceFactory.create(
-            name='Service 1', slug='SVC1', creator = self.superuser, director=self.marge)
+            name='Service 1', slug='SVC1', creator=self.superuser, director=self.marge)
         self.service_empty = ServiceFactory.create(
-            name='Service 2', slug='SVC2', creator = self.superuser, director=None)
+            name='Service 2', slug='SVC2', creator=self.superuser, director=None)
         self.division = DivisionFactory.create(
-            name='Division 1', slug='DIV1', creator = self.superuser, director=self.marge)
+            name='Division 1', slug='DIV1', creator=self.superuser, director=self.marge)
         self.division_empty = ServiceFactory.create(
-            name='Division 2', slug='DIV2', creator = self.superuser, director=None)
+            name='Division 2', slug='DIV2', creator=self.superuser, director=None)
         
-        self.program = Program.objects.create(
+        # ProgramFactory already sets division
+        self.program = ProgramFactory.create(
             name="ScienceProgram",
             slug="scienceprogram",
             position=0,
             program_leader=self.steven)
+
+        # ProjectFactory already sets program and output_program
+        self.science_project = ScienceProjectFactory.create(
+            # data_custodian=self.bob, site_custodian=self.bob,
+            creator=self.bob, 
+            modifier=self.bob, 
+            project_owner=self.bob)
 
     def assert_200(self, url):
         """GET a given URL and assert that the response has status 200 OK."""

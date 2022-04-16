@@ -248,7 +248,9 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
 
         self.project = ScienceProjectFactory.create(
             # data_custodian=self.bob, site_custodian=self.bob,
-            creator=self.bob, modifier=self.bob, project_owner=self.bob)
+            creator=self.bob, 
+            modifier=self.bob, 
+            project_owner=self.bob)
 
     def test_new_project_status(self):
         """Test that the new project has the correct status.

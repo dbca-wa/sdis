@@ -80,6 +80,7 @@ class ProjectFactory(factory.django.DjangoModelFactory):
     title = "Test Project"
     type = 0
     program = factory.SubFactory(ProgramFactory)
+    output_program = factory.SubFactory(ServiceFactory)
     project_owner = factory.SubFactory(UserFactory)
     creator = factory.SubFactory(UserFactory)
 
