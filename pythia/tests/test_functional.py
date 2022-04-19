@@ -16,6 +16,7 @@ from selenium.webdriver.common.keys import Keys
 
 from pythia.projects.models import *
 from pythia.documents.models import *
+from pythia.reports.models import *
 from pythia.tests.base import (
     SuperUserFactory, UserFactory, ScienceProjectFactory)
 

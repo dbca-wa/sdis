@@ -44,6 +44,7 @@ class ARARReport(pythia_models.Audit):
     divisions = models.ManyToManyField(
         pythia_models.Division,
         blank=True,
+        related_name="ararreports",
         help_text=_("Divisions included in this report."))
 
     year = models.PositiveIntegerField(
@@ -235,6 +236,11 @@ class ARARReport(pythia_models.Audit):
         return None
 
     @property
+    def division_ids(self):
+        """Return the set of all Division IDs this report reports on."""
+        return set([d.id for d in self.divisions.all()])
+
+    @property
     def progress_reports(self):
         """A QuerySet of Science Projects with prefetched documents."""
         return self.progressreport_set.all().order_by(
@@ -266,6 +272,7 @@ class ARARReport(pythia_models.Audit):
         """A QuerySet of CollaborationProjects with prefetched documents."""
         from pythia.projects.models import (Project, CollaborationProject as p)  # noqa
         return p.objects.filter(
+            program__division__id__in=self.division_ids,
             status=Project.STATUS_ACTIVE
         ).order_by("position", "-year", "-number")
 
@@ -339,35 +346,51 @@ def request_progress_reports(instance):
     
     * The project is of a type requiring an update (SP, CF, STP).
     * The project belongs to a Division nominated in self.divisions.
-      # https://github.com/dbca-wa/sdis/issues/171
     * The project is of a status that requires an update (active or closing).
     """
-
-    logger.debug("Function request_progress_reports() called.")
+    logger.info("{0} requesting ProgressReports from Projects of Divisions {1}".format(
+        instance.fullname, instance.division_ids)
+    )
     from pythia.projects.models import (
         Project, ScienceProject, CoreFunctionProject, StudentProject)
 
-    logger.debug("{0} requesting progress reports".format(instance.fullname))
-    [call_update(Project.objects.get(pk=p), instance) for p in
-        ScienceProject.objects.filter(status=Project.STATUS_ACTIVE
-                                      ).values_list('pk', flat=True)]
 
-    [call_update(Project.objects.get(pk=p), instance, final=True) for p in
-        ScienceProject.objects.filter(status=Project.STATUS_CLOSING
-                                      ).values_list('pk', flat=True)]
+    div_ids = instance.division_ids
+    [call_update(
+        Project.objects.get(pk=p), instance) 
+        for p in ScienceProject.objects.filter(
+            program__division__id__in=instance.division_ids,
+            status=Project.STATUS_ACTIVE
+        ).values_list('pk', flat=True)]
 
-    [call_update(Project.objects.get(pk=p), instance) for p in
-        CoreFunctionProject.objects.filter(status=Project.STATUS_ACTIVE
-                                           ).values_list('pk', flat=True)]
+    [call_update(
+        Project.objects.get(pk=p), instance, final=True) 
+        for p in ScienceProject.objects.filter(
+            program__division__id__in=instance.division_ids,
+            status=Project.STATUS_CLOSING
+        ).values_list('pk', flat=True)]
 
-    [call_update(Project.objects.get(pk=p), instance, final=True) for p in
-        CoreFunctionProject.objects.filter(status=Project.STATUS_CLOSING
-                                           ).values_list('pk', flat=True)]
+    [call_update(
+        Project.objects.get(pk=p), instance) 
+        for p in CoreFunctionProject.objects.filter(
+            program__division__id__in=instance.division_ids,
+            status=Project.STATUS_ACTIVE
+        ).values_list('pk', flat=True)]
 
-    [call_update(Project.objects.get(pk=p), instance) for p in
-        StudentProject.objects.filter(status=Project.STATUS_ACTIVE
-                                      ).values_list('pk', flat=True)]
-    logger.debug(
+    [call_update(
+        Project.objects.get(pk=p), instance, final=True) 
+        for p in CoreFunctionProject.objects.filter(
+            program__division__id__in=instance.division_ids,
+            status=Project.STATUS_CLOSING
+        ).values_list('pk', flat=True)]
+
+    [call_update(
+        Project.objects.get(pk=p), instance) 
+        for p in StudentProject.objects.filter(
+            program__division__id__in=instance.division_ids,
+            status=Project.STATUS_ACTIVE
+        ).values_list('pk', flat=True)]
+    logger.info(
         "{0} finished requesting progressreports".format(instance.fullname))
 
 
@@ -378,7 +401,15 @@ def arar_post_save(sender, instance, created, **kwargs):
     An existing ARAR will not request updates.
     """
     if created:
-        logger.debug("ARARReport saved as new calls request_progress_reports.")
+        logger.info("ARARReport saved as new calls request_progress_reports.")
         request_progress_reports(instance)
 
 signals.post_save.connect(arar_post_save, sender=ARARReport)
+
+def report_divisions_changed(sender, **kwargs):
+    """Call progress reports when ARARReport.divisions are changed."""
+    logger.info("ARARReport.divisions changed: request_progress_reports.")
+    request_progress_reports(kwargs['instance'])
+
+signals.m2m_changed.connect(report_divisions_changed,
+                            sender=ARARReport.divisions.through)

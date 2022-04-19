@@ -1184,14 +1184,16 @@ class ARARReportModelTests(TestCase):
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
 
-        self.division = DivisionFactory.create(
-            creator=self.marge, director=self.marge)
+        self.division1 = DivisionFactory.create(creator=self.marge, director=self.marge)
+        self.division2 = DivisionFactory.create(creator=self.marge, director=self.fran)
 
-        self.program = ProgramFactory.create(program_leader=self.steven, division = self.division)
+        self.program1 = ProgramFactory.create(program_leader=self.steven, division = self.division1)
+        self.program2 = ProgramFactory.create(program_leader=self.steven, division = self.division2)
+
 
         self.sp = ScienceProjectFactory.create(
             creator=self.bob,
-            program=self.program,
+            program=self.program1,
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
 
@@ -1202,7 +1204,7 @@ class ARARReportModelTests(TestCase):
 
         self.cf = CoreFunctionProjectFactory.create(
             creator=self.bob,
-            program=self.program,
+            program=self.program1,
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
 
@@ -1213,7 +1215,7 @@ class ARARReportModelTests(TestCase):
 
         self.ext = CollaborationProjectFactory.create(
             creator=self.bob,
-            program=self.program,
+            program=self.program1,
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
 
@@ -1224,7 +1226,7 @@ class ARARReportModelTests(TestCase):
 
         self.stp = StudentProjectFactory.create(
             creator=self.bob,
-            program=self.program,
+            program=self.program1,
             # data_custodian=self.bob, site_custodian=self.bob,
             project_owner=self.bob)
 
@@ -1232,21 +1234,31 @@ class ARARReportModelTests(TestCase):
             project=self.stp,
             user=self.bob,
             role=ProjectMembership.ROLE_RESEARCH_SCIENTIST)
+        
+        # Some projects not participating
+        self.sp2= ScienceProjectFactory.create(
+            creator=self.bob,
+            program=self.program2,
+            # data_custodian=self.bob, site_custodian=self.bob,
+            project_owner=self.bob)
 
     def tearDown(self):
         """Destroy test objects after a test."""
         [m.delete for m in ProjectMembership.objects.all()]
         self.sp.delete()
+        self.sp2.delete()
         self.cf.delete()
         self.ext.delete()
         self.stp.delete()
-        self.program.delete()
         self.superuser.delete()
         self.bob.delete()
         self.steven.delete()
         self.marge.delete()
         self.peter.delete()
-        self.division.delete()
+        self.division1.delete()
+        self.division2.delete()
+        self.program1.delete()
+        self.program2.delete()
 
     def test_new_arar(self):
         """Test new ARAR creates updates and changes project status."""
@@ -1255,6 +1267,12 @@ class ARARReportModelTests(TestCase):
         self.sp.status = Project.STATUS_ACTIVE
         self.sp.save()
         self.assertEqual(self.sp.status, Project.STATUS_ACTIVE)
+
+        print("  Fast-track {0} to active".format(self.sp2.debugname))
+        self.assertEqual(self.sp2.status, Project.STATUS_NEW)
+        self.sp2.status = Project.STATUS_ACTIVE
+        self.sp2.save()
+        self.assertEqual(self.sp2.status, Project.STATUS_ACTIVE)
 
         print("  Fast-track {0} to active".format(self.cf.debugname))
         self.assertEqual(self.cf.status, Project.STATUS_NEW)
@@ -1273,7 +1291,73 @@ class ARARReportModelTests(TestCase):
             year=self.sp.year,
             date_open=datetime.now(),
             date_closed=datetime.now())
-        print("  New {0} requests progress reports".format(self.arar.fullname))
+        
+        print("  New {0} has no division and therefore no ({1}) progressreports".format(
+            self.arar.fullname, self.arar.progress_reports.count()))
+        self.assertTrue(self.arar.progress_reports.count() == 0)
+
+        print("  {0} should have no progressreport".format(self.sp.debugname))
+        self.assertTrue(self.sp.progressreport is None)
+
+        print("  {0} should have no progressreport".format(self.sp2.debugname))
+        self.assertTrue(self.sp2.progressreport is None)
+
+        # Add Division1
+        self.arar.divisions.add(self.division1)
+        print("  New {0} with one added division has now {1} progressreports".format(
+            self.arar.fullname, self.arar.progress_reports.count()))
+        self.assertTrue(self.arar.progress_reports.count() > 0)
+
+        print("  {0} should have a progressreport".format(self.sp.debugname))
+        self.assertTrue(self.sp.progressreport is not None)
+
+        print("  {0} should have no progressreport".format(self.sp2.debugname))
+        self.assertTrue(self.sp2.progressreport is None)
+
+        print("  Progressreports come only from Projects in Report Divisions")
+        divisions_found = set([rep.project.program.division.id for rep in self.arar.progress_reports])
+        
+        divisions_should = self.arar.division_ids
+        self.assertEqual(divisions_found, divisions_should)
+
+        print("  Projects from other Divisions do not participate")
+        projects_found  = set([rep.project.id for rep in self.arar.progress_reports])
+        print("  SP from Division 1 is in progressreports")
+        self.assertTrue(self.sp.id in projects_found)
+        print("  SP from Division 2 is not in progressreports")
+        self.assertFalse(self.sp2.id in projects_found)
+
+        # Add Division2
+        print("  Adding other Divisions requests updates from their projects")
+        print("  Participating Divisions before adding second Div: {}".format(self.arar.divisions.all()))
+        pr_found_before = set([rep.id for rep in self.arar.progress_reports])
+        self.arar.divisions.add(self.division2)
+
+        print("  Participating Divisions after adding second Div: {}".format(self.arar.divisions.all()))
+        divisions_found_in_pr = set([rep.project.program.division.id for rep in self.arar.progress_reports])
+
+        divisions_of_report = self.arar.division_ids
+        print("  Divisions match up between ARARReport ({0}) and progressreports: {1}".format(
+            divisions_of_report, divisions_found_in_pr))
+        self.assertEqual(divisions_found_in_pr, divisions_of_report)
+
+        # print("  SP from Division 1 is still in progressreports")
+        # self.assertTrue(self.sp.progress_report in self.arar.progress_reports)
+        
+        # print("  SP from Division 2 is now in progressreports")
+        # self.assertTrue(self.sp2.progress_report in self.arar.progress_reports)
+
+        print("  {0} should have a progressreport".format(self.sp.debugname))
+        self.assertTrue(self.sp.progressreport is not None)
+        self.assertTrue(self.sp.progressreport.report == self.arar)
+
+        print("  {0} should have a progressreport".format(self.sp2.debugname))
+        self.assertTrue(self.sp2.progressreport is not None)
+        self.assertTrue(self.sp2.progressreport.report == self.arar)
+        
+        print("  Changed number of progressreports")
+        pr_found_after = set([rep.id for rep in self.arar.progress_reports])
+        self.assertFalse(pr_found_before == pr_found_after)
 
         print("  Test saving changed object to db")
         self.sp = self.sp.progressreport.project
@@ -1285,6 +1369,9 @@ class ARARReportModelTests(TestCase):
 
         print("  {0} should have a progressreport".format(self.sp.debugname))
         self.assertTrue(self.sp.progressreport is not None)
+
+        print("  {0} should have a progressreport".format(self.sp2.debugname))
+        self.assertTrue(self.sp2.progressreport is not None)
 
         print("  {0} should have a progressreport".format(self.cf.debugname))
         self.assertTrue(self.cf.progressreport is not None)
