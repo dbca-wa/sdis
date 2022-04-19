@@ -41,6 +41,11 @@ class ARARReport(pythia_models.Audit):
     There can only be one ARR per year, enforced with a `unique` year.
     """
 
+    divisions = models.ManyToManyField(
+        pythia_models.Division,
+        blank=True,
+        help_text=_("Divisions included in this report."))
+
     year = models.PositiveIntegerField(
         verbose_name=_("Report year"),
         unique=True,
@@ -203,6 +208,12 @@ class ARARReport(pythia_models.Audit):
         return "Annual Report {0}-{1}".format(
             self.year - 1, self.year)
 
+    # Make self._meta accessible to templates
+    @property
+    def opts(self):
+        """Return `._meta` as property."""
+        return self._meta            
+
     @property
     def fullname(self):
         """The HTML-safe report name."""
@@ -306,10 +317,7 @@ class ARARReport(pythia_models.Audit):
 
 
 def call_update(proj, rep, final=False):
-    """Request a (final) update from a project for a report.
-
-    HACK: project status is set and saved, although the transition should do.
-    """
+    """Request a (final) update from a project for a report."""
     from pythia.projects.models import Project
     if final:
         proj.request_final_update(rep)
@@ -323,7 +331,18 @@ def call_update(proj, rep, final=False):
 
 
 def request_progress_reports(instance):
-    """Call Project.request_update() for each active or closing project."""
+    """Call Project.request_update() for each active or closing project.
+
+    This function is run as post_save signal when a new ARARReport is created.
+
+    Projects are nominated for an update through:
+    
+    * The project is of a type requiring an update (SP, CF, STP).
+    * The project belongs to a Division nominated in self.divisions.
+      # https://github.com/dbca-wa/sdis/issues/171
+    * The project is of a status that requires an update (active or closing).
+    """
+
     logger.debug("Function request_progress_reports() called.")
     from pythia.projects.models import (
         Project, ScienceProject, CoreFunctionProject, StudentProject)

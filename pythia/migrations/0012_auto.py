@@ -8,42 +8,20 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Deleting model 'Division'
-        db.delete_table(u'pythia_division')
-
-        # Adding model 'Service'
-        db.create_table(u'pythia_service', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('effective_from', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('effective_to', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('creator', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'pythia_service_created', to=orm['pythia.User'])),
-            ('modifier', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'pythia_service_modified', to=orm['pythia.User'])),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=320)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50)),
-            ('director', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name=u'leads_services', null=True, to=orm['pythia.User'])),
+        # Adding M2M table for field divisions on 'ARARReport'
+        m2m_table_name = db.shorten_name(u'pythia_ararreport_divisions')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('ararreport', models.ForeignKey(orm[u'pythia.ararreport'], null=False)),
+            ('division', models.ForeignKey(orm[u'pythia.division'], null=False))
         ))
-        db.send_create_signal(u'pythia', ['Service'])
+        db.create_unique(m2m_table_name, ['ararreport_id', 'division_id'])
+
 
     def backwards(self, orm):
-        # Adding model 'Division'
-        db.create_table(u'pythia_division', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('effective_from', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('effective_to', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True)),
-            ('creator', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'pythia_division_created', to=orm['pythia.User'])),
-            ('modifier', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'pythia_division_modified', to=orm['pythia.User'])),
-            ('created', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=320)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(max_length=50)),
-            ('director', self.gf('django.db.models.fields.related.ForeignKey')(related_name=u'leads_divisions', null=True, to=orm['pythia.User'], blank=True)),
-        ))
-        db.send_create_signal(u'pythia', ['Division'])
+        # Removing M2M table for field divisions on 'ARARReport'
+        db.delete_table(db.shorten_name(u'pythia_ararreport_divisions'))
 
-        # Deleting model 'Service'
-        db.delete_table(u'pythia_service')
 
     models = {
         u'auth.group': {
@@ -90,6 +68,7 @@ class Migration(SchemaMigration):
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'pythia_ararreport_created'", 'to': u"orm['pythia.User']"}),
             'date_closed': ('django.db.models.fields.DateField', [], {}),
             'date_open': ('django.db.models.fields.DateField', [], {}),
+            'divisions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['pythia.Division']", 'symmetrical': 'False', 'blank': 'True'}),
             'dm': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
@@ -130,12 +109,26 @@ class Migration(SchemaMigration):
             'northern_extent': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'region': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['pythia.Region']"})
         },
+        u'pythia.division': {
+            'Meta': {'ordering': "[u'slug', u'name']", 'object_name': 'Division'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'pythia_division_created'", 'to': u"orm['pythia.User']"}),
+            'director': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'leads_divisions'", 'null': 'True', 'to': u"orm['pythia.User']"}),
+            'effective_from': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'effective_to': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'modifier': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'pythia_division_modified'", 'to': u"orm['pythia.User']"}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '320'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'max_length': '50'})
+        },
         u'pythia.program': {
             'Meta': {'ordering': "[u'-published', u'position', u'cost_center']", 'object_name': 'Program'},
             'cost_center': ('django.db.models.fields.CharField', [], {'max_length': '3', 'null': 'True', 'blank': 'True'}),
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'pythia_program_created'", 'to': u"orm['pythia.User']"}),
             'data_custodian': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'pythia_data_custodian_on_programs'", 'null': 'True', 'to': u"orm['pythia.User']"}),
+            'division': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['pythia.Division']", 'null': 'True', 'blank': 'True'}),
             'effective_from': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'effective_to': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'finance_admin': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'finance_admin_on_programs'", 'null': 'True', 'to': u"orm['pythia.User']"}),
@@ -162,7 +155,7 @@ class Migration(SchemaMigration):
             'Meta': {'ordering': "[u'slug', u'name']", 'object_name': 'Service'},
             'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "u'pythia_service_created'", 'to': u"orm['pythia.User']"}),
-            'director': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'leads_divisions'", 'null': 'True', 'to': u"orm['pythia.User']"}),
+            'director': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "u'leads_services'", 'null': 'True', 'to': u"orm['pythia.User']"}),
             'effective_from': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'effective_to': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

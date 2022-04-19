@@ -37,8 +37,8 @@
             "modifier": [
                 "FlorianM"
             ], 
-            "slug": "6", 
-            "name": "Test"
+            "slug": "x", 
+            "name": "Data migration placeholder"
         }
     },
     {
@@ -210,3 +210,4 @@
         }
     }
     ]
+    
