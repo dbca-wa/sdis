@@ -1,16 +1,17 @@
 # Prepare the base environment.
-FROM python:2.7.16-buster as builder_base
+FROM python:2.7.18-buster as builder_base
 LABEL maintainer=Florian.Mayer@dbca.wa.gov.au
-LABEL description="Python 2.7.16-buster plus Latex and GDAL."
+LABEL description="Python 2.7.18-buster plus Latex and GDAL."
 LABEL org.opencontainers.image.source = "https://github.com/dbca-wa/sdis"
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install --yes \
     -o Acquire::Retries=10 --no-install-recommends \
-    lmodern software-properties-common libmagic-dev libproj-dev gdal-bin \
+    apt-utils lmodern software-properties-common libmagic-dev libproj-dev gdal-bin \
     python-dev libsasl2-dev python-enchant \
     postgresql-client openssh-client rsync \
-    texlive-full texlive-xetex \
+    texlive texlive-xetex \
+    # texlive-full \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && wget https://github.com/jgm/pandoc/releases/download/2.7/pandoc-2.7-1-amd64.deb \

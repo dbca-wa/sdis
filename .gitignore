@@ -38,3 +38,4 @@ hoit
 sdis/sdis_uwsgi.ini
 
 .venv/
+oldvenv/
