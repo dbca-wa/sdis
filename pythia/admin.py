@@ -393,9 +393,9 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin, TablibAdmin):
 class UserAdmin(DjangoUserAdmin):
     """Custom UserAdmin."""
 
-    list_display = ('username', 'fullname', 'email', 'program', 'work_center')
+    list_display = ('username', 'fullname', 'email', 'division', 'program', 'work_center')
     list_per_page = 1000    # sod pagination
-    list_filter = ('is_external', 'is_group', 'agreed',
+    list_filter = ('division', 'is_external', 'is_group', 'agreed',
                    'is_staff', 'is_superuser', 'is_active')
     readonly_fields = ('username', 'is_active', 'is_staff', 'is_superuser',
                        'user_permissions', 'last_login', 'date_joined')
@@ -424,10 +424,15 @@ class UserAdmin(DjangoUserAdmin):
         ('Administrative Details', {
             'description': 'Behind the scenes settings',
             'classes': ('collapse',),
-            'fields': ('program', 'work_center', 'username', 'password',
+            'fields': ('division', 'program', 'work_center', 
+                       'username', 'password',
                        'is_active', 'is_staff', 'is_superuser',
                        'date_joined', 'groups'), })
     )
+
+    def division(self, obj):
+        """Return the User's Division."""
+        return obj.pythia_profile.division
 
     def program(self, obj):
         """Return the User's program."""

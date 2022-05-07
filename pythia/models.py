@@ -1041,6 +1041,13 @@ class User(AbstractBaseUser, PermissionsMixin):
                     " If provided, the affiliation will be appended to the"
                     " person or group name in parentheses."))
 
+    division = models.ForeignKey(
+        Division,
+        verbose_name=_("Departmental Division"),
+        blank=True, null=True,
+        help_text=_("The Departmental Division of this User. "
+                    "Only applies to DBCA staff."))
+
     # Contact details --------------------------------------------------------#
     image = models.ImageField(
         upload_to="profiles", null=True, blank=True,

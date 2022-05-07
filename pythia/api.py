@@ -34,6 +34,19 @@ from pythia.projects.models import (
 
 # -----------------------------------------------------------------------------#
 # Serializers
+class DivisionSerializer(serializers.HyperlinkedModelSerializer):
+    """A simple Division serializer."""
+
+    class Meta:
+        """Class opts."""
+
+        model = Division
+        fields = ('id',
+                  'name',
+                  'slug',
+                  'director')
+
+
 class AreaSerializer(serializers.HyperlinkedModelSerializer):
     """A simple Area serializer."""
 
@@ -79,6 +92,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     """A User serializer."""
 
     fullname = serializers.Field()
+    division = DivisionSerializer()
 
     class Meta:
         """Class opts."""
@@ -88,7 +102,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
                   'fullname',
                   'username',
                   'email',
-                  'is_staff')
+                  'is_staff',
+                  'division',
+                  'program')
 
 
 class ServiceSerializer(serializers.HyperlinkedModelSerializer):
@@ -366,6 +382,9 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+class DivisionViewSet(viewsets.ModelViewSet):
+    queryset = Division.objects.all()
+    serializer_class = DivisionSerializer
 
 class ProgramViewSet(viewsets.ModelViewSet):
     """A clever Program ViewSet that returns fast lists and full details.
@@ -483,5 +502,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 router = routers.DefaultRouter()
 router.register(r'areas', AreaViewSet)
 router.register(r'users', UserViewSet)
+router.register(r'divisions', DivisionViewSet)
 router.register(r'programs', ProgramViewSet)
 router.register(r'projects', ProjectViewSet, base_name="projects")
