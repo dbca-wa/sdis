@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sat May  7 10:51:03 2022
+# Make data base, printed on Sat May  7 14:37:29 2022
 
 # Variables
 
@@ -21,7 +21,7 @@ SSH_AGENT_LAUNCHER = gnome-keyring
 # environment
 GJS_DEBUG_OUTPUT = stderr
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-c8f6b593-52ef-4f43-bc62-f2503e38d21c.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-f6b47396-5c9f-4697-bee2-854181aad509.sock
 # environment
 VSCODE_CWD = /home/florianm
 # environment
@@ -89,13 +89,13 @@ MAKEFILE_LIST :=
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-VSCODE_PID = 14769
+VSCODE_PID = 7978
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
-SESSION_MANAGER = local/kens-awesome-002:@/tmp/.ICE-unix/3933,unix/kens-awesome-002:/tmp/.ICE-unix/3933
+SESSION_MANAGER = local/kens-awesome-002:@/tmp/.ICE-unix/3473,unix/kens-awesome-002:/tmp/.ICE-unix/3473
 # automatic
 *F = $(notdir $*)
 # environment
@@ -137,7 +137,7 @@ VIRTUAL_ENV_DISABLE_PROMPT = 1
 # environment
 PYENV_VIRTUALENV_INIT = 1
 # environment
-INVOCATION_ID = f5869cd68fa2480a93b3cee59e01125f
+INVOCATION_ID = a7ed847cca4a4167ab6960f312046a0e
 # environment
 VSCODE_LOG_NATIVE = false
 # environment
@@ -165,7 +165,7 @@ fish_user_paths = /home/florianm/.pyenv/bin /home/florianm/.poetry/bin /home/flo
 # makefile
 .DEFAULT_GOAL := 
 # environment
-SYSTEMD_EXEC_PID = 3956
+SYSTEMD_EXEC_PID = 3500
 # environment
 DISPLAY = :1
 # environment
@@ -175,9 +175,9 @@ GTK_MODULES = gail:atk-bridge
 # default
 MAKE_VERSION := 4.3
 # environment
-MANAGERPID = 3664
+MANAGERPID = 3207
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 14769
+GIO_LAUNCHED_DESKTOP_FILE_PID = 7978
 # environment
 _ = /usr/bin/dbus-update-activation-environment
 # environment
@@ -185,7 +185,7 @@ XDG_RUNTIME_DIR = /run/user/1000
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
-JOURNAL_STREAM = 8:43661
+JOURNAL_STREAM = 8:47435
 # environment
 XDG_SESSION_CLASS = user
 # environment
@@ -280,10 +280,9 @@ GNUmakefile:
 
 # strcache performance: lookups = 42 / hit rate = 7%
 # hash-table stats:
+# Load=39/8192=0%, Rehash=0, Collisions=0/42=0%
+# Finished Make data base on Sat May  7 14:37:29 2022
+
  
 make: *** No rule to make target 'all'.  Stop.
 
-# Load=39/8192=0%, Rehash=0, Collisions=0/42=0%
-# Finished Make data base on Sat May  7 10:51:03 2022
-
- 

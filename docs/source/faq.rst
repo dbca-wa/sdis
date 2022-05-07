@@ -2,11 +2,12 @@
 Frequently Asked Questions
 **************************
 
-Many questions will be covered by the instructions in :doc:`quickstart`.
+Many questions will be covered by the instructions to specific user roles.
+Here is a collection of frequently asked questions providing further guidance:
 
 Where are my projects?
 ======================
-The `SDIS home page <https://sdis.dpaw.wa.gov.au/>`_ will display projects
+The `SDIS home page <https://sdis.dbca.wa.gov.au/>`_ will display projects
 you supervise or participate in under "My Projects".
 
 Note:
@@ -25,7 +26,7 @@ You can type to filter the dropdown menus!
 
 Which projects will be discussed at the next SCMT meeting?
 ==========================================================
-On the `SDIS home page <https://sdis.dpaw.wa.gov.au/>`_, in the "Projects" section,
+On the `SDIS home page <https://sdis.dbca.wa.gov.au/>`_, in the "Projects" section,
 click "View xxx projects awaiting SCMT approval" to expand a list of project
 documents (Concept Plans and Project Closures) awaiting SCMT approval.
 
@@ -34,7 +35,7 @@ This selection is of particular interest to SCMT members as pre-read for the SCM
 Is there anything SDIS wants *me* to do?
 ========================================
 If there are any documents awaiting your input, and possibly any approval actions,
-they will be shown on the `SDIS home page <https://sdis.dpaw.wa.gov.au/>`_ under
+they will be shown on the `SDIS home page <https://sdis.dbca.wa.gov.au/>`_ under
 "My Tasks". Click each link, update the content as appropriate, save the changes,
 and if appropriate, execute any approval steps shown under "Actions".
 
@@ -173,7 +174,7 @@ No, not really - only kicking off a new ARAR cycle will create the documents
 you need to update. They simply don't exist earlier.
 If you need to provide early updates (e.g. because of field work), use the latest
 progress reports as starting point (copy out the text), and email the new version
-to Florian.
+to the system administrator.
 
 What happens in the last weeks before a new ARAR comes around?
 ==============================================================
@@ -191,7 +192,7 @@ What happens during the ARAR reporting phase?
 The general purpose of SDIS is to encourage project management through the correct approval of related project documentation, and to audit the human decisions.
 However, sometimes we need to fast-track some processes and override the system. A system admin with sufficient permissions can do so.
 
-* SDIS admins assist BCS staff with the updates and their approval. Some projects and documents get stuck and need a superuser to reset approvals.
+* SDIS admins assist DBCA staff with the updates and their approval. Some projects and documents get stuck and need a superuser to reset approvals.
 * Given a draft of the organigram, the developer updates the print version.
 * Any other changes to the report structure are applied by the developer upon request from the Directorate.
 

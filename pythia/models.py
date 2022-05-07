@@ -620,8 +620,7 @@ class Address(Audit, ActiveModel):
 class Service(Audit, ActiveModel):
     """Departmental services.
 
-    Departmental Services are structured into programs (BCS) or equivalent organisational units.
-    Biodiversity and Conservation Science projects provide value to the Departmental Services.
+    SDIS Science projects provide value to a defined selection of the Departmental Services.
     """
 
     name = models.CharField(max_length=320)
