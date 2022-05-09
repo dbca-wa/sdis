@@ -1,6 +1,4 @@
 make all --print-data-base --no-builtin-variables --no-builtin-rules --question
-make: *** No rule to make target 'all'.  Stop.
-
 # GNU Make 4.3
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2020 Free Software Foundation, Inc.
@@ -8,7 +6,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Mon May  9 12:15:59 2022
+# Make data base, printed on Mon May  9 17:10:55 2022
 
 # Variables
 
@@ -23,7 +21,7 @@ SSH_AGENT_LAUNCHER = gnome-keyring
 # environment
 GJS_DEBUG_OUTPUT = stderr
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-eac7e4a1-eccc-490b-959f-a8c8e5f32978.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-1a6496c9-4c56-4ca5-896c-2a4a803973b2.sock
 # environment
 VSCODE_CWD = /home/florianm
 # environment
@@ -91,7 +89,7 @@ MAKEFILE_LIST :=
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-VSCODE_PID = 19710
+VSCODE_PID = 63368
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
@@ -179,7 +177,7 @@ MAKE_VERSION := 4.3
 # environment
 MANAGERPID = 3225
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 19710
+GIO_LAUNCHED_DESKTOP_FILE_PID = 63368
 # environment
 _ = /usr/bin/dbus-update-activation-environment
 # environment
@@ -283,7 +281,9 @@ GNUmakefile:
 # strcache performance: lookups = 42 / hit rate = 7%
 # hash-table stats:
  
+make: *** No rule to make target 'all'.  Stop.
+
 # Load=39/8192=0%, Rehash=0, Collisions=0/42=0%
-# Finished Make data base on Mon May  9 12:15:59 2022
+# Finished Make data base on Mon May  9 17:10:55 2022
 
  

@@ -282,7 +282,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         ResearchFunction,
         blank=True, null=True,
         verbose_name="Research Function",
-        help_text=_("The SCD Research Function this project mainly"
+        help_text=_("The Research Function this project mainly"
                     " contributes to."))
     areas = models.ManyToManyField(
         Area,
@@ -307,7 +307,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         related_name='pythia_project_data_custodian', blank=True, null=True,
         help_text=_("The data custodian (SPP E25) responsible for data "
                     "management, publishing and metadata documentation"
-                    " on the <a target=\"_\" href=\"http://internal-data.dpaw"
+                    " on the <a target=\"_\" href=\"http://data.dbca"
                     ".wa.gov.au/\">data catalogue</a>."))
     site_custodian = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name=_("site custodian"),
