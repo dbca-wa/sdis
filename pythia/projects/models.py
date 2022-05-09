@@ -203,9 +203,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         default=0,
         help_text=_("The project type determines the approval and "
                     "documentation requirements during the project's "
-                    "life span. Choose wisely - you will not be able"
-                    " to change the project type later."
-                    "If you get it wrong, create a new project of the"
+                    "life span. Choose wisely - you will not be able "
+                    "to change the project type later. "
+                    "If you get it wrong, create a new project of the "
                     "correct type and tell admins to delete the duplicate "
                     "project of the incorrect type."))
 
@@ -233,7 +233,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     #
     title = models.TextField(
         verbose_name=_("Project title"),
-        help_text=_("The project title with formatting if required."))
+        help_text=_("The project title with formatting if required (e.g. for taxonomic names)."))
     image = ResizedImageField(
         upload_to=projects_upload_to,
         blank=True, null=True,

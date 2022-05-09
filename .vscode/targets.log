@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Mon May  9 09:43:07 2022
+# Make data base, printed on Mon May  9 10:48:49 2022
 
 # Variables
 
@@ -23,7 +23,7 @@ SSH_AGENT_LAUNCHER = gnome-keyring
 # environment
 GJS_DEBUG_OUTPUT = stderr
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-6d1d4a3e-ed02-44e0-b9fc-30f6a1333f35.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-932bc761-671a-452a-8956-25319bcc3fc8.sock
 # environment
 VSCODE_CWD = /home/florianm
 # environment
@@ -91,7 +91,7 @@ MAKEFILE_LIST :=
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-VSCODE_PID = 87354
+VSCODE_PID = 93913
 # environment
 XDG_SESSION_TYPE = x11
 # automatic
@@ -179,7 +179,7 @@ MAKE_VERSION := 4.3
 # environment
 MANAGERPID = 3207
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 87354
+GIO_LAUNCHED_DESKTOP_FILE_PID = 93913
 # environment
 _ = /usr/bin/dbus-update-activation-environment
 # environment
@@ -283,6 +283,6 @@ GNUmakefile:
 # strcache performance: lookups = 42 / hit rate = 7%
 # hash-table stats:
 # Load=39/8192=0%, Rehash=0, Collisions=0/42=0%
-# Finished Make data base on Mon May  9 09:43:07 2022
+# Finished Make data base on Mon May  9 10:48:49 2022
 
  

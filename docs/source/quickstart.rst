@@ -12,11 +12,11 @@ If there are urgent or new Tasks, SDIS will notify you via email.
 
 Login
 =====
-SDIS uses the Parks & Wildlife Single-Sign-On login, provided by Microsoft's Office 365.
+SDIS uses the DBCA Single-Sign-On login, provided by Microsoft's Office 365.
 Once-off, SDIS will redirect you to login.microsoftonline.com, which you already
 have used to login to other Parks & Wildlife online services, such as Office 365.
 
-Remember to use your **email address** (including @dpaw.wa.gov.au), not your user name.
+Remember to use your **email address** (including @dbca.wa.gov.au), not your user name.
 
 Feel free to select "Keep me signed in", and let your browser "remember the password".
 At this point, you already are logged into your computer with the same credentials,
@@ -29,15 +29,10 @@ SDIS recommends to use Google Chrome or Mozilla Firefox for optimal browsing exp
 
 Find a Project
 ==============
-On the `"Browse all Projects" page <https://sdis.dpaw.wa.gov.au/projects/project/>`_
+On the `"Browse all Projects" page <https://sdis.dbca.wa.gov.au/projects/project/>`_
 you can filter and search for projects.
 
-Download a data snapshot
-========================
-On the "Browse all projects" page, the big buttons "Projects", "Project Memberships"
-and "Users" will download all projects, memberships and users as an Excel spreadsheet.
-Please note that this is a rapidly outdating snapshot.
-**Do not** update this spreadsheet - do update projects directly in SDIS instead.
+
 
 Project Life Cycles
 ===================
@@ -66,7 +61,7 @@ Project Creation and Approval
 
 Create a new Science Project
 ----------------------------
-* On the `SDIS home page <https://sdis.dpaw.wa.gov.au>`_ click Create New Project
+* On the `SDIS home page <https://sdis.dbca.wa.gov.au>`_ click Create New Project
 * In the Project Type dropdown box select Science Project
 * Enter a project title and divisional program (and as many other fields as you can fill in), then click Save Changes
 * In the Overview tab, enter team members. External team members must first be registered with SDIS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member. Click Edit Project Details to provide additional information such as location, then click Save Changes.
@@ -77,7 +72,7 @@ Core Functions look the same as Science Projects, however they are maintained by
 
 Create a new External Collaboration
 -----------------------------------
-* On the SDIS home page (https://sdis.dpaw.wa.gov.au) click Create New Project
+* On the SDIS home page (https://sdis.dbca.wa.gov.au) click Create New Project
 * In the Project Type dropdown box select External Collaboration
 * Enter a project title and divisional program, then click Save Changes
 * In the Overview tab, enter team members. External collaborators must first be registered with SDIS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member.
@@ -85,7 +80,7 @@ Create a new External Collaboration
 
 Create a new Student Project
 ----------------------------
-* On the SDIS home page (https://sdis.dpaw.wa.gov.au) click Create New Project
+* On the SDIS home page (https://sdis.dbca.wa.gov.au) click Create New Project
 * In the Project Type dropdown box select Student Project
 * Enter a project title and divisional program, then click Save Changes
 * In the Overview tab, enter team members. If student is external you must first register them with SDIS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member.
@@ -94,9 +89,9 @@ Create a new Student Project
 Managing project teams
 ======================
 
-Add a DPaW employee as team member
+Add a dbca employee as team member
 ----------------------------------
-Before SDIS can add DPaW employees to teams, they have to login once in person,
+Before SDIS can add dbca employees to teams, they have to login once in person,
 so that SDIS adds them to its internal user database.
 
 A user that has never logged in cannot be added to teams or into project roles.
@@ -116,7 +111,7 @@ Register an external colleague
 
 Now the new user can be added to project teams or project roles.
 
-**Note** External colleagues cannot login to SDIS, unless they have a DPaW account and email.
+**Note** External colleagues cannot login to SDIS, unless they have a dbca account and email.
 However, a profile needs to be created as shown here in order to add them to project team
 lists and represent them with their correct name and attribution.
 
@@ -195,16 +190,16 @@ from any active ARAR.
 Interaction with the Data Catalogue
 ===================================
 The Project Closure document will want to know where the data and digital artefacts
-are. The place for them is the `data catalogue <http://internal-data.dpaw.wa.gov.au/>`_.
+are. The place for them is the `data catalogue <http://internal-data.dbca.wa.gov.au/>`_.
 
 A semi-official "what goes where" guide, including instructions for the data catalogue,
-can be found on the `Marine Science Wiki <https://confluence.dpaw.wa.gov.au/display/MSIM/Home>`_.
+can be found on the `Marine Science Wiki <https://confluence.dbca.wa.gov.au/display/MSIM/Home>`_.
 
 Please note that every researcher is still (as per divisional guidelines)
 responsible to **backup their data in two separate places**, and put a
 **third copy** on the data catalogue.
 
-Our `data catalogue <http://internal-data.dpaw.wa.gov.au/>`_ is a warehouse of
+Our `data catalogue <http://internal-data.dbca.wa.gov.au/>`_ is a warehouse of
 metadata ( = a phone book for datasets) which holds links to, or (third!) copies of, departmental datasets.
 The catalogue is **not a complete backup for data** and - although the server
 and the database are backed up, and there are fail safes in place - with enough

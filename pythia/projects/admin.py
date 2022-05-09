@@ -127,7 +127,7 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
                 'fields': ('year', 'number', 'type', 'title',
                            'project_owner', 'data_custodian',
                            # 'site_custodian',
-                           'division', 'program', 'output_program', 'research_function',
+                           'program', 'output_program', 'research_function',
                            'start_date', 'end_date'), }),
             ('Project Location', {
                 'description': "Enter areas of relevance to the project",
@@ -396,6 +396,7 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
             self.model = obj.__class__
         result = super(ProjectAdmin, self).get_form(request, obj, **kwargs)
         self.model = temp
+        result.base_fields['type'].initial = request.GET.get("project_type", 0)
         result.base_fields['program'].initial = request.user.program
         result.base_fields['project_owner'].initial = request.user
         result.base_fields['data_custodian'].initial = request.user

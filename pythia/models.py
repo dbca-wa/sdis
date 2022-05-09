@@ -624,7 +624,7 @@ class Service(Audit, ActiveModel):
     """
 
     name = models.CharField(max_length=320)
-    slug = models.SlugField(help_text=_("The acronym of the service name."))
+    slug = models.SlugField(help_text=_("A URL-safe acronym of the Service's name without whitespace."))
     # Key personnel ----------------------------------------------------------#
     director = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='leads_services',
@@ -652,7 +652,7 @@ class Division(Audit, ActiveModel):
     """
 
     name = models.CharField(max_length=320)
-    slug = models.SlugField(help_text=_("The acronym of the service name."))
+    slug = models.SlugField(help_text=_("A URL-safe acronym of the Division's name without whitespace."))
     # Key personnel ----------------------------------------------------------#
     director = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='leads_divisions',
@@ -667,7 +667,8 @@ class Division(Audit, ActiveModel):
 
     def __str__(self):
         """String representation."""
-        return 'Division {0}: {1}'.format(self.slug, self.name)
+        #return 'Division {0}: {1}'.format(self.slug, self.name)
+        return self.name
 
 
 @python_2_unicode_compatible
