@@ -109,6 +109,7 @@ In a nutshell, Project approval in SDIS is like playing a board game.
 Newly created projects spawn documents, which have to be filled in and sent through their own
 approval work flow. Approval of documents advances projects to new life cycle stages.
 
+.. _project_lc:
 
 Science Projects and Core Functions
 -----------------------------------
@@ -172,6 +173,7 @@ simple annual progress reports.
 
 Progress reports requiring your input will turn up in "My Tasks" as well.
 
+.. _document_lc:
 
 Document Life Cycles
 ====================
