@@ -269,9 +269,9 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     #
     program = models.ForeignKey(
         Program,
-        verbose_name=_("Biodiversity and Conservation Science Program"),
+        verbose_name=_("Program"),
         blank=True, null=True,
-        help_text=_("The Biodiversity and Conservation Science Program "
+        help_text=_("The Program or equivalent Divisional subunit "
                     "hosting this project."))
     output_program = models.ForeignKey(
         Service,

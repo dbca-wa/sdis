@@ -192,7 +192,7 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     team_list_plain = serializers.Field()
     tagline_plain = serializers.Field()
     keywords_plain = serializers.Field()
-    program = serializers.RelatedField()
+    program = ProgramSerializer() # serializers.RelatedField()
     cost_center = serializers.Field()
     status_active = serializers.Field()
     absolute_url = serializers.Field()

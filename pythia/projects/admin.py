@@ -143,6 +143,7 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
         """Program Division."""
         return obj.program.division.slug if obj.program and obj.program.division else ''
     division.short_description = 'Division'
+    division.allow_tags = True
 
     def project_id(self, obj):
         """project_id."""
@@ -218,7 +219,7 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
     def get_queryset(self, request):
         """Curtomise queryset."""
         return super(ProjectAdmin, self).queryset(request).select_related(
-            'program', 'project_owner', 'modifier')
+            'program__division', 'program', 'project_owner', 'modifier')
 
     def response_add(self, request, obj, post_url_continue=None):
         """Customise response."""

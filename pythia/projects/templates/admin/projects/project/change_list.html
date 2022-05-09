@@ -117,14 +117,20 @@ $(function() {
     });//key up.
 
     // three shortcut buttons
-    $("#clear").click(function(){$("table#result_list tbody tr:hidden").show(); $("#FilterTextBox").val(""); return false; });
+    $("#clear").click(function(){$("table#result_list tbody tr:hidden").show(); $("#FilterTextBox").val(""); return false;});
     $("#current-user").click(function(){$("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false;});
     $("#cfspp").click(function(){
         $("table#result_list tbody tr:visible").hide();
         $("table#result_list tbody .indexColumn:contains('science project')").parent().show();
         $("table#result_list tbody .indexColumn:contains('core function project')").parent().show();
         $("#FilterTextBox").val("");
-        return false;
+        return false;    
+    });
+    $("#bcs").click(function(){
+      $("table#result_list tbody tr:visible").hide();
+      $("table#result_list tbody .indexColumn:contains('bcs')").parent().show();
+      $("#FilterTextBox").val("");
+      return false;  
     });
     //$("#cfspp").click();
 

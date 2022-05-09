@@ -1074,8 +1074,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Affiliation: spatial, organizational -----------------------------------#
     program = models.ForeignKey(
         Program, blank=True, null=True,  # optional for migrations
-        help_text=_("The main Biodiversity and Conservation Science Program "
-                    "affilitation."))
+        help_text=_("The main Program affilitation."))
 
     work_center = models.ForeignKey(
         WorkCenter, null=True, blank=True,
