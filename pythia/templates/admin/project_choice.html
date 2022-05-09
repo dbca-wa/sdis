@@ -1,0 +1,112 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}
+{% if not is_popup %}
+<ul class="breadcrumb">
+  <li><a href="{% url 'admin:index' %}">Home</a></li>
+  <li><a href="{% url 'admin:projects_project_changelist' %}">Projects</a></li>
+  <li>Create a new Project</li>
+</ul>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron">
+  <h1>Create a new Project</h1>
+  Projects differ by documentation structure, approval process, and reporting requirements.
+
+  Make sure you choose the correct project type as you will not be able to change the project type after creation.
+  If you need to change the project type, you need to have the project deleted and create a new project of the desired type.
+</div>
+
+<div class="row">
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="well">
+      <h3>Science Project</h3>
+      <div>
+        <p>
+          A project with a defined period of scientific activities.
+        </p>
+        <p>
+          <ul>
+          <li>Has an approval process to determine its fit within Departmental stragegy and priorities.</li>
+          <li>Has a formal closure process.</li>
+          <li>Requires annual reporting.</li>
+          </ul
+        </p>
+      </div>
+      <a class="btn btn-block btn-primary"
+        href="{% url 'admin:projects_project_add' %}?project_type=0">
+        Create a Science Project
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="well">
+      <h3>Core Function</h3>
+      <div>
+        <p>
+          An ongoing science function with an indefinite period of activity.
+        </p>
+        <p>
+          <ul>
+          <li>Has no approval process.</li>
+          <li>Has an immediate closure process.</li>
+          <li>Requires annual reporting.</li>
+          </ul
+        </p>
+      </div>
+      <a class="btn btn-block btn-primary"
+        href="{% url 'admin:projects_project_add' %}?project_type=1">
+        Create a Core Function
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="well">
+      <h3>External Partnership</h3>
+      <div>
+        <p>
+          Participation in an externally managed project.
+        </p>
+        <p>
+          <ul>
+          <li>Has no formal approval process.</li>
+          <li>Has an immediate closure process.</li>
+          <li>Project details are automatically included in annual reporting.</li>
+          </ul
+        </p>
+      </div>
+      <a class="btn btn-block btn-primary"
+        href="{% url 'admin:projects_project_add' %}?project_type=2">
+        Create an External Partnership
+      </a>
+    </div>
+  </div>
+
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="well">
+      <h3>Student Project</h3>
+      <div>
+        <p>
+          Supervision of a tertiary student.
+        </p>
+        <p>
+          <ul>
+          <li>Has no formal approval process.</li>
+          <li>Has an immediate closure process.</li>
+          <li>Requires annual reporting.</li>
+          </ul
+        </p>
+      </div>
+      <a class="btn btn-block btn-primary"
+        href="{% url 'admin:projects_project_add' %}?project_type=3">
+        Create a Student Project
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

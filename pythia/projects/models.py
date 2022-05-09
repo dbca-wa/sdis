@@ -186,7 +186,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     PROJECT_TYPES = (
         (SCIENCE_PROJECT, _('Science Project')),
         (CORE_PROJECT, _('Core Function')),
-        (COLLABORATION_PROJECT, _('External Collaboration')),
+        (COLLABORATION_PROJECT, _('External Partnership')),
         (STUDENT_PROJECT, _('Student Project')),
     )
 

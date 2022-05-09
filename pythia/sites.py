@@ -10,9 +10,10 @@ from django.contrib.auth.admin import GroupAdmin
 from django.core.urlresolvers import reverse
 from django.db.models.base import ModelBase
 from django.http import HttpResponseRedirect
+from django.views import static
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
-from django.views import static
+from django.views.generic import TemplateView
 
 from pythia.admin import (
     AuditAdmin, UserAdmin, DivisionAdmin, ServiceAdmin, ProgramAdmin, 
@@ -145,6 +146,10 @@ class PythiaSite(AuditSite):
             url(r'^action/batch-approve-progressreports/$',
                 batch_approve_progressreports,
                 name="batch_approve_progressreports"),
+
+            url(r'^projects/choose/$',
+                TemplateView.as_view(template_name="admin/project_choice.html"),
+                name="project_choice"),
 
             url(r'^arar_dashboard',
                 arar_dashboard,

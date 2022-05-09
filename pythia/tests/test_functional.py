@@ -185,6 +185,7 @@ class ProjectTests(BaseLiveServerTestCase):
         self.create_preauthenticated_session(admin)
 
         # and clicks on "create a new project"
+        import ipdb; ipdb.set_trace()
         url = reverse('admin:projects_project_add')
         self.selenium.get("%s%s" % (self.live_server_url, url))
         self.wait_page_loaded()
@@ -197,6 +198,13 @@ class ProjectTests(BaseLiveServerTestCase):
         # self.fail("Finish this test")
         pass
 
+    def test_project_create_corefunction(self):
+        """Test that Project create_view creates a CF project with ?project_type=1."""
+        url = "{0}?project_type=1".format(reverse('admin:projects_project_add'))
+        self.assert_200(url)
+
+        res = self.client.get(url)
+        self.assertEqual(res.context['form'].initial['project_type'], 1)
 
 class ScienceProjectApprovalTests(BaseLiveServerTestCase):
     """

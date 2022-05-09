@@ -51,9 +51,25 @@ favicon.badge({{ my_tasklist.count }});
                 <!-- <a class="btn btn-default btn-block"
                     href="export/projects.Project/">
                     Download all Projects (XLS)</a> -->
-                <a class="btn btn-default btn-block"
-                    href="{% url 'admin:projects_project_add' %}">
-                    Create new Project</a>
+                    
+                <!-- Intermediate landing page offering more explanation on project types -->
+                <a class="btn btn-block btn-primary" href="{% url 'admin:project_choice' %}">Create a new Project</a>
+
+                <!-- Dropdown button group to offer the options without much explanation -->
+                <!-- 
+                <div class="btn-group btn-block">
+                    <button type="button" class="btn btn-default btn-block dropdown-toggle" 
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Create Project <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'admin:projects_project_add' %}?project_type=0">Science Project</a></li>
+                        <li><a href="{% url 'admin:projects_project_add' %}?project_type=1">Core Function</a></li>
+                        <li><a href="{% url 'admin:projects_project_add' %}?project_type=2">External Partnership</a></li>
+                        <li><a href="{% url 'admin:projects_project_add' %}?project_type=3">Student Project</a></li>
+                    </ul>
+                </div>
+                -->
                 <div style="margin-top:5px;"></div><!-- spacing hack -->
                 {% scmt_preread %}
             </div>

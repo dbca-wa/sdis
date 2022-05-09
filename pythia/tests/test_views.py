@@ -86,6 +86,19 @@ class SmokeTest(BaseTestCase):
         url = reverse('admin:pythia_division_changelist')
         self.assert_200(url)        
 
+    def test_project_create(self):
+        """Test that Project create_view loads without any further GET request parameters."""
+        url = reverse('admin:projects_project_add')
+        self.assert_200(url)
+
+    def test_project_create_corefunction(self):
+        """Test that Project create_view creates a CF project with ?project_type=1."""
+        url = "{0}?project_type=1".format(reverse('admin:projects_project_add'))
+        self.assert_200(url)
+
+        # res = self.client.get(url)
+        # self.assertEqual(res.context['form'].initial['project_type'], 1)
+
     def test_project_changelist(self):
         """Render Project change_list."""
         url = reverse('admin:projects_project_changelist')
