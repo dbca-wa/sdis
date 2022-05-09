@@ -481,14 +481,16 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         Return all users with permission to "approve" documents for this project.
 
-        Default: ``self.program.division.director``.
+        Default: ``self.program.division.director`` and all superusers.
         """
+        superusers = User.objects.filter(is_superuser=True)
+        
         if self.program and self.program.division:
-            return [self.program.division.director, ]
+            return list(set(superusers)) + [self.program.division.director, ]
         else:
             logger.warning("[pythia.projects.models.Project.approvers] "
-                           "approvers not found - need project.program.division.director")
-            return set()
+                           "Need project.program.division.director")
+            return list(set(superusers))
         # try:
         #     scd, created = Group.objects.get_or_create(name='SCD')
         #     return scd.user_set.all()

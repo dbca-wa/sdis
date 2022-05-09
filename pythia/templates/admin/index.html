@@ -79,15 +79,15 @@ favicon.badge({{ my_tasklist.count }});
                 {% if current_arar %}
                 <a class="btn btn-success btn-block"
                     href="{% url 'admin:arar_dashboard' %}"
-                    title="Read and work on progress reports">
-                    Current ARAR (progress report overview)</a>
+                    title="Read and work on BCS annual report progress reports">
+                    Current BCS annual report (progress)</a>
                 <a class="btn btn-primary btn-block"
                     href="{% url 'admin:pythia_ararreport_detail' current_arar.pk %}"
-                    title="View the current ARAR online">
-                    Current ARAR (print preview)</a>
+                    title="View the current BCS annual report online">
+                    Current BCS annual report (print preview)</a>
                 <button class="btn btn-default btn-block dropdown-toggle"
                     data-toggle="dropdown">
-                    Download published ARAR <span class="caret"></span></button>
+                    Download published BCS annual report <span class="caret"></span></button>
                 {% endif %}
                 <ul class="dropdown-menu" role="menu">
                     {% include 'admin/includes/arar_list_static.html' %}

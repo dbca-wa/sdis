@@ -68,6 +68,12 @@ class SmokeTest(BaseTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
     
+    def test_project_choice(self):
+        """Render Project choice landing page. 
+        """
+        url = reverse('admin:project_choice')
+        self.assert_200(url)
+
     def test_service_changelist(self):
         """Render Service change_list. 
         

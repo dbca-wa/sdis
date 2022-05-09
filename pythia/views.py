@@ -92,9 +92,10 @@ def batch_approve_progressreports(request):
 
     from pythia.documents.models import (
         Document, ProgressReport, StudentReport)
-    pr = [d.approve() for d in
+
+    pr = [[d.approve(), d.save()] for d in
           ProgressReport.objects.filter(status=Document.STATUS_INAPPROVAL)]
-    sr = [d.approve() for d in
+    sr = [[d.approve(), d.save()] for d in
           StudentReport.objects.filter(status=Document.STATUS_INAPPROVAL)]
 
     messages.success(
