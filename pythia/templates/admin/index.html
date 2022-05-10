@@ -45,6 +45,7 @@ favicon.badge({{ my_tasklist.count }});
         <div class="row">
             <div class="col-md-6">
                 <h2>Projects</h2>
+                <p>Projects can be registered for any DBCA Division.</p>
                 <a class="btn btn-primary btn-block"
                     href="{% url 'admin:projects_project_changelist' %}">
                     Browse all Projects</a>
@@ -75,6 +76,7 @@ favicon.badge({{ my_tasklist.count }});
             </div>
             <div class="col-md-6">
                 <h2>Reports</h2>
+                <p>Currently, only BCS projects participate in annual reporting.</p>
                 {% get_current_arar as current_arar %}
                 {% if current_arar %}
                 <a class="btn btn-success btn-block"

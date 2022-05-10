@@ -116,7 +116,7 @@ $(function() {
              ).parent().hide();});
     });//key up.
 
-    // three shortcut buttons
+    // shortcut filter buttons
     $("#clear").click(function(){$("table#result_list tbody tr:hidden").show(); $("#FilterTextBox").val(""); return false;});
     $("#current-user").click(function(){$("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false;});
     $("#cfspp").click(function(){
@@ -129,6 +129,18 @@ $(function() {
     $("#bcs").click(function(){
       $("table#result_list tbody tr:visible").hide();
       $("table#result_list tbody .indexColumn:contains('bcs')").parent().show();
+      $("#FilterTextBox").val("");
+      return false;  
+    });
+    $("#rfms").click(function(){
+      $("table#result_list tbody tr:visible").hide();
+      $("table#result_list tbody .indexColumn:contains('rfms')").parent().show();
+      $("#FilterTextBox").val("");
+      return false;  
+    });
+    $("#cem").click(function(){
+      $("table#result_list tbody tr:visible").hide();
+      $("table#result_list tbody .indexColumn:contains('cem')").parent().show();
       $("#FilterTextBox").val("");
       return false;  
     });
