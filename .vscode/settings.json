@@ -1,6 +1,0 @@
-{
-    "restructuredtext.confPath": "${workspaceFolder}/docs_source/conf.py",
-    "esbonio.sphinx.buildDir": "${workspaceFolder}/docs",
-    "esbonio.sphinx.confDir": "${workspaceFolder}/docs_source/conf.py",
-    "git.ignoreLimitWarning": true
-}

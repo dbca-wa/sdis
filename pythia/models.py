@@ -659,7 +659,7 @@ class Division(Audit, ActiveModel):
         related_name='leads_divisions',
         blank=True, 
         null=True, 
-        help_text=_("The Division's Director"))
+        help_text=_("The Division's Director will be attributed as head of the Division in reports."))
 
     approver = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
@@ -667,8 +667,8 @@ class Division(Audit, ActiveModel):
         blank=True, 
         null=True, 
         help_text=_(
-            "The person who approves on behald of the Director. "
-            "This can be the same person or someone else."))
+            "The Approver receives email notifications about outstanding approval requests and has permissions to approve documents. "
+            "The Approver can be the Director or someone else, such as (but not limited to) an Assistant Director or Executive Assistant."))
 
     class Meta:
         """Class opts."""
