@@ -186,14 +186,21 @@ def user_portfolio(usr, personalise=True):
 
 @register.inclusion_tag('frontpage/scmt_preread.html')
 def scmt_preread():
-    """Render all documents that will be discussed at the next SCMT meeting.
+    """Return all documents that will be discussed at the next BCS SCMT meeting.
 
-    Relevant documents are ConceptPlans and ProjectClosures "in approval".
+    Relevant documents are ConceptPlans and ProjectClosures "in approval" of Division BCS.
     """
     from pythia.documents.models import (Document, ConceptPlan, ProjectClosure)
-    # SCP, PCF "in approval"
-    scp = ConceptPlan.objects.filter(status=Document.STATUS_INAPPROVAL)
-    pcf = ProjectClosure.objects.filter(status=Document.STATUS_INAPPROVAL)
+
+    # SCP, PCF "in approval" of Division BCS
+    scp = ConceptPlan.objects.filter(
+        status=Document.STATUS_INAPPROVAL, 
+        project__program__division__slug__iexact="BCS")
+
+    pcf = ProjectClosure.objects.filter(
+        status=Document.STATUS_INAPPROVAL, 
+        project__program__division__slug__iexact="BCS")
+
     return {"conceptplans": list(scp),
             "projectclosures": list(pcf),
             "length": len(scp) + len(pcf), }
