@@ -104,7 +104,7 @@ $(function() {
 
     //add index column with all content.
     $("table#result_list tbody > tr:has(td)").each(function(){
-       var t = $(this).text().toLowerCase(); //all row text
+       var t = $(this).text(); //.toLowerCase(); //all row text
        $("<td class='indexColumn'></td>").hide().text(t).appendTo(this);
     });//each tr
 
@@ -116,31 +116,36 @@ $(function() {
              ).parent().hide();});
     });//key up.
 
+    // https://stackoverflow.com/a/8747204/2813717
+    jQuery.expr[':'].icontains = function(a, i, m) {
+      return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+    };    
+
     // shortcut filter buttons
     $("#clear").click(function(){$("table#result_list tbody tr:hidden").show(); $("#FilterTextBox").val(""); return false;});
     $("#current-user").click(function(){$("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false;});
     $("#cfspp").click(function(){
         $("table#result_list tbody tr:visible").hide();
-        $("table#result_list tbody .indexColumn:contains('science project')").parent().show();
-        $("table#result_list tbody .indexColumn:contains('core function project')").parent().show();
+        $("table#result_list tbody .indexColumn:contains('Science Project')").parent().show();
+        $("table#result_list tbody .indexColumn:contains('Core Function')").parent().show();
         $("#FilterTextBox").val("");
         return false;    
     });
     $("#bcs").click(function(){
       $("table#result_list tbody tr:visible").hide();
-      $("table#result_list tbody .indexColumn:contains('bcs')").parent().show();
+      $("table#result_list tbody .indexColumn:contains('BCS')").parent().show();
       $("#FilterTextBox").val("");
       return false;  
     });
     $("#rfms").click(function(){
       $("table#result_list tbody tr:visible").hide();
-      $("table#result_list tbody .indexColumn:contains('rfms')").parent().show();
+      $("table#result_list tbody .indexColumn:contains('RFMS')").parent().show();
       $("#FilterTextBox").val("");
       return false;  
     });
     $("#cem").click(function(){
       $("table#result_list tbody tr:visible").hide();
-      $("table#result_list tbody .indexColumn:contains('cem')").parent().show();
+      $("table#result_list tbody .indexColumn:contains('CEM')").parent().show();
       $("#FilterTextBox").val("");
       return false;  
     });

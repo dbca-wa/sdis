@@ -3,12 +3,15 @@
   <link rel="stylesheet" type="text/css" href="{% static "handsontable/dist/jquery.handsontable.css" %}">
 {% endblock %}
 {% block extrahead %}
-  <script src="{% static 'jquery/dist/jquery.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" 
+integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
   <script src="{% static 'modernizr/modernizr.js' %}"></script>
   <script src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}"></script>
   <script src="{% static 'favico.js/favico-0.3.4.min.js' %}"></script>
   <script src="{% static 'jquery-ui/ui/minified/jquery-ui.min.js' %}"></script>
   <script src="{% static 'handsontable/dist/jquery.handsontable.js' %}"></script>
+
+  
 {% endblock %}
 {% block content %}
 <div class="dir_msg_heading">Director's Message</div>
