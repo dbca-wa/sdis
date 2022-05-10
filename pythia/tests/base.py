@@ -59,6 +59,7 @@ class DivisionFactory(factory.django.DjangoModelFactory):
     slug = factory.Sequence(lambda n: "division%d" % n)
     creator = factory.SubFactory(UserFactory)
     director = factory.SubFactory(UserFactory)
+    approver = factory.SubFactory(UserFactory)
     
 
 class ProgramFactory(factory.django.DjangoModelFactory):

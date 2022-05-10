@@ -655,8 +655,20 @@ class Division(Audit, ActiveModel):
     slug = models.SlugField(help_text=_("A URL-safe acronym of the Division's name without whitespace."))
     # Key personnel ----------------------------------------------------------#
     director = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name='leads_divisions',
-        blank=True, null=True, help_text=_("The Division's Director"))
+        settings.AUTH_USER_MODEL, 
+        related_name='leads_divisions',
+        blank=True, 
+        null=True, 
+        help_text=_("The Division's Director"))
+
+    approver = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        related_name='approves_divisions',
+        blank=True, 
+        null=True, 
+        help_text=_(
+            "The person who approves on behald of the Director. "
+            "This can be the same person or someone else."))
 
     class Meta:
         """Class opts."""

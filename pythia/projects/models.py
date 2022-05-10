@@ -485,20 +485,12 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         """
         superusers = User.objects.filter(is_superuser=True)
         
-        if self.program and self.program.division:
-            return list(set(superusers)) + [self.program.division.director, ]
+        if self.program and self.program.division and self.program.division.approver:
+            return list(set(superusers)) + [self.program.division.approver, ]
         else:
             logger.warning("[pythia.projects.models.Project.approvers] "
-                           "Need project.program.division.director")
+                           "Need project.program.division.approver")
             return list(set(superusers))
-        # try:
-        #     scd, created = Group.objects.get_or_create(name='SCD')
-        #     return scd.user_set.all()
-        # except:
-        #     logger.warning("[pythia.projects.models.Project.approvers] "
-        #                    "approvers not found")
-        #     return set()
-        # # return Group.objects.get(name='SCD').user_set.all()
 
     @property
     def special_roles(self):

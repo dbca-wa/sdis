@@ -44,7 +44,8 @@ class DivisionSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id',
                   'name',
                   'slug',
-                  'director')
+                  'director',
+                  'approver')
 
 
 class AreaSerializer(serializers.HyperlinkedModelSerializer):
@@ -123,12 +124,13 @@ class DivisionSerializer(serializers.HyperlinkedModelSerializer):
     """A fast and simple Division serializer."""
 
     director = serializers.RelatedField()
+    approver = serializers.RelatedField()
 
     class Meta:
         """Class opts."""
 
         model = Program
-        fields = ('id', 'name', 'slug', 'director',)
+        fields = ('id', 'name', 'slug', 'director', 'approver')
 
 
 class ProgramSerializer(serializers.HyperlinkedModelSerializer):
@@ -382,9 +384,11 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
 class DivisionViewSet(viewsets.ModelViewSet):
     queryset = Division.objects.all()
     serializer_class = DivisionSerializer
+
 
 class ProgramViewSet(viewsets.ModelViewSet):
     """A clever Program ViewSet that returns fast lists and full details.

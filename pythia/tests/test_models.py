@@ -59,6 +59,8 @@ class ProgramModelTests(BaseTestCase):
             username='steven', first_name='Steven', last_name='Stevenson')
         self.marge = UserFactory.create(
             username='marge', first_name='Marge', last_name='Simpson')
+        self.kat = UserFactory.create(
+            username='kat', first_name='Kat', last_name='Walterson')
         self.program = ProgramFactory.create(
             creator=self.marge, program_leader=self.steven)
 
@@ -184,7 +186,7 @@ class ScienceProjectModelTests(BaseTestCase):
             is_group=True, group_name='Group Name')
 
         self.division = DivisionFactory.create(
-            creator=self.marge, director=self.marge)
+            creator=self.marge, director=self.marge, approver=self.marge)
 
         self.program = ProgramFactory.create(
             creator=self.marge, program_leader=self.steven, division=self.division)
@@ -892,7 +894,7 @@ class CoreFunctionProjectModelTests(TestCase):
             username='peter', first_name='Peter', last_name='Peterson')
 
         self.division = DivisionFactory.create(
-            creator=self.marge, director=self.marge)
+            creator=self.marge, director=self.marge, approver=self.marge)
 
         self.program = ProgramFactory.create(
             creator=self.marge,
@@ -966,7 +968,7 @@ class CollaborationProjectModelTests(TestCase):
             username='peter', first_name='Peter', last_name='Peterson')
 
         self.division = DivisionFactory.create(
-            creator=self.marge, director=self.marge)
+            creator=self.marge, director=self.marge, approver=self.marge)
 
         self.program = ProgramFactory.create(
             creator=self.marge, program_leader=self.steven, division = self.division)
@@ -1050,7 +1052,7 @@ class StudentProjectModelTests(TestCase):
             username='peter', first_name='Peter', last_name='Peterson')
 
         self.division = DivisionFactory.create(
-            creator=self.marge, director=self.marge)
+            creator=self.marge, director=self.marge, approver=self.marge)
 
         self.program = ProgramFactory.create(
             creator=self.marge, program_leader=self.steven, division = self.division)
