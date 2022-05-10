@@ -116,10 +116,12 @@ $(function() {
              ).parent().hide();});
     });//key up.
 
-    // https://stackoverflow.com/a/8747204/2813717
-    jQuery.expr[':'].icontains = function(a, i, m) {
-      return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
-    };    
+    // https://gist.github.com/pklauzinski/b6f836f99cfa11100488
+    $.expr[':'].icontains = $.expr.createPseudo(function(text) {
+      return function(e) {
+          return $(e).text().toUpperCase().indexOf(text.toUpperCase()) >= 0;
+      };
+    });  
 
     // shortcut filter buttons
     $("#clear").click(function(){$("table#result_list tbody tr:hidden").show(); $("#FilterTextBox").val(""); return false;});
