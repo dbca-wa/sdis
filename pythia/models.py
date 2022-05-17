@@ -990,11 +990,19 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
 
     username = models.CharField(
-        _('username'), max_length=30, unique=True,
+        _('username'), 
+        unique=True,
+        max_length=150, 
         help_text=_('Required. 30 characters or fewer. Letters, digits and '
                     '@/./+/-/_ only.'),
-        validators=[validators.RegexValidator(
-            r'^[\w.@+-]+$', _('Enter a valid username.'), 'invalid')])
+        validators=[
+            validators.RegexValidator(
+                regex = r"^[\w.@+-]+\Z", 
+                message = _("Enter a valid username."
+                " This value may contain only letters, numbers, and @/./+/-/_ characters.")
+            )
+        ]
+    )
 
     # Internal person
     # Internal group
