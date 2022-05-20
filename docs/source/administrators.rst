@@ -23,8 +23,11 @@ Close annual reporting cycle
 Close any progress reports which are "in approval" through Menu > Backstage > Batch-approve all Progress Reports.
 Instruct the Directorate to solicit through an email broadcast:
 
-* Project closures 
-* Registration/approval of any new Projects
+* Initiate Project Closure for any complete, suspended, or terminated Project (SP or CF). 
+  These projct types require a formal approval process and might solicit a last Progress Report.
+* Close any completed Student Project or External Partnership. These project types close immediately without any approval process.
+* Register and seek approval for any new Project, especially those which have progressed significantly since the last annual report.
+* Update all External Partnerships. Their Project details will be used in the annual report.
 
 Allow sufficient time for Project teams to register their new Projects and author Project Closure documents, 
 and SCMT to discuss and approve Project closures.
