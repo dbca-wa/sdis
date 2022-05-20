@@ -20,14 +20,21 @@ Go to the Project list and click "Download Projects" to get a full list of Proje
 
 Close annual reporting cycle
 ============================
-Close any progress reports which are "in approval" through Menu > Backstage > Batch-approve all Progress Reports.
-Instruct the Directorate to solicit through an email broadcast:
+* Close any progress reports which are "in approval" through Menu > Backstage > Batch-approve all Progress Reports.
+* This can be done as soon as the annual report content is print ready.
+* Approving a Progress Report reverts its Project from "update requested" to its normal "approved and active" state.
+
+Prepare SDIS for a new annual reporting cycle
+=============================================
+Instruct the Directorate to solicit the following actions from SDIS Project Teams through an email broadcast:
 
 * Initiate Project Closure for any complete, suspended, or terminated Project (SP or CF). 
   These projct types require a formal approval process and might solicit a last Progress Report.
 * Close any completed Student Project or External Partnership. These project types close immediately without any approval process.
 * Register and seek approval for any new Project, especially those which have progressed significantly since the last annual report.
 * Update all External Partnerships. Their Project details will be used in the annual report.
+* Remember that only members of a Project Team have permission to update Project Documents, 
+  and they can add other SDIS Users to the Team to give colleagues write permissions.
 
 Allow sufficient time for Project teams to register their new Projects and author Project Closure documents, 
 and SCMT to discuss and approve Project closures.
