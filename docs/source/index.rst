@@ -43,6 +43,7 @@ the software architecture and design decisions are discussed in the :doc:`develo
    authors
    reviewers
    approvers
+   administrators
    faq
    quickstart
    specs
