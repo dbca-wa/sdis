@@ -15,4 +15,40 @@ The role of admin, maintainer, and developer is currently shared.
 Download a data snapshot
 ========================
 
+Go to the Project list and click "Download Projects" to get a full list of Projects with their details.
 **Do not** update this spreadsheet - do update projects directly in SDIS instead.
+
+Close annual reporting cycle
+============================
+Close any progress reports which are "in approval" through Menu > Backstage > Batch-approve all Progress Reports.
+Instruct the Directorate to solicit through an email broadcast:
+
+* Project closures 
+* Registration/approval of any new Projects
+
+Allow sufficient time for Project teams to register their new Projects and author Project Closure documents, 
+and SCMT to discuss and approve Project closures.
+
+Create a new annual reporting cycle
+===================================
+Precondition:
+
+* All Projects, their documentation, and their approval are up to date. 
+* Project closures are initiated and approved. Projects with "closure pending final update" will participate in the upcoming annual report.
+
+Action:
+
+* `Create a new BCS Annual Report <https://sdis.dbca.wa.gov.au/pythia/ararreport/add/>`_.
+* Select all participating Divisions. This is likely only BCS.
+* Enter the reporting year.
+* Chapter images and introductions can be updated later on.
+* Open/close dates are not acted upon, they are optional.
+
+On creation of a new annual report, and only when it is created for the first time, 
+all relevant projects will enter the life cycle state "update requested" and spawn a new Progress Report (SP and CF)
+or StudentReport (STP). This populates the "My Tasks" portfolio of each User, but will not send email notifications.
+
+Post action:
+
+* Broadcast to all involved staff that annual reporting season is now open.
+* Members of External Partnerships do now have to provide a Progress Report, but need to update Project details or close them where appropriate.
