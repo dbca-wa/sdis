@@ -53,6 +53,38 @@ def arar_dashboard(request):
         {"original": ARARReport.objects.latest()})
 
 
+def project_dashboard(request):
+    """Render Projects grouped by Programs."""
+    from pythia.models import Division
+    from pythia.projects.models import Project
+    logger.info("User {0} views Project Dashboard".format(request.user))
+
+    division = request.user.division if (
+        request.user and request.user.division
+    ) else Division.objects.first()
+
+    projects = Project.objects.filter(
+        program__division=division
+    ).order_by(
+        'program__position', 
+        'position', 
+        '-year', 
+        '-number'
+    ).prefetch_related(
+        'program',
+        'program__modifier',
+        'program__program_leader'
+    )
+
+    return TemplateResponse(
+        request,
+        'projects/dashboard.html',
+        {
+            "division": division,
+            "projects": projects
+        }
+    )
+
 @csrf_exempt
 def update_cache(request):
     """Update cached fields on Projects, guess initials for Users without."""

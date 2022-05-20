@@ -705,6 +705,7 @@ class Program(Audit, ActiveModel):
         Division,
         verbose_name=_("Departmental Division"),
         blank=True, null=True,
+        related_name = "programs",
         help_text=_("The Departmental Division this program belongs to."))
 
     # Publishing and printing options ----------------------------------------#

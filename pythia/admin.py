@@ -395,7 +395,7 @@ class UserAdmin(DjangoUserAdmin):
 
     list_display = ('username', 'fullname', 'email', 'division', 'program', 'work_center')
     list_per_page = 1000    # sod pagination
-    list_filter = ('division', 'is_external', 'is_group', 'agreed',
+    list_filter = ('division', 'program', 'is_external', 'is_group', 'agreed',
                    'is_staff', 'is_superuser', 'is_active')
     readonly_fields = ('username', 'is_active', 'is_staff', 'is_superuser',
                        'user_permissions', 'last_login', 'date_joined')

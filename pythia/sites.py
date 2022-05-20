@@ -35,8 +35,14 @@ from pythia.projects.models import (
 from pythia.reports.admin import ARARReportAdmin
 from pythia.reports.models import ARARReport
 from pythia.views import (
-    CommentUpdateView, comments_delete, comments_post, update_cache,
-    arar_dashboard, batch_approve_progressreports)
+    CommentUpdateView, 
+    comments_delete, 
+    comments_post, 
+    update_cache,
+    arar_dashboard, 
+    project_dashboard,
+    batch_approve_progressreports
+)
 
 
 class AuditSite(admin.AdminSite):
@@ -154,8 +160,16 @@ class PythiaSite(AuditSite):
             url(r'^arar_dashboard',
                 arar_dashboard,
                 name="arar_dashboard"),
+            
+            url(r'^project_dashboard',
+                project_dashboard,
+                name="project_dashboard"),
+
+
             ) + staticserve(settings.STATIC_URL,
                             document_root=settings.STATIC_ROOT)
+
+
 
         return urlpatterns + super(PythiaSite, self).get_urls()
 
