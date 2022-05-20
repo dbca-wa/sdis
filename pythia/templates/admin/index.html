@@ -45,7 +45,9 @@ favicon.badge({{ my_tasklist.count }});
         <div class="row">
             <div class="col-md-6">
                 <h2>Projects</h2>
+                <!-- #176
                 <p>Projects can be registered for any DBCA Division.</p>
+                -->
                 <a class="btn btn-primary btn-block"
                     href="{% url 'admin:projects_project_changelist' %}">
                     Browse all Projects</a>
@@ -76,7 +78,9 @@ favicon.badge({{ my_tasklist.count }});
             </div>
             <div class="col-md-6">
                 <h2>Reports</h2>
+                <!-- #176
                 <p>Currently, only BCS projects participate in annual reporting.</p>
+                -->
                 {% get_current_arar as current_arar %}
                 {% if current_arar %}
                 <a class="btn btn-success btn-block"
@@ -89,7 +93,7 @@ favicon.badge({{ my_tasklist.count }});
                     Current BCS annual report (print preview)</a>
                 <button class="btn btn-default btn-block dropdown-toggle"
                     data-toggle="dropdown">
-                    Download published BCS annual report <span class="caret"></span></button>
+                    Download published BCS annual reports <span class="caret"></span></button>
                 {% endif %}
                 <ul class="dropdown-menu" role="menu">
                     {% include 'admin/includes/arar_list_static.html' %}

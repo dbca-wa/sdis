@@ -125,6 +125,7 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
                 'classes': ('collapse in',),
                 'description': "Keep mandatory project information up to date",
                 'fields': ('year', 'number', 'type', 'title',
+                           'comments', 
                            'project_owner', 'data_custodian',
                            # 'site_custodian',
                            'program', 'output_program', 'research_function',
@@ -136,7 +137,7 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
             ('Project display', {
                 'description': "Showcase info used in overviews and reports",
                 'classes': ('collapse',),
-                'fields': ('image', 'tagline', 'comments', 'keywords', 'position'), })
+                'fields': ('image', 'tagline', 'keywords', 'position'), })
         )
 
     def division(self, obj):
