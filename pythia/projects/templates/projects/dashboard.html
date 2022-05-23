@@ -3,7 +3,15 @@
 {% block content %}
 <div class="row" id="row-overview">
   <div class="col-md-12">
-    <h1>{{ division.name }} Projects</h1>
+    <h1>
+      {% if not request.user.is_superuser %}{{ division.name }} {% endif %}
+      Projects
+      <span class="pull-right">
+        <a class="btn btn-small btn-info" href="/api/projects?format=csv" title="Download all Projects as CSV">
+          <i class="glyphicon glyphicon-save glyphicon-white"></i> Projects
+        </a>
+      </span>
+    </h1>
     <span class="text-muted">
       <small>
         This list is filtered to Projects of your own Division ({{ division.slug }}).
@@ -35,9 +43,9 @@
                 <div class="well" style="opacity: 0.7; margin-top: 20px; margin-left: 20px; margin-right: 20px;">
                   <h3 class="media-heading">{{ program|safe }}
                     <a href="{{ program_change }}" onclick="return showAddAnotherPopup(this);" type="button"
-                      class="btn btn-primary btn-xs pull-right" title="Edit Program Leader's introduction" target="_">
+                      class="btn btn-primary btn-xs pull-right" title="Update Program" target="_">
                       <i class="glyphicon glyphicon-pencil"></i>
-                      &nbsp; Program details
+                      &nbsp; Update
                     </a>
                     <span class="text-muted">
                       <small>updated {{ program.modified|naturaltime }}
@@ -81,7 +89,9 @@
 
               {% for project in prog.list %}
               {% url project.opts|pythia_urlname:'change' project.pk|pythia_urlquote as project_change %}
+
               <div class="panel panel-default">
+                <!-- Toggle visibility here on search -->
                 <div class="panel-heading">
                   <div class="row">
                     <div class="col-sm-3">
@@ -90,9 +100,9 @@
                       {% else %}
                       <a onclick="return showAddAnotherPopup(this);" type="button"
                         class="btn btn-primary btn-xs pull-right" href="{{ project_change }}"
-                        title="Edit team list or project title">
+                        title="Update Project details, image, team list in a popup">
                         <i class="glyphicon glyphicon-pencil"></i>
-                        &nbsp;Add thumbnail image</a>
+                        &nbsp;Add image</a>
                       {% endif %}
                     </div>
                     <div class="col-sm-9">
@@ -137,10 +147,10 @@
                         <strong>{{ project.title|safe }}</strong>
                       </h3>
 
-                       <!-- Team list -->
+                      <!-- Team list -->
                       <h5><em>{{ project.team_list_plain|safe }}</em></h5>
 
-                       <!-- Tagline -->
+                      <!-- Tagline -->
                       <div>
                         <i class="glyphicon glyphicon-bullhorn"></i>&nbsp;
                         {% if project.tagline %}
@@ -148,7 +158,7 @@
                         {% else %}This project needs a catchy tagline!{% endif %}
                       </div>
 
-                       <!-- Keywords -->
+                      <!-- Keywords -->
                       <div>
                         <i class="glyphicon glyphicon-tags"></i>&nbsp;
                         {% if project.keywords %}
@@ -186,6 +196,35 @@
 {{ block.super }}
 {{ media }}
 <script>
+  $("#FilterTextBox").keyup(function () {
+    var s = $(this).val().toLowerCase().split(" ");
+    $("table#result_list tbody > tr:hidden").show();
+    $.each(s, function () {
+      $("table#result_list tbody tr:visible .indexColumn:not(:contains('" + this + "'))"
+      ).parent().hide();
+    });
+  });//key up.
+
+  // https://gist.github.com/pklauzinski/b6f836f99cfa11100488
+  $.expr[':'].icontains = $.expr.createPseudo(function (text) {
+    return function (e) {
+      return $(e).text().toUpperCase().indexOf(text.toUpperCase()) >= 0;
+    };
+  });
+
+  // shortcut filter buttons
+  $("#clear").click(function () { $("table#result_list tbody tr:hidden").show(); $("#FilterTextBox").val(""); return false; });
+  $("#current-user").click(function () { $("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false; });
+  $("#cfspp").click(function () {
+    $("table#result_list tbody tr:visible").hide();
+    $("table#result_list tbody .indexColumn:contains('Science Project')").parent().show();
+    $("table#result_list tbody .indexColumn:contains('Core Function')").parent().show();
+    $("#FilterTextBox").val("");
+    return false;
+  });
+
+
+
   // Handles related-objects functionality: lookup link for raw_id_fields
   // and Add Another links.
 

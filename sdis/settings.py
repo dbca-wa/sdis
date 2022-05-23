@@ -16,7 +16,7 @@ PROJECT_DIR = os.path.join(BASE_DIR, 'pythia')
 sys.path.insert(0, PROJECT_DIR)
 
 SECRET_KEY = env('SECRET_KEY', default='foo')
-DEBUG = env('DJANGO_DEBUG', default=False)
+DEBUG = env('DJANGO_DEBUG', default=True)
 CSRF_COOKIE_SECURE = env('DJANGO_CSRF_COOKIE_SECURE', default=True)
 SESSION_COOKIE_SECURE = env('DJANGO_CSRF_COOKIE_SECURE', default=True)
 GOOGLE_ANALYTICS_KEY = env('GOOGLE_ANALYTICS_KEY', default='')

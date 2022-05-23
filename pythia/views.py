@@ -54,21 +54,43 @@ def arar_dashboard(request):
 
 
 def project_dashboard(request):
-    """Render Projects grouped by Programs."""
+    """Render Projects grouped by Programs.
+
+    If no request user is given, return Projects of the first available Division.
+    If the user is a superuser, return all Projects of all Divisions.
+    If the user is not a superuser, return Projects of the User's Division.
+    """
     from pythia.models import Division
     from pythia.projects.models import Project
-    logger.info("User {0} views Project Dashboard".format(request.user))
+
+    if request.user:
+        logger.info("User {0} views Project Dashboard".format(request.user))
+    else:
+        logger.info("User (not available) views Project Dashboard")
 
     division = request.user.division if (
         request.user and request.user.division
     ) else Division.objects.first()
 
+    # if request.user.is_superuser:
+    # # This throws ISE on program change_url: program.opts.model_name not found
+    #     projects = Project.objects.order_by(
+    #         'program__position',
+    #         'position',
+    #         '-year',
+    #         '-number'
+    #     ).prefetch_related(
+    #         'program',
+    #         'program__modifier',
+    #         'program__program_leader'
+    #     )
+    # else:
     projects = Project.objects.filter(
         program__division=division
     ).order_by(
-        'program__position', 
-        'position', 
-        '-year', 
+        'program__position',
+        'position',
+        '-year',
         '-number'
     ).prefetch_related(
         'program',
@@ -84,6 +106,7 @@ def project_dashboard(request):
             "projects": projects
         }
     )
+
 
 @csrf_exempt
 def update_cache(request):
