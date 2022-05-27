@@ -69,7 +69,7 @@ def project_dashboard(request):
         logger.info("User (not available) views Project Dashboard")
 
     division = request.user.division if (
-        request.user and request.user.division
+        request.user and hasattr(request.user, "division") and request.user.division
     ) else Division.objects.first()
 
     # if request.user.is_superuser:

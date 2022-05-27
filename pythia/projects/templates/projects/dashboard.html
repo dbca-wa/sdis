@@ -1,6 +1,19 @@
 {% extends "admin/base.html" %}
 {% load pythia_base humanize static %}
 {% block content %}
+<div class="row-fluid">
+  Search for <input class="search-query span6" type="text" name="FilterTextBox" id="FilterTextBox" value=""
+    placeholder="project year, number and title" />
+  or show
+  <a href="#" id="clear" class="btn btn-small reset" rel="nofollow">All</a>
+  <a href="#" id="cfspp" class="btn btn-small" rel="nofollow">Only SP and CF</a>
+  <a href="#" id="current-user" class="btn btn-small" rel="nofollow">Mine</a>
+  <!-- #176
+  <a href="#" id="bcs" class="btn btn-small" rel="nofollow">Only BCS</a>
+  <a href="#" id="rfms" class="btn btn-small" rel="nofollow">Only RFMS</a>
+  <a href="#" id="cem" class="btn btn-small" rel="nofollow">Only CEM</a>
+  -->
+</div>
 <div class="row" id="row-overview">
   <div class="col-md-12">
     <h1>
@@ -90,7 +103,9 @@
               {% for project in prog.list %}
               {% url project.opts|pythia_urlname:'change' project.pk|pythia_urlquote as project_change %}
 
-              <div class="panel panel-default">
+              <div class="panel panel-default project-item"
+                data-search="{{ project.get_type_display }} {{ project.year }}-{{ project.number|stringformat:" 03d" }}
+                {{ project.title }} {{ project.team_list_plain }} {{ project.keywords_plain}}">
                 <!-- Toggle visibility here on search -->
                 <div class="panel-heading">
                   <div class="row">
@@ -196,29 +211,61 @@
 {{ block.super }}
 {{ media }}
 <script>
-  $("#FilterTextBox").keyup(function () {
-    var s = $(this).val().toLowerCase().split(" ");
-    $("table#result_list tbody > tr:hidden").show();
-    $.each(s, function () {
-      $("table#result_list tbody tr:visible .indexColumn:not(:contains('" + this + "'))"
-      ).parent().hide();
-    });
-  });//key up.
+  
 
   // https://gist.github.com/pklauzinski/b6f836f99cfa11100488
   $.expr[':'].icontains = $.expr.createPseudo(function (text) {
     return function (e) {
-      return $(e).text().toUpperCase().indexOf(text.toUpperCase()) >= 0;
+      return $(e).text().toLowerCase().indexOf(text.toLowerCase()) >= 0;
     };
   });
 
-  // shortcut filter buttons
-  $("#clear").click(function () { $("table#result_list tbody tr:hidden").show(); $("#FilterTextBox").val(""); return false; });
+  /*
+   * Divs to toggle have class "project-item" and contain attribute data-search="..." with contents: 
+   * get_type_display year number title team_list_plain team_list_plain keywords_plain
+   */
+
+  function hide(elements) {
+    elements = elements.length ? elements : [elements];
+    for (var index = 0; index < elements.length; index++) {
+      elements[index].style.display = 'none';
+    }
+  }
+
+  function show(elements, specifiedDisplay) {
+    elements = elements.length ? elements : [elements];
+    for (var index = 0; index < elements.length; index++) {
+      elements[index].style.display = specifiedDisplay || 'block';
+    }
+  }
+
+
+  // Filter all elements with class "project-item" which contain the search string in the data-search attribute
+  function filter_search(search_string) {
+    console.log(search_string);
+
+    // Show all projects
+    show($("div.project-item"));
+    
+    $.each(
+      // Lowercase the search string and split into words
+      search_string.toLowerCase().split(" "), 
+
+      // Hide any projects not containing all the search words
+      function () {hide($("div.project-item:not(:icontains('" + this + "'))"));}
+    );
+  }
+
+  // FilterTextBox: On key up, filter the project list.
+  $("#FilterTextBox").keyup(filter_search($("#FilterTextBox").val()));
+
+  // TODO
+  $("#clear").click(function () { $("div.project-item:hidden").show(); $("#FilterTextBox").val(""); return false; });
   $("#current-user").click(function () { $("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false; });
   $("#cfspp").click(function () {
-    $("table#result_list tbody tr:visible").hide();
-    $("table#result_list tbody .indexColumn:contains('Science Project')").parent().show();
-    $("table#result_list tbody .indexColumn:contains('Core Function')").parent().show();
+    $("div.project-item:hidden").show(); $("#FilterTextBox").val("Science Project");
+    $("div.project-item[data-search] :contains('Science Project')").show();
+    $("div.project-item[data-search] :contains('Core Function')").show();
     $("#FilterTextBox").val("");
     return false;
   });

@@ -398,7 +398,12 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
             self.model = obj.__class__
         result = super(ProjectAdmin, self).get_form(request, obj, **kwargs)
         self.model = temp
-        result.base_fields['type'].initial = request.GET.get("project_type", 0)
+        
+        # Special treatment for readonly fields 
+        # (missing in change view, present in create view):
+        if hasattr(result.base_fields, "type"):
+            result.base_fields['type'].initial = request.GET.get("project_type", 0)
+        # Since we don't apply any magic to project year and number, these are not handled here
         result.base_fields['program'].initial = request.user.program
         result.base_fields['project_owner'].initial = request.user
         result.base_fields['data_custodian'].initial = request.user
