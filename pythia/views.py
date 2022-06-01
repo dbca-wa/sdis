@@ -10,7 +10,7 @@ from django.forms import ModelForm
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
-from django.views.generic import edit
+from django.views.generic import edit, ListView
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.admin.views.main import ChangeList
@@ -23,6 +23,9 @@ from django_comments.views.moderation import perform_delete
 from django_comments.views.utils import next_redirect
 
 from pythia.forms import TermsAndConditionsForm
+from pythia.models import Division
+from pythia.projects.models import Project
+from pythia.projects.filters import ProjectFilter
 
 logger = logging.getLogger(__name__)
 
@@ -60,9 +63,6 @@ def project_dashboard(request):
     If the user is a superuser, return all Projects of all Divisions.
     If the user is not a superuser, return Projects of the User's Division.
     """
-    from pythia.models import Division
-    from pythia.projects.models import Project
-
     if request.user:
         logger.info("User {0} views Project Dashboard".format(request.user))
     else:
@@ -107,6 +107,58 @@ def project_dashboard(request):
         }
     )
 
+class ProjectList(ListView):
+    """A ListView of Projects."""
+    model = Project
+    template = "projects/project_list.html"
+    filter_class = ProjectFilter
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(ProjectList, self).get_context_data(**kwargs)
+
+
+
+        # projects = Project.objects.filter(
+        #     program__division=division
+        # ).prefetch_related(
+        #     'program',
+        #     'program__modifier',
+        #     'program__program_leader'
+        # ).order_by(
+        #     'program__position',
+        #     'position',
+        #     '-year',
+        #     '-number'
+        # )
+        # context['division'] = division
+        # context['project_list'] = projects
+        context['list_filter'] = ProjectFilter(self.request.GET, queryset=self.get_queryset())
+        return context
+
+    def get_queryset(self):
+        u = self.request.user
+        
+        if u:
+            logger.info("User {0} views Project Dashboard".format(u))
+        else:
+            logger.info("User (not available) views Project Dashboard")
+
+        division = u.division if (u and hasattr(u, "division") and u.division) else Division.objects.first()
+        qs = super(ProjectList, self).get_queryset(
+        ).filter(
+            program__division=division
+        ).prefetch_related(
+           'program',
+            'program__modifier',
+            'program__program_leader'
+        ).order_by(
+            'program__position',
+            'position',
+            '-year',
+            '-number'
+        )
+        return ProjectFilter(self.request.GET, queryset=qs).qs
 
 @csrf_exempt
 def update_cache(request):

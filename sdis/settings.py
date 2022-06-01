@@ -262,7 +262,7 @@ SWAGGER_SETTINGS = {
 }
 
 # Email
-EMAIL_HOST = env('EMAIL_HOST', default='smtp.corporateict.domain')
+EMAIL_HOST = env('EMAIL_HOST', default='smtp.lan.fyi')
 EMAIL_PORT = env('EMAIL_PORT', default=25)
 ENVELOPE_EMAIL_RECIPIENTS = ['florian.mayer@dbca.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True

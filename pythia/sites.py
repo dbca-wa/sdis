@@ -41,6 +41,7 @@ from pythia.views import (
     update_cache,
     arar_dashboard, 
     project_dashboard,
+    ProjectList,
     batch_approve_progressreports
 )
 
@@ -164,6 +165,10 @@ class PythiaSite(AuditSite):
             url(r'^project_dashboard',
                 project_dashboard,
                 name="project_dashboard"),
+
+            url(r'^projects/$',
+            ProjectList.as_view(),
+            name="project_list"),
 
 
             ) + staticserve(settings.STATIC_URL,
