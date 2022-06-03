@@ -1,5 +1,15 @@
 {% extends "admin/base.html" %}
 {% load pythia_base projects humanize static crispy_forms_tags %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+/* Hack for crispy form: hide the help-block that just says "Filter" */
+.help-block {display: none;}
+</style>
+
+{% endblock %}
+
 {% block content %}
 <div class="row-fluid">
     <h1>
@@ -127,6 +137,7 @@
                               <i class="glyphicon glyphicon-resize-vertical"></i> More...
                           </a>&nbsp;
                           <a type="button" class="btn btn-primary btn-xs" href="{{ project_change }}"
+                          target="_"
                             title="Visit Project page to view and update details and related documents">
                             <i class="glyphicon glyphicon-share-alt"></i> Go to
                           </a>
@@ -198,174 +209,10 @@
           <button
             class="btn btn-primary my-2 my-sm-0 btn-block"
             title="Filter results by above criteria." type="submit">
-            Filter results
+            <i class="glyphicon glyphicon-filter"></i>&nbsp;
+            Filter Projects
           </button>
         </form>
     </div><!-- /#filters-row -->
 </div><!-- /#row-overview OV -->
-{% endblock %}
-
-{% block extrahead %}
-{{ block.super }}
-{{ media }}
-<script>
-  
-
-  // https://gist.github.com/pklauzinski/b6f836f99cfa11100488
-  $.expr[':'].icontains = $.expr.createPseudo(function (text) {
-    return function (e) {
-      return $(e).text().toLowerCase().indexOf(text.toLowerCase()) >= 0;
-    };
-  });
-
-  /*
-   * Divs to toggle have class "project-item" and contain attribute data-search="..." with contents: 
-   * get_type_display year number title team_list_plain team_list_plain keywords_plain
-   */
-
-  function hide(elements) {
-    elements = elements.length ? elements : [elements];
-    for (var index = 0; index < elements.length; index++) {
-      elements[index].style.display = 'none';
-    }
-  }
-
-  function show(elements, specifiedDisplay) {
-    elements = elements.length ? elements : [elements];
-    for (var index = 0; index < elements.length; index++) {
-      elements[index].style.display = specifiedDisplay || 'block';
-    }
-  }
-
-
-  // Filter all elements with class "project-item" which contain the search string in the data-search attribute
-  function filter_search(search_string) {
-    console.log(search_string);
-
-    // Show all projects
-    show($("div.project-item"));
-    
-    $.each(
-      // Lowercase the search string and split into words
-      search_string.toLowerCase().split(" "), 
-
-      // Hide any projects not containing all the search words
-      function () {hide($("div.project-item:not(:icontains('" + this + "'))"));}
-    );
-  }
-
-  // FilterTextBox: On key up, filter the project list.
-  $("#FilterTextBox").keyup(filter_search($("#FilterTextBox").val()));
-
-  // TODO
-  $("#clear").click(function () { $("div.project-item:hidden").show(); $("#FilterTextBox").val(""); return false; });
-  $("#current-user").click(function () { $("#FilterTextBox").val("{{user.get_full_name}}").keyup(); return false; });
-  $("#cfspp").click(function () {
-    $("div.project-item:hidden").show(); $("#FilterTextBox").val("Science Project");
-    $("div.project-item[data-search] :contains('Science Project')").show();
-    $("div.project-item[data-search] :contains('Core Function')").show();
-    $("#FilterTextBox").val("");
-    return false;
-  });
-
-
-
-  // Handles related-objects functionality: lookup link for raw_id_fields
-  // and Add Another links.
-
-  function html_unescape(text) {
-    // Unescape a string that was escaped using django.utils.html.escape.
-    text = text.replace(/&lt;/g, '<');
-    text = text.replace(/&gt;/g, '>');
-    text = text.replace(/&quot;/g, '"');
-    text = text.replace(/&#39;/g, "'");
-    text = text.replace(/&amp;/g, '&');
-    return text;
-  }
-
-  // IE doesn't accept periods or dashes in the window name, but the element IDs
-  // we use to generate popup window names may contain them, therefore we map them
-  // to allowed characters in a reversible way so that we can locate the correct
-  // element when the popup window is dismissed.
-  function id_to_windowname(text) {
-    text = text.replace(/\./g, '__dot__');
-    text = text.replace(/\-/g, '__dash__');
-    return text;
-  }
-
-  function windowname_to_id(text) {
-    text = text.replace(/__dot__/g, '.');
-    text = text.replace(/__dash__/g, '-');
-    return text;
-  }
-
-  function showRelatedObjectLookupPopup(triggeringLink) {
-    var name = triggeringLink.id.replace(/^lookup_/, '');
-    name = id_to_windowname(name);
-    var href;
-    if (triggeringLink.href.search(/\?/) >= 0) {
-      href = triggeringLink.href + '&_popup=1';
-    } else {
-      href = triggeringLink.href + '?_popup=1';
-    }
-    var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
-    win.focus();
-    return false;
-  }
-
-  function dismissRelatedLookupPopup(win, chosenId) {
-    var name = windowname_to_id(win.name);
-    var elem = document.getElementById(name);
-    if (elem.className.indexOf('vManyToManyRawIdAdminField') != -1 && elem.value) {
-      elem.value += ',' + chosenId;
-    } else {
-      document.getElementById(name).value = chosenId;
-    }
-    win.close();
-  }
-
-  function showAddAnotherPopup(triggeringLink) {
-    var name = triggeringLink.id.replace(/^add_/, '');
-    name = id_to_windowname(name);
-    href = triggeringLink.href
-    if (href.indexOf('?') == -1) {
-      href += '?_popup=1';
-    } else {
-      href += '&_popup=1';
-    }
-    var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
-    win.focus();
-    return false;
-  }
-
-  function dismissAddAnotherPopup(win, newId, newRepr) {
-    // newId and newRepr are expected to have previously been escaped by
-    // django.utils.html.escape.
-    newId = html_unescape(newId);
-    newRepr = html_unescape(newRepr);
-    var name = windowname_to_id(win.name);
-    var elem = document.getElementById(name);
-    if (elem) {
-      var elemName = elem.nodeName.toUpperCase();
-      if (elemName == 'SELECT') {
-        var o = new Option(newRepr, newId);
-        elem.options[elem.options.length] = o;
-        o.selected = true;
-      } else if (elemName == 'INPUT') {
-        if (elem.className.indexOf('vManyToManyRawIdAdminField') != -1 && elem.value) {
-          elem.value += ',' + newId;
-        } else {
-          elem.value = newId;
-        }
-      }
-    } else {
-      var toId = name + "_to";
-      elem = document.getElementById(toId);
-      var o = new Option(newRepr, newId);
-      SelectBox.add_to_cache(toId, o);
-      SelectBox.redisplay(toId);
-    }
-    win.close();
-  }
-</script>
 {% endblock %}

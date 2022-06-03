@@ -137,8 +137,11 @@ class ProjectList(ListView):
             u, "division") and u.division) else Division.objects.first()
 
         qs = super(ProjectList, self).get_queryset(
-        ).filter(program__division=division).prefetch_related(
+        ).filter(
+            program__division=division
+        ).prefetch_related(
             'program',
+            'program__division',
             'program__modifier',
             'program__program_leader'
         ).order_by(
@@ -148,6 +151,10 @@ class ProjectList(ListView):
             '-number'
         )
 
+        # import ipdb; ipdb.set_trace()
+        # if not u.is_superuser:
+        #     qs = qs.filter(program__division=division)
+        
         return ProjectFilter(self.request.GET, queryset=qs).qs
 
 

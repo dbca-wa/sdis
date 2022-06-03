@@ -183,11 +183,11 @@ class ProjectFilter(FilterSet):
         fields = [
             "title",
             "type",
-            "status",
             "year",
             "number",
-            "program__division",
-            "program__published",
-            "program",
             "start_date",
+            # "program__division", # enable if more than own Division shown
+            "program",
+            "program__published",
+            "status",
         ]
