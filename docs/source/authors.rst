@@ -34,6 +34,12 @@ Add an external colleague to a Project Team
 * Once you have created and saved the new SDIS User profile, you can add them to the Project Team via "Add team member".
 * Student Projects and External Partnerships often have external colleagues.
 
+Document visibility
+===================
+* Currently, only BCS staff are meant to see Project Documents. 
+* Members of other Divisions will see no reference to Documents and are not required to fill in any Documents. Less work!
+* If you however think you should see more or less Documents than you currently do, please get in touch with the administrators.
+
 Complete and submit a Document
 ==============================
 This section applies generally to any SDIS Document.
