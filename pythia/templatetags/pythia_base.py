@@ -174,6 +174,8 @@ def user_portfolio(usr, personalise=True):
 
     The template can be personalised to address the user directly as "You",
     "My", etc. or render the user's first name.
+
+    show_docs: https://github.com/dbca-wa/sdis/issues/184
     """
     return {'my_tasklist': usr.tasklist,
             'my_portfolio': usr.portfolio,
@@ -181,7 +183,9 @@ def user_portfolio(usr, personalise=True):
             'you': "you" if personalise else usr.first_name,
             's': "" if personalise else "s",
             'are': "are" if personalise else "is",
-            'your': "your" if personalise else "{0}'s".format(force_str(usr.first_name)), }
+            'your': "your" if personalise else "{0}'s".format(force_str(usr.first_name)), 
+            'show_docs': usr.show_docs,
+            }
 
 
 @register.inclusion_tag('frontpage/scmt_preread.html')

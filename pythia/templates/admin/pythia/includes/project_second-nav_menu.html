@@ -6,6 +6,8 @@
     <a href="{{ project_change }}"> Overview </a>
 </li>
 
+<!-- https://github.com/dbca-wa/sdis/issues/184 -->
+{% if request.user.show_docs %}
 {% with project.documents.grouped as grouped %}
 {% if project.documents.count %}
 {% for verbose_name, documents in grouped.items %}
@@ -41,5 +43,6 @@
 {% endfor %}
 {% endif %}
 {% endwith %}
+{% endif %}
 
 

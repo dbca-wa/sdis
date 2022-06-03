@@ -1496,4 +1496,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         if (stuck_result["new"] or stuck_result["pending"]) and is_scd:
             result["stuck"] = stuck_result
 
+        # https://github.com/dbca-wa/sdis/issues/184
+        if not self.show_docs:
+            result["stuck"] = {"new": [], "pending": []}
+
         return result
+
+    @property
+    def show_docs(self):
+        """Whether to show Documents to the User.
+        
+        Currently, documents are only shown to BCS members.
+        In future, all users should see Documents, and this test should be retired.
+
+        See https://github.com/dbca-wa/sdis/issues/184
+        """
+        return self.division and self.division.slug == "BCS"

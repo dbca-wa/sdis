@@ -1,4 +1,7 @@
 {% load pythia_base documents projects %}
+
+<!-- https://github.com/dbca-wa/sdis/issues/184 -->
+{% if show_docs %}
 <div class="panel panel-default" id="panel-tasks">
     <div class="panel-heading">
         <h4 class="panel-title">
@@ -41,6 +44,7 @@
     </div>
 </div><!-- /#panel-tasks -->
 
+
 {% if my_portfolio.stuck %}
 <div class="panel panel-default" id="panel-stuck">
     <div class="panel-heading">
@@ -69,6 +73,7 @@
              {% endfor %}
     </div>
 </div><!-- /#panel-stuck -->
+{% endif%}
 {% endif%}
 
 <div class="panel panel-default" id="panel-projects">

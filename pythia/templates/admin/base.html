@@ -156,6 +156,8 @@
         </li>
 
         <!-- Reports -->
+        <!-- https://github.com/dbca-wa/sdis/issues/184 -->
+        {% if request.user.show_docs %}
         <li id="nav-reports" class="dropdown">
           <a href="{{ list_report }}" data-toggle="dropdown"
             class="dropdown-toggle">Reports <b class="caret"></b></a>
@@ -189,6 +191,7 @@
             {% include 'admin/includes/arar_list_static.html' %}
           </ul><!-- /.dropdown-menu#dropdown-menu-reports -->
         </li><!-- /li#nav-reports -->
+        {% endif %}
 
         <!-- Sites -->
         <!--li id="nav-sites"><a href="" title="See where our work takes place">Sites</a></li-->

@@ -236,17 +236,20 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
     def get_breadcrumbs(self, request, obj=None, add=False):
         """Override the base breadcrumbs: Inject All Projects."""
         ct = ContentType.objects.get_for_model(self.model)
-        cl = reverse("admin:{}_{}_changelist".format(ct.app_label, ct.model))
-        pcl = reverse('admin:projects_project_changelist')
-
-        if cl == pcl:
-            return(
+        cl = reverse("admin:project_list")
+        return(
                 Breadcrumb(_('Home'), reverse('admin:index')),
-                Breadcrumb(_('All Projects'), pcl),)
-        else:
-            return (Breadcrumb(_('Home'), reverse('admin:index')),
-                    Breadcrumb(_('All Projects'), pcl),
-                    Breadcrumb(self.model._meta.verbose_name_plural, cl))
+                Breadcrumb(_('Projects'), cl),)
+        # pcl = reverse('admin:projects_project_changelist')
+
+        # if cl == pcl:
+        #     return(
+        #         Breadcrumb(_('Home'), reverse('admin:index')),
+        #         Breadcrumb(_('All Projects'), cl),)
+        # else:
+        #     return (Breadcrumb(_('Home'), reverse('admin:index')),
+        #             Breadcrumb(_('All Projects'), pcl),
+        #             Breadcrumb(self.model._meta.verbose_name_plural, cl))
 
     def get_readonly_fields(self, request, obj=None):
         """Control which fields can be updated by whom.
