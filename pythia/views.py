@@ -69,7 +69,8 @@ def project_dashboard(request):
         logger.info("User (not available) views Project Dashboard")
 
     division = request.user.division if (
-        request.user and hasattr(request.user, "division") and request.user.division
+        request.user and hasattr(
+            request.user, "division") and request.user.division
     ) else Division.objects.first()
 
     # if request.user.is_superuser:
@@ -107,6 +108,7 @@ def project_dashboard(request):
         }
     )
 
+
 class ProjectList(ListView):
     """A ListView of Projects."""
     model = Project
@@ -116,40 +118,27 @@ class ProjectList(ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(ProjectList, self).get_context_data(**kwargs)
-
-
-
-        # projects = Project.objects.filter(
-        #     program__division=division
-        # ).prefetch_related(
-        #     'program',
-        #     'program__modifier',
-        #     'program__program_leader'
-        # ).order_by(
-        #     'program__position',
-        #     'position',
-        #     '-year',
-        #     '-number'
-        # )
-        # context['division'] = division
+        context['division'] = self.request.user.division if (self.request.user and hasattr(
+            self.request.user, "division") and self.request.user.division) else Division.objects.first()
         # context['project_list'] = projects
-        context['list_filter'] = ProjectFilter(self.request.GET, queryset=self.get_queryset())
+        context['list_filter'] = ProjectFilter(
+            self.request.GET, queryset=self.get_queryset())
         return context
 
     def get_queryset(self):
         u = self.request.user
-        
+
         if u:
             logger.info("User {0} views Project Dashboard".format(u))
         else:
             logger.info("User (not available) views Project Dashboard")
 
-        division = u.division if (u and hasattr(u, "division") and u.division) else Division.objects.first()
+        division = u.division if (u and hasattr(
+            u, "division") and u.division) else Division.objects.first()
+
         qs = super(ProjectList, self).get_queryset(
-        ).filter(
-            program__division=division
-        ).prefetch_related(
-           'program',
+        ).filter(program__division=division).prefetch_related(
+            'program',
             'program__modifier',
             'program__program_leader'
         ).order_by(
@@ -158,7 +147,9 @@ class ProjectList(ListView):
             '-year',
             '-number'
         )
+
         return ProjectFilter(self.request.GET, queryset=qs).qs
+
 
 @csrf_exempt
 def update_cache(request):

@@ -711,8 +711,9 @@ class Program(Audit, ActiveModel):
     # Publishing and printing options ----------------------------------------#
     published = models.BooleanField(
         default=True,
-        verbose_name="Publish this Program?"
-        " Administrative and deprecated programs are unpublished.")
+        verbose_name="Published",
+        help_text = ("Published programs are reported on annually. "
+                    "Administrative and deprecated programs are unpublished."))
     position = models.IntegerField(
         help_text='An arbitrary, ascending ordering number.')
 

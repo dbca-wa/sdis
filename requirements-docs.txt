@@ -43,7 +43,7 @@ semantic-version==2.3.0
 # API
 djangorestframework==2.3.13
 django-rest-swagger==0.1.14
-django-filter==0.7
+django-filter==0.11.0
 
 # Export to CSV
 django_tablib==3.2

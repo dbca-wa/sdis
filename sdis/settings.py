@@ -229,6 +229,11 @@ LOGOUT_REDIRECT_URL = LOGOUT_URL
 #     'pythia.User': None,
 # }
 
+# Crispy forms
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+# https://django-filter.readthedocs.io/en/stable/ref/filters.html#choicefilter
+FILTERS_EMPTY_CHOICE_LABEL = "---------"
+
 # Django-Restframework
 REST_FRAMEWORK = {
     # Use hyperlinked styles by default.

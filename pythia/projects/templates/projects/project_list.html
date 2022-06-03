@@ -1,26 +1,26 @@
 {% extends "admin/base.html" %}
-{% load pythia_base humanize static %}
+{% load pythia_base projects humanize static crispy_forms_tags %}
 {% block content %}
 <div class="row-fluid">
-
-</div>
-<div class="row" id="row-overview">
-  <div class="col-lg-9 col-md-8 col-sm-6 col-6">
     <h1>
-      {% if not request.user.is_superuser %}{{ division.name }} {% endif %}
-      Projects
-      <span class="pull-right">
-        <a class="btn btn-small btn-info" href="/api/projects?format=csv" title="Download all Projects as CSV">
-          <i class="glyphicon glyphicon-save glyphicon-white"></i> Projects
-        </a>
+        {% if not request.user.is_superuser %}{{ division.name }} {% endif %}
+        Projects
+        <span class="pull-right">
+            <a class="btn btn-small btn-primary" href="/api/projects?format=csv" title="Download all Projects as CSV">
+                <i class="glyphicon glyphicon-save glyphicon-white"></i> Download all Projects
+            </a>
+        </span>
+      </h1>
+      <span class="text-muted">
+        <small>
+          This list is filtered to Projects of your own Division ({{ division.slug }}).
+          Click on Program titles to expand projects, and "expand" to view project details.
+        </small>
       </span>
-    </h1>
-    <span class="text-muted">
-      <small>
-        This list is filtered to Projects of your own Division ({{ division.slug }}).
-        Click Project titles to expand details.
-      </small>
-    </span>
+</div>
+
+<div class="row-fluid">
+  <div class="col-lg-9 col-md-8 col-sm-6 col-6">
 
     {% regroup project_list by program as program_list %}
 
@@ -115,34 +115,21 @@
                         <!-- Badges -->
                         <span class="label label-default">
                           <i class="glyphicon glyphicon-blackboard"></i>&nbsp;
-                          {{ project.get_type_display }}
+                          {{ project.get_type_display }} {{ project.project_ckantag|safe }}
                         </span>&nbsp;
-                        <span class="label label-default">
-                          <i class="glyphicon glyphicon-paperclip"></i>&nbsp;
-                          {{ project.year }}-{{ project.number|stringformat:"03d" }}
-                        </span>&nbsp;
-                        <span class="label label-default">
-                          <i class="glyphicon glyphicon-check"></i>&nbsp;
-                          {{ project.get_status_display }}
-                        </span>&nbsp;
-                        <span class="label label-default">
-                          <i class="glyphicon glyphicon-calendar"></i>&nbsp;
-                          {{ project.start_date|date:"Y" }} - {{ project.end_date|date:"Y" }}
-                        </span>
+                        {% project_status_label project %}
 
+                   
                         <!-- Links -->
                         <span class="pull-right">
                           <a class="btn btn-primary btn-xs" title="Toggle Project details" data-toggle="collapse"
                             data-parent="#acc-{{ program.pk }}" href="#collapse-{{ program.pk }}-{{ project.pk }}">
-                            <span class="text-{{ project.status_label }}">
-                              <i class="glyphicon glyphicon-resize-vertical"></i>
-                              &nbsp;Expand
-                            </span>
+                              <i class="glyphicon glyphicon-resize-vertical"></i> More...
                           </a>&nbsp;
                           <a type="button" class="btn btn-primary btn-xs" href="{{ project_change }}"
                             title="Visit Project page to view and update details and related documents">
-                            <i class="glyphicon glyphicon-share-alt"></i>
-                            &nbsp;Visit</a>
+                            <i class="glyphicon glyphicon-share-alt"></i> Go to
+                          </a>
                         </span>
 
                       </div>
@@ -154,6 +141,12 @@
 
                       <!-- Team list -->
                       <h5><em>{{ project.team_list_plain|safe }}</em></h5>
+
+                     <!-- Duration -->
+                     <div>
+                        <i class="glyphicon glyphicon-calendar"></i>&nbsp;
+                        {{ project.start_date|date:"Y" }} - {{ project.end_date|date:"Y" }}
+                      </div>
 
                       <!-- Tagline -->
                       <div>
@@ -199,7 +192,8 @@
     <div id="filters-row" class="col-lg-3 col-md-4 col-sm-6 col-6">
         <form method="get">
           <div class="row-fluid">
-          {{ list_filter.form.as_p }}
+            {{ list_filter.form|crispy }}
+          {# list_filter.form #}
           </div>
           <button
             class="btn btn-primary my-2 my-sm-0 btn-block"
@@ -207,7 +201,7 @@
             Filter results
           </button>
         </form>
-      </div><!-- /#filters-row -->
+    </div><!-- /#filters-row -->
 </div><!-- /#row-overview OV -->
 {% endblock %}
 

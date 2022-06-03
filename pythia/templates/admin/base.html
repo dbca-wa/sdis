@@ -85,6 +85,7 @@
 <!-- Application navigation links -->
 {% url 'admin:index' as pythia_home %}
 {% url 'admin:projects_project_changelist' as list_project %}
+{% url 'admin:project_list' as pythia_project_list %}
 {% url 'admin:project_choice' as add_project %}
 {% url 'admin:projects_researchfunction_changelist' as list_researchfunction %}
 {% url 'admin:projects_researchfunction_add' as add_researchfunction %}
@@ -145,9 +146,9 @@
       <ul class="nav navbar-nav">
         {% if request.user.is_authenticated and not request.user.completed_registration %}
         <li id="nav-projects" class="dropdown">
-          <a href="{{ list_project }}" data-toggle="dropdown" class="dropdown-toggle">Projects <b class="caret"></b></a>
+          <a href="{{ pythia_project_list }}" data-toggle="dropdown" class="dropdown-toggle">Projects <b class="caret"></b></a>
           <ul class="dropdown-menu" role="menu" id="dropdown-menu-projects">
-                <li><a href="{{ list_project }}" id="nav-project-list" title="List all Projects">
+                <li><a href="{{ pythia_project_list }}" id="nav-project-list" title="List all Projects">
                     <span class="glyphicon glyphicon-list"></span>&nbsp;Browse all Projects</a></li>
                 <li><a href="{{ add_project }}" id="nav-project-add" title="Create a new Project">
                     <span class="glyphicon glyphicon-plus"></span>&nbsp;Create new Project</a></li>
@@ -342,9 +343,9 @@
         {% if not request.user.completed_registration %}
             <form id="form-project-search"
                 class="navbar-form navbar-right hidden-xs nomarginright"
-                action="{{ list_project }}" method="get" role="search">
+                action="{{ pythia_project_list }}" method="get" role="search">
               <div class="search input-group input-group-sm">
-                <input name="q" id="mod-search-searchword" maxlength="20"
+                <input name="title" id="mod-search-searchword" maxlength="20"
                     class="form-control" type="text"
                     size="20" value="Search Projects..."
                     onblur="if (this.value=='') this.value='Search Projects...';"
