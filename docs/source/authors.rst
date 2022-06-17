@@ -20,19 +20,54 @@ Create a Project
 * Fill out Project details. See the FAQ for guidance on thumbnail images, and read the helptext of the form fields.
 * Next, add colleagues to the Team list, and fill out the first Document, the Concept Plan.
 
+Oops, wrong project type - now what?
+====================================
+For technical reasons, you cannot change the type of a project once it has been created.
+
+* Create a new project of the correct type.
+* Deleting projects is limited to SDIS admins.
+  Notify an SDIS admin to delete the Project of incorrect type.
+  Make their lives easier by sending the URL of the Project, not the slug (type-year-number) or title.
+
+The reason we restrict deletion of Projects is to retain the history of past Projects.
+It would be an easy error to make to delete a Project on completion. 
+Instead of being deleted at the end of their active life, Projects go through a formal closure process, 
+creating yet more documentation (reasons, outputs) that adds to the history of the Project.
+Completed projects are kept with status "Completed and closed".
+
 Add DBCA colleagues to a Project Team
 =====================================
+SDIS keeps a list of User profiles with all the details we need for reporting and display purposes.
+SDIS automatically creates a User profile when a new User visits SDIS for the first time.
+
+The profile then needs some more information (full names, affiliations) which the Users can enter themselves.
+
+Lastly, the Division and Program has to be set by an SDIS admin, as visibility of projects is restricted to the User's own Division. 
+SDIS does not receive enough information from DBCA's login system to automatically set the Division and Program.
+
 * At the Project's detail page, click on the "Add team member" button to select any DBCA colleague.
 * The DBCA colleague must have visited SDIS prior to that in order to be known to SDIS. 
   They should also update their profile so SDIS gets their name and title right in Team lists.
 * Only Project Team members can update Documents.
 * Project Team members can add others to the Team.
 
+Caveat: you cannot add a DBCA colleague until they have visited SDIS at least once.
+
 Add an external colleague to a Project Team
 ===========================================
+To add external colleagues to a Project Team, they also require an SDIS profile. 
+There's only one little catch - they can't access SDIS (yet) being external to DBCA.
+Therefore, you will have to create a profile for them.
+
 * At the Project's detail page, click on the "Register an external colleague" button to create a new User profile for them.
+* As username, choose their ``givenname_surname`` in all lower case and separated with an underscore.
+* As password, choose any password of your choice. The external user will never login and never need this password. 
+  Having a password is a requirement of the software SDIS is written in. Set and forget!
+* Enter profile details and save the profile.
 * Once you have created and saved the new SDIS User profile, you can add them to the Project Team via "Add team member".
 * Student Projects and External Partnerships often have external colleagues.
+
+Caveat: External colleagues will never need to login to SDIS, and do not need to know about this profile.
 
 Document visibility
 ===================

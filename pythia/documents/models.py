@@ -1515,6 +1515,7 @@ class ProjectClosure(Document):
         project immediately.
         * All other cases (failsafe! there's only refular completion left) will
         set the project to pending final update.
+        
         """
         from pythia.projects.models import Project
         if self.goal == ProjectClosure.STATUS_FORCE_COMPLETED:
