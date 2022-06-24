@@ -240,16 +240,6 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
         return(
                 Breadcrumb(_('Home'), reverse('admin:index')),
                 Breadcrumb(_('Projects'), cl),)
-        # pcl = reverse('admin:projects_project_changelist')
-
-        # if cl == pcl:
-        #     return(
-        #         Breadcrumb(_('Home'), reverse('admin:index')),
-        #         Breadcrumb(_('All Projects'), cl),)
-        # else:
-        #     return (Breadcrumb(_('Home'), reverse('admin:index')),
-        #             Breadcrumb(_('All Projects'), pcl),
-        #             Breadcrumb(self.model._meta.verbose_name_plural, cl))
 
     def get_readonly_fields(self, request, obj=None):
         """Control which fields can be updated by whom.

@@ -68,10 +68,7 @@ def project_dashboard(request):
     else:
         logger.info("User (not available) views Project Dashboard")
 
-    division = request.user.program.division if (
-        request.user and hasattr(
-            request.user, "program") and request.user.program.division
-    ) else Division.objects.first()
+    division = request.user.division
 
     # if request.user.is_superuser:
     # # This throws ISE on program change_url: program.opts.model_name not found
@@ -119,12 +116,7 @@ class ProjectList(ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(ProjectList, self).get_context_data(**kwargs)
-        context['division'] = self.request.user.program.division if (
-            self.request.user and 
-            hasattr(self.request.user, "program") and 
-            self.request.user.program.division
-        ) else Division.objects.first()
-        # context['project_list'] = projects
+        context['division'] = self.request.user.division
         context['list_filter'] = ProjectFilter(
             self.request.GET, queryset=self.get_queryset())
         return context
@@ -137,8 +129,7 @@ class ProjectList(ListView):
         else:
             logger.info("User (not available) views Project Dashboard")
 
-        division = u.division if (u and hasattr(
-            u, "division") and u.division) else Division.objects.first()
+        division = u.division
 
         qs = super(ProjectList, self).get_queryset(
         ).filter(
@@ -155,10 +146,6 @@ class ProjectList(ListView):
             '-year',
             '-number'
         )
-
-        # import ipdb; ipdb.set_trace()
-        # if not u.is_superuser:
-        #     qs = qs.filter(program__division=division)
         
         return ProjectFilter(self.request.GET, queryset=qs).qs
 
