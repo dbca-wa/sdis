@@ -254,7 +254,7 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
     def get_readonly_fields(self, request, obj=None):
         """Control which fields can be updated by whom.
 
-        Only superuser or Group 'SCD' can change project year or number.
+        Only a superuser can change project year or number.
         Project type can only be changed in add view, not later on, as this
         would possibly require the deletion and creation of other documents.
         Therefore, setting the project type is an irreversible decision.
@@ -266,10 +266,8 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
 
         rof = super(ProjectAdmin, self).get_readonly_fields(request, obj)
 
-        if not ((request.user.is_superuser) or
-                (request.user in Group.objects.get_or_create(
-                name='SCD')[0].user_set.all())):
-            # no one except Directorate and su should update year or number
+        if not request.user.is_superuser:
+            # only superuser can update year or number
             rof += ('year', 'number',)
             if obj:
                 # type only in add view, not in change view

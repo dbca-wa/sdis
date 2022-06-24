@@ -1063,12 +1063,12 @@ class User(AbstractBaseUser, PermissionsMixin):
                     " If provided, the affiliation will be appended to the"
                     " person or group name in parentheses."))
 
-    division = models.ForeignKey(
-        Division,
-        verbose_name=_("Departmental Division"),
-        blank=True, null=True,
-        help_text=_("The Departmental Division of this User. "
-                    "Only applies to DBCA staff."))
+    # division = models.ForeignKey(
+    #     Division,
+    #     verbose_name=_("Departmental Division"),
+    #     blank=True, null=True,
+    #     help_text=_("The Departmental Division of this User. "
+    #                 "Only applies to DBCA staff."))
 
     # Contact details --------------------------------------------------------#
     image = models.ImageField(
@@ -1309,6 +1309,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def supervisor(self):
         """Return the Program Leader as User object, falls back to the User."""
         return self.program.program_leader if self.program else self
+
+    @property
+    def division(self):
+        """The Division of the User's Program."""
+        return self.program.division or Division.objects.first()
 
     @property
     def registration_complete(self):

@@ -68,9 +68,9 @@ def project_dashboard(request):
     else:
         logger.info("User (not available) views Project Dashboard")
 
-    division = request.user.division if (
+    division = request.user.program.division if (
         request.user and hasattr(
-            request.user, "division") and request.user.division
+            request.user, "program") and request.user.program.division
     ) else Division.objects.first()
 
     # if request.user.is_superuser:
@@ -119,8 +119,11 @@ class ProjectList(ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(ProjectList, self).get_context_data(**kwargs)
-        context['division'] = self.request.user.division if (self.request.user and hasattr(
-            self.request.user, "division") and self.request.user.division) else Division.objects.first()
+        context['division'] = self.request.user.program.division if (
+            self.request.user and 
+            hasattr(self.request.user, "program") and 
+            self.request.user.program.division
+        ) else Division.objects.first()
         # context['project_list'] = projects
         context['list_filter'] = ProjectFilter(
             self.request.GET, queryset=self.get_queryset())
