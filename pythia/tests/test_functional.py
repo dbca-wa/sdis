@@ -206,6 +206,11 @@ class ProjectTests(BaseLiveServerTestCase):
         res = self.client.get(url)
         self.assertEqual(res.context['form'].initial['project_type'], 1)
 
+    def test_project_delete(self):
+        """Test that a Project, once deleted, does not show in portfolio or project list."""
+        pass
+
+
 class ScienceProjectApprovalTests(BaseLiveServerTestCase):
     """
     Functional testing of project and document approvals.

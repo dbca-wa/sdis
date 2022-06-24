@@ -1422,6 +1422,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             "-project__year", "-project__number").filter(
             user=self, project__status__in=Project.ACTIVE)
         projects = Project.objects.order_by("-year", "-number").filter(
+            effective_to__isnull=True,
             project_owner=self)
         own_list = projects.filter(status__in=Project.ACTIVE)
         stuck_new = projects.filter(status__in=Project.STATUS_NEW,

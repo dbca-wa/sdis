@@ -87,6 +87,7 @@ def project_dashboard(request):
     #     )
     # else:
     projects = Project.objects.filter(
+        effective_to__isnull=True,
         program__division=division
     ).order_by(
         'program__position',
@@ -138,6 +139,7 @@ class ProjectList(ListView):
 
         qs = super(ProjectList, self).get_queryset(
         ).filter(
+            effective_to__isnull=True,
             program__division=division
         ).prefetch_related(
             'program',
