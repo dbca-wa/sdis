@@ -393,7 +393,7 @@ class BaseAdmin(FormfieldOverridesMixin, AuditAdmin, TablibAdmin):
 class UserAdmin(DjangoUserAdmin):
     """Custom UserAdmin."""
 
-    list_display = ('username', 'fullname', 'email', 'division', 'program', 'work_center')
+    list_display = ('username', 'fullname', 'email', 'program', 'work_center')
     list_per_page = 1000    # sod pagination
     list_filter = ('program', 'is_external', 'is_group', 'agreed',
                    'is_staff', 'is_superuser', 'is_active')
@@ -424,7 +424,7 @@ class UserAdmin(DjangoUserAdmin):
         ('Administrative Details', {
             'description': 'Behind the scenes settings',
             'classes': ('collapse',),
-            'fields': ('division', 'program', 'work_center', 
+            'fields': ('program', 'work_center', 
                        'username', 'password',
                        'is_active', 'is_staff', 'is_superuser',
                        'date_joined', 'groups'), })
