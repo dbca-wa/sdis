@@ -1313,7 +1313,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def division(self):
         """The Division of the User's Program."""
-        return self.program.division or Division.objects.first()
+        if self.program and self.program.division:
+            return self.program.division 
+        else:
+            return Division.objects.first()
 
     @property
     def registration_complete(self):

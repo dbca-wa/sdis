@@ -430,17 +430,17 @@ class UserAdmin(DjangoUserAdmin):
                        'date_joined', 'groups'), })
     )
 
-    def division(self, obj):
-        """Return the User's Division."""
-        return obj.pythia_profile.division
+    # def division(self, obj):
+    #     """Return the User's Division."""
+    #     return obj.pythia_profile.division
 
-    def program(self, obj):
-        """Return the User's program."""
-        return obj.pythia_profile.program
+    # def program(self, obj):
+    #     """Return the User's program."""
+    #     return obj.pythia_profile.program
 
-    def work_center(self, obj):
-        """Return the User's workcenter."""
-        return obj.pythia_profile.work_center
+    # def work_center(self, obj):
+    #     """Return the User's workcenter."""
+    #     return obj.pythia_profile.work_center
 
     def get_breadcrumbs(self, request, obj=None, add=False):
         """Override the base breadcrumbs."""

@@ -49,6 +49,7 @@ def avail_tx(u, tx, obj):
 #         pass  # TODO
 # TODO portfolio: make projects to fall into/out of each category of
 # tasklist/portfolio for users of each role
+# TODO test that a user can have no program and division still works
 
 class ProgramModelTests(BaseTestCase):
     "Base program tests."
