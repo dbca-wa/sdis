@@ -42,6 +42,20 @@ and if appropriate, execute any approval steps shown under "Actions".
 Note: Save your changes to documents before leaving the page or executing any actions.
 Make sure you leave the active fields by clicking outside before saving!
 
+I'm updating a Project or Document, but the updates don't save
+==============================================================
+When updating a text field, click **inside** the field to enable the editor.
+When done, click **outside** to close the editor and save the changes to the field.
+Update as many fields as many times as you like.
+
+To save the changes to all fields, hit the green "Save" button. 
+You only need hit "Save" after all the fields have been updated.
+
+Possible problems:
+
+* If you "Save" and an editor is still enabled on a field, your edits to that field will not be saved.
+* If you close the page without hitting "Save", no edits will be saved at all.
+
 Why can't I submit my project's related documents for review, or request project closure?
 =========================================================================================
 Only project team members can execute these life cycle steps. If you can't, but
