@@ -25,6 +25,11 @@ Documentation for common SDIS workflows is split by user role:
 See also :doc:`faq`.
 The above should enable SDIS users to fulfil their tasks and operate SDIS.
 
+If you need help or contact anyone about a specific Project or Document in SDIS,
+please make their lives easier and include the URL to the Project or Document. 
+The URL is shown in your browser when you look at the thing you have a question about and starts with ``https://sdis.dbca.wa.gov.au/``.
+
+
 Interested readers may learn from the :doc:`specs` in full detail about the
 User roles (governing permissions and available actions), and how to advance 
 projects through their life cycles through document approvals.
