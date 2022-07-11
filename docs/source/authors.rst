@@ -81,7 +81,9 @@ This section applies generally to any SDIS Document.
 
 * Click on any field to enable a rich text editor.
 * Follow the guidance in the helptext of the form fields.
-* Finish editing the document by clicking on the "Save" button at the bottom.
+* When done updating a field, make sure to click outside of the editable area to close the editor and save the changes to that field.
+* Once all fields are updated, finish editing the document by clicking on the "Save" button at the bottom. 
+  This saves changes to all fields. Make sure you've closed any active editors by clicking outside.
 * You can view the edit history through the "History" link at the top, and restore older versions if needed.
 * Documents are editable only to those involved (Project team members as per the Project overview, reviewers, approvers), 
   and only when it is their turn to provide input.
