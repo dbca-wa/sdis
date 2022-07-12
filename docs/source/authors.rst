@@ -110,6 +110,7 @@ Close a Project
 * You can close a Project by clicking on the "Request Closure" button on the Project's detail page. This generates a Project Closure Document.
 * Fill out and submit the Project Closure Document for review.
 * There are several flavours of Project Closure determining what comes next:
+
   * The Project was completed successfully, and all progress was reported in the last annual report. There is no need for a final Progress Report.
   * Same, but some progress was made after the last annual report. A final Progress Report is required.
   * The Project is suspended. No Progress Report will be required. The Project might be resumed later.
