@@ -88,6 +88,14 @@ This section applies generally to any SDIS Document.
 * Documents are editable only to those involved (Project team members as per the Project overview, reviewers, approvers), 
   and only when it is their turn to provide input.
 * If a Document is read-only, you should not have any reason to update it. If that seems wrong, contact the admins.
+* Read-only Documents show the text content including the embedded formatting markup (HTML directives like ``<style>``). 
+  Text pasted directly from a MS Word document with track changes enables looks particularly bad.
+* In the rich text editor, use the "Source View" button to hand-edit content, and "Clear Formatting" to reset most unwanted style.
+  If the source view shows much unwanted formatting markup, paste the text into a plain-text editor like Notepad 
+  and back into SDIS to get rid of invisible formatting markup.
+
+In general, SDIS wants formatting to be restricted to the styles provided by its embedded rich text editor.
+Start with unformatted text, then format content in SDIS.
 
 Register your Data
 ==============================

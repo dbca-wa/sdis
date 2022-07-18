@@ -62,6 +62,15 @@ Only project team members can execute these life cycle steps. If you can't, but
 feel you should be able to, an existing project team member has to add you to the
 team.
 
+My Document is read-only and the content looks garbled.
+=======================================================
+SDIS shows editable text with embedded formatting enabled. Once read-only, e.g. when a Document
+has been submitted up the approval chain, or when approved, content is shown as supplied by the authors.
+This includes all the normally invisible formatting.
+
+You can see a Document properly laid out through both the PDF export and 
+(if it's a Progress Report or a Student Report) in the print preview of the current Annual Report.
+
 How can I change the project type?
 ==================================
 Behind the scenes, SDIS creates different items when a project is created.
