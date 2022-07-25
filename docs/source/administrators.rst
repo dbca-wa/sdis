@@ -90,3 +90,13 @@ If a Director or their Approver changes, a Superuser must:
 
 * Update the Division, set the Director and/or Approver. 
   This is shown in the Project List and the Annual Report, and used to determine who can approve Documents for a Division.
+
+Onboard special roles
+=====================
+The special roles of Biometrician, Herbarium Curator, Animal Ethics representative (unused), and Data Manager (unused),
+are appointed by a Superuser as SDIS groups in the respective Users' profiles.
+
+* BM or PL can grant BM's approval in Project Plans.
+* AE or PL can grant AE approval in Project Plans.
+* Each role needs to setup an email inbox rule.
+* Each role needs to be trained personally.
