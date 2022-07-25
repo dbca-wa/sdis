@@ -1,5 +1,5 @@
 {% load pythia_base documents projects %}
-{% if length > 0 %}
+{% if length > 0 and request.user.show_docs %}
 <!-- panel panel-primary -->
 <div class="panel" id="panel-preread">
     <!-- <div class="panel-heading"> -->
