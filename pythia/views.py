@@ -62,6 +62,9 @@ def project_dashboard(request):
     If no request user is given, return Projects of the first available Division.
     If the user is a superuser, return all Projects of all Divisions.
     If the user is not a superuser, return Projects of the User's Division.
+
+    User.division is a proxy for User.program.division with a fallback to the 
+    first available Division.
     """
     if request.user:
         logger.info("User {0} views Project Dashboard".format(request.user))
@@ -108,7 +111,16 @@ def project_dashboard(request):
 
 
 class ProjectList(ListView):
-    """A ListView of Projects."""
+    """A ListView of Projects of a User's Division.
+
+    Superusers are also limited to their own Division.
+    
+    User.division is a proxy for User.program.division with a fallback to the 
+    first available Division.
+
+    In the future, the Division-based filtering could become a pre-selected filter
+    rather than a hard limit of visibility.
+    """
     model = Project
     template = "projects/project_list.html"
     filter_class = ProjectFilter

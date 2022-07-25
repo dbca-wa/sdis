@@ -2,7 +2,7 @@
 <div class="col-sm-3">
     {% if project.image %}
     <a class="thumbnail" href="#">
-        <img src="{{ project.image.url }}" class="media-object" alt="Project logo">
+        <img src="{{ project.image.url }}" class="media-object" alt="Project image">
     </a>
     {% else %}
     <span class="">This project needs a picture!</span>
@@ -26,11 +26,12 @@
     </div><!-- /#project-status-dates-program -->
     <h3 class="media-heading">{{ project.project_name_html|safe }}</h3>
     <h5><em>{{ project.team_list_plain|safe }}</em></h5>
-    <div>
+    <!-- Disable tagline -->
+    <!-- div>
         {% if project.tagline %}<i class="glyphicon glyphicon-comments"></i>&nbsp;
         {{ project.tagline|safe }}
         {% else %}This project needs a catchy tagline!{% endif %}
-    </div>
+    </div-->
     <div>
         <i class="glyphicon glyphicon-tags"></i>&nbsp;
         {% if project.keywords %}{{ project.keywords_plain|safe }}

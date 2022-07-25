@@ -137,7 +137,10 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
             ('Project display', {
                 'description': "Showcase info used in overviews and reports",
                 'classes': ('collapse',),
-                'fields': ('image', 'tagline', 'keywords', 'position'), })
+                'fields': ('image', 
+                # "tagline" Temporarily disabled: advice MB May 2022
+                #'tagline', 
+                'keywords', 'position'), })
         )
 
     def division(self, obj):
