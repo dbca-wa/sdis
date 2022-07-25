@@ -62,3 +62,31 @@ Post action:
 
 * Broadcast to all involved staff that annual reporting season is now open.
 * Members of External Partnerships do now have to provide a Progress Report, but need to update Project details or close them where appropriate.
+
+View Projects of other Divisions
+================================
+* Edit your own profile and set your own Program to one of the intended Division.
+* Now the Project List will show only Projects of that Division.
+
+Onboard Users
+=========================================
+New SDIS Users must be allocated to a Program and Division by a Superuser.
+
+* Make them visit SDIS once if they are DBCA staff. This creates an SDIS profile.
+* Edit their Profile and set the correct Program.
+
+Onboard Reviewers
+=================
+If a Program Leader appointment changes, a Superuser must:
+
+* Update the Program, set new Program Leader. This is shown in the Project list and the Annual Report.
+* Edit new Program Leader's User profile, add to SDIS Group ``SMT``. 
+  This gives the User permission as a reviewer for their own projects, 
+  and any other project in their division (as a stand-in for an unavailable PL if needed).
+
+Onboard Approvers
+=================
+If a Director or their Approver changes, a Superuser must:
+
+* Update the Division, set the Director and/or Approver. 
+  This is shown in the Project List and the Annual Report, and used to determine who can approve Documents for a Division.

@@ -37,7 +37,8 @@ Take actions on the Document:
 
 Review a Project Plan
 =====================
-Before a Project Plan can be submitted for approval, the reviewer must enter Endorsements of the Biometrician, Data Manager, Herbarium Curator, and Animal Ethics Committee as required.
+Before a Project Plan can be submitted for approval, the reviewer must enter Endorsements 
+of the Biometrician, Data Manager (once enabled), Herbarium Curator, and Animal Ethics Committee as required.
 
 Endorsements are parallel approval processes of unlreated parties which may happen in any order.
 Therefore, they are not modelled as approval actions, but as special features of the Project Plan.
