@@ -70,10 +70,12 @@ View Projects of other Divisions
 
 Onboard Users
 =========================================
-New SDIS Users must be allocated to a Program and Division by a Superuser.
+New SDIS Users must set a Program in their Profile.
 
+* See also "Authors > Onboarding a DBCA colleague".
 * Make them visit SDIS once if they are DBCA staff. This creates an SDIS profile.
-* Edit their Profile and set the correct Program.
+* Edit their Profile and set the correct Program if they haven't yet.
+* Set special roles (see below) as required through User Groups.
 
 Onboard Reviewers
 =================
@@ -96,6 +98,7 @@ Onboard special roles
 The special roles of Biometrician, Herbarium Curator, Animal Ethics representative (unused), and Data Manager (unused),
 are appointed by a Superuser as SDIS groups in the respective Users' profiles.
 
+* Only a superuser can update the User Group.
 * BM or PL can grant BM's approval in Project Plans.
 * AE or PL can grant AE approval in Project Plans.
 * Each role needs to setup an email inbox rule.

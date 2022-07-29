@@ -35,23 +35,27 @@ Instead of being deleted at the end of their active life, Projects go through a 
 creating yet more documentation (reasons, outputs) that adds to the history of the Project.
 Completed projects are kept with status "Completed and closed".
 
-Add DBCA colleagues to a Project Team
-=====================================
-SDIS keeps a list of User profiles with all the details we need for reporting and display purposes.
+Onboarding a DBCA colleague to SDIS
+===================================
+SDIS maintains a list of User profiles with all the details we need for reporting and display purposes.
+
 SDIS automatically creates a User profile when a new User visits SDIS for the first time.
 
-The profile then needs some more information (full names, affiliations) which the Users can enter themselves.
+The profile then needs some more information (full names, affiliations, DBCA Program) which the Users can enter themselves.
+SDIS does not receive enough information from DBCA's login system to automatically set the Program, so the User has to set this manually.
+Setting the Program will infer the User's Division, which in turn drives the SDIS User experience - 
+BCS staff have more documentation and reporting features available than other Divisions.
 
-Lastly, the Division and Program has to be set by an SDIS admin, as visibility of projects is restricted to the User's own Division. 
-SDIS does not receive enough information from DBCA's login system to automatically set the Division and Program.
-
-* At the Project's detail page, click on the "Add team member" button to select any DBCA colleague.
-* The DBCA colleague must have visited SDIS prior to that in order to be known to SDIS. 
+Add DBCA colleagues to a Project Team
+=====================================
+* If the colleague is new to DBCA, assist them through the onboarding outlined above. Primarily, prompt them to visit SDIS once.
+* The DBCA colleague must have visited SDIS prior to that in order to be known to SDIS.
   They should also update their profile so SDIS gets their name and title right in Team lists.
+* At the Project's detail page, click on the "Add team member" button to select any DBCA colleague.
 * Only Project Team members can update Documents.
 * Project Team members can add others to the Team.
 
-Caveat: you cannot add a DBCA colleague until they have visited SDIS at least once.
+Caveat: you cannot add a DBCA colleague to a Project Team until they have visited SDIS at least once.
 
 Add an external colleague to a Project Team
 ===========================================
@@ -60,9 +64,9 @@ There's only one little catch - they can't access SDIS (yet) being external to D
 Therefore, you will have to create a profile for them.
 
 * At the Project's detail page, click on the "Register an external colleague" button to create a new User profile for them.
-* As username, choose their ``givenname_surname`` in all lower case and separated with an underscore.
+* As username, choose their ``givenname_surname`` in all lower case and separated with an underscore. DO NOT use your own email address here.
 * As password, choose any password of your choice. The external user will never login and never need this password. 
-  Having a password is a requirement of the software SDIS is written in. Set and forget!
+  Having a password is a requirement of the software framework SDIS is written in. Set and forget!
 * Enter profile details and save the profile.
 * Once you have created and saved the new SDIS User profile, you can add them to the Project Team via "Add team member".
 * Student Projects and External Partnerships often have external colleagues.
@@ -129,7 +133,10 @@ Close a Project
 
 Find Help
 ==============================
+The following steps aim to solve any problems. Ideally they are followed in this sequence:
+
 * Read this documentation carefully.
 * Consult the :doc:`faq`.
 * Ask the admins.
 * If you think you've encountered a bug, feel free to open an `issue here <https://github.com/dbca-wa/sdis/issues>`_.
+* If you feel that the documentation is missing something, or is unclear on something, your feedback would be highly appreciated and will help us to improve the documentation.
