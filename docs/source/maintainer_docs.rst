@@ -68,7 +68,13 @@ Deploy
 Documentation
 =============
 The docs source is part of the SDIS source.
+The docs are built and hosted on readthedocs.org, where a 
+`GitHub incoming webhook <https://readthedocs.org/dashboard/sdis/integrations/>`_ 
+automatically builds the docs on every GitHub push.
+An alternative would be a GitHub action to build the docs and host on github-pages.
 
-* Update docs as needed, commit and push.
-* The docs are hosted on readthedocs.org.
-* rtd has an integration, which should be triggered by every GH push.
+* Update docs as needed.
+* Build and view locally: ``fab docs``.
+* Commit changes (only docs source is committed, locally built docs are gitignored) and push.
+* Readthedocs will automatically pull, build, and host the docs.
+* Both the SDIS code repo and the SDIS app link to the hosted docs.
