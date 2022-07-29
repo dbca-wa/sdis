@@ -64,3 +64,11 @@ Deploy
 * Once running and tested, edit PROD. 
   Since the Docker image is already downloaded, this step will be fast. 
   Run db migrations if necessary.
+
+Documentation
+=============
+The docs source is part of the SDIS source.
+
+* Update docs as needed, commit and push.
+* The docs are hosted on readthedocs.org.
+* rtd has an integration, which should be triggered by every GH push.
