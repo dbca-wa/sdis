@@ -16,7 +16,7 @@
         {% if not request.user.is_superuser %}{{ division.name }} {% endif %}
         Projects
         <span class="pull-right">
-            <a class="btn btn-small btn-primary" href="/api/projects?format=csv" title="Download all Projects as CSV">
+            <a class="btn btn-small btn-primary" href="/api/projects?format=csv" title="Download all Projects as CSV" download>
                 <i class="glyphicon glyphicon-save glyphicon-white"></i> Download all Projects
             </a>
         </span>
