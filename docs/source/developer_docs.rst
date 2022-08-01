@@ -4,7 +4,7 @@ Developer Documentation
 
 This chapter discusses the design philosophy behind the software architecture of SDIS.
 To get up and running in your own development environment, consult the
-`README <https://github.com/parksandwildlife/sdis>`_.
+`README <https://github.com/dbca-wa/sdis>`_.
 
 Polymorphic inheritance
 =======================

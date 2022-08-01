@@ -127,7 +127,9 @@
                           <i class="glyphicon glyphicon-blackboard"></i>&nbsp;
                           {{ project.get_type_display }} {{ project.project_ckantag|safe }}
                         </span>&nbsp;
+                        {% if request.user.show_docs %}
                         {% project_status_label project %}
+                        {% endif %}
 
                    
                         <!-- Links -->

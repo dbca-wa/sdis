@@ -67,7 +67,9 @@
                  class="list-group-item portfolio"
                  title="This project has been idle for more than two months">
                  <span class="glyphicon glyphicon-time"></span>
+                 {% if request.user.show_docs %}
                  <span class="pull-right">{% project_status_label proj %}</span>
+                 {% endif %}
                  {{ proj.project_name_html|safe }}
              </a>
              {% endfor %}
@@ -103,7 +105,9 @@
             class="list-group-item portfolio"
             title="This project's details list {{you}} as project owner">
             <span class="glyphicon glyphicon-star"></span>
-            <span class="pull-right">{% project_status_label proj %}</span>
+            {% if request.user.show_docs %}
+                 <span class="pull-right">{% project_status_label proj %}</span>
+                 {% endif %}
             {{ proj.project_name_html|safe }}
         </a>
         {% endfor %}
@@ -112,7 +116,9 @@
             class="list-group-item portfolio"
             title="{{ you|title }} {{ are }} on the team list of this project">
             <span class="glyphicon glyphicon-star-empty"></span>
-            <span class="pull-right">{% project_status_label proj %}</span>
+            {% if request.user.show_docs %}
+                 <span class="pull-right">{% project_status_label proj %}</span>
+                 {% endif %}
             {{ proj.project_name_html|safe }}
         </a>
         {% endfor %}
@@ -150,7 +156,9 @@
             class="list-group-item portfolio"
             title="{{ you|title }} {{ are }} listed as the project owner in this project's details">
             <span class="glyphicon glyphicon-star"></span>
-            <span class="pull-right">{% project_status_label proj %}</span>
+            {% if request.user.show_docs %}
+                 <span class="pull-right">{% project_status_label proj %}</span>
+                 {% endif %}
             {{ proj.project_name_html|safe }}
         </a>
         {% endfor %}
@@ -159,7 +167,9 @@
             class="list-group-item portfolio"
             title="{{ you|title }} {{ are }} on this project's team list">
             <span class="glyphicon glyphicon-star-empty"></span>
-            <span class="pull-right">{% project_status_label proj %}</span>
+            {% if request.user.show_docs %}
+                 <span class="pull-right">{% project_status_label proj %}</span>
+            {% endif %}
             {{ proj.project_name_html|safe }}
         </a>
         {% endfor %}
