@@ -763,16 +763,25 @@ class Program(Audit, ActiveModel):
     class Meta:
         """Class opts."""
 
-        ordering = ['-published', 'position', 'cost_center']
+        ordering = ['division', '-published', 'position', 'cost_center']
         verbose_name = "Program"
         verbose_name_plural = "Programs"
 
     def __str__(self):
         """The name."""
+        return '{0} {1}{2}'.format(
+            self.division.slug if self.division and self.division.slug else "SET DIVISION",
+            mark_safe(strip_tags(self.name)),
+            '' if self.published else ' [not published]'
+        )
+    
+    def label(self):
+        """The name."""
         return '{0}{1}'.format(
             mark_safe(strip_tags(self.name)),
-            '' if self.published else ' (not published)'
+            '' if self.published else ' [not published]'
         )
+    
 
     def save(self, *args, **kw):
         """Generate slug from name if not set."""

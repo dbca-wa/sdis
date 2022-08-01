@@ -4,7 +4,7 @@
     {% regroup reports|dictsort:"project.program.position" by project.program as report_list %}
     {% for program_reports in report_list %}
     {% with program_reports.grouper as program %}
-    <div class="program_heading">{{ program }}</div>
+    <div class="program_heading">{{ program.label }}</div>
     <div class="program_content">
         <div class="program_leader">{{ program.program_leader.get_full_name }}</div>
         <!-- <div class="program_intro">{{ program.introduction|safe }}</div> -->

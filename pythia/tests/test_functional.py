@@ -18,7 +18,7 @@ from pythia.projects.models import *
 from pythia.documents.models import *
 from pythia.reports.models import *
 from pythia.tests.base import (
-    SuperUserFactory, UserFactory, ScienceProjectFactory)
+    DivisionFactory, SuperUserFactory, UserFactory, ScienceProjectFactory)
 
 import pdb
 
@@ -265,6 +265,8 @@ class ScienceProjectApprovalTests(BaseLiveServerTestCase):
             creator=self.bob, 
             modifier=self.bob, 
             project_owner=self.bob)
+
+        self.division = DivisionFactory.create()
 
     def test_new_project_status(self):
         """Test that the new project has the correct status.

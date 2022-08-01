@@ -36,7 +36,7 @@
     <div class="well" style="opacity: 0.7; margin-top: 20px;">
 
         <h3 id="{{ program.opts.module_name }}:{{ program.pk }}"
-        class="media-heading">{{ program|safe }}
+        class="media-heading">{{ program.label|safe }}
         <a href="{{ program_change }}"
         onclick="return showAddAnotherPopup(this);"
         type="button"

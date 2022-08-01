@@ -607,6 +607,7 @@ class ScienceProjectModelTests(BaseTestCase):
         n = datetime.now()
         r = ARARReport.objects.create(
             year=self.project.year, date_open=n, date_closed=n)
+        r.divisions.add(self.division)
         print("  Created {0}".format(r.__str__()))
         self.project.request_update()
         self.project.save()

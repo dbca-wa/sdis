@@ -54,7 +54,7 @@
               <div class="panel panel-default" style="background: url('{% if program.image %}{{ program.image.url }}{% endif %}');
                             background-size: cover; opacity: 1;">
                 <div class="well" style="opacity: 0.7; margin-top: 20px; margin-left: 20px; margin-right: 20px;">
-                  <h3 class="media-heading">{{ program|safe }}
+                  <h3 class="media-heading">{{ program.label|safe }}
                     <a href="{{ program_change }}" onclick="return showAddAnotherPopup(this);" type="button"
                       class="btn btn-primary btn-xs pull-right" title="Update Program" target="_">
                       <i class="glyphicon glyphicon-pencil"></i>

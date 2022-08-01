@@ -19,7 +19,7 @@
                 {% for program_reports in report_list %}
                 <li>
                     {% with program_reports.grouper as program %}
-                    <a href="#{{ program.opts.module_name }}:{{ program.pk }}">{{ program }}</a>
+                    <a href="#{{ program.opts.module_name }}:{{ program.pk }}">{{ program.label }}</a>
                     {% endwith %}
                 </li>
                 {% endfor %}

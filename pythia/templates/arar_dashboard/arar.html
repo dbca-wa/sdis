@@ -14,7 +14,7 @@
                 {% with program_reports.grouper as program %}
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ program.pk }}">{{ program }}</a>
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ program.pk }}">{{ program.label }}</a>
                     </h4>
                 </div>
                 <div id="collapse-{{ program.pk }}" class="panel-collapse collapse">
@@ -28,7 +28,7 @@
                                 <div class="well"
                                 style="opacity: 0.7; margin-top: 20px; margin-left: 20px; margin-right: 20px;">
 
-                                    <h3 class="media-heading">{{ program|safe }}
+                                    <h3 class="media-heading">{{ program.label|safe }}
 
                                         {% url program.opts|pythia_urlname:'change' program.pk|pythia_urlquote as program_change %}
                                         <a href="{{ program_change }}" onclick="return showAddAnotherPopup(this);"

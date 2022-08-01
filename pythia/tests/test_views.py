@@ -217,7 +217,9 @@ class ConceptPlanAdminTests(BaseTestCase):
         self.marge.groups.add(self.scd)
         self.peter = UserFactory.create(
             username='peter', first_name='Peter', last_name='Peterson')
+        self.division = DivisionFactory.create()
         self.program = Program.objects.create(
+            division=self.division,
             name="ScienceProgram",
             slug="scienceprogram",
             position=0,
