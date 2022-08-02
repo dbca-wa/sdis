@@ -170,11 +170,8 @@ class PythiaSite(AuditSite):
             ProjectList.as_view(),
             name="project_list"),
 
-
             ) + staticserve(settings.STATIC_URL,
                             document_root=settings.STATIC_ROOT)
-
-
 
         return urlpatterns + super(PythiaSite, self).get_urls()
 
