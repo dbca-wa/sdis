@@ -28,8 +28,8 @@ ALLOWED_HOSTS = env('DJANGO_ALLOWED_HOSTS', '*,localhost,127.0.0.1,::1').split('
 # Application definition
 SITE_ID = 1
 SITE_URL = env('SITE_URL')
-SITE_NAME = 'SDIS'
-SITE_TITLE = 'Science Directorate Information System'
+SITE_NAME = 'SPMS'
+SITE_TITLE = 'Science Project Management System'
 APPLICATION_VERSION_NO = env("SDIS_VERSION", default="0.1")
 
 DATABASES = {'default': database.config()}
@@ -271,7 +271,7 @@ EMAIL_HOST = env('EMAIL_HOST', default='smtp.lan.fyi')
 EMAIL_PORT = env('EMAIL_PORT', default=25)
 ENVELOPE_EMAIL_RECIPIENTS = ['florian.mayer@dbca.wa.gov.au']
 ENVELOPE_USE_HTML_EMAIL = True
-DEFAULT_FROM_EMAIL = '"SDIS" <sdis-noreply@dbca.wa.gov.au>'
+DEFAULT_FROM_EMAIL = '"SPMS" <SPMS-noreply@dbca.wa.gov.au>'
 
 # Admins get notified of ERR/WARN logging events
 ADMINS = (('Florian Mayer', 'Florian.Mayer@dbca.wa.gov.au'), )

@@ -12,8 +12,8 @@ pipenv and poetry are unusable for Python 2.7 projects. We need a new setup.
 * Install shell completions, e.g. fish: https://gist.github.com/sirkonst/e39bc28218b57cc78b6f728b8da99f33
 * Good pyenv intro: https://realpython.com/intro-to-pyenv/
 * Use pyenv to install Python 2.7.18.
-* Clone SDIS repo.
-* Inside SDIS repo, run ``pyenv local 2.7.18`` to create a ``.python-version`` file.
+* Clone SPMS repo.
+* Inside SPMS repo, run ``pyenv local 2.7.18`` to create a ``.python-version`` file.
 * Find path to python2.7 with ``which python2.7`` (e.g. /home/USERNAME/.pyenv/shims/python2.7).
 * Create a virtualenv with ``virtualenv -p /home/USERNAME/.pyenv/shims/python2.7 .venv``.
 * Activate virtualenv with ``source .venv/bin/activate.fish``.
@@ -25,7 +25,7 @@ Alternatives: Develop with Docker / docker-compose following https://docs.docker
 Day to day development
 ======================
 
-* Enter SDIS repo.
+* Enter SPMS repo.
 * Activate virtualenv with ``source .venv/bin/activate.fish`` (or shell of your choice).
 * Ballmer.jpg
 * Run tests with ``fab test``.
@@ -58,7 +58,7 @@ Release
 Deploy
 ------
 
-* Open Rancher UI and edit the UAT config for SDIS workload to the new version number. 
+* Open Rancher UI and edit the UAT config for SPMS workload to the new version number. 
   This will download the Docker image (which can take a few mins), then hot-swap the images.
 * Apply migrations if any through a shell on the respective workload with ``./manage.py migrate``.
 * Once running and tested, edit PROD. 
@@ -67,7 +67,7 @@ Deploy
 
 Documentation
 =============
-The docs source is part of the SDIS source.
+The docs source is part of the SPMS source.
 The docs are built and hosted on readthedocs.org, where a 
 `GitHub incoming webhook <https://readthedocs.org/dashboard/sdis/integrations/>`_ 
 automatically builds the docs on every GitHub push.
@@ -77,4 +77,4 @@ An alternative would be a GitHub action to build the docs and host on github-pag
 * Build and view locally: ``fab docs``.
 * Commit changes (only docs source is committed, locally built docs are gitignored) and push.
 * Readthedocs will automatically pull, build, and host the docs.
-* Both the SDIS code repo and the SDIS app link to the hosted docs.
+* Both the SPMS code repo and the SPMS app link to the hosted docs.

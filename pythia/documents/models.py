@@ -911,7 +911,7 @@ class ProjectPlan(Document):
         help_text=_("The Animal Ethics Committee's endorsement of the"
                     " planned direct interaction with animals. "
                     "Approval process is currently handled outside "
-                    "of SDIS."))
+                    "of SPMS."))
 
     data_management = models.TextField(
         verbose_name=_("Data management"), blank=True, null=True,

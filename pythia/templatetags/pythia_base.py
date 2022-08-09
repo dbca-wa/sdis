@@ -127,8 +127,8 @@ def as_html(original, field, tag='h1'):
 
 @register.simple_tag
 def get_version_info():
-    return "SDIS %(version)s, Django %(django)s" % {
-        'version': env("SDIS_RELEASE", default="4.0.0"),
+    return "SPMS %(version)s, Django %(django)s" % {
+        'version': env("SDIS_RELEASE", default="5.0.0"),
         'django': django.get_version()}
 
 

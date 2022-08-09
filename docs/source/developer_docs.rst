@@ -2,7 +2,7 @@
 Developer Documentation
 ***********************
 
-This chapter discusses the design philosophy behind the software architecture of SDIS.
+This chapter discusses the design philosophy behind the software architecture of SPMS.
 To get up and running in your own development environment, consult the
 `README <https://github.com/dbca-wa/sdis>`_.
 
@@ -41,7 +41,7 @@ models.
   retract them, and request project closure.
 * All SCMT members (program leaders) are allowed to "review" documents
 * All Directorate representatives are allowed to "approve" things and fast-track
-  projects through their life cycles to re-align SDIS with reality.
+  projects through their life cycles to re-align SPMS with reality.
 
 Notably, there are no customisations to Django permissions in place.
 Django-fsm accepts either hard-coded permission strings, or lambda functions.
@@ -172,7 +172,7 @@ Technical Documentation
 
 This chapter links automatically extracted code documentation with the source code.
 
-**NOTE** Until SDIS is upgraded to Django 1.8, autodocs will fail to extract
+**NOTE** Until SPMS is upgraded to Django 1.8, autodocs will fail to extract
 docstrings from modules using Django image fields and django-fsm state fields.
 Refer directly to the docstrings inside code if they don't show up below.
 

@@ -7,7 +7,7 @@ Here is a collection of frequently asked questions providing further guidance:
 
 Where are my projects?
 ======================
-The `SDIS home page <https://sdis.dbca.wa.gov.au/>`_ will display projects
+The `SPMS home page <https://scienceprojects.dbca.wa.gov.au/>`_ will display projects
 you supervise or participate in under "My Projects".
 
 Note:
@@ -26,16 +26,16 @@ You can type to filter the dropdown menus!
 
 Which projects will be discussed at the next SCMT meeting?
 ==========================================================
-On the `SDIS home page <https://sdis.dbca.wa.gov.au/>`_, in the "Projects" section,
+On the `SPMS home page <https://scienceprojects.dbca.wa.gov.au/>`_, in the "Projects" section,
 click "View xxx projects awaiting SCMT approval" to expand a list of project
 documents (Concept Plans and Project Closures) awaiting SCMT approval.
 
 This selection is of particular interest to SCMT members as pre-read for the SCMT meeting.
 
-Is there anything SDIS wants *me* to do?
+Is there anything SPMS wants *me* to do?
 ========================================
 If there are any documents awaiting your input, and possibly any approval actions,
-they will be shown on the `SDIS home page <https://sdis.dbca.wa.gov.au/>`_ under
+they will be shown on the `SPMS home page <https://scienceprojects.dbca.wa.gov.au/>`_ under
 "My Tasks". Click each link, update the content as appropriate, save the changes,
 and if appropriate, execute any approval steps shown under "Actions".
 
@@ -64,7 +64,7 @@ team.
 
 My Document is read-only and the content looks garbled.
 =======================================================
-SDIS shows editable text with embedded formatting enabled. Once read-only, e.g. when a Document
+SPMS shows editable text with embedded formatting enabled. Once read-only, e.g. when a Document
 has been submitted up the approval chain, or when approved, content is shown as supplied by the authors.
 This includes all the normally invisible formatting.
 
@@ -73,10 +73,10 @@ You can see a Document properly laid out through both the PDF export and
 
 How can I change the project type?
 ==================================
-Behind the scenes, SDIS creates different items when a project is created.
+Behind the scenes, SPMS creates different items when a project is created.
 It is not possible to migrate the content of the different fields and documents
 without the risk of data loss.
-Therefore, SDIS does not allow to change project types after their creation.
+Therefore, SPMS does not allow to change project types after their creation.
 If you still need to change a project type, please do:
 
 * Create new project with the correct type. Copy/paste or re-type relevant fields.
@@ -87,7 +87,7 @@ The admins can delete a project:
 * Delete the (child-)project on the detail page, then
 * delete the (parent-)project on the overview page.
 
-SDIS requires this two-step deletion process due to a
+SPMS requires this two-step deletion process due to a
 `known bug <https://github.com/django-polymorphic/django-polymorphic/issues/34>`_
 in one of its third party libraries.
 
@@ -113,7 +113,7 @@ Can I download documents?
 =========================
 You sure can! The "View PDF" link above each document will create a beautifully
 laid out PDF with a cover page indicating its approval status and project details.
-The PDFs have links in the page headers back to their online counterparts in SDIS.
+The PDFs have links in the page headers back to their online counterparts in SPMS.
 
 The "Create PDF" link does not work
 ===================================
@@ -122,7 +122,7 @@ This can happen if the content has been copy-pasted from MS Word, EndNote, or
 web pages.
 
 Cut and paste the content into a simple text exitor like Notepad, then back into
-SDIS to remove this invisible markup.
+SPMS to remove this invisible markup.
 *Do not* use "clever" text processors like MS Word, as they
 "understand" and preserve the invisible markup we want to get rid of.
 *Do* use simple text editors like Notepad, which actively discard invisible markup.
@@ -179,16 +179,16 @@ updates from all Science Projects, Core Functions, and Student Projects.
 It will include project level details from all existing External Collaborations.
 
 * You will get one broadcast email when the ARAR process starts.
-* SDIS will not email you separately for progress reports
-* SDIS will show any progress reports requiring your input under "My Tasks"
+* SPMS will not email you separately for progress reports
+* SPMS will show any progress reports requiring your input under "My Tasks"
 
-Before the ARAR gets kicked off, make sure to get your things in SDIS up to date:
+Before the ARAR gets kicked off, make sure to get your things in SPMS up to date:
 
 * Create new projects, start their approval process
 * Close old projects (some will have a closure process incolving document approval)
 * Update team lists on projects.
 
-This will prevent SDIS from unknowingly requesting updates from long dead projects
+This will prevent SPMS from unknowingly requesting updates from long dead projects
 (which create extra effort to get rid off again).
 
 Can I provide ARAR updates before the new cycle begins?
@@ -206,16 +206,16 @@ the ARAR process starts. (This meeting has the power to approve requested projec
 
 1. Before the last SCMT meeting before the ARAR: PLs and Scientists review their projects, request closure / termination / suspending where required, and update the team lists.
 2. At the last SCMT meeting before the ARAR: SCMT discusses and approves/rejects Project Closure documents, and terminates / suspends projects as appropriate.
-3. After the last SCMT meeting: SDIS admins (Julian/Florian) create a new ARAR when instructed to by the Directorate. This will generate Progress Reports for all active and closing ScienceProjects, all active CoreFunctions, and all active StudentProjects.
+3. After the last SCMT meeting: SPMS admins (Julian/Florian) create a new ARAR when instructed to by the Directorate. This will generate Progress Reports for all active and closing ScienceProjects, all active CoreFunctions, and all active StudentProjects.
 
 Running through updates in this order will speed up the update process considerably by preventing the confusion (as there's no staff training ahead of the ARAR process) and required subsequent individual coaching from the ARAR admins to involved staff members to back each falsely project open out of the ARAR update process.
 
 What happens during the ARAR reporting phase?
 =============================================
-The general purpose of SDIS is to encourage project management through the correct approval of related project documentation, and to audit the human decisions.
+The general purpose of SPMS is to encourage project management through the correct approval of related project documentation, and to audit the human decisions.
 However, sometimes we need to fast-track some processes and override the system. A system admin with sufficient permissions can do so.
 
-* SDIS admins assist DBCA staff with the updates and their approval. Some projects and documents get stuck and need a superuser to reset approvals.
+* SPMS admins assist DBCA staff with the updates and their approval. Some projects and documents get stuck and need a superuser to reset approvals.
 * Given a draft of the organigram, the developer updates the print version.
 * Any other changes to the report structure are applied by the developer upon request from the Directorate.
 
@@ -223,7 +223,7 @@ How can I exclude an unwanted regular progress report?
 ------------------------------------------------------
 A progress report was requested in error for a project that should have been started the project closure process.
 
-* An SDIS admin can force close the project, which deletes the current progress report, excludes the project from the annual report, generates a project closure form, and sets the project status to "closing".
+* An SPMS admin can force close the project, which deletes the current progress report, excludes the project from the annual report, generates a project closure form, and sets the project status to "closing".
 * Force closing a project can be reverted if needed.
 
 How can I exclude an unwanted "final" progress report?
@@ -244,15 +244,15 @@ How is a project plan endorsed and approved?
 --------------------------------------------
 As a Program Leader, I have received a notification email about a Project Plan which needs to be approved. I cannot see the button to approve the project plan but I'm not sure why.
 
-* SDIS shows in the sidebar whether the endorsements of Biometrician (always required), the Herbarium Curator (if plant specimen collection involved) and the AEC (if animal handling involved) are required.
-* Any SDIS user who is part of the Group "BM" / "HC" / "AEC" can set the endorsement field inside the main document to "Granted" or "Denied", then save.
+* SPMS shows in the sidebar whether the endorsements of Biometrician (always required), the Herbarium Curator (if plant specimen collection involved) and the AEC (if animal handling involved) are required.
+* Any SPMS user who is part of the Group "BM" / "HC" / "AEC" can set the endorsement field inside the main document to "Granted" or "Denied", then save.
 * Once endorsements are given, the Program Leader will be shown the "approve" button, which sets the project to "active" without the need for additional Directorate approval.
 
 How can I change how project team members are shown in the team list?
 ---------------------------------------------------------------------
 To change a project team member's affiliation (and update the cached version):
 
-* Staff > Browse SDIS users > User details, (e.g. field "Affiliations" > update affiliation "Curtin University") > Save User.
+* Staff > Browse SPMS users > User details, (e.g. field "Affiliations" > update affiliation "Curtin University") > Save User.
 * Left column shows user's projects (where the users occur on project teams) > open each project in a new tab.
 * Each project: Manage Team > "edit" membership > save. This updates the cached project team list.
 * Update all (admins only): Backstage > update caches.

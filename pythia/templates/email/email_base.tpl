@@ -1,7 +1,7 @@
 {% extends "mail_templated/base.tpl" %}
 
 {% block subject %}
-[SDIS] {{ object_name }} requires your attention
+[SPMS] {{ object_name }} requires your attention
 {% endblock %}
 
 {% block html %}
@@ -13,7 +13,7 @@ Hi,
 </p>
 
 <p>
-    <a href="https://sdis.dpaw.wa.gov.au">SDIS</a> may require your input,
+    <a href="https://scienceprojects.dpaw.wa.gov.au">SPMS</a> may require your input,
     review, or just wants to let you know that a document has been approved.
 </p>
 
@@ -33,17 +33,17 @@ Hi,
 <p>
     For your convenience, the link to
     <a href="{{ object_url }}">{{ object_name }}</a> is also listed under
-    "My Tasks" on your <a href="https://sdis.dpaw.wa.gov.au">SDIS home page</a>.
+    "My Tasks" on your <a href="https://scienceprojects.dpaw.wa.gov.au">SPMS home page</a>.
 </p>
 
 <p>
     Cheers,<br />
-    SDIS
+    SPMS
 </p>
 
 <p>
 ps. If you get stuck, please consult the
-<a href="http://sdis.readthedocs.io/">SDIS Documentation</a>.
+<a href="http://sdis.readthedocs.io/">SPMS Documentation</a>.
 <br />
 pps. If these messages clog your inbox, consider creating an
 <a href="https://support.office.com/en-us/article/Manage-email-messages-by-using-rules-c24f5dea-9465-4df4-ad17-a50704d66c59">Outlook rule</a>.

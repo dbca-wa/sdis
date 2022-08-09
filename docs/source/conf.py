@@ -91,7 +91,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'SDIS'
+project = u'SPMS'
 copyright = u'2012-2022, Department of Biodivsersity, Conservation and  Attractions WA'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -244,7 +244,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    ('index', 'SDIS.tex', u'SDIS Documentation',
+    ('index', 'SDIS.tex', u'SPMS Documentation',
      u'2012-2022, Department of Biodivsersity, Conservation and  Attractions WA' +
      ', Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, ' +
      'Nick Sandford, Ashley Felton', 'manual'),
@@ -276,7 +276,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'sdis', u'SDIS Documentation',
+    ('index', 'sdis', u'SPMS Documentation',
      [u'2012-2022, Department of Biodivsersity, Conservation and  Attractions WA' +
       ', Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, ' +
       'Nick Sandford, Ashley Felton'], 1)
@@ -292,10 +292,10 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'SDIS', u'SDIS Documentation',
+    ('index', 'SDIS', u'SPMS Documentation',
      u'2012-2022, Department of Biodivsersity, Conservation and  Attractions WA' +
      ', Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, ' +
-     'Nick Sandford, Ashley Felton', 'SDIS', 'Project approval and reporting.',
+     'Nick Sandford, Ashley Felton', 'SPMS', 'Project approval and reporting.',
      'Miscellaneous'),
 ]
 
@@ -315,13 +315,13 @@ texinfo_documents = [
 # -- Options for Epub output ----------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'SDIS'
+epub_title = u'SPMS'
 epub_author = u'Department of Biodivsersity, Conservation and  Attractions WA, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
 epub_publisher = u'Department of Biodivsersity, Conservation and  Attractions WA, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
 epub_copyright = u'2022, Department of Biodivsersity, Conservation and  Attractions WA, Florian Mayer, Paul Gioia, Adon Metcalfe, Tomas Krajca, Scott Percival, Nick Sandford, Ashley Felton'
 
 # The basename for the epub file. It defaults to the project name.
-#epub_basename = u'SDIS'
+#epub_basename = u'SPMS'
 
 # The HTML theme for the epub output. Since the default themes are not optimized
 # for small screen space, using the same theme for HTML and epub output is

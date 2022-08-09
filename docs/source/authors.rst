@@ -6,12 +6,12 @@ Project owners and teams
 
 This chapter guides project owners and their teams through their tasks.
 
-Project owners are those who register a Project in SDIS to get departmental approval.
+Project owners are those who register a Project in SPMS to get departmental approval.
 They have to author documents and submit them for approval.
 
 Complete your Profile
 =====================
-* Follow the link "My SDIS Profile" in the main menu underneath your name.
+* Follow the link "My SPMS Profile" in the main menu underneath your name.
 * Update your Profile and save.
 
 Create a Project
@@ -25,8 +25,8 @@ Oops, wrong project type - now what?
 For technical reasons, you cannot change the type of a project once it has been created.
 
 * Create a new project of the correct type.
-* Deleting projects is limited to SDIS admins.
-  Notify an SDIS admin to delete the Project of incorrect type.
+* Deleting projects is limited to SPMS admins.
+  Notify an SPMS admin to delete the Project of incorrect type.
   Use the "Share" link to create an email containing direct links to the respective Project or Document.
 
 The reason we restrict deletion of Projects is to retain the history of past Projects.
@@ -40,46 +40,46 @@ Ask a question about a Project or Document
 Each Project and Document has a "Share" button. 
 This button opens an email containing a direct link to the Project or Document in question.
 
-Opening a direct link is much faster for the receiver than to hunt through SDIS, 
+Opening a direct link is much faster for the receiver than to hunt through SPMS, 
 searching by project year, number and/or title.
 
-Onboarding a DBCA colleague to SDIS
+Onboarding a DBCA colleague to SPMS
 ===================================
-SDIS maintains a list of User profiles with all the details we need for reporting and display purposes.
+SPMS maintains a list of User profiles with all the details we need for reporting and display purposes.
 
-SDIS automatically creates a User profile when a new User visits SDIS for the first time.
+SPMS automatically creates a User profile when a new User visits SPMS for the first time.
 
 The profile then needs some more information (full names, affiliations, DBCA Program) which the Users can enter themselves.
-SDIS does not receive enough information from DBCA's login system to automatically set the Program, so the User has to set this manually.
-Setting the Program will infer the User's Division, which in turn drives the SDIS User experience - 
+SPMS does not receive enough information from DBCA's login system to automatically set the Program, so the User has to set this manually.
+Setting the Program will infer the User's Division, which in turn drives the SPMS User experience - 
 BCS staff have more documentation and reporting features available than other Divisions.
 
 Add DBCA colleagues to a Project Team
 =====================================
-* If the colleague is new to DBCA, assist them through the onboarding outlined above. Primarily, prompt them to visit SDIS once.
-* The DBCA colleague must have visited SDIS prior to that in order to be known to SDIS.
-  They should also update their profile so SDIS gets their name and title right in Team lists.
+* If the colleague is new to DBCA, assist them through the onboarding outlined above. Primarily, prompt them to visit SPMS once.
+* The DBCA colleague must have visited SPMS prior to that in order to be known to SPMS.
+  They should also update their profile so SPMS gets their name and title right in Team lists.
 * At the Project's detail page, click on the "Add team member" button to select any DBCA colleague.
 * Only Project Team members can update Documents.
 * Project Team members can add others to the Team.
 
-Caveat: you cannot add a DBCA colleague to a Project Team until they have visited SDIS at least once.
+Caveat: you cannot add a DBCA colleague to a Project Team until they have visited SPMS at least once.
 
 Add an external colleague to a Project Team
 ===========================================
-To add external colleagues to a Project Team, they also require an SDIS profile. 
-There's only one little catch - they can't access SDIS (yet) being external to DBCA.
+To add external colleagues to a Project Team, they also require an SPMS profile. 
+There's only one little catch - they can't access SPMS (yet) being external to DBCA.
 Therefore, you will have to create a profile for them.
 
 * At the Project's detail page, click on the "Register an external colleague" button to create a new User profile for them.
 * As username, choose their ``givenname_surname`` in all lower case and separated with an underscore. DO NOT use your own email address here.
 * As password, choose any password of your choice. The external user will never login and never need this password. 
-  Having a password is a requirement of the software framework SDIS is written in. Set and forget!
+  Having a password is a requirement of the software framework SPMS is written in. Set and forget!
 * Enter profile details and save the profile.
-* Once you have created and saved the new SDIS User profile, you can add them to the Project Team via "Add team member".
+* Once you have created and saved the new SPMS User profile, you can add them to the Project Team via "Add team member".
 * Student Projects and External Partnerships often have external colleagues.
 
-Caveat: External colleagues will never need to login to SDIS, and do not need to know about this profile.
+Caveat: External colleagues will never need to login to SPMS, and do not need to know about this profile.
 
 Document visibility
 ===================
@@ -89,7 +89,7 @@ Document visibility
 
 Complete and submit a Document
 ==============================
-This section applies generally to any SDIS Document.
+This section applies generally to any SPMS Document.
 
 * Click on any field to enable a rich text editor.
 * Follow the guidance in the helptext of the form fields.
@@ -104,10 +104,10 @@ This section applies generally to any SDIS Document.
   Text pasted directly from a MS Word document with track changes enables looks particularly bad.
 * In the rich text editor, use the "Source View" button to hand-edit content, and "Clear Formatting" to reset most unwanted style.
   If the source view shows much unwanted formatting markup, paste the text into a plain-text editor like Notepad 
-  and back into SDIS to get rid of invisible formatting markup.
+  and back into SPMS to get rid of invisible formatting markup.
 
-In general, SDIS wants formatting to be restricted to the styles provided by its embedded rich text editor.
-Start with unformatted text, then format content in SDIS.
+In general, SPMS wants formatting to be restricted to the styles provided by its embedded rich text editor.
+Start with unformatted text, then format content in SPMS.
 
 Register your Data
 ==============================
@@ -146,5 +146,5 @@ The following steps aim to solve any problems. Ideally they are followed in this
 * Read this documentation carefully.
 * Consult the :doc:`faq`.
 * Ask the admins.
-* If you think you've encountered a bug, feel free to open an `issue here <https://github.com/dbca-wa/sdis/issues>`_.
+* If you think you've encountered a bug, feel free to open an `issue here <https://github.com/dbca-wa/SPMS/issues>`_.
 * If you feel that the documentation is missing something, or is unclear on something, your feedback would be highly appreciated and will help us to improve the documentation.

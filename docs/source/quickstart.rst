@@ -2,18 +2,18 @@
 Getting started
 ***************
 
-The most common and fun things to do in SDIS revolve around project approval
+The most common and fun things to do in SPMS revolve around project approval
 and taking the "ow" out of the "how" of annual reporting.
 
 Gone are the days of emailing MS Word documents - the future is here, and it's
-all in your browser. SDIS will tell you what to do (your Tasks), offer shortcuts
+all in your browser. SPMS will tell you what to do (your Tasks), offer shortcuts
 to your Projects, and allow you to browse other Projects and Reports.
-If there are urgent or new Tasks, SDIS will notify you via email.
+If there are urgent or new Tasks, SPMS will notify you via email.
 
 Login
 =====
-SDIS uses the DBCA Single-Sign-On login, provided by Microsoft's Office 365.
-Once-off, SDIS will redirect you to login.microsoftonline.com, which you already
+SPMS uses the DBCA Single-Sign-On login, provided by Microsoft's Office 365.
+Once-off, SPMS will redirect you to login.microsoftonline.com, which you already
 have used to login to other Parks & Wildlife online services, such as Office 365.
 
 Remember to use your **email address** (including @dbca.wa.gov.au), not your user name.
@@ -23,20 +23,20 @@ At this point, you already are logged into your computer with the same credentia
 so letting the browser keep you logged in is no extra security risk.
 
 Your browser will remember your login status for a few weeks. However,
-for security reasons, SDIS will occasionally ask you to provide your login again.
+for security reasons, SPMS will occasionally ask you to provide your login again.
 
-SDIS recommends to use Google Chrome or Mozilla Firefox for optimal browsing experience.
+SPMS recommends to use Google Chrome or Mozilla Firefox for optimal browsing experience.
 
 Find a Project
 ==============
-On the `"Browse all Projects" page <https://sdis.dbca.wa.gov.au/projects/project/>`_
+On the `"Browse all Projects" page <https://scienceprojects.dbca.wa.gov.au/projects/>`_
 you can filter and search for projects.
 
 
 
 Project Life Cycles
 ===================
-First, let's have a look at the game of snakes and ladders that is SDIS's project
+First, let's have a look at the game of snakes and ladders that is SPMS's project
 life cycle management.
 
 There are three main workflows:
@@ -61,29 +61,29 @@ Project Creation and Approval
 
 Create a new Science Project
 ----------------------------
-* On the `SDIS home page <https://sdis.dbca.wa.gov.au>`_ click Create New Project
+* On the `SPMS home page <https://scienceprojects.dbca.wa.gov.au>`_ click Create New Project
 * In the Project Type dropdown box select Science Project
 * Enter a project title and divisional program (and as many other fields as you can fill in), then click Save Changes
-* In the Overview tab, enter team members. External team members must first be registered with SDIS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member. Click Edit Project Details to provide additional information such as location, then click Save Changes.
+* In the Overview tab, enter team members. External team members must first be registered with SPMS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member. Click Edit Project Details to provide additional information such as location, then click Save Changes.
 * In the Concept Plan tab, enter the details of your concept plan, then click Save Changes.
 * Submit the concept plan for review (Submit for review button) by your Program Leader.
 
-Core Functions look the same as Science Projects, however they are maintained by SDIS admins.
+Core Functions look the same as Science Projects, however they are maintained by SPMS admins.
 
 Create a new External Collaboration
 -----------------------------------
-* On the SDIS home page (https://sdis.dbca.wa.gov.au) click Create New Project
+* On the SPMS home page (https://scienceprojects.dbca.wa.gov.au) click Create New Project
 * In the Project Type dropdown box select External Collaboration
 * Enter a project title and divisional program, then click Save Changes
-* In the Overview tab, enter team members. External collaborators must first be registered with SDIS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member.
+* In the Overview tab, enter team members. External collaborators must first be registered with SPMS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member.
 * Click Edit project details, then under Collaboration details enter the collaboration name and budget.
 
 Create a new Student Project
 ----------------------------
-* On the SDIS home page (https://sdis.dbca.wa.gov.au) click Create New Project
+* On the SPMS home page (https://scienceprojects.dbca.wa.gov.au) click Create New Project
 * In the Project Type dropdown box select Student Project
 * Enter a project title and divisional program, then click Save Changes
-* In the Overview tab, enter team members. If student is external you must first register them with SDIS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member.
+* In the Overview tab, enter team members. If student is external you must first register them with SPMS (see below - Register external colleague). Once registered, click Add team member and select them as you would any staff member.
 * Click Edit project details, then under Student project details enter the study level and academic organisation.
 
 Managing project teams
@@ -91,8 +91,8 @@ Managing project teams
 
 Add a dbca employee as team member
 ----------------------------------
-Before SDIS can add dbca employees to teams, they have to login once in person,
-so that SDIS adds them to its internal user database.
+Before SPMS can add dbca employees to teams, they have to login once in person,
+so that SPMS adds them to its internal user database.
 
 A user that has never logged in cannot be added to teams or into project roles.
 
@@ -111,7 +111,7 @@ Register an external colleague
 
 Now the new user can be added to project teams or project roles.
 
-**Note** External colleagues cannot login to SDIS, unless they have a dbca account and email.
+**Note** External colleagues cannot login to SPMS, unless they have a dbca account and email.
 However, a profile needs to be created as shown here in order to add them to project team
 lists and represent them with their correct name and attribution.
 
@@ -172,7 +172,7 @@ Since there is no formal closure process, the project simply will be marked as "
 
 If the Student Project is in the middle of an ARAR update, the project team can still
 choose to "Cancel update and request closure", which will mark the project as "Completed"
-and delete the Progress Report. Since SDIS cannot decide whether this Progress Report
+and delete the Progress Report. Since SPMS cannot decide whether this Progress Report
 is required or not, it is up to the team to decide the appropriate action.
 
 Closing an External Collaboration

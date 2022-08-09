@@ -24,17 +24,26 @@ favicon.badge({{ my_tasklist.count }});
 
 {% block contentwrapper %}
 <div class="jumbotron hidden-xs">
-    <h1>Science Directorate Information System</h1>
+    <h1>Science Project Management System</h1>
     <p class="hidden-sm">Hello, {% firstof request.user.first_name request.user.username %}!
-        This is SDIS, DBCA's one-stop shop for project approval and reporting.</p>
+
+        <!-- https://github.com/dbca-wa/sdis/issues/184 -->
+        {% if request.user.show_docs %}
+        Welcome to SPMS, DBCA's portal for project documentation, approval and reporting.</p>
     <small class="hidden-xs">
         Please update and submit (when ready) all documents awaiting your
         attention in "My Tasks", update project details and team lists of
         "My Projects" and "My Partnerships", create new projects and initiate
         closure of old projects as appropriate.
-        If you get stuck, the <a href="http://sdis.readthedocs.io/">User Manual</a>
-        has all the anwers!
+        If you get stuck, the <a href="http://sdis.readthedocs.io/">User Manual</a> has all the anwers!
     </small>
+    {% else %}
+        Welcome to SPMS, DBCA's project register.</p>
+        <small class="hidden-xs">
+        Please update your user profile to set your program/region/branch, and register your projects.
+        If you get stuck, the <a href="http://sdis.readthedocs.io/">User Manual</a> has all the anwers!
+    </small>
+    {% endif %}
 </div>
 <div class="row">
     <div class="col-md-4">

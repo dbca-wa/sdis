@@ -10,7 +10,7 @@ from pythia.views import TermsAndConditions, spell_check
 from pythia.api import router
 
 js_info_dict = {'packages': ('django.conf',), }
-# schema_view = get_swagger_view(title='SDIS API')
+# schema_view = get_swagger_view(title='SPMS API')
 
 urlpatterns = patterns(
     '',
