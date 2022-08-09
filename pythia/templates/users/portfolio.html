@@ -67,6 +67,7 @@
                  class="list-group-item portfolio"
                  title="This project has been idle for more than two months">
                  <span class="glyphicon glyphicon-time"></span>
+                 <!-- https://github.com/dbca-wa/sdis/issues/184 -->
                  {% if request.user.show_docs %}
                  <span class="pull-right">{% project_status_label proj %}</span>
                  {% endif %}
@@ -105,6 +106,7 @@
             class="list-group-item portfolio"
             title="This project's details list {{you}} as project owner">
             <span class="glyphicon glyphicon-star"></span>
+            <!-- https://github.com/dbca-wa/sdis/issues/184 -->
             {% if request.user.show_docs %}
                  <span class="pull-right">{% project_status_label proj %}</span>
                  {% endif %}
@@ -116,6 +118,7 @@
             class="list-group-item portfolio"
             title="{{ you|title }} {{ are }} on the team list of this project">
             <span class="glyphicon glyphicon-star-empty"></span>
+            <!-- https://github.com/dbca-wa/sdis/issues/184 -->
             {% if request.user.show_docs %}
                  <span class="pull-right">{% project_status_label proj %}</span>
                  {% endif %}
@@ -156,6 +159,7 @@
             class="list-group-item portfolio"
             title="{{ you|title }} {{ are }} listed as the project owner in this project's details">
             <span class="glyphicon glyphicon-star"></span>
+            <!-- https://github.com/dbca-wa/sdis/issues/184 -->
             {% if request.user.show_docs %}
                  <span class="pull-right">{% project_status_label proj %}</span>
                  {% endif %}
@@ -167,6 +171,7 @@
             class="list-group-item portfolio"
             title="{{ you|title }} {{ are }} on this project's team list">
             <span class="glyphicon glyphicon-star-empty"></span>
+            <!-- https://github.com/dbca-wa/sdis/issues/184 -->
             {% if request.user.show_docs %}
                  <span class="pull-right">{% project_status_label proj %}</span>
             {% endif %}

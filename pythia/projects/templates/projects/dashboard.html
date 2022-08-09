@@ -144,6 +144,7 @@
                         <span class="pull-right">
                           <a class="btn btn-primary btn-xs" title="Toggle Project details" data-toggle="collapse"
                             data-parent="#acc-{{ program.pk }}" href="#collapse-{{ program.pk }}-{{ project.pk }}">
+                            <!-- https://github.com/dbca-wa/sdis/issues/184 -->
                             {% if request.user.show_docs %}
                             <span class="text-{{ project.status_label }}">
                               <i class="glyphicon glyphicon-resize-vertical"></i>
