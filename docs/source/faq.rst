@@ -130,14 +130,14 @@ SDIS to remove this invisible markup.
 
 How can I make my project stand out?
 ====================================
-Provide a tagline, a description, and a nice thumbnail image!
+Provide a tagline, a project summary, and a nice thumbnail image!
 
 Tagline
 -------
-Can you sell your project in one sentence to a non-expert audience?
+Can you sell your project in one sentence to a non-expert audience? (Currently disabled)
 
-Description
------------
+Project Summary
+---------------
 The description is the place to explain the project in up to three paragraphs to
 the interested reader, much like a publication's abstract.
 

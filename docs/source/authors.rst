@@ -27,13 +27,21 @@ For technical reasons, you cannot change the type of a project once it has been 
 * Create a new project of the correct type.
 * Deleting projects is limited to SDIS admins.
   Notify an SDIS admin to delete the Project of incorrect type.
-  Make their lives easier by sending the URL of the Project, not the slug (type-year-number) or title.
+  Use the "Share" link to create an email containing direct links to the respective Project or Document.
 
 The reason we restrict deletion of Projects is to retain the history of past Projects.
 It would be an easy error to make to delete a Project on completion. 
 Instead of being deleted at the end of their active life, Projects go through a formal closure process, 
 creating yet more documentation (reasons, outputs) that adds to the history of the Project.
 Completed projects are kept with status "Completed and closed".
+
+Ask a question about a Project or Document
+==========================================
+Each Project and Document has a "Share" button. 
+This button opens an email containing a direct link to the Project or Document in question.
+
+Opening a direct link is much faster for the receiver than to hunt through SDIS, 
+searching by project year, number and/or title.
 
 Onboarding a DBCA colleague to SDIS
 ===================================
