@@ -17,6 +17,7 @@ from __future__ import (division, print_function, unicode_literals,
 from datetime import date
 from itertools import chain
 import logging
+from tabnanny import verbose
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -244,10 +245,11 @@ class Project(PolymorphicModel, Audit, ActiveModel):
                   " Aim for an aspect ratio (width to height) of 1.5 to 1.")
     tagline = models.TextField(
         blank=True, null=True,
-        help_text="Sell the project in one sentence to a wide audience.")
+        help_text="Describe the project in one sentence to a wide audience.")
     comments = models.TextField(
+        verbose_name = _("Project Summary"),
         blank=True, null=True,
-        help_text=_("Any additional comments on the project."))
+        help_text=_("A concise project summary, or any additional useful information."))
     keywords = models.TextField(
         blank=True, null=True,
         help_text="Add some keywords as comma separated list.")
