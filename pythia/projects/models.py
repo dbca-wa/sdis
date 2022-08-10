@@ -226,7 +226,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
     position = models.IntegerField(
         blank=True, null=True, default=1000,
         help_text=_("The primary ordering instance. If left to default, "
-                    "ordering happends by project year and number (newest "
+                    "ordering happens by project year and number (newest "
                     "first)."))
 
     # -------------------------------------------------------------------------#
@@ -486,7 +486,7 @@ class Project(PolymorphicModel, Audit, ActiveModel):
         Default: ``self.program.division.director`` and all superusers.
         """
         superusers = User.objects.filter(is_superuser=True)
-        
+
         if self.program and self.program.division and self.program.division.approver:
             return list(set(superusers)) + [self.program.division.approver, ]
         else:
@@ -1315,13 +1315,13 @@ class StudentProject(Project):
 
     def get_student_list_plain(self):
         """Return a string of Student names.
-        
+
         To include the affiliation, use ``x.user.abbreviated_name``.
         """
         return ', '.join([
             x.user.abbreviated_name_no_affiliation for x in
             ProjectMembership.objects.filter(project=self).filter(
-                role=ProjectMembership.ROLE_SUPERVISED_STUDENT)])          
+                role=ProjectMembership.ROLE_SUPERVISED_STUDENT)])
 
     def get_academic_list_plain(self):
         """Return a string of DBCA staff."""
