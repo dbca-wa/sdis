@@ -6,9 +6,9 @@ Administrators
 
 This chapter guides administrators (admins) through their tasks.
 
-SDIS admins have backstage access to all data and have permissions to perform any action.
+SPMS admins have backstage access to all data and have permissions to perform any action.
 
-SDIS maintainers in contrast have access to the database backend and can easily and safely modify data in bulk.
+SPMS maintainers in contrast have access to the database backend and can easily and safely modify data in bulk.
 
 The role of admin, maintainer, and developer is currently shared.
 
@@ -16,7 +16,7 @@ Download a data snapshot
 ========================
 
 Go to the Project list and click "Download Projects" to get a full list of Projects with their details.
-**Do not** update this spreadsheet - do update projects directly in SDIS instead.
+**Do not** update this spreadsheet - do update projects directly in SPMS instead.
 
 Close annual reporting cycle
 ============================
@@ -24,9 +24,9 @@ Close annual reporting cycle
 * This can be done as soon as the annual report content is print ready.
 * Approving a Progress Report reverts its Project from "update requested" to its normal "approved and active" state.
 
-Prepare SDIS for a new annual reporting cycle
+Prepare SPMS for a new annual reporting cycle
 =============================================
-Instruct the Directorate to solicit the following actions from SDIS Project Teams through an email broadcast:
+Instruct the Directorate to solicit the following actions from SPMS Project Teams through an email broadcast:
 
 * Initiate Project Closure for any complete, suspended, or terminated Project (SP or CF). 
   These projct types require a formal approval process and might solicit a last Progress Report.
@@ -34,7 +34,7 @@ Instruct the Directorate to solicit the following actions from SDIS Project Team
 * Register and seek approval for any new Project, especially those which have progressed significantly since the last annual report.
 * Update all External Partnerships. Their Project details will be used in the annual report.
 * Remember that only members of a Project Team have permission to update Project Documents, 
-  and they can add other SDIS Users to the Team to give colleagues write permissions.
+  and they can add other SPMS Users to the Team to give colleagues write permissions.
 
 Allow sufficient time for Project teams to register their new Projects and author Project Closure documents, 
 and SCMT to discuss and approve Project closures.
@@ -48,7 +48,7 @@ Precondition:
 
 Action:
 
-* `Create a new BCS Annual Report <https://sdis.dbca.wa.gov.au/pythia/ararreport/add/>`_.
+* `Create a new BCS Annual Report <https://SPMS.dbca.wa.gov.au/pythia/ararreport/add/>`_.
 * Select all participating Divisions. This is likely only BCS.
 * Enter the reporting year.
 * Chapter images and introductions can be updated later on.
@@ -70,10 +70,10 @@ View Projects of other Divisions
 
 Onboard Users
 =========================================
-New SDIS Users must set a Program in their Profile.
+New SPMS Users must set a Program in their Profile.
 
 * See also "Authors > Onboarding a DBCA colleague".
-* Make them visit SDIS once if they are DBCA staff. This creates an SDIS profile.
+* Make them visit SPMS once if they are DBCA staff. This creates an SPMS profile.
 * Edit their Profile and set the correct Program if they haven't yet.
 * Set special roles (see below) as required through User Groups.
 
@@ -82,7 +82,7 @@ Onboard Reviewers
 If a Program Leader appointment changes, a Superuser must:
 
 * Update the Program, set new Program Leader. This is shown in the Project list and the Annual Report.
-* Edit new Program Leader's User profile, add to SDIS Group ``SMT``. 
+* Edit new Program Leader's User profile, add to SPMS Group ``SMT``. 
   This gives the User permission as a reviewer for their own projects, 
   and any other project in their division (as a stand-in for an unavailable PL if needed).
 
@@ -96,7 +96,7 @@ If a Director or their Approver changes, a Superuser must:
 Onboard special roles
 =====================
 The special roles of Biometrician, Herbarium Curator, Animal Ethics representative (unused), and Data Manager (unused),
-are appointed by a Superuser as SDIS groups in the respective Users' profiles.
+are appointed by a Superuser as SPMS groups in the respective Users' profiles.
 
 * Only a superuser can update the User Group.
 * BM or PL can grant BM's approval in Project Plans.

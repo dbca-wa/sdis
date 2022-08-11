@@ -6,18 +6,18 @@ Approvers
 
 This chapter guides approvers through their tasks.
 
-SDIS Approvers are the Executive Directors of SDIS Divisions, or a nominated person of their choice.
+SPMS Approvers are the Executive Directors of SPMS Divisions, or a nominated person of their choice.
 
-They have to approve Documents related to Projects of their SDIS Division.
+They have to approve Documents related to Projects of their SPMS Division.
 
 
-Manage SDIS emails
+Manage SPMS emails
 ===================
-SDIS lets users opt into sending emails about requested Actions. At the level of an approver, these can add up considerably.
-Email inbox rules help to manage the stream of SDIS notifications:
+SPMS lets users opt into sending emails about requested Actions. At the level of an approver, these can add up considerably.
+Email inbox rules help to manage the stream of SPMS notifications:
 
-* SDIS prefixes the subject of all emails sent from the system with ``[SDIS]``. 
-* This allows to create an inbox rule to e.g. move all SDIS emails into an inbox subfolder, e.g. named "SDIS".
+* SPMS prefixes the subject of all emails sent from the system with ``[SPMS]``. 
+* This allows to create an inbox rule to e.g. move all SPMS emails into an inbox subfolder, e.g. named "SPMS".
 
 Approve a Document
 ==================
@@ -36,13 +36,13 @@ Take actions on the Document:
   * Avaliable actions are offered in the sidebar at the top right under "Actions".
   * Request a revision from the reviewers (level 2) or authors (level 1) for bigger changes. 
     We expect that communcation regarding these changes can happen through fastest and preferred channels 
-    outside of SDIS, such as MS Teams, email, or a simple chat.
+    outside of SPMS, such as MS Teams, email, or a simple chat.
   * Once happy with the Document, the approver must approve or reject the Document.
   * Approving a Document will make the Document's text read-only. The life cycle of a Document is explained at :ref:`document_lc`. 
   * Approving a Document will move its Project into the next life cycle stage. The life cycle of Projects is explained at :ref:`project_lc`.
   * If a button was pressed unintentionally, the approver can reverse the action with an opposite action.
   * Every Document's approval status can be reset, and the Document can be fast-tracked to the desired life cycle stage.
-  * Every action will create a new TODO item for involved staff. They will see this when they next visit SDIS in their TODO list.
+  * Every action will create a new TODO item for involved staff. They will see this when they next visit SPMS in their TODO list.
   * Every action will offer to notify involved staff via email.
 
 If an action is not available or something seems odd, contact the system administrators to rectify the situation.

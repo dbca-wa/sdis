@@ -8,16 +8,16 @@ There are many things that can be done with projects and documents, but some
 actions are only available to a restricted audience and/or only at certain times
 or under certain circumstances.
 
-SDIS's philosophy is to be permissive, but log everything.
-The point of truth for project approval is the SCMT; necessarily, SDIS will always
+SPMS's philosophy is to be permissive, but log everything.
+The point of truth for project approval is the SCMT; necessarily, SPMS will always
 require to be brought up to speed with the latest SCMT decisions.
 
 After 4 years of development and honing workflows and user interface,
-SDIS implements all known SCD rules and
-workflows around project approval. If things go to plan, SDIS will
+SPMS implements all known SCD rules and
+workflows around project approval. If things go to plan, SPMS will
 show "the right buttons" to allow appropriate actions.
 
-SDIS features a role-based permission system, based on three roles:
+SPMS features a role-based permission system, based on three roles:
 
 Project teams
 -------------
@@ -35,7 +35,7 @@ Team membership.
 Only team members of a project can update a document and execute any life cycle steps, such as
 submitting related documents for review, or requesting closure.
 
-**Only DPaW staff are notified** when the team is emailed. SDIS leaves prompting
+**Only DPaW staff are notified** when the team is emailed. SPMS leaves prompting
 contributions from external collaborators to personal communication as (and when)
 appropriate by DPaW staff.
 
@@ -53,7 +53,7 @@ Program Leaders can review other programs' projects as well, because:
 
 Program Leader permissions are global (for all projects and documents).
 **Only the direct Program Leader is notified** when actions from reviewers are
-requested. SDIS leaves the edge case of prompting another PL for input as (and when)
+requested. SPMS leaves the edge case of prompting another PL for input as (and when)
 appropriate to the directly involved and notified PLs.
 
 Directorate
@@ -81,14 +81,14 @@ and will receive an email when a new Project Plan requires their attention.
 
 For each Project Plan, the following should happen:
 
-* SDIS sends an email when the Project Plan is created
+* SPMS sends an email when the Project Plan is created
 * BM reads the "Methodology" section, discusses with team as required
 * HV reads the "No. specimens" section, discusses with team as required
 * Soon: DM trains team to create datasets on the
-  [Internal Data Catalogue](http://internal-data.dpaw.wa.gov.au), sets them up
+  [Internal Data Catalogue](http://data.dbca.wa.gov.au), sets them up
   with a high performance computing (HPC) environment if required, and points out
-  [documentation on data management](https://confluence.dpaw.wa.gov.au/display/MSIM/Home).
-* The Program Leader enters AE endorsement as per (external to SDIS) communication
+  documentation on data management.
+* The Program Leader enters AE endorsement as per (external to SPMS) communication
   with the Animal Ethics Committee.
 * Endorsement is granted or denied by setting the respective "endorsement" fields
   in the Project Plan to "granted" or "denied", respectively, and saving the document.
@@ -105,7 +105,7 @@ Project Life Cycles
 ===================
 
 This section goes into the full detail about the supported Project types and their life cycles.
-In a nutshell, Project approval in SDIS is like playing a board game.
+In a nutshell, Project approval in SPMS is like playing a board game.
 Newly created projects spawn documents, which have to be filled in and sent through their own
 approval work flow. Approval of documents advances projects to new life cycle stages.
 
@@ -240,7 +240,7 @@ Commonality: Public document written in the affiliation of DPaW.
     * author team (text, not User)
     * manuscript (file)
     * attachments (file) x n
-    * related projects (text): SDIS projects, non-SDIS projects
+    * related projects (text): SPMS projects, non-SPMS projects
     * formatted citation
     * RIS (text)
     * DOI
@@ -271,7 +271,7 @@ Commonality: Public document written in the affiliation of DPaW.
 * ARAR builds publication list from "published"
 
 REQ Publication guideline must be discoverable
-REQ Updated guidelines relevant to SDIS need to be published
+REQ Updated guidelines relevant to SPMS need to be published
 REQ Publication has authors
 
 TODO should we retain deleted forms?
@@ -295,18 +295,18 @@ Model fields
 * for each role: involves_X (y/n), determines whether role needs to review
 * for each role: endorsed by role Y, editable only to members of role
 * citation metadata as required
-* authors - either plain text or SDIS user list
+* authors - either plain text or SPMS user list
 
 Life cycle
 ----------
 
 * RP is prepared by staff member who keeps working version on their desk.
-* RP is uploaded to SDIS as read-only PDF copy.
+* RP is uploaded to SPMS as read-only PDF copy.
 * User provides criteria which determine required review roles.
-* SDIS shows document as "draft".
+* SPMS shows document as "draft".
 * User submits document for review and approval.
-* SDIS shows document status as "in review".
-* SDIS notifies each involved role by email containing instructions and URL.
+* SPMS shows document status as "in review".
+* SPMS notifies each involved role by email containing instructions and URL.
 * Each role can follow URL in email to RP and read the plan.
 * Each role can choose to provide feedback, which opens an email to author allowing
   the reviewer to provide private, direct feedback to author.
@@ -320,20 +320,20 @@ Life cycle
 * then Manager Species and Comm Ken Atkins
 * then A/Dir Conservation
 * If nationally threteaned species in other (interstate) jurisdictions, the
-  document is sent (external to SDIS) to Commonwealth who have their separate process.
+  document is sent (external to SPMS) to Commonwealth who have their separate process.
 * If Commonwealth agencies are involved, their feedback is handled by (TODO insert role here).
 * Once all reviewers have endorsed, email notification for approval is sent to Dir SCD.
-* SDIS shows document as "in approval".
+* SPMS shows document as "in approval".
 * Dir SCD can either provide feedback via email, or approve.
-* SDIS turns record read-only to prevent tampering and shows document as "approved".
-* SDIS notified librarian of approval, sending URL, citation and document.
-* Document is filed and released to public (both external to SDIS).
+* SPMS turns record read-only to prevent tampering and shows document as "approved".
+* SPMS notified librarian of approval, sending URL, citation and document.
+* Document is filed and released to public (both external to SPMS).
 
 Questions
 ---------
 
 * Where is the point of truth for the approved document?
-* SDIS should rename "PL" to accommodate "Branch Manager", eg. "PL or BM"
+* SPMS should rename "PL" to accommodate "Branch Manager", eg. "PL or BM"
 
 Translocation proposals
 -----------------------
