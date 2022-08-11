@@ -395,7 +395,7 @@ class ProjectAdmin(BaseAdmin, DetailAdmin, DownloadAdminMixin):
         
         # Special treatment for readonly fields 
         # (missing in change view, present in create view):
-        if hasattr(result.base_fields, "type"):
+        if "type" in result.base_fields:
             result.base_fields['type'].initial = request.GET.get("project_type", 0)
         # Since we don't apply any magic to project year and number, these are not handled here
         result.base_fields['program'].initial = request.user.program

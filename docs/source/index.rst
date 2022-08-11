@@ -12,6 +12,14 @@ SPMS Documentation
    :target: https://github.com/dbca-wa/SPMS/projects/1
    :alt: GitHub issues
 
+.. 
+  Thirteen programs for biodiversity's division,
+  Five for the branches in their halls of conservation,
+  Nine for regions under wide skies,
+  One place to register them all, one place to find them,
+  One place to report on all, and in the paper bind them,
+  In the SPMS, where the projects lie.
+
 The Science Project Management System (SPMS) is DBCA's project documentation,
 approval and reporting platform.
 
