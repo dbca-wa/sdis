@@ -1,6 +1,7 @@
 import json
 
 import django
+from django.conf import settings
 from django.contrib.admin.util import lookup_field, quote
 from django.conf import settings
 from django.core.urlresolvers import resolve, reverse
@@ -19,6 +20,10 @@ except:
 
 register = template.Library()
 
+
+@register.simple_tag
+def settings_value(name):
+    return getattr(settings, name, "")
 
 @register.filter
 def pythia_urlname(value, arg):
@@ -127,7 +132,8 @@ def as_html(original, field, tag='h1'):
 
 @register.simple_tag
 def get_version_info():
-    return "SPMS %(version)s, Django %(django)s" % {
+    return "%(name)s %(version)s, Django %(django)s" % {
+        'name': env("SITE_NAME", default="SPMS"),
         'version': env("SDIS_RELEASE", default="5.0.0"),
         'django': django.get_version()}
 

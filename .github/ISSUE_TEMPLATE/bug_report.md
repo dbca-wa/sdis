@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: SDIS is doing something wrong
+about: SPMS is doing something wrong
 title: ''
 labels: bug
 assignees: florianm

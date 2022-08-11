@@ -18,7 +18,7 @@
 </li>
 
 <a class="btn btn-xs btn-primary pull-right" 
-  href="mailto:?subject=Question about SDIS Document {{ original }}&body=SDIS Document {{ original }} at {{ request.build_absolute_uri }}" 
+  href="mailto:?subject=Question about {% settings_value "SITE_NAME" %} Document {{ original }}&body={% settings_value "SITE_NAME" %} Document {{ original }} at {{ request.build_absolute_uri }}" 
   title="Share a direct link to this document via email" 
   target="_" rel="nofollow">
   <i class="glyphicon glyphicon-envelope"></i> Share

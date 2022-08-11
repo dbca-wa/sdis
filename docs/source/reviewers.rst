@@ -6,10 +6,10 @@ Reviewers
 
 This chapter guides reviewers through their tasks.
 
-SDIS Reviewers are the heads of SDIS Programs: Program Leaders, Regional Leaders, Branch Managers.
-In SDIS terminology, we call them all "reviewers", and call their organsational units "SDIS Programs".
+SPMS Reviewers are the heads of SPMS Programs: Program Leaders, Regional Leaders, Branch Managers.
+In SPMS terminology, we call them all "reviewers", and call their organsational units "SPMS Programs".
 
-They have to review and endorse Documents related to Projects of their SDIS Program.
+They have to review and endorse Documents related to Projects of their SPMS Program.
 
 Review a Document
 ==================
@@ -28,11 +28,11 @@ Take actions on the Document:
   * Avaliable actions are offered in the sidebar at the top right under "Actions".
   * Request a revision from the authors for bigger changes. 
     We expect that communcation regarding these changes can happen through fastest and preferred channels 
-    outside of SDIS, such as MS Teams, email, or a simple chat.
+    outside of SPMS, such as MS Teams, email, or a simple chat.
   * Once happy with the Document, the reviewer must submit the Document for approval.
   * If a button was pressed unintentionally, the reviewer can reverse the action with an opposite action, e.g. 
     a Document can be withdrawn from approval to be edited some more.
-  * Every action will create a new TODO item for involved staff. They will see this when they next visit SDIS in their TODO list.
+  * Every action will create a new TODO item for involved staff. They will see this when they next visit SPMS in their TODO list.
   * Every action will offer to notify involved staff via email.
 
 Review a Project Plan
@@ -54,12 +54,12 @@ Enter Endorsements
 * On saving the Document, the Endorsement status in the sidebar will update.
 * Once all required Endorsements are granted, the Action "submit for approval" will be unlocked and visible.
 
-Manage SDIS emails
+Manage SPMS emails
 ===================
-SDIS prefixes the subject of all emails sent from the system with ``[SDIS]``. 
-This allows to create an inbox rule to e.g. move all SDIS emails into an inbox subfolder, e.g. named "SDIS".
+SPMS prefixes the subject of all emails sent from the system with ``[SPMS]``. 
+This allows to create an inbox rule to e.g. move all SPMS emails into an inbox subfolder, e.g. named "SPMS".
  
 Export a Document to PDF
 =========================
-Every Document can be exported to PDF through the link at the page top right. PDFs can be "generated" (freshly recreated) and "downloaded" (last saved PDF version). PDFs contain a nicely formatted header indicating the approval status and hyperlinks to SDIS.
+Every Document can be exported to PDF through the link at the page top right. PDFs can be "generated" (freshly recreated) and "downloaded" (last saved PDF version). PDFs contain a nicely formatted header indicating the approval status and hyperlinks to SPMS.
 

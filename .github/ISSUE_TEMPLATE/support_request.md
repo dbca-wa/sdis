@@ -13,7 +13,7 @@ assignees: florianm
 ## Search
 <!-- Where did you look for help? -->
 - [ ] [SPMS user manual](https://sdis.readthedocs.io/)
-- [ ] [SPMS itself](https://sdis.dbca.wa.gov.au/)
+- [ ] [SPMS itself](https://scienceprojects.dbca.wa.gov.au/)
 - [ ] [Open SPMS issues](https://github.com/dbca-wa/sdis/issues)
 - [ ] [SPMS Kanban board](https://github.com/dbca-wa/sdis/projects/1)
 

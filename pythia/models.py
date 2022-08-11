@@ -620,7 +620,7 @@ class Address(Audit, ActiveModel):
 class Service(Audit, ActiveModel):
     """Departmental services.
 
-    SDIS Science projects provide value to a defined selection of the Departmental Services.
+    SPMS Science projects provide value to a defined selection of the Departmental Services.
     """
 
     name = models.CharField(max_length=320)
@@ -1128,8 +1128,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     projects = models.TextField(
         blank=True, null=True,
-        verbose_name=_("Projects outside SDIS"),
-        help_text=_("Tell us about your other projects outside SDIS."))
+        verbose_name=_("Projects outside SPMS"),
+        help_text=_("Tell us about your other projects outside SPMS."))
 
     # Publications -----------------------------------------------------------#
     # Publications should be models in their own module really
@@ -1171,7 +1171,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     agreed = models.BooleanField(
         default=False, editable=False,
         verbose_name=_("Agreed to the Terms and Conditions"),
-        help_text=_("Has the user agreed to SDIS' Terms and Conditions?"))
+        help_text=_("Has the user agreed to the Terms and Conditions?"))
 
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 

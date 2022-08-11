@@ -13,7 +13,7 @@
   https://github.com/dbca-wa/sdis/issues/197
 -->
 <a class="btn btn-xs btn-primary pull-right" 
-  href="mailto:?subject=Question about SDIS Project {{ original.project_type_year_number }}&body=SDIS Project {{ original }} at {{ request.build_absolute_uri }}" 
+  href="mailto:?subject=Question about {% settings_value "SITE_NAME" %} Project {{ original.project_type_year_number }}&body={% settings_value "SITE_NAME" %} Project {{ original }} at {{ request.build_absolute_uri }}" 
   title="Share a direct link to this project via email" 
   target="_" rel="nofollow">
   <i class="glyphicon glyphicon-envelope"></i> Share

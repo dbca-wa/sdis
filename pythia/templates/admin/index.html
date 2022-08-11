@@ -1,6 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_static staticfiles pythia_base documents projects %}
-{% block title %}SDIS{% endblock %}
+{% block title %}{% settings_value "SITE_NAME" %}{% endblock %}
 {% block extrastyle %}
 {{ block.super }}
 {% endblock %}
@@ -24,12 +24,12 @@ favicon.badge({{ my_tasklist.count }});
 
 {% block contentwrapper %}
 <div class="jumbotron hidden-xs">
-    <h1>Science Project Management System</h1>
+    <h1>{% settings_value "SITE_TITLE" %}</h1>
     <p class="hidden-sm">Hello, {% firstof request.user.first_name request.user.username %}!
 
         <!-- https://github.com/dbca-wa/sdis/issues/184 -->
         {% if request.user.show_docs %}
-        Welcome to SPMS, DBCA's portal for project documentation, approval and reporting.</p>
+        Welcome to {% settings_value "SITE_NAME" %}, DBCA's portal for project documentation, approval and reporting.</p>
     <small class="hidden-xs">
         Please update and submit (when ready) all documents awaiting your
         attention in "My Tasks", update project details and team lists of
@@ -38,7 +38,7 @@ favicon.badge({{ my_tasklist.count }});
         If you get stuck, the <a href="http://sdis.readthedocs.io/">User Manual</a> has all the anwers!
     </small>
     {% else %}
-        Welcome to SPMS, DBCA's project register.</p>
+        Welcome to {% settings_value "SITE_NAME" %}, DBCA's project register.</p>
         <small class="hidden-xs">
         Please update your user profile to set your program/region/branch, and register your projects.
         If you get stuck, the <a href="http://sdis.readthedocs.io/">User Manual</a> has all the anwers!

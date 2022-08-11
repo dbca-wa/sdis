@@ -9,7 +9,7 @@
   <meta name="description" content="{% block page_description %}{% endblock %}">
   <meta name="author" content="{% block page_author %}{% endblock %}">
   <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
-  <title>{% block title %}{{ site_name }}{% endblock %}</title>
+  <title>{% block title %}{% settings_value "SITE_NAME" %}{% endblock %}</title>
 
   <!-- Site-level CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"
@@ -138,8 +138,8 @@
       <a class="navbar-brand navbar-left"
          id="nav-home"
          href="{% url 'admin:index' %}"
-         title="SPMS home">
-         SPMS
+         title="{% settings_value "SITE_NAME" %} home">
+         {% settings_value "SITE_NAME" %}
       </a>
     </div>
     <div class="navbar-collapse collapse">
@@ -200,14 +200,14 @@
         <li id="nav-profile" class="dropdown">
         <a href="" data-toggle="dropdown" class="dropdown-toggle">Staff <b class="caret"></b></a>
           <ul class="dropdown-menu" role="menu" id="dropdown-menu-users">
-                <li class="dropdown-header">SPMS users</li>
-            <li id="nav-profile-list"><a href="{{ list_users }}" title="Browse SPMS-internal user profiles">
+                <li class="dropdown-header">Users</li>
+            <li id="nav-profile-list"><a href="{{ list_users }}" title="Browse {% settings_value "SITE_NAME" %}-internal user profiles">
                 <span class="glyphicon glyphicon-list"></span>&nbsp;
-                Browse SPMS users</a></li>
+                Browse {% settings_value "SITE_NAME" %} Users</a></li>
             <li id="nav-profile-mine"><a href="{% url 'admin:pythia_user_change' request.user.pk %}"
-                title="Edit your SPMS profile as used in overviews and reports">
+                title="Edit your {% settings_value "SITE_NAME" %} profile as used in overviews and reports">
                 <span class="glyphicon glyphicon-user"></span>&nbsp;
-                View my SPMS Profile</a></li>
+                View my {% settings_value "SITE_NAME" %} Profile</a></li>
             <li><a href="{% url 'admin:pythia_user_add' %}"
                 title="Register an external colleague, so you can add him/her as student or collaborator to team lists">
                 <span class="glyphicon glyphicon-plus"></span>&nbsp;Register an external colleague</a></li>
@@ -339,7 +339,7 @@
                target="_"
                id="user-docs-navbtn"
                style="color:red;"
-               title="Stuck? Find all answers in the SPMS documentation.">
+               title="Stuck? Find all answers in the {% settings_value "SITE_NAME" %} documentation.">
                User Manual</a>
         </li>
       </ul><!-- /.nav.navbar-nav -->
@@ -376,9 +376,9 @@
                 <li class="dropdown-header">DBCA account</li>
 
                 <li><a href="{% url 'admin:pythia_user_change' request.user.pk %}"
-                    title="View and edit your SPMS Profile">
+                    title="View and edit your {% settings_value "SITE_NAME" %} Profile">
                     <span class="glyphicon glyphicon-user"></span>&nbsp;
-                    My SPMS Profile</a></li>
+                    My {% settings_value "SITE_NAME" %} Profile</a></li>
                 <li id="nav-profile-mine"><a href="https://sww.dpaw.wa.gov.au/"
                     title="View my Divisional Profile on the Science Website Workbench" target="_">
                 <span class="glyphicon glyphicon-user"></span>&nbsp;
@@ -395,7 +395,7 @@
                 <li class="dropdown-header">Documentation</li>
                 <li><a href="http://sdis.readthedocs.io/"
                        target="_" id="user-docs"
-                       title="Browse SPMS docs in new tab">Documentation</a></li>
+                       title="Browse {% settings_value "SITE_NAME" %} docs in new tab">Documentation</a></li>
 
             {% endblock %}
             </ul><!-- /.dropdown-menu -->

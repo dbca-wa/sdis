@@ -50,13 +50,13 @@
             <a href="{% url "admin:projects_projectmembership_add" %}?project={{ project.pk }}"
                 id="add_id_%s"
                 class="btn btn-xs btn-primary"
-                title="Add an existing SDIS user as team member"
+                title="Add an existing {% settings_value "SITE_NAME" %} user as team member"
                 onclick="return showAddAnotherPopup(this);">
                 <i class="glyphicon glyphicon-plus"></i>&nbsp;Add team member</a>
             <a href="{% url 'admin:pythia_user_add' %}"
                 class="btn btn-xs btn-primary"
                 target="_"
-                title="Register a colleague as new SDIS user (opens new window)">
+                title="Register a colleague as new user (opens new window)">
                 <i class="glyphicon glyphicon-plus"></i>&nbsp;Register an external colleague</i></a>
         </div><!-- /.pull-right -->
         &nbsp;

@@ -1,10 +1,10 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
+{% load i18n pythia_base %}
 
-{% block title %}{% firstof title "" %} | {% trans 'SPMS' %}{% endblock %}
+{% block title %}{% firstof title "" %} | {% settings_value "SITE_NAME" %}{% endblock %}
 
 {% block branding %}
-<h4><a id="logo" class="brand" href="{% url 'admin:index' %}">{% trans 'SDIS' %}</a></h4>
+<h4><a id="logo" class="brand" href="{% url 'admin:index' %}">{% settings_value "SITE_NAME" %}</a></h4>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}
