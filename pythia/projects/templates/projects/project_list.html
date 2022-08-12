@@ -16,19 +16,16 @@
         {% if not request.user.is_superuser %}{{ division.name }} {% endif %}
         Projects
         <span class="pull-right">
-            <a class="btn btn-small btn-primary" href="/api/projects?format=csv" title="Download all Projects as CSV" download>
+            <a class="btn btn-small btn-primary" 
+               href="/api/projects?format=csv" 
+               title="Download all Projects from all Divisions as CSV" download>
                 <i class="glyphicon glyphicon-save glyphicon-white"></i> Download all Projects
             </a>
         </span>
       </h1>
       <span class="text-muted">
         <small>
-          {% if show_all_divisions %}
-          This list shows Projects of all Divisions.
-          {% else %}
-          This list is filtered to Projects of your own Division ({{ division.slug }}).
-          {% endif %}
-          Click on Program titles to expand projects, and "More..." to view Project summaries.
+          This list shows Projects of {{ division }}.
         </small>
       </span>
 </div>

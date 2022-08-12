@@ -128,10 +128,18 @@ class ProjectList(ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(ProjectList, self).get_context_data(**kwargs)
-        context['division'] = self.request.user.division if self.request.user else Division.objects.first()
-        context['show_all_divisions'] = self.request.user.is_admin if self.request.user else True
+        
         context['list_filter'] = ProjectFilter(
             self.request.GET, queryset=self.get_queryset())
+
+        # Only non-anonymous users have a division, and admins don't count.
+        if self.request.user.is_anonymous:
+            context['division'] = "all Divisions because you are an anonymous user"
+        elif self.request.user.is_admin:
+            context['division'] = "all Divisions because you are an admin user"
+        else:
+            context['division'] = self.request.user.division
+
         return context
 
     def get_queryset(self):
@@ -141,6 +149,7 @@ class ProjectList(ListView):
         * Admin users: Projects of all Divisions.
         * Non-admin users: Projects of own Division only.
         """
+        # A base queryset, sorted, prefetched.
         qs = super(ProjectList, self).get_queryset(
                 ).filter(
                     effective_to__isnull=True
@@ -156,16 +165,16 @@ class ProjectList(ListView):
                     '-number'
                 )
         
-        if self.request.user and not self.request.user.is_admin:
+        # Additional filtering depending on user's scope.
+        if self.request.user.is_anonymous:
+            logger.info("Anonymous User views Project Dashboard: All Divisions")
+        elif self.request.user.is_admin:
+            logger.info("Admin User {0} views Project Dashboard: All Divisions".format(self.request.user))
+        else:
+            logger.info("User {0} views Project Dashboard: Own Division".format(self.request.user))
             qs = qs.filter(program__division=self.request.user.division)
 
-        logger.info(
-            "User {0} views Project Dashboard: Division {1}".format(
-                self.request.user, 
-                self.request.user.division.slug if self.request.user else "(Anonymous user)"
-            )
-        )
-
+        # User-selected filters.
         return ProjectFilter(self.request.GET, queryset=qs).qs
 
 

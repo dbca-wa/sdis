@@ -231,7 +231,8 @@ class SmokeTest(BaseTestCase):
             program=self.program,
             project_owner=self.bob)
         url = "/api/projects/"
-        self.assert_200(url, self.marge)
+        res = self.client.get(url)
+        assert(res.status_code == 403)
 
 # TEST: User adds external user, enter username, password
 # next screen add first name, last name etc, username must be ro
