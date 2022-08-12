@@ -23,8 +23,12 @@
       </h1>
       <span class="text-muted">
         <small>
+          {% if show_all_divisions %}
+          This list shows Projects of all Divisions.
+          {% else %}
           This list is filtered to Projects of your own Division ({{ division.slug }}).
-          Click on Program titles to expand projects, and "expand" to view project details.
+          {% endif %}
+          Click on Program titles to expand projects, and "More..." to view Project summaries.
         </small>
       </span>
 </div>
@@ -38,12 +42,14 @@
       <div class="panel panel-default">
         {% for prog in program_list %}
         {% with prog.grouper as program %}
+        {% if program %}
         {% url program.opts|pythia_urlname:'change' program.pk|pythia_urlquote as program_change %}
+        {% endif %}
 
         <div class="panel-heading">
           <h4 class="panel-title">
             <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ program.pk }}">
-              {{ program.name }}
+              {{ program.name|default:"Without Program" }}
             </a>
           </h4>
         </div>

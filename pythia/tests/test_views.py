@@ -23,47 +23,73 @@ class SmokeTest(BaseTestCase):
         self.smt, created = Group.objects.get_or_create(name='SMT')
         self.scd, created = Group.objects.get_or_create(name='SCD')
         self.users, created = Group.objects.get_or_create(name='Users')
+        self.admins, created = Group.objects.get_or_create(name='admins')
 
-        self.superuser = SuperUserFactory.create(username='admin')
-        self.bob = UserFactory.create(
-            username='bob', first_name='Bob', last_name='Bobson')
-        self.john = UserFactory.create(
-            username='john', first_name='John', last_name='Johnson')
-        self.steven = UserFactory.create(
-            username='steven', first_name='Steven', last_name='Stevenson')
-        self.steven.groups.add(self.smt)
-        self.fran = UserFactory.create(
-            username='fran', first_name='Fran', last_name='Franson')
-        self.fran.groups.add(self.smt)
-        self.marge = UserFactory.create(
-            username='marge', first_name='Marge', last_name='Simpson')
-        self.marge.groups.add(self.scd)
-        self.peter = UserFactory.create(
-            username='peter', first_name='Peter', last_name='Peterson')
-        self.service = ServiceFactory.create(
-            name='Service 1', slug='SVC1', creator=self.superuser, director=self.marge)
-        self.service_empty = ServiceFactory.create(
-            name='Service 2', slug='SVC2', creator=self.superuser, director=None)
-        self.division = DivisionFactory.create(
-            name='Division 1', slug='DIV1', creator=self.superuser, director=self.marge)
-        self.division_empty = ServiceFactory.create(
-            name='Division 2', slug='DIV2', creator=self.superuser, director=None)
-        
-        # ProgramFactory already sets division
         self.program = ProgramFactory.create(
             name="ScienceProgram",
             slug="scienceprogram",
-            position=0,
-            program_leader=self.steven)
+
+            position=0)
+
+        self.program2 = ProgramFactory.create(
+            name="ScienceProgram2",
+            slug="scienceprogram2",
+
+            position=0)
+
+        self.superuser = SuperUserFactory.create(username='admin')
+        self.bob = UserFactory.create(
+            username='bob', first_name='Bob', last_name='Bobson', program = self.program)
+        self.john = UserFactory.create(
+            username='john', first_name='John', last_name='Johnson', program = self.program)
+        self.steven = UserFactory.create(
+            username='steven', first_name='Steven', last_name='Stevenson', program = self.program)
+        self.steven.groups.add(self.smt)
+        self.fran = UserFactory.create(
+            username='fran', first_name='Fran', last_name='Franson', program = self.program2)
+        self.fran.groups.add(self.smt)
+        self.marge = UserFactory.create(
+            username='marge', first_name='Marge', last_name='Simpson', program = self.program)
+        self.marge.groups.add(self.scd)
+        self.marge.groups.add(self.admins)
+        self.peter = UserFactory.create(
+            username='peter', first_name='Peter', last_name='Peterson', program = self.program)
+        self.service = ServiceFactory.create(
+            name='Service 1', slug='SVC1', creator=self.superuser, director=self.marge)
+        self.service_empty = ServiceFactory.create(
+            name='Service 2', slug='SVC2', creator=self.superuser, director=self.fran)
+        self.division = DivisionFactory.create(
+            name='Division 1', slug='DIV1', creator=self.superuser, director=self.marge)
+        self.division2 = DivisionFactory.create(
+            name='Division 2', slug='DIV2', creator=self.superuser, director=self.fran)
+        
+        self.program.program_leader = self.steven
+        self.program.division = self.division
+        self.program.save()
+
+        self.program2.program_leader = self.fran
+        self.program2.division = self.division2
+        self.program2.save()
+
 
         # ProjectFactory already sets program and output_program
         self.science_project = ScienceProjectFactory.create(
             # data_custodian=self.bob, site_custodian=self.bob,
+            program=self.program,
             creator=self.bob, 
             modifier=self.bob, 
             project_owner=self.bob)
 
-    def assert_200(self, url):
+
+        # ProjectFactory already sets program and output_program
+        self.science_project2 = ScienceProjectFactory.create(
+            # data_custodian=self.bob, site_custodian=self.bob,
+            program=self.program2,
+            creator=self.peter, 
+            modifier=self.peter, 
+            project_owner=self.peter)            
+
+    def assert_200(self, url, user=None):
         """GET a given URL and assert that the response has status 200 OK."""
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -72,7 +98,7 @@ class SmokeTest(BaseTestCase):
         """Render Project choice landing page. 
         """
         url = reverse('admin:project_choice')
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_service_changelist(self):
         """Render Service change_list. 
@@ -81,7 +107,7 @@ class SmokeTest(BaseTestCase):
         Here, one Service has no Director set.
         """
         url = reverse('admin:pythia_service_changelist')
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_division_changelist(self):
         """Render Division change_list. 
@@ -90,30 +116,53 @@ class SmokeTest(BaseTestCase):
         Here, one Division has no Director set.
         """
         url = reverse('admin:pythia_division_changelist')
-        self.assert_200(url)        
+        self.assert_200(url, self.marge)        
 
     def test_project_create(self):
         """Test that Project create_view loads without any further GET request parameters."""
         url = reverse('admin:projects_project_add')
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_project_create_corefunction(self):
         """Test that Project create_view creates a CF project with ?project_type=1."""
         url = "{0}?project_type=1".format(reverse('admin:projects_project_add'))
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
         # res = self.client.get(url)
         # self.assertEqual(res.context['form'].initial['project_type'], 1)
 
+    def test_project_list(self):
+        """Render the new and improved Project list_view."""
+        url = reverse('admin:project_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        
+
+    def test_project_list_visibility(self):
+        """Test project list visibility.
+        
+        * To a user in group "admins", the project list should show all divisions.
+        * To a user not in group "admins", the project list should show their division's projects only.
+        """
+        # Create authenticated request from a division user
+        # project_list should show self.science_project but not show self.science_project2
+
+        # Create authenticated request from a division2 user
+        # project_list should not show self.science_project but show self.science_project2
+
+        # Create authenticated request from an admin user
+        # project_list should show self.science_project and show self.science_project2
+        pass
+
     def test_project_changelist(self):
         """Render Project change_list."""
         url = reverse('admin:projects_project_changelist')
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_scienceproject_changelist(self):
         """Render ScienceProject change_list."""
         url = reverse('admin:projects_scienceproject_changelist')
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_scienceproject_changeview(self):
         """Render ScienceProject change_view."""
@@ -121,12 +170,12 @@ class SmokeTest(BaseTestCase):
             program=self.program,
             project_owner=self.bob)
         url = project.absolute_url
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_cfproject_changelist(self):
         """Render CFProject change_list."""
         url = reverse('admin:projects_corefunctionproject_changelist')
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_cfproject_changeview(self):
         """Render CFProject change_view."""
@@ -134,12 +183,12 @@ class SmokeTest(BaseTestCase):
             program=self.program,
             project_owner=self.bob)
         url = project.absolute_url
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_extproject_changelist(self):
         """Render EXT Project change_list."""
         url = reverse('admin:projects_collaborationproject_changelist')
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_extproject_changeview(self):
         """Render EXT Project change_view."""
@@ -147,12 +196,12 @@ class SmokeTest(BaseTestCase):
             program=self.program,
             project_owner=self.bob)
         url = project.absolute_url  # convenience helper on Project
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_studentproject_changelist(self):
         """Render StudentProject change_list."""
         url = reverse('admin:projects_studentproject_changelist')
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_studentproject_changeview(self):
         """Render StudentProject change_view."""
@@ -160,12 +209,12 @@ class SmokeTest(BaseTestCase):
             program=self.program,
             project_owner=self.bob)
         url = scienceproject.absolute_url
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_conceptplan_changelist(self):
         """Render ConceptPlan changelist."""
         url = reverse("admin:documents_conceptplan_changelist")
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_conceptplan_changeview(self):
         """Render ConceptPlan changeview."""
@@ -174,7 +223,7 @@ class SmokeTest(BaseTestCase):
             project_owner=self.bob)
         scp = scienceproject.documents.instance_of(ConceptPlan).get()
         url = scp.get_absolute_url()
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
     def test_api_projects(self):
         """Test API endpoints /api/projects/"""
@@ -182,7 +231,7 @@ class SmokeTest(BaseTestCase):
             program=self.program,
             project_owner=self.bob)
         url = "/api/projects/"
-        self.assert_200(url)
+        self.assert_200(url, self.marge)
 
 # TEST: User adds external user, enter username, password
 # next screen add first name, last name etc, username must be ro

@@ -128,37 +128,44 @@ class ProjectList(ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(ProjectList, self).get_context_data(**kwargs)
-        context['division'] = self.request.user.division
+        context['division'] = self.request.user.division if self.request.user else Division.objects.first()
+        context['show_all_divisions'] = self.request.user.is_admin if self.request.user else True
         context['list_filter'] = ProjectFilter(
             self.request.GET, queryset=self.get_queryset())
         return context
 
     def get_queryset(self):
-        u = self.request.user
+        """Return Projects filtered to a Division depending on User role.
 
-        if u:
-            logger.info("User {0} views Project Dashboard".format(u))
-        else:
-            logger.info("User (not available) views Project Dashboard")
-
-        division = u.division
-
+        * Anonymous users: Projects of all Divisions.
+        * Admin users: Projects of all Divisions.
+        * Non-admin users: Projects of own Division only.
+        """
         qs = super(ProjectList, self).get_queryset(
-        ).filter(
-            effective_to__isnull=True,
-            program__division=division
-        ).prefetch_related(
-            'program',
-            'program__division',
-            'program__modifier',
-            'program__program_leader'
-        ).order_by(
-            'program__position',
-            'position',
-            '-year',
-            '-number'
-        )
+                ).filter(
+                    effective_to__isnull=True
+                ).prefetch_related(
+                    'program',
+                    'program__division',
+                    'program__modifier',
+                    'program__program_leader'
+                ).order_by(
+                    'program__position',
+                    'position',
+                    '-year',
+                    '-number'
+                )
         
+        if self.request.user and not self.request.user.is_admin:
+            qs = qs.filter(program__division=self.request.user.division)
+
+        logger.info(
+            "User {0} views Project Dashboard: Division {1}".format(
+                self.request.user, 
+                self.request.user.division.slug if self.request.user else "(Anonymous user)"
+            )
+        )
+
         return ProjectFilter(self.request.GET, queryset=qs).qs
 
 

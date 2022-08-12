@@ -185,7 +185,7 @@ class ProjectTests(BaseLiveServerTestCase):
         self.create_preauthenticated_session(admin)
 
         # and clicks on "create a new project"
-        import ipdb; ipdb.set_trace()
+        #import ipdb; ipdb.set_trace()
         url = reverse('admin:projects_project_add')
         self.selenium.get("%s%s" % (self.live_server_url, url))
         self.wait_page_loaded()

@@ -1530,3 +1530,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         See https://github.com/dbca-wa/sdis/issues/184
         """
         return self.division and self.division.slug == "BCS"
+
+    @property
+    def is_admin(self):
+        """Return True if the User is in Group "admins"."""
+        return 'admins' in [g.name for g in self.groups.all()]
