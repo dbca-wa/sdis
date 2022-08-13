@@ -57,4 +57,4 @@ def colourise(value):
 @stringfilter
 def html2latex(value):
     """Convert an HTML string to a Latex string."""
-    return mark_safe(pypandoc.convert(value, 'tex', format='html'))
+    return mark_safe(pypandoc.convert_text(value, 'tex', format='html'))
