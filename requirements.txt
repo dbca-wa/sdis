@@ -127,7 +127,7 @@ pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==6.2.2
 pipdeptree==1.0.0
-pipenv==2021.5.29
+pipenv==2022.1.8
 platformdirs==2.0.2
 prompt-toolkit==1.0.18
 psycopg2==2.7.5
