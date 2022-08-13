@@ -2,18 +2,18 @@
 SPMS Documentation
 ******************
 
-.. image:: https://circleci.com/gh/dbca-wa/SPMS.svg?style=svg
-   :target: https://circleci.com/gh/dbca-wa/SPMS
+.. image:: https://circleci.com/gh/dbca-wa/sdis.svg?style=svg
+   :target: https://circleci.com/gh/dbca-wa/sdis
    :alt: Test Status
-.. image:: https://coveralls.io/repos/github/dbca-wa/SPMS/badge.svg?branch=master
-   :target: https://coveralls.io/github/dbca-wa/SPMS
+.. image:: https://coveralls.io/repos/github/dbca-wa/sdis/badge.svg?branch=master
+   :target: https://coveralls.io/github/dbca-wa/sdis
    :alt: Test Coverage
-.. image:: https://img.shields.io/github/issues/dbca-wa/SPMS
-   :target: https://github.com/dbca-wa/SPMS/projects/1
+.. image:: https://img.shields.io/github/issues/dbca-wa/sdis
+   :target: https://github.com/dbca-wa/sdis/projects/1
    :alt: GitHub issues
 
 .. 
-  Thirteen programs for biodiversity's division,
+  Thirteen programs for Biodiversity's division,
   Five for the branches in their halls of conservation,
   Nine for regions under wide skies,
   One place to register them all, one place to find them,
