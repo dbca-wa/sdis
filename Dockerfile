@@ -9,8 +9,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     -o Acquire::Retries=10 --no-install-recommends \
     apt-utils lmodern software-properties-common libmagic-dev libproj-dev gdal-bin \
     python-dev libsasl2-dev python-enchant \
-    postgresql-client openssh-client rsync \
-    texlive-full texlive-xetex vim \
+    postgresql-client openssh-client rsync vim ncdu \
+    texlive-full texlive-xetex \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && wget https://github.com/jgm/pandoc/releases/download/2.7/pandoc-2.7-1-amd64.deb \
