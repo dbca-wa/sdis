@@ -133,7 +133,7 @@ class ProjectList(ListView):
             self.request.GET, queryset=self.get_queryset())
 
         # Only non-anonymous users have a division, and admins don't count.
-        if self.request.user.is_anonymous:
+        if self.request.user.is_anonymous():
             context['division'] = "all Divisions because you are an anonymous user"
         elif self.request.user.is_admin:
             context['division'] = "all Divisions because you are an admin user"
@@ -166,7 +166,7 @@ class ProjectList(ListView):
                 )
         
         # Additional filtering depending on user's scope.
-        if self.request.user.is_anonymous:
+        if self.request.user.is_anonymous():
             logger.info("Anonymous User views Project Dashboard: All Divisions")
         elif self.request.user.is_admin:
             logger.info("Admin User {0} views Project Dashboard: All Divisions".format(self.request.user))
