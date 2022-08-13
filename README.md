@@ -1,7 +1,7 @@
 [![Test Status](https://circleci.com/gh/dbca-wa/sdis.svg?style=svg)](https://circleci.com/gh/dbca-wa/sdis)
 [![Coverage Status](https://coveralls.io/repos/github/dbca-wa/sdis/badge.svg?branch=master)](https://coveralls.io/github/dbca-wa/sdis?branch=master)
 [![Issues](https://img.shields.io/static/v1?label=docs&message=Issues&color=brightgreen)](https://github.com/dbca-wa/sdis/issues)
-[![Documentation Status](https://readthedocs.org/projects/sdis/badge/?version=latest)](http://sdis.readthedocs.io/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/sdis/badge/?version=latest)](http://sdis.readthedocs.io/)
 
 Science Project Management System
 ======================================
