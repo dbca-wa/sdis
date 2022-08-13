@@ -11,7 +11,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     python-dev libsasl2-dev python-enchant \
     postgresql-client openssh-client rsync vim ncdu \
     texlive-base tex-common texlive-xetex texlive-luatex tex-gyre \
-    texlive-latex-base texlive-latex-recommended \
+    texlive-latex-base texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-lang-english texlive-plain-generic \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
