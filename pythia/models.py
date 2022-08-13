@@ -709,11 +709,16 @@ class Program(Audit, ActiveModel):
         help_text=_("The Departmental Division this program belongs to."))
 
     # Publishing and printing options ----------------------------------------#
+    # The naming "published" was chosen when SDIS was BCS only, and 
+    # the annual report would include projects of all (implicitly BCS only) programs.
+    # This flag did and still does exclude projects from that program from annual reporting.
+    # TODO refactor this field to a better name, e.g. "active" 
+    # (avoid name collisions with parent models).
     published = models.BooleanField(
         default=True,
-        verbose_name="Published",
-        help_text = ("Published programs are reported on annually. "
-                    "Administrative and deprecated programs are unpublished."))
+        verbose_name="Active",
+        help_text = ("Active programs can be reported on annually. "
+                    "Administrative and deprecated programs are marked as inactive."))
     position = models.IntegerField(
         help_text='An arbitrary, ascending ordering number.')
 
@@ -772,14 +777,14 @@ class Program(Audit, ActiveModel):
         return '{0} {1}{2}'.format(
             self.division.slug if self.division and self.division.slug else "SET DIVISION",
             mark_safe(strip_tags(self.name)),
-            '' if self.published else ' [not published]'
+            '' if self.published else ' [inactive]'
         )
     
     def label(self):
         """The name."""
         return '{0}{1}'.format(
             mark_safe(strip_tags(self.name)),
-            '' if self.published else ' [not published]'
+            '' if self.published else ' [inactive]'
         )
     
 
