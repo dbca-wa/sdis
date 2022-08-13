@@ -186,7 +186,7 @@ class ProjectFilter(FilterSet):
             "year",
             "number",
             "start_date",
-            # "program__division", # enable if more than own Division shown
+            "program__division",
             "program",
             "program__published",
             "status",

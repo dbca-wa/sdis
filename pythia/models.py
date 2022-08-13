@@ -703,10 +703,10 @@ class Program(Audit, ActiveModel):
 
     division = models.ForeignKey(
         Division,
-        verbose_name=_("Departmental Division"),
+        verbose_name=_("Division"),
         blank=True, null=True,
         related_name = "programs",
-        help_text=_("The Departmental Division this program belongs to."))
+        help_text=_("The Division this program belongs to."))
 
     # Publishing and printing options ----------------------------------------#
     # The naming "published" was chosen when SDIS was BCS only, and 
