@@ -10,10 +10,44 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     apt-utils lmodern software-properties-common libmagic-dev libproj-dev gdal-bin \
     python-dev libsasl2-dev python-enchant \
     postgresql-client openssh-client rsync vim ncdu \
-    texlive-full texlive-xetex \
-  && apt-get remove '.*-doc' \
+    # texlive-full texlive-xetex  # Full blown installation with many un-needed packages
+    texlive-base texlive-xetex tex-common tex-gyre texlive-fonts-recommended \
+    texlive-latex-base texlive-latex-recommended \
+    texlive-lang-english texlive-plain-generic  \
+  # # Packages in texlive-full we do not need:
+  # # Meta
+  # texlive-pstricks
+  # texinfo
+  # texlive-luatex
+  # texlive-bibtex-extra  
+  # texlive-extra-utils
+  # texlive-latex-extra
+  # texlive-fonts-extra texlive-fonts-extra-links
+  # # Functionality
+  # texlive-metapost
+  # texlive-font-utils 
+  # texlive-binaries
+  # texlive-formats-extra
+  # texlive-games texlive-humanities texlive-music texlive-pictures texlive-publishers texlive-science
+  # # Languages
+  # texlive-lang-arabic texlive-lang-chinese texlive-lang-cjk texlive-lang-cyrillic texlive-lang-czechslovak
+  # texlive-lang-european texlive-lang-french texlive-lang-german texlive-lang-greek texlive-lang-italian
+  # texlive-lang-japanese texlive-lang-korean texlive-lang-other texlive-lang-polish texlive-lang-portuguese 
+  # texlive-lang-spanish
+  # # Docs
+  # texlive-fonts-recommended-doc
+  # texlive-humanities-doc 
+  # texlive-latex-base-doc 
+  # texlive-latex-extra-doc
+  # texlive-fonts-extra-doc 
+  # texlive-latex-recommended-doc
+  # texlive-metapost-doc
+  # texlive-pictures-doc
+  # texlive-pstricks-doc
+  # texlive-publishers-doc
+  # texlive-science-doc
   && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* /usr/share/doc/* \
+  && rm -rf /var/lib/apt/lists/* \
   && wget https://github.com/jgm/pandoc/releases/download/2.7/pandoc-2.7-1-amd64.deb \
   && dpkg -i pandoc-2.7-1-amd64.deb \
   && rm pandoc-2.7-1-amd64.deb
