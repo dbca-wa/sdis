@@ -10,7 +10,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     apt-utils lmodern software-properties-common libmagic-dev libproj-dev gdal-bin \
     python-dev libsasl2-dev python-enchant \
     postgresql-client openssh-client rsync vim ncdu \
-    texlive-base tex-common texlive-xetex texlive-luatex tex-gyre \
+    texlive-base tex-common texlive-xetex texlive-luatex tex-gyre texlive-pictures \
     texlive-latex-base texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-lang-english texlive-plain-generic \
   && apt-get clean \
