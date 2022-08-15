@@ -12,9 +12,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     postgresql-client openssh-client rsync vim ncdu \
     texlive-base tex-common texlive-xetex texlive-luatex tex-gyre texlive-pictures \
     texlive-latex-base texlive-latex-recommended texlive-latex-extra \
-    texlive-fonts-recommended texlive-lang-english texlive-plain-generic \
   && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* \
+  && rm -rf /var/lib/apt/lists/* /usr/share/doc/* \
   && wget https://github.com/jgm/pandoc/releases/download/2.7/pandoc-2.7-1-amd64.deb \
   && dpkg -i pandoc-2.7-1-amd64.deb \
   && rm pandoc-2.7-1-amd64.deb

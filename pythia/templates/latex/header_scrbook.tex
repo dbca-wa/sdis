@@ -1,18 +1,21 @@
 {% load staticfiles%}
+%------------------------------------------------------------------------------%
+% header_scrbook.tex Style and layout definitions
+%------------------------------------------------------------------------------%
 \documentclass[version=last,
     %unicode=true,
-    paper=a4,                               % paper size
-    10pt,                                   % default font size
+    paper=a4,         % paper size
+    10pt,             % default font size
     dvipsnames,
-    twoside,                                % PRINT Binding Correction
-    % oneside,                              % ONLINE
-    headings=openany,                       % open chapters on odd and even pages
+    twoside,          % PRINT Binding Correction
+    % oneside,        % ONLINE
+    headings=openany, % open chapters on odd and even pages
     open=any,
-    BCOR=7mm,                               % PRINT Binding Correction
-    %DIV=13,    % typearea 161.54mm x 228.46mm, top 22.85mm, inner 16.15mm
-    %DIV=14,    % 165.00 233.36 21.21 15.00
-    DIV=15,     % 168.00 237.60 19.80 14.00
-    % toc=chapterentrywithdots              % Table of Contents style
+    BCOR=7mm,         % PRINT Binding Correction
+    %DIV=13,          % typearea 161.54mm x 228.46mm, top 22.85mm, inner 16.15mm
+    %DIV=14,          % 165.00 233.36 21.21 15.00
+    DIV=15,           % 168.00 237.60 19.80 14.00
+    toc=chapterentrywithoutdots              % Table of Contents style
 ]{scrbook}
 \usepackage{typearea}
 
@@ -35,7 +38,7 @@
 {% else %}
 \ihead{\textbf{% templatetag openbrace %}{{ subtitle }}}}
 {% endif %}
-%\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Directorate Information System}}
+%\chead{\href{% templatetag openbrace %}{{ baseurl|safe }}}{Science Project Management System}}
 \ohead{
   \href{https://www.dbca.wa.gov.au/science}{%
     \includegraphics[height=8mm, keepaspectratio]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca-bcs.jpg}}%
@@ -97,14 +100,15 @@ Contents
 %\setlength{\parindent}{0em}    % Don't indent paragraphs - ONLINE
 %\setlength{\parskip}{1.3 ex plus 0.5ex minus 0.3ex} % 1-1.8 ex vspace btw pars
 \usepackage{scrextend}          % Custom paragraph indentation
+%\usepackage{tocstyle}          % Deprecated and removed from KOMAscript
 \usepackage{tocbasic}
-% \setcounter{tocdepth}{1}
-\newtocstyle{compact}{%
-  \settocfeature[1]{entryhook}{\bfseries}%
-  \settocfeature[1]{entryvskip}{2em plus 2pt}% spacing btw TOC heading and body
-  \settocfeature[1]{leaders}{\hfill}%
-}
-\usetocstyle{compact}
+% %\setcounter{tocdepth}{1}
+% \newtocstyle{compact}{%
+% \settocfeature[1]{entryhook}{\bfseries}%
+% \settocfeature[1]{entryvskip}{2em plus 2pt}% spacing btw TOC heading and body
+% \settocfeature[1]{leaders}{\hfill}%
+% }
+% \usetocstyle{compact}
 
 %------------------------------------------------------------------------------%
 % Tables, columns, layout
