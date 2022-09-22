@@ -12,18 +12,19 @@
     %DIV=14,    % 165.00 233.36 21.21 15.00
     DIV=15,     % 168.00 237.60 19.80 14.00
     % toc=chapterentrywithdots              % Table of Contents style
-]{scrbook}
+    ,unicode=true
+]{book}
 \usepackage{typearea}
 
 
 %------------------------------------------------------------------------------%
 % Headers and footers
 %------------------------------------------------------------------------------%
-\usepackage[automark,headsepline,footsepline,plainfootsepline]{scrlayer-scrpage}
-\automark*[section]{}
-\addtokomafont{pageheadfoot}{\normalfont\footnotesize\sffamily} % Don't italicise
-\renewcommand{\chaptermark}[1]{\markleft{#1}{}}     % Chapter: suppress numbering
-\renewcommand{\sectionmark}[1]{\markright{#1}{}}    % Section: suppress numbering
+%\usepackage[automark,headsepline,footsepline,plainfootsepline]{scrlayer-scrpage}
+%\automark*[section]{}
+%\addtokomafont{pageheadfoot}{\normalfont\footnotesize\sffamily} % Don't italicise
+%\renewcommand{\chaptermark}[1]{\markleft{#1}{}}     % Chapter: suppress numbering
+%\renewcommand{\sectionmark}[1]{\markright{#1}{}}    % Section: suppress numbering
 
 % Header (inner, center, outer)
 {% if link_sdis %}
