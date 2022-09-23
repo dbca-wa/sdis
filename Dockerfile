@@ -53,7 +53,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
 # RUN tlmgr update --self && tlmgr update --all
 
 # Install Python libs.
-FROM texlive as builder_base
+FROM builder_base as python_libs_sdis
 WORKDIR /usr/src/app
 COPY requirements_docker.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
