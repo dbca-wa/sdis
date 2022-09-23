@@ -1,7 +1,7 @@
 # Prepare the base environment.
-FROM python:2.7.18-buster as builder_base
+FROM python:2.7.18-bullseye as builder_base
 LABEL maintainer=Florian.Mayer@dbca.wa.gov.au
-LABEL description="Python 2.7.18-buster plus Latex and GDAL."
+LABEL description="Python 2.7.18-bullseye plus Latex and GDAL."
 LABEL org.opencontainers.image.source = "https://github.com/dbca-wa/sdis"
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
