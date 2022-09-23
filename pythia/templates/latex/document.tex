@@ -1,5 +1,5 @@
 {% load pythia_base texify %}
-{% include "latex/header_scrreprt.tex" %}
+{% include "latex/header_scrbook.tex" %}
 {% url original.opts|pythia_urlname:"change" original.pk as original_change %}
 
 \usepackage[automark,headsepline,footsepline,plainfootsepline]{scrlayer-scrpage}
@@ -14,7 +14,7 @@
 \ohead{\href{https://www.dbca.wa.gov.au/science/10-biodiversity-and-conservation-science}{
 \includegraphics[height=6mm, keepaspectratio]{% templatetag openbrace %}{{ STATIC_ROOT }}/img/logo-dbca-bcs.jpg}}}
 % Footer (inner, center, outer)
-\ifoot{\textbf{Printed}~{{ timestamp|date:'r' }}} % inner/left footer
+\ifoot{\textbf{Generated}~{{ timestamp|date:'r' }}} % inner/left footer
 \cfoot{}
 \ofoot[\bfseries\thepage]{\bfseries\thepage}        % Page number (also [plain])
 
