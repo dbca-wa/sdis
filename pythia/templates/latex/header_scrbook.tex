@@ -12,19 +12,17 @@
     %DIV=14,    % 165.00 233.36 21.21 15.00
     DIV=15,     % 168.00 237.60 19.80 14.00
     % toc=chapterentrywithdots              % Table of Contents style
-    ,unicode=true
-]{book}
+]{scrbook}
 \usepackage{typearea}
-
 
 %------------------------------------------------------------------------------%
 % Headers and footers
 %------------------------------------------------------------------------------%
-%\usepackage[automark,headsepline,footsepline,plainfootsepline]{scrlayer-scrpage}
-%\automark*[section]{}
-%\addtokomafont{pageheadfoot}{\normalfont\footnotesize\sffamily} % Don't italicise
-%\renewcommand{\chaptermark}[1]{\markleft{#1}{}}     % Chapter: suppress numbering
-%\renewcommand{\sectionmark}[1]{\markright{#1}{}}    % Section: suppress numbering
+\usepackage[automark,headsepline,footsepline,plainfootsepline]{scrlayer-scrpage}
+\automark*[section]{}
+\addtokomafont{pageheadfoot}{\normalfont\footnotesize\sffamily} % Don't italicise
+\renewcommand{\chaptermark}[1]{\markleft{#1}{}}     % Chapter: suppress numbering
+\renewcommand{\sectionmark}[1]{\markright{#1}{}}    % Section: suppress numbering
 
 % Header (inner, center, outer)
 {% if link_sdis %}
@@ -74,17 +72,17 @@
 \addtokomafont{section}{\LARGE} %\center
 
 % Spacing of headings
-%\RedeclareSectionCommand[afterskip=4pt]{section}     % less space after section
-%\RedeclareSectionCommand[beforeskip=0cm]{subsection} % tighten HRule to proj name
+\RedeclareSectionCommand[afterskip=4pt]{section}     % less space after section
+\RedeclareSectionCommand[beforeskip=0cm]{subsection} % tighten HRule to proj name
 \RedeclareSectionCommand[afterskip=0.1\baselineskip]{subsubsection} % less space
 % after progressreport subheadings
 
-\deftocheading{toc}{
-\huge\bfseries\centering
-\vspace*{3.1em}
-Contents
-\vspace*{0.8em}
-\par\normalsize\mdseries}% TOC title with 3em vspace
+% \deftocheading{toc}{
+% \huge\bfseries\centering
+% \vspace*{3.1em}
+% Contents
+% \vspace*{0.8em}
+% \par\normalsize\mdseries}% TOC title with 3em vspace
 
 % Hide a part heading
 \newcommand*\Hide{\titleformat{\part}{}{}{0pt}{}}
@@ -255,7 +253,7 @@ Contents
 % Remove the header from odd empty pages at the end of chapters
 %------------------------------------------------------------------------------%
 \makeatletter
-\renewcommand{\cleardoublepage}{
+\renewcommand{\cleardoublepage}{%
 \clearpage\ifodd\c@page\else
 \hbox{}
 \vspace*{\fill}
