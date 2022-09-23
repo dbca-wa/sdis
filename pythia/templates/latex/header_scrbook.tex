@@ -118,8 +118,15 @@ Contents
 \setcounter{tocdepth}{2}        % TOC list down to section
 \usepackage{enumerate}          % Enumerations
 \usepackage{enumitem}           % Enumerations
-\usepackage{longtable}          % Multipage table
-\usepackage{tabu}               %
+% tabu is broken https://tex.stackexchange.com/a/604318/249371
+% \usepackage{longtable}          % Multipage table
+% \usepackage{tabu}               %
+\usepackage{tabularray}
+\DefTblrTemplate{contfoot-text}{default}{}
+\DefTblrTemplate{conthead-text}{default}{}
+\DefTblrTemplate{caption}{default}{}
+\DefTblrTemplate{conthead}{default}{}
+\DefTblrTemplate{capcont}{default}{} % Default: no table caption
 \setlength{\tabulinesep}{1.5mm} % Consistent vertical spacing in tabu
 \newcommand{\HRule}{\vspace{8mm}\noindent\rule{\linewidth}{0.1pt}}
 \usepackage[export]{adjustbox}  % minipage, image frame

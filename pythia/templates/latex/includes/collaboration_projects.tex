@@ -13,18 +13,16 @@
 \chaptermark{External Partnerships}
 \sectionmark{}
 %
-\begin{longtabu} to \linewidth { X X X X }
-\hline
-%
+% [caption={External Partnerships}]
+\begin{longtblr}{*4{X[l]}}
 \hline
 \rowcolor{infobg}
 \textbf{Partners} &
 \textbf{Project Title} &
 \textbf{External Funding} &
 \textbf{Departmental Involvement} \\
-\hline
 \endhead
-%
+\hline
 {% for project in projects|dictsort:"name" %}
 {{ project.name|html2latex }} &
 {{ project.title|html2latex }} &
@@ -35,7 +33,7 @@
 No projects. \\
 {% endfor %}
 %
-\end{longtabu}
+\end{longtblr}
 %------------------------------------------------------------------------------%
 % End ARAR Table External Partnerships
 %------------------------------------------------------------------------------%

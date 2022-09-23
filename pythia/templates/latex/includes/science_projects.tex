@@ -21,8 +21,8 @@
 \section*{ {{ program_reports.grouper|html2latex }} }
 \sectionmark{ {{ program_reports.grouper|html2latex }} }
 %
-\begin{longtabu} to \linewidth { X X X p{5cm} r{0.7cm} }
-\hline
+{% comment %} \begin{longtabu} to \linewidth { X X X p{5cm} r{0.7cm} } {% endcomment %}
+\begin{longtblr}[caption={}]{X[l, 2] X[l, 2] X[l, 2] X[l, 4] X[r, 1]}
 \hline
 \rowcolor{infobg}
 \textbf{DBCA Region} &
@@ -30,9 +30,8 @@
 \textbf{NRM Region} &
 \textbf{Project Title} &
 \textbf{Page}\\
-\hline
 \endhead
-%
+\hline
 {% for report in program_reports.list|dictsort:"project.title" %}
 {{ report.project.area_list_dpaw_region|html2latex }} &
 {{ report.project.area_list_ibra_imcra_region|html2latex }} &
@@ -43,7 +42,7 @@
 {% empty %}
 No projects.\\
 {% endfor %}
-\end{longtabu}
+\end{longtblr}
 %
 {% endfor %}
 %------------------------------------------------------------------------------%

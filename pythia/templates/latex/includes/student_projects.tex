@@ -15,9 +15,7 @@
 \sectionmark{}
 %
 %\begin{longtabu} to \textwidth { p{2.3cm} X X X p{1.5cm} r{0.7cm} }
-\begin{longtabu} to \textwidth { p X X X p r }
-\hline
-%
+\begin{longtblr}[caption={}]{X[l, 2] X[l] X[l] X[l] X[r, 2] X[r, 1]}
 \hline
 \rowcolor{infobg}
 \textbf{DBCA Officer} &
@@ -26,8 +24,8 @@
 \textbf{Project Title} &
 \textbf{Duration} &
 \textbf{Page} \\
-\hline
 \endhead
+\hline
 %
 {% for report in reports %}
 {{ report.project.supervising_scientist_list_plain|html2latex }} &
@@ -41,7 +39,7 @@
 No projects. \\
 {% endfor %}
 %
-\end{longtabu}
+\end{longtblr}
 %------------------------------------------------------------------------------%
 % End ARAR Table Student Projects
 %------------------------------------------------------------------------------%
