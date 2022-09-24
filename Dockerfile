@@ -4,7 +4,8 @@ LABEL maintainer=Florian.Mayer@dbca.wa.gov.au
 LABEL description="Ubuntu 22.04 plus Latex and GDAL."
 LABEL org.opencontainers.image.source = "https://github.com/dbca-wa/sdis"
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+RUN DEBIAN_FRONTEND=noninteractive add-apt-repository universe \
+  && DEBIAN_FRONTEND=noninteractive apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install --yes \
     -o Acquire::Retries=10 --no-install-recommends \
     apt-utils lmodern software-properties-common libmagic-dev libproj-dev gdal-bin \
@@ -46,15 +47,15 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     echo "Installing pandoc" \
   && wget https://github.com/jgm/pandoc/releases/download/2.7/pandoc-2.7-1-amd64.deb \
   && dpkg -i pandoc-2.7-1-amd64.deb \
-  && rm pandoc-2.7-1-amd64.deb
-
-# RUN tlmgr update --self && tlmgr update --all
+  && wget https://bootstrap.pypa.io/pip/2.7/get-pip.py -O get-pip.py \
+  && python2 get-pip.py \
+  && rm pandoc-2.7-1-amd64.deb get-pip.py
 
 # Install Python libs.
 FROM builder_base as python_libs_sdis
 WORKDIR /usr/src/app
 COPY requirements_docker.txt ./requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip2 install --no-cache-dir -r requirements.txt
 # Update the bug in django/contrib/gis/geos/libgeos.py
 # Reference: https://stackoverflow.com/questions/18643998/geodjango-geosexception-error
 RUN sed -i -e "s/ver = geos_version().decode()/ver = geos_version().decode().split(' ')[0]/" \
@@ -65,7 +66,7 @@ FROM python_libs_sdis
 COPY fabfile.py favicon.ico gunicorn.ini manage.py ./
 COPY pythia ./pythia
 COPY sdis ./sdis
-RUN python manage.py collectstatic --clear --noinput -l
+RUN python2 manage.py collectstatic --clear --noinput -l
 USER www-data
 EXPOSE 8080
 HEALTHCHECK --interval=1m --timeout=5s --start-period=10s --retries=3 CMD ["wget", "-q", "-O", "-", "http://localhost:8080/"]
