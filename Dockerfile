@@ -1,7 +1,7 @@
 # Prepare the base environment.
-FROM python:2.7.18-buster as builder_base
+FROM ubuntu:22.04 as builder_base
 LABEL maintainer=Florian.Mayer@dbca.wa.gov.au
-LABEL description="Python 2.7.18-buster plus Latex and GDAL."
+LABEL description="Ubuntu 22.04 plus Latex and GDAL."
 LABEL org.opencontainers.image.source = "https://github.com/dbca-wa/sdis"
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
@@ -51,7 +51,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && dpkg -i pandoc-2.7-1-amd64.deb \
   && rm pandoc-2.7-1-amd64.deb
 
-RUN tlmgr update --self && tlmgr update --all
+# RUN tlmgr update --self && tlmgr update --all
 
 # Install Python libs.
 FROM builder_base as python_libs_sdis
