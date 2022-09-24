@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 # from rest_framework_swagger.views import get_swagger_view
 
 from pythia.sites import site
-from pythia.views import TermsAndConditions, spell_check
+from pythia.views import TermsAndConditions #, spell_check
 from pythia.api import router
 
 js_info_dict = {'packages': ('django.conf',), }
