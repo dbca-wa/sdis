@@ -15,7 +15,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     texlive-latex-base texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-fonts-extra \
   && rm -rf /var/lib/apt/lists/* /usr/share/doc/* && apt-get clean \
-  echo "Delete TeX Live sources and other useless stuff." &&\
+  echo "Delete TeX Live sources." &&\
     (rm -rf /usr/share/texmf/source || true) &&\
     (rm -rf /usr/share/texlive/texmf-dist/source || true) &&\
     find /usr/share/texlive -type f -name "readme*.*" -delete &&\
@@ -23,9 +23,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     (rm -rf /usr/share/texlive/release-texlive.txt || true) &&\
     (rm -rf /usr/share/texlive/doc.html || true) &&\
     (rm -rf /usr/share/texlive/index.html || true) &&\
-    # update font cache
-    echo "Update font cache." &&\
-    fc-cache -fv &&\
 # clean up all temporary files
     echo "Clean up all temporary files." &&\
     apt-get clean -y &&\
