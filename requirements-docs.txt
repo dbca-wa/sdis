@@ -132,3 +132,8 @@ flake8_import_order
 flake8-todo
 pep8-naming
 radon
+
+#10 105.5 ERROR: pyopenssl 20.0.1 has requirement cryptography>=3.2, but you'll have cryptography 3.0 which is incompatible.
+#10 105.5 ERROR: django-smart-selects 1.5.6 has requirement django<3.1,>=1.8, but you'll have django 1.6.5 which is incompatible.
+#10 105.5 ERROR: django-fsm-log 2.0.1 has requirement django>=1.8, but you'll have django 1.6.5 which is incompatible.
+#10 105.5 ERROR: django-braces 1.14.0 has requirement Django>=1.11.0, but you'll have django 1.6.5 which is incompatible.
