@@ -231,46 +231,46 @@ def batch_approve_progressreports(request):
     return HttpResponseRedirect("/")
 
 
-@csrf_exempt
-def spell_check(request):
-    """Spellcheck view."""
-    import enchant
+# @csrf_exempt
+# def spell_check(request):
+#     """Spellcheck view."""
+#     import enchant
 
-    raw = request.body
-    input = json.loads(raw)
-    id = input['id'] if ('id' in input) else None
-    method = input['method'] if ('method' in input) else {}
-    params = input['params'] if ('params' in input) else {}
+#     raw = request.body
+#     input = json.loads(raw)
+#     id = input['id'] if ('id' in input) else None
+#     method = input['method'] if ('method' in input) else {}
+#     params = input['params'] if ('params' in input) else {}
 
-    result = {}
+#     result = {}
 
-    try:
-        if params and method:
-            lang = params['lang'] if ('lang' in params) else 'en-au'
-            arg = params['words'] if ('words' in params) else []
+#     try:
+#         if params and method:
+#             lang = params['lang'] if ('lang' in params) else 'en-au'
+#             arg = params['words'] if ('words' in params) else []
 
-            if not enchant.dict_exists(str(lang)):
-                raise RuntimeError(
-                    "dictionary not found for language '%s'" % lang)
+#             if not enchant.dict_exists(str(lang)):
+#                 raise RuntimeError(
+#                     "dictionary not found for language '%s'" % lang)
 
-            checker = enchant.Dict(str(lang))
+#             checker = enchant.Dict(str(lang))
 
-            if method == 'spellcheck':
-                for x in [word for word in arg if word and not
-                          checker.check(word)]:
-                    result[x] = checker.suggest(x)
+#             if method == 'spellcheck':
+#                 for x in [word for word in arg if word and not
+#                           checker.check(word)]:
+#                     result[x] = checker.suggest(x)
 
-    except Exception:
-        pass
+#     except Exception:
+#         pass
 
-    output = {
-        'id': id,
-        'result': result,
-    }
-    # except Exception:
-    #    logging.exception("Error running spellchecker")
-    #    return HttpResponse("Error running spellchecker")
-    return HttpResponse(json.dumps(output), content_type='application/json')
+#     output = {
+#         'id': id,
+#         'result': result,
+#     }
+#     # except Exception:
+#     #    logging.exception("Error running spellchecker")
+#     #    return HttpResponse("Error running spellchecker")
+#     return HttpResponse(json.dumps(output), content_type='application/json')
 
 
 def comments_post(request):

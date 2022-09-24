@@ -1,24 +1,31 @@
-# Prepare the base environment.
+# Test local build: docker build . -t dbcawa/sdis:latest
+# git commit and git tag and git push to build and push on GH actions
 FROM ubuntu:22.04 as builder_base
 LABEL maintainer=Florian.Mayer@dbca.wa.gov.au
 LABEL description="Ubuntu 22.04 plus Latex and GDAL."
 LABEL org.opencontainers.image.source = "https://github.com/dbca-wa/sdis"
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update \
-  && DEBIAN_FRONTEND=noninteractive apt-get install --yes \
+ENV DEBIAN_FRONTEND noninteractive
+RUN  apt-get update \
+  && apt-get install --yes \
     -o Acquire::Retries=10 --no-install-recommends \
-    apt-utils lmodern software-properties-common libmagic-dev libproj-dev gdal-bin \
-    libsasl2-dev enchant-2 \
-    postgresql-client openssh-client rsync vim ncdu wget \
-    # NOT: texlive-full texlive-xetex texlive-luatex \
+    # System utilities
+    apt-utils  software-properties-common openssh-client rsync vim ncdu wget \
+    # C compiler
+    gcc mono-mcs postgresql-client  \
+    # spatial and other libs
+    lmodern libmagic-dev libproj-dev gdal-bin libsasl2-dev enchant-2 \
+    # Latex
     texlive-base tex-common texlive-xetex texlive-luatex tex-gyre texlive-pictures \
     texlive-latex-base texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-fonts-extra \
-  && DEBIAN_FRONTEND=noninteractive add-apt-repository -y universe \
-  && DEBIAN_FRONTEND=noninteractive apt-get update \
-  && DEBIAN_FRONTEND=noninteractive apt-get install --yes python2-dev python2 \
-  && rm -rf /var/lib/apt/lists/* /usr/share/doc/* && apt-get clean \
-  echo "Delete TeX Live sources." &&\
+  && echo "Installing Python 2.7" \
+  && add-apt-repository -y universe \
+  && apt-get update \
+  && apt-get install --yes python2-dev python2 \
+  && rm -rf /var/lib/apt/lists/* /usr/share/doc/* \
+  && apt-get clean \
+  && echo "Delete TeX Live sources." &&\
     (rm -rf /usr/share/texmf/source || true) &&\
     (rm -rf /usr/share/texlive/texmf-dist/source || true) &&\
     find /usr/share/texlive -type f -name "readme*.*" -delete &&\
@@ -61,7 +68,7 @@ RUN pip2 install --no-cache-dir -r requirements.txt
 # Update the bug in django/contrib/gis/geos/libgeos.py
 # Reference: https://stackoverflow.com/questions/18643998/geodjango-geosexception-error
 RUN sed -i -e "s/ver = geos_version().decode()/ver = geos_version().decode().split(' ')[0]/" \
-  /usr/local/lib/python2.7/site-packages/django/contrib/gis/geos/libgeos.py
+   /usr/local/lib/python2.7/dist-packages/django/contrib/gis/geos/libgeos.py
 
 # Install the project.
 FROM python_libs_sdis

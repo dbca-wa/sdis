@@ -89,7 +89,7 @@ beautifulsoup4==4.5.3
 django-tinymce==1.5.2
 html2text==2016.9.19
 html5lib==0.999999999
-pyenchant==1.6.8
+# pyenchant==1.6.8
 pypandoc==1.4
 Unidecode==0.04.16
 

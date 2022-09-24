@@ -19,7 +19,7 @@ urlpatterns = patterns(
         'django.views.i18n.javascript_catalog',
         js_info_dict),
 
-    url(r'^spillchuck/$', spell_check),
+    # url(r'^spillchuck/$', spell_check),
 
     url(r'^terms-and-conditions/$',
         TermsAndConditions.as_view(),
