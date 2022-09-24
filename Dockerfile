@@ -50,7 +50,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && wget https://github.com/jgm/pandoc/releases/download/2.7/pandoc-2.7-1-amd64.deb \
   && dpkg -i pandoc-2.7-1-amd64.deb \
   && rm pandoc-2.7-1-amd64.deb
-# RUN tlmgr update --self && tlmgr update --all
+
+RUN tlmgr update --self && tlmgr update --all
 
 # Install Python libs.
 FROM builder_base as python_libs_sdis
