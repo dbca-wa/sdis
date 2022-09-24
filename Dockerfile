@@ -4,17 +4,19 @@ LABEL maintainer=Florian.Mayer@dbca.wa.gov.au
 LABEL description="Ubuntu 22.04 plus Latex and GDAL."
 LABEL org.opencontainers.image.source = "https://github.com/dbca-wa/sdis"
 
-RUN DEBIAN_FRONTEND=noninteractive add-apt-repository universe \
-  && DEBIAN_FRONTEND=noninteractive apt-get update \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install --yes \
     -o Acquire::Retries=10 --no-install-recommends \
     apt-utils lmodern software-properties-common libmagic-dev libproj-dev gdal-bin \
-    python2-dev python2 libsasl2-dev enchant-2 \
+    libsasl2-dev enchant-2 \
     postgresql-client openssh-client rsync vim ncdu wget \
     # NOT: texlive-full texlive-xetex texlive-luatex \
     texlive-base tex-common texlive-xetex texlive-luatex tex-gyre texlive-pictures \
     texlive-latex-base texlive-latex-recommended texlive-latex-extra \
     texlive-fonts-recommended texlive-fonts-extra \
+  && DEBIAN_FRONTEND=noninteractive add-apt-repository -y universe \
+  && DEBIAN_FRONTEND=noninteractive apt-get update \
+  && DEBIAN_FRONTEND=noninteractive apt-get install --yes python2-dev python2 \
   && rm -rf /var/lib/apt/lists/* /usr/share/doc/* && apt-get clean \
   echo "Delete TeX Live sources." &&\
     (rm -rf /usr/share/texmf/source || true) &&\
