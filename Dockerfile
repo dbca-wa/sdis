@@ -8,7 +8,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install --yes \
     -o Acquire::Retries=10 --no-install-recommends \
     apt-utils lmodern software-properties-common libmagic-dev libproj-dev gdal-bin \
-    python-dev libsasl2-dev python-enchant \
+    python2-dev python2 libsasl2-dev python-enchant \
     postgresql-client openssh-client rsync vim ncdu \
     # NOT: texlive-full texlive-xetex texlive-luatex \
     texlive-base tex-common texlive-xetex texlive-luatex tex-gyre texlive-pictures \
