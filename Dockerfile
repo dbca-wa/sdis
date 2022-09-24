@@ -9,7 +9,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     -o Acquire::Retries=10 --no-install-recommends \
     apt-utils lmodern software-properties-common libmagic-dev libproj-dev gdal-bin \
     python2-dev python2 libsasl2-dev enchant-2 \
-    postgresql-client openssh-client rsync vim ncdu \
+    postgresql-client openssh-client rsync vim ncdu wget \
     # NOT: texlive-full texlive-xetex texlive-luatex \
     texlive-base tex-common texlive-xetex texlive-luatex tex-gyre texlive-pictures \
     texlive-latex-base texlive-latex-recommended texlive-latex-extra \
