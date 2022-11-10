@@ -109,7 +109,7 @@ itypes==1.2.0
 jdcal==1.4.1
 Jinja2==2.11.2
 kombu==4.6.11
-lxml==4.7.1
+lxml==4.9.1
 mando==0.6.4
 MarkupPy==1.14
 MarkupSafe==1.1.1
@@ -125,7 +125,7 @@ pathlib2==2.3.5
 pep8-naming==0.11.1
 pexpect==4.8.0
 pickleshare==0.7.5
-Pillow==6.2.2
+Pillow==9.0.1
 pipdeptree==1.0.0
 pipenv==2021.5.29
 platformdirs==2.0.2
