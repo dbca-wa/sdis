@@ -14,15 +14,15 @@
 \sectionmark{}
 %
 % [caption={External Partnerships}]
-\begin{longtblr}{*4{X[l]}}
+\begin{longtblr}{colspec={*4{X[l]}}, rowhead=1}
 \hline
 \rowcolor{infobg}
 \textbf{Partners} &
 \textbf{Project Title} &
 \textbf{External Funding} &
 \textbf{Departmental Involvement} \\
-\endhead
 \hline
+\endhead
 {% for project in projects|dictsort:"name" %}
 {{ project.name|html2latex }} &
 {{ project.title|html2latex }} &
