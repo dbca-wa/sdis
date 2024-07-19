@@ -13,3 +13,5 @@ Greek oracle of Delphi, whose comments and approvals were used as an early
 project planning tool.
 
 Refer to the documentation for advice on use, development, and deployment.
+
+NOTE: This repository has been archived. Please see the replacement repositories.
